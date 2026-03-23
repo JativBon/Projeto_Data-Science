@@ -1,12 +1,12 @@
-# Projeto Data Warehouse
+# Projeto Data Sciense
 
 Projeto académico da unidade curricular de Projeto de Engenharia Informática, focado na preparação de dados sequenciais e extração de padrões de transição para análise de processos.
 
 ## Autoria
 
-- Joaquim Bonacho
-- César Neves
-- Ricardo Costa
+- Joaquim Bonacho (2300542)
+- César Neves (2200745)
+- Ricardo Costa (2400400)
 
 ## Objetivo
 
