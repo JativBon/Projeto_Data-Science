@@ -1,4 +1,4 @@
-# Projeto Data Sciense
+# Projeto Data Science
 
 Projeto académico da unidade curricular de Projeto de Engenharia Informática, focado na preparação de dados sequenciais e extração de padrões de transição para análise de processos.
 
