@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # FASE A — Ler e processar o dataset para criar sequências por cliente
 # Ler o ficheiro Excel
-df = pd.read_excel("dataset 03.xlsx")
+df: pd.DataFrame = pd.read_excel("dataset 03.xlsx")
 print("Leitura concluida: dataset 03.xlsx")
 print(f"Registos carregados: {len(df)}")
 print(f"Colunas encontradas: {list(df.columns)}")
@@ -38,8 +38,8 @@ print("\nExemplo de sequências:")
 print(sequencias.head())
 
 # Função para remover eventos repetidos consecutivos em cada sequência
-def remover_repetidos(seq):
-    nova = []
+def remover_repetidos(seq: list[str]) -> list[str]:
+    nova: list[str] = []
     for item in seq:
         if not nova or nova[-1] != item:
             nova.append(item)
@@ -97,7 +97,7 @@ print("Ficheiro gerado com sucesso: sequencias_dataset03.txt")
 
 # FASE B — Gerar pares A -> B
 
-pares = []
+pares: list[tuple[str, str]] = []
 
 for seq in sequencias:
     seq = list(seq)
@@ -147,8 +147,8 @@ print("Ficheiro gerado: frequencias_pares_dataset03.csv")
 # FASE D — Matriz de adjacência
 
 # Obter lista ordenada de todos os eventos únicos
-eventos = sorted(set([origem for origem, destino in frequencias.keys()] +
-                     [destino for origem, destino in frequencias.keys()]))
+eventos = sorted(set([origem for origem, _ in frequencias.keys()] +
+                     [destino for _, destino in frequencias.keys()]))
 
 # Criar matriz de adjacência com zeros
 matriz_adjacencia = pd.DataFrame(0, index=eventos, columns=eventos)
@@ -185,7 +185,7 @@ for origem, destino, dados in G.edges(data=True):
 plt.figure(figsize=(10, 8))
 pos = nx.spring_layout(G, seed=42)
 
-nx.draw(
+nx.draw_networkx(
     G,
     pos,
     with_labels=True,
@@ -217,7 +217,7 @@ for (origem, destino), freq in frequencias.items():
 plt.figure(figsize=(10, 8))
 pos = nx.spring_layout(G_forte, seed=42)
 
-nx.draw(
+nx.draw_networkx(
     G_forte,
     pos,
     with_labels=True,
@@ -239,22 +239,22 @@ print("Ficheiro gerado: grafo_dataset03_filtrado.png")
 # FASE F — Ramex simplificado (Back-and-Forward Heuristic)
 
 # Criar grafo dirigido completo com pesos
-G = nx.DiGraph()
+G_ramex_full = nx.DiGraph()
 for (origem, destino), freq in frequencias.items():
-    G.add_edge(origem, destino, weight=freq)
+    G_ramex_full.add_edge(origem, destino, weight=freq)
 
 # Escolher raiz: START se existir, senão o nó com maior soma dos pesos de saída
-if "START" in G.nodes():
+soma_saida: dict[str, int] = {}
+if "START" in G_ramex_full.nodes():
     raiz = "START"
 else:
-    soma_saida = {}
-    for no in G.nodes():
-        soma_saida[no] = sum(dados["weight"] for _, _, dados in G.out_edges(no, data=True))
-    raiz = max(soma_saida, key=soma_saida.get)
+    for no in G_ramex_full.nodes():
+        soma_saida[no] = sum(dados["weight"] for _, _, dados in G_ramex_full.out_edges(no, data=True))
+    raiz = max(soma_saida, key=lambda k: soma_saida[k])
 
 print(f"\nRaiz escolhida para o Ramex simplificado: {raiz}")
 
-if "START" not in G.nodes():
+if "START" not in G_ramex_full.nodes():
     print("Soma dos pesos de saída por nó:")
     for no, valor in soma_saida.items():
         print(f"{no}: {valor}")
@@ -264,14 +264,14 @@ G_ramex = nx.DiGraph()
 visitados = set([raiz])
 G_ramex.add_node(raiz)
 
-while len(visitados) < len(G.nodes()):
+while len(visitados) < len(G_ramex_full.nodes()):
     melhor_aresta = None
     melhor_peso = -1
     novo_no = None
 
     # FORWARD: visitado -> não visitado
     for u in visitados:
-        for _, v, dados in G.out_edges(u, data=True):
+        for _, v, dados in G_ramex_full.out_edges(u, data=True):
             if v not in visitados:
                 peso = dados["weight"]
                 if peso > melhor_peso:
@@ -281,7 +281,7 @@ while len(visitados) < len(G.nodes()):
 
     # BACKWARD: não visitado -> visitado
     for v in visitados:
-        for u, _, dados in G.in_edges(v, data=True):
+        for u, _, dados in G_ramex_full.in_edges(v, data=True):
             if u not in visitados:
                 peso = dados["weight"]
                 if peso > melhor_peso:
@@ -294,6 +294,7 @@ while len(visitados) < len(G.nodes()):
 
     u, v, peso = melhor_aresta
     G_ramex.add_edge(u, v, weight=peso)
+    assert novo_no is not None
     visitados.add(novo_no)
 
 print("\nArestas escolhidas pelo Ramex simplificado:")
@@ -304,7 +305,7 @@ for origem, destino, dados in G_ramex.edges(data=True):
 plt.figure(figsize=(10, 8))
 pos = nx.spring_layout(G_ramex, seed=42)
 
-nx.draw(
+nx.draw_networkx(
     G_ramex,
     pos,
     with_labels=True,
