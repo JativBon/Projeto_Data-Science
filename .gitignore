@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.mypy_cache/
 
 # Virtual environments
 .venv/
@@ -13,8 +15,6 @@ ENV/
 build/
 dist/
 *.egg-info/
-.pytest_cache/
-.mypy_cache/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -26,3 +26,11 @@ dist/
 # OS generated files
 Thumbs.db
 .DS_Store
+
+# Project caches
+.matplotlib-cache/
+
+# Temporary outputs and local test files
+tmp_pairs_*.csv
+matriz_teste.csv
+*.log
