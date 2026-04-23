@@ -48,18 +48,38 @@ def load_pair_frequencies(file_path: str) -> pd.DataFrame:
     return df_pairs
 
 
+def aggregate_pair_frequencies(df_pairs: pd.DataFrame) -> pd.DataFrame:
+    return (
+        df_pairs.groupby(["Source", "Target"], as_index=False)["Frequency"]
+        .sum()
+        .sort_values(by="Frequency", ascending=False, kind="stable")
+        .reset_index(drop=True)
+    )
+
+
 def build_adjacency_matrix(df_pairs: pd.DataFrame) -> pd.DataFrame:
     nos = sorted(set(df_pairs["Source"]).union(set(df_pairs["Target"])))
 
     matriz = pd.DataFrame(0, index=nos, columns=nos, dtype=int)
 
-    for _, linha in df_pairs.iterrows():
-        source = str(linha["Source"])
-        target = str(linha["Target"])
-        frequency = int(linha["Frequency"])
-        matriz.loc[source, target] = frequency
+    for linha in df_pairs.itertuples(index=False):
+        matriz.loc[str(linha.Source), str(linha.Target)] = int(linha.Frequency)
 
     return matriz
+
+
+def infer_output_path(input_file: str) -> str:
+    caminho_entrada = Path(input_file)
+    stem = caminho_entrada.stem
+
+    if stem.startswith("pares_frequencias_"):
+        nome_saida = f"matriz_adjacencia_{stem.removeprefix('pares_frequencias_')}.csv"
+    elif stem.startswith("frequencias_pares_"):
+        nome_saida = f"matriz_adjacencia_{stem.removeprefix('frequencias_pares_')}.csv"
+    else:
+        nome_saida = f"matriz_{stem}.csv"
+
+    return str(caminho_entrada.with_name(nome_saida))
 
 
 def export_adjacency_matrix(matrix_df: pd.DataFrame, output_file: str) -> None:
@@ -68,16 +88,17 @@ def export_adjacency_matrix(matrix_df: pd.DataFrame, output_file: str) -> None:
 
 
 def main() -> int:
-    if len(sys.argv) != 3:
-        print("Uso: python 05_matriz_adjacencia.py <input_pairs_csv> <output_matrix_csv>")
+    if len(sys.argv) not in {2, 3}:
+        print("Uso: python 05_matriz_adjacencia.py <input_pairs_csv> [output_matrix_csv]")
         return 1
 
     input_file = sys.argv[1]
-    output_file = sys.argv[2]
+    output_file = sys.argv[2] if len(sys.argv) == 3 else infer_output_path(input_file)
 
     try:
         df_pairs = load_pair_frequencies(input_file)
-        matrix_df = build_adjacency_matrix(df_pairs)
+        df_pairs_agregado = aggregate_pair_frequencies(df_pairs)
+        matrix_df = build_adjacency_matrix(df_pairs_agregado)
         export_adjacency_matrix(matrix_df, output_file)
     except (FileNotFoundError, ValueError, OSError) as exc:
         print(exc)
@@ -85,7 +106,7 @@ def main() -> int:
 
     total_nos = len(matrix_df.index)
     total_arestas = int((matrix_df > 0).sum().sum())
-    soma_frequencias = int(df_pairs["Frequency"].sum())
+    soma_frequencias = int(df_pairs_agregado["Frequency"].sum())
 
     print(f"Ficheiro lido: {input_file}")
     print(f"Ficheiro gerado: {output_file}")
@@ -95,7 +116,7 @@ def main() -> int:
     print(f"Soma total das frequencias: {soma_frequencias}")
 
     print("\nTop 5 transicoes mais fortes:")
-    for linha in df_pairs.sort_values(by="Frequency", ascending=False).head(5).itertuples(index=False):
+    for linha in df_pairs_agregado.head(5).itertuples(index=False):
         print(f"{linha.Source} -> {linha.Target} = {linha.Frequency}")
 
     return 0
