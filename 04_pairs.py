@@ -52,6 +52,18 @@ def count_frequencies(pairs: list[tuple[str, str]]) -> Counter[tuple[str, str]]:
     return Counter(pairs)
 
 
+def infer_output_path(input_path: str) -> str:
+    caminho_entrada = Path(input_path)
+    stem = caminho_entrada.stem
+
+    if stem.startswith("sequencias_"):
+        nome_saida = f"pares_frequencias_{stem.removeprefix('sequencias_')}.csv"
+    else:
+        nome_saida = f"pares_frequencias_{stem}.csv"
+
+    return str(caminho_entrada.with_name(nome_saida))
+
+
 def export_csv(freq_dict: Counter[tuple[str, str]], output_path: str = "pares_frequencias.csv") -> None:
     caminho_saida = Path(output_path)
 
@@ -64,12 +76,12 @@ def export_csv(freq_dict: Counter[tuple[str, str]], output_path: str = "pares_fr
 
 
 def main() -> int:
-    if len(sys.argv) != 3:
-        print("Uso: python 04_pairs.py <input_txt> <output_csv>")
+    if len(sys.argv) not in {2, 3}:
+        print("Uso: python 04_pairs.py <input_txt> [output_csv]")
         return 1
 
     input_path = sys.argv[1]
-    output_path = sys.argv[2]
+    output_path = sys.argv[2] if len(sys.argv) == 3 else infer_output_path(input_path)
 
     try:
         sequences = load_sequences(input_path)
