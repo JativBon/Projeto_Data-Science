@@ -1,0 +1,101 @@
+{
+  "algorithm": "RAMEX Forward Heuristic",
+  "root": "Fluxo_Aumenta",
+  "metrics": {
+    "original_nodes": 9,
+    "original_edges": 14,
+    "selected_nodes": 8,
+    "selected_edges": 7,
+    "original_weight_sum": 50.0,
+    "selected_weight_sum": 24.0,
+    "preserved_weight_percent": 48.0,
+    "is_acyclic": true
+  },
+  "nodes": [
+    {
+      "id": "Fluxo_Aumenta",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "Falha_Bomba",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Nivel_Sobe",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Pressao_Sobe",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Alarme_Falha",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Alarme_Nivel_Alto",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Valvula_Abre",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Intervencao_Manual",
+      "level": 3,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "Fluxo_Aumenta",
+      "to": "Falha_Bomba",
+      "weight": 1.0,
+      "level": 1
+    },
+    {
+      "from": "Fluxo_Aumenta",
+      "to": "Nivel_Sobe",
+      "weight": 5.0,
+      "level": 1
+    },
+    {
+      "from": "Fluxo_Aumenta",
+      "to": "Pressao_Sobe",
+      "weight": 7.0,
+      "level": 1
+    },
+    {
+      "from": "Falha_Bomba",
+      "to": "Alarme_Falha",
+      "weight": 3.0,
+      "level": 2
+    },
+    {
+      "from": "Nivel_Sobe",
+      "to": "Alarme_Nivel_Alto",
+      "weight": 3.0,
+      "level": 2
+    },
+    {
+      "from": "Nivel_Sobe",
+      "to": "Valvula_Abre",
+      "weight": 4.0,
+      "level": 2
+    },
+    {
+      "from": "Alarme_Falha",
+      "to": "Intervencao_Manual",
+      "weight": 1.0,
+      "level": 3
+    }
+  ],
+  "root_selection_method": "max_out_weight_fallback"
+}

@@ -1,0 +1,10 @@
+{
+  "job_id": "5a08e089db1142f680c1b0844443eb0b",
+  "original_filename": "testes_SCADA.csv",
+  "filename": "testes_SCADA.csv",
+  "path": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\backend-ramex\\uploads\\5a08e089db1142f680c1b0844443eb0b\\testes_SCADA.csv",
+  "columns": [
+    "event_id",
+    "sequence"
+  ]
+}

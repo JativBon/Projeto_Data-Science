@@ -1,0 +1,41 @@
+{
+  "dataset": "401f97b755f64d83931b6a4596582ddb",
+  "best_algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+  "structural_type": "grafo pequeno e completo",
+  "rows": [
+    {
+      "Algoritmo": "RAMEX 2007 Rooted Branching",
+      "Metodo": "networkx_arborescence",
+      "Nos selecionados": 4,
+      "Arestas selecionadas": 3,
+      "Soma pesos selecionados": 123,
+      "Peso preservado (%)": 34.94318181818182,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "Tecnologia"
+    },
+    {
+      "Algoritmo": "RAMEX Forward Heuristic",
+      "Metodo": "RAMEX Forward Heuristic",
+      "Nos selecionados": 4,
+      "Arestas selecionadas": 3,
+      "Soma pesos selecionados": 123.0,
+      "Peso preservado (%)": 34.94318181818182,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "Tecnologia"
+    },
+    {
+      "Algoritmo": "RAMEX Back-and-Forward Poly-tree Formal",
+      "Metodo": "ramex_back_forward_polytree_formal",
+      "Nos selecionados": 4,
+      "Arestas selecionadas": 3,
+      "Soma pesos selecionados": 130.0,
+      "Peso preservado (%)": 36.93181818181818,
+      "Aciclico": true,
+      "Conectado": true,
+      "Raiz ou aresta inicial": "Tecnologia -> Mercearia"
+    }
+  ],
+  "summary": "Os resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi RAMEX Back-and-Forward Poly-tree Formal (36.93%). Tipo estrutural: grafo pequeno e completo."
+}

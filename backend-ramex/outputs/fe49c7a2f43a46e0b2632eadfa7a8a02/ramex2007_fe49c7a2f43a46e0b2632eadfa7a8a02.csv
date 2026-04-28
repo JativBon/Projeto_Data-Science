@@ -1,0 +1,10 @@
+From,To,Weight,Level,Method,IsRootedBranching
+SOURCE,Bomba_ON,11,1,networkx_arborescence,True
+Bomba_ON,Falha_Bomba,1,2,networkx_arborescence,True
+Bomba_ON,Fluxo_Aumenta,9,2,networkx_arborescence,True
+Falha_Bomba,Alarme_Falha,3,3,networkx_arborescence,True
+Fluxo_Aumenta,Nivel_Sobe,5,3,networkx_arborescence,True
+Fluxo_Aumenta,Pressao_Sobe,7,3,networkx_arborescence,True
+Alarme_Falha,Intervencao_Manual,1,4,networkx_arborescence,True
+Nivel_Sobe,Alarme_Nivel_Alto,3,4,networkx_arborescence,True
+Pressao_Sobe,Valvula_Abre,4,4,networkx_arborescence,True

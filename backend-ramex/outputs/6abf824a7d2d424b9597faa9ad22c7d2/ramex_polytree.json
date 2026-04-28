@@ -1,0 +1,879 @@
+{
+  "root": "150",
+  "strategy": "top-k",
+  "metrics": {
+    "original_nodes": 200,
+    "original_edges": 38625,
+    "polytree_nodes": 53,
+    "polytree_edges": 62,
+    "original_weight_sum": 139155,
+    "polytree_weight_sum": 517,
+    "preserved_weight_percent": 0.3715281520606518,
+    "max_depth": 5,
+    "average_branching": 2.1379310344827585,
+    "repeated_nodes": 10,
+    "density_before": 0.9704773869346733,
+    "density_after": 0.02104499274310595,
+    "edge_reduction_percent": 99.84983818770226,
+    "coverage_by_level": {
+      "1": 18.0,
+      "2": 37.0,
+      "3": 69.0,
+      "4": 144.0,
+      "5": 282.0
+    },
+    "strategy": "top-k"
+  },
+  "parameters": {
+    "alpha": 0.35,
+    "beta": 0.25,
+    "gamma": 0.15,
+    "delta": 0.15,
+    "epsilon": 0.05,
+    "zeta": 0.05,
+    "preserve_weight_target": 0.7,
+    "max_branching": 3,
+    "min_score": 0.0,
+    "max_depth": 5,
+    "strategy": "top-k",
+    "top_k_per_node": 2,
+    "min_weight": 0
+  },
+  "nodes": [
+    {
+      "id": "150",
+      "level": 0
+    },
+    {
+      "id": "120",
+      "level": 1
+    },
+    {
+      "id": "132",
+      "level": 1
+    },
+    {
+      "id": "109",
+      "level": 2
+    },
+    {
+      "id": "122",
+      "level": 2
+    },
+    {
+      "id": "15",
+      "level": 2
+    },
+    {
+      "id": "72",
+      "level": 2
+    },
+    {
+      "id": "100",
+      "level": 3
+    },
+    {
+      "id": "125",
+      "level": 3
+    },
+    {
+      "id": "126",
+      "level": 3
+    },
+    {
+      "id": "139",
+      "level": 3
+    },
+    {
+      "id": "160",
+      "level": 3
+    },
+    {
+      "id": "168",
+      "level": 3
+    },
+    {
+      "id": "37",
+      "level": 3
+    },
+    {
+      "id": "78",
+      "level": 3
+    },
+    {
+      "id": "106",
+      "level": 4
+    },
+    {
+      "id": "117",
+      "level": 4
+    },
+    {
+      "id": "135",
+      "level": 4
+    },
+    {
+      "id": "141",
+      "level": 4
+    },
+    {
+      "id": "143",
+      "level": 4
+    },
+    {
+      "id": "154",
+      "level": 4
+    },
+    {
+      "id": "155",
+      "level": 4
+    },
+    {
+      "id": "166",
+      "level": 4
+    },
+    {
+      "id": "174",
+      "level": 4
+    },
+    {
+      "id": "179",
+      "level": 4
+    },
+    {
+      "id": "30",
+      "level": 4
+    },
+    {
+      "id": "57",
+      "level": 4
+    },
+    {
+      "id": "82",
+      "level": 4
+    },
+    {
+      "id": "84",
+      "level": 4
+    },
+    {
+      "id": "1",
+      "level": 5
+    },
+    {
+      "id": "10",
+      "level": 5
+    },
+    {
+      "id": "102",
+      "level": 5
+    },
+    {
+      "id": "115",
+      "level": 5
+    },
+    {
+      "id": "134",
+      "level": 5
+    },
+    {
+      "id": "152",
+      "level": 5
+    },
+    {
+      "id": "156",
+      "level": 5
+    },
+    {
+      "id": "158",
+      "level": 5
+    },
+    {
+      "id": "159",
+      "level": 5
+    },
+    {
+      "id": "161",
+      "level": 5
+    },
+    {
+      "id": "162",
+      "level": 5
+    },
+    {
+      "id": "167",
+      "level": 5
+    },
+    {
+      "id": "192",
+      "level": 5
+    },
+    {
+      "id": "197",
+      "level": 5
+    },
+    {
+      "id": "200",
+      "level": 5
+    },
+    {
+      "id": "25",
+      "level": 5
+    },
+    {
+      "id": "29",
+      "level": 5
+    },
+    {
+      "id": "41",
+      "level": 5
+    },
+    {
+      "id": "45",
+      "level": 5
+    },
+    {
+      "id": "64",
+      "level": 5
+    },
+    {
+      "id": "7",
+      "level": 5
+    },
+    {
+      "id": "81",
+      "level": 5
+    },
+    {
+      "id": "85",
+      "level": 5
+    },
+    {
+      "id": "99",
+      "level": 5
+    }
+  ],
+  "edges": [
+    {
+      "From": "150",
+      "To": "120",
+      "Weight": 9,
+      "Level": 1,
+      "ParentPath": "150",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "150",
+      "To": "132",
+      "Weight": 9,
+      "Level": 1,
+      "ParentPath": "150",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "120",
+      "To": "15",
+      "Weight": 10,
+      "Level": 2,
+      "ParentPath": "150 -> 120",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "120",
+      "To": "122",
+      "Weight": 8,
+      "Level": 2,
+      "ParentPath": "150 -> 120",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "132",
+      "To": "72",
+      "Weight": 10,
+      "Level": 2,
+      "ParentPath": "150 -> 132",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "132",
+      "To": "109",
+      "Weight": 9,
+      "Level": 2,
+      "ParentPath": "150 -> 132",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "15",
+      "To": "125",
+      "Weight": 8,
+      "Level": 3,
+      "ParentPath": "150 -> 120 -> 15",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "15",
+      "To": "126",
+      "Weight": 8,
+      "Level": 3,
+      "ParentPath": "150 -> 120 -> 15",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "122",
+      "To": "139",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "150 -> 120 -> 122",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "122",
+      "To": "100",
+      "Weight": 8,
+      "Level": 3,
+      "ParentPath": "150 -> 120 -> 122",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "72",
+      "To": "78",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "150 -> 132 -> 72",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "72",
+      "To": "160",
+      "Weight": 8,
+      "Level": 3,
+      "ParentPath": "150 -> 132 -> 72",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "109",
+      "To": "168",
+      "Weight": 10,
+      "Level": 3,
+      "ParentPath": "150 -> 132 -> 109",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "109",
+      "To": "37",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "150 -> 132 -> 109",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "125",
+      "To": "174",
+      "Weight": 10,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 15 -> 125",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "125",
+      "To": "57",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 15 -> 125",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "126",
+      "To": "30",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 15 -> 126",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "126",
+      "To": "84",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 15 -> 126",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "139",
+      "To": "82",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 122 -> 139",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "139",
+      "To": "117",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 122 -> 139",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "100",
+      "To": "166",
+      "Weight": 12,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 122 -> 100",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "100",
+      "To": "143",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "150 -> 120 -> 122 -> 100",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "78",
+      "To": "141",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 72 -> 78",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "78",
+      "To": "15",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 72 -> 78",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "160",
+      "To": "135",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 72 -> 160",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "160",
+      "To": "154",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 72 -> 160",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "168",
+      "To": "179",
+      "Weight": 11,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 109 -> 168",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "168",
+      "To": "155",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 109 -> 168",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "37",
+      "To": "106",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 109 -> 37",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "37",
+      "To": "117",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "150 -> 132 -> 109 -> 37",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "174",
+      "To": "156",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 125 -> 174",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "174",
+      "To": "134",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 125 -> 174",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "57",
+      "To": "102",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 125 -> 57",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "57",
+      "To": "41",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 125 -> 57",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "30",
+      "To": "85",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 126 -> 30",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "30",
+      "To": "115",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 126 -> 30",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "84",
+      "To": "197",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 126 -> 84",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "84",
+      "To": "10",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 15 -> 126 -> 84",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "82",
+      "To": "159",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 139 -> 82",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "82",
+      "To": "161",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 139 -> 82",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "117",
+      "To": "64",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 139 -> 117",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "117",
+      "To": "115",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 139 -> 117",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "166",
+      "To": "81",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 100 -> 166",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "166",
+      "To": "72",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 100 -> 166",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "143",
+      "To": "99",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 100 -> 143",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "143",
+      "To": "192",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 120 -> 122 -> 100 -> 143",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "141",
+      "To": "200",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 78 -> 141",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "141",
+      "To": "167",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 78 -> 141",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "15",
+      "To": "125",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 78 -> 15",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "15",
+      "To": "126",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 78 -> 15",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "135",
+      "To": "152",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 160 -> 135",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "135",
+      "To": "179",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 160 -> 135",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "154",
+      "To": "29",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 160 -> 154",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "154",
+      "To": "25",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 72 -> 160 -> 154",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "179",
+      "To": "45",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 168 -> 179",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "179",
+      "To": "1",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 168 -> 179",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "155",
+      "To": "7",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 168 -> 155",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "155",
+      "To": "139",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 168 -> 155",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "106",
+      "To": "162",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 37 -> 106",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "106",
+      "To": "158",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 37 -> 106",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "117",
+      "To": "64",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 37 -> 117",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "117",
+      "To": "115",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "150 -> 132 -> 109 -> 37 -> 117",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    }
+  ],
+  "scoring_formula": "top-k"
+}

@@ -1,0 +1,5928 @@
+{
+  "algorithm": "RAMEX 2007 Rooted Branching",
+  "method": "networkx_arborescence",
+  "root": "SOURCE",
+  "source": "SOURCE",
+  "sink": "SINK",
+  "include_sink": false,
+  "metrics": {
+    "original_nodes": 537,
+    "original_edges": 557,
+    "reachable_nodes": 537,
+    "selected_nodes": 537,
+    "selected_edges": 536,
+    "original_weight_sum": 557,
+    "selected_weight_sum": 536,
+    "preserved_weight_percent": 96.22980251346499,
+    "is_acyclic": true,
+    "max_indegree_except_root": 1
+  },
+  "nodes": [
+    {
+      "id": "SOURCE",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "11.39",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "15.57",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "2320.26",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "35.27",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "4481.22",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "5.05",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "6.12",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "9.25",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "1036.01",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "11.27",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "14.52",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "19.17",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "317.56",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "4.72",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "427.29",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "6.22",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "1045.42",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "11.0",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "2045.37",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "367.53",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "40.63",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "5.76",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "7.67",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "9.58",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "1.44",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "10.83",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "1136.17",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "22.77",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "28.43",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "5.67",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "536.82",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "73.22",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "15.04",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "21.73",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "3.44",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "33.82",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "369.75",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "457.97",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "7.61",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "932.69",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "1.57",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "1264.09",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "15.08",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "20.04",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "3.36",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "421.75",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "6.91",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "621.55",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "9.53",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "14.66",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "1619.35",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "18.07",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "1839.22",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "497.33",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "6.18",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "7.62",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "8.17",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "11.23",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "14.89",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "15.2",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "206.17",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "31.48",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "324.15",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "35.11",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "4.61",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "632.33",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "17.94",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "22.65",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "30.94",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "3056.06",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "35.29",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "6.99",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "68.85",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "7.33",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "8.98",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "845.73",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "1190.57",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "12.4",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "15.43",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "19.35",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "35.48",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "459.22",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "6.13",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "6.9",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "943.65",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "17.26",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "1752.01",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "19.3",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "2020.25",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "25.61",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "28.41",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "29.96",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "4243.86",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "8.7",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "13.8",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "1320.96",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "25.11",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "3.26",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "368.27",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "45.96",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "638.27",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "8.58",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "10.09",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "13.54",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "1359.88",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "14.92",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "1750.73",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "23.14",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "5.15",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "924.59",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "1605.2",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "1610.63",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "18.29",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "2.45",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "2.51",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "4209.6",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "459.05",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "7.86",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "15.97",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "19.89",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "2.79",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "2044.44",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "55.06",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "7.87",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "835.81",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "999.67",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "10.87",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "15.99",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "21.46",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "2313.38",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "28.91",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "4.66",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "423.73",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "545.14",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "825.58",
+      "level": 16,
+      "is_root": false
+    },
+    {
+      "id": "1177.98",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "133.24",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "17.96",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "2.44",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "3.34",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "30.73",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "32.3",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "4379.31",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "44.99",
+      "level": 17,
+      "is_root": false
+    },
+    {
+      "id": "1.29",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "1.47",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "1357.37",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "1495.93",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "1553.16",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "16.94",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "25.85",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "3193.62",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "4.24",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "9.2",
+      "level": 18,
+      "is_root": false
+    },
+    {
+      "id": "10.86",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "14.12",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "2015.9",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "41.75",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "47.3",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "588.42",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "696.9",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "7.7",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "7.85",
+      "level": 19,
+      "is_root": false
+    },
+    {
+      "id": "1152.75",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "13.85",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "136.68",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "1810.58",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "1959.89",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "34.16",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "4.68",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "7.31",
+      "level": 20,
+      "is_root": false
+    },
+    {
+      "id": "20.25",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "2248.08",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "29.68",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "3.05",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "367.23",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "431.55",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "7.0",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "889.88",
+      "level": 21,
+      "is_root": false
+    },
+    {
+      "id": "12.57",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "12.91",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "2205.52",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "3127.25",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "3209.42",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "38.06",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "5.57",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "638.28",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "9.15",
+      "level": 22,
+      "is_root": false
+    },
+    {
+      "id": "1351.33",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "1426.09",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "1439.17",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "2184.76",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "30.07",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "34.18",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "40.41",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "6.39",
+      "level": 23,
+      "is_root": false
+    },
+    {
+      "id": "1902.37",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "219.56",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "22.15",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "25.63",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "30.09",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "3955.96",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "5.5",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "695.3",
+      "level": 24,
+      "is_root": false
+    },
+    {
+      "id": "108.62",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "15.1",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "227.55",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "2755.31",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "29.76",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "38.35",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "5.48",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "846.23",
+      "level": 25,
+      "is_root": false
+    },
+    {
+      "id": "1171.7",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "15.98",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "2652.09",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "29.72",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "3650.99",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "468.45",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "5.11",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "7.54",
+      "level": 26,
+      "is_root": false
+    },
+    {
+      "id": "103.69",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "23.51",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "30.31",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "307.64",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "342.49",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "36.82",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "3645.41",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "5.04",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "5.25",
+      "level": 27,
+      "is_root": false
+    },
+    {
+      "id": "1103.17",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "12.94",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "141.34",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "1490.18",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "1501.44",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "25.19",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "35.51",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "6.68",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "7.4",
+      "level": 28,
+      "is_root": false
+    },
+    {
+      "id": "1518.29",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "28.01",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "3067.53",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "32.23",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "418.66",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "43.42",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "43.97",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "566.47",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "7.42",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "8.85",
+      "level": 29,
+      "is_root": false
+    },
+    {
+      "id": "2.75",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "23.91",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "2396.73",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "30.74",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "310.81",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "33.79",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "3569.24",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "38.81",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "4.82",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "676.78",
+      "level": 30,
+      "is_root": false
+    },
+    {
+      "id": "1524.49",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "16.27",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "2362.18",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "25.96",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "31.72",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "40.05",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "603.44",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "7.11",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "7.77",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "90.85",
+      "level": 31,
+      "is_root": false
+    },
+    {
+      "id": "1775.86",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "23.13",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "245.02",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "28.0",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "35.89",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "35.96",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "4.55",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "448.37",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "6.66",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "739.6",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "8.23",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "9.48",
+      "level": 32,
+      "is_root": false
+    },
+    {
+      "id": "1.62",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "127.72",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "16.37",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "19.86",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "36.76",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "3932.88",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "4.57",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "6.92",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "626.56",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "70.39",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "8.86",
+      "level": 33,
+      "is_root": false
+    },
+    {
+      "id": "16.72",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "232.93",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "31.75",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "42.08",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "47.2",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "589.98",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "6.56",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "724.52",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "773.84",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "8.93",
+      "level": 34,
+      "is_root": false
+    },
+    {
+      "id": "1.53",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "1081.95",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "11.35",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "1163.38",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "13.3",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "15.05",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "18.63",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "2453.64",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "741.11",
+      "level": 35,
+      "is_root": false
+    },
+    {
+      "id": "1197.56",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "1428.58",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "1616.12",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "25.69",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "46.06",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "6.05",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "7.05",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "7.48",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "813.52",
+      "level": 36,
+      "is_root": false
+    },
+    {
+      "id": "10.03",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "1349.06",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "18.09",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "1934.72",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "2.55",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "21.85",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "270.95",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "29.75",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "3.63",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "8.97",
+      "level": 37,
+      "is_root": false
+    },
+    {
+      "id": "13.4",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "13.71",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "19.2",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "2.48",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "2607.94",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "2643.28",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "3.12",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "3350.76",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "37.61",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "5.29",
+      "level": 38,
+      "is_root": false
+    },
+    {
+      "id": "1167.74",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "1315.46",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "19.83",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "199.1",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "27.06",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "38.21",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "48.54",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "7.96",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "743.25",
+      "level": 39,
+      "is_root": false
+    },
+    {
+      "id": "1.41",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "10.8",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "16.16",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "18.2",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "2151.55",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "4.56",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "417.19",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "4425.1",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "750.74",
+      "level": 40,
+      "is_root": false
+    },
+    {
+      "id": "11.32",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "20.05",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "2248.18",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "3.15",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "3462.57",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "4.52",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "6.32",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "617.0",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "7.19",
+      "level": 41,
+      "is_root": false
+    },
+    {
+      "id": "1.69",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "11.72",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "1182.73",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "13.09",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "18.41",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "3.2",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "3136.31",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "4.14",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "654.38",
+      "level": 42,
+      "is_root": false
+    },
+    {
+      "id": "14.78",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "15.48",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "1671.32",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "2.65",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "3.71",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "34.78",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "34.96",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "4005.58",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "816.98",
+      "level": 43,
+      "is_root": false
+    },
+    {
+      "id": "10.38",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "27.51",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "3.82",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "350.36",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "44.75",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "5.14",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "7.01",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "751.62",
+      "level": 44,
+      "is_root": false
+    },
+    {
+      "id": "1.83",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "11.01",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "13.08",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "15.06",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "203.78",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "2117.87",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "8.42",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "9.57",
+      "level": 45,
+      "is_root": false
+    },
+    {
+      "id": "12.31",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "17.63",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "21.04",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "2472.03",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "29.5",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "30.77",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "3217.99",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "35.94",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "7.89",
+      "level": 46,
+      "is_root": false
+    },
+    {
+      "id": "15.95",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "16.77",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "17.28",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "2785.13",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "29.62",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "296.27",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "4.27",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "6.86",
+      "level": 47,
+      "is_root": false
+    },
+    {
+      "id": "111.55",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "13.11",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "17.3",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "23.24",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "26.09",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "31.92",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "3673.18",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "7.23",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "8.05",
+      "level": 48,
+      "is_root": false
+    },
+    {
+      "id": "1189.33",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "29.92",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "3.56",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "3713.71",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "38.97",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "43.16",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "6.82",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "7.71",
+      "level": 49,
+      "is_root": false
+    },
+    {
+      "id": "16.48",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "17.42",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "18.69",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "328.79",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "33.78",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "3337.06",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "5.19",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "5.61",
+      "level": 50,
+      "is_root": false
+    },
+    {
+      "id": "12.16",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "169.37",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "22.5",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "23.1",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "3.93",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "33.19",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "35.14",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "797.74",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "8.18",
+      "level": 51,
+      "is_root": false
+    },
+    {
+      "id": "10.31",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "11.59",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "16.26",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "1882.37",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "26.58",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "3122.29",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "39.65",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "44.54",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "8.25",
+      "level": 52,
+      "is_root": false
+    },
+    {
+      "id": "4.25",
+      "level": 53,
+      "is_root": false
+    },
+    {
+      "id": "4.36",
+      "level": 53,
+      "is_root": false
+    },
+    {
+      "id": "6.38",
+      "level": 53,
+      "is_root": false
+    },
+    {
+      "id": "7.16",
+      "level": 53,
+      "is_root": false
+    },
+    {
+      "id": "747.52",
+      "level": 53,
+      "is_root": false
+    },
+    {
+      "id": "781.18",
+      "level": 53,
+      "is_root": false
+    },
+    {
+      "id": "8.09",
+      "level": 53,
+      "is_root": false
+    },
+    {
+      "id": "1826.96",
+      "level": 54,
+      "is_root": false
+    },
+    {
+      "id": "1983.79",
+      "level": 54,
+      "is_root": false
+    },
+    {
+      "id": "27.42",
+      "level": 54,
+      "is_root": false
+    },
+    {
+      "id": "4.26",
+      "level": 54,
+      "is_root": false
+    },
+    {
+      "id": "4.7",
+      "level": 54,
+      "is_root": false
+    },
+    {
+      "id": "6.45",
+      "level": 54,
+      "is_root": false
+    },
+    {
+      "id": "6.49",
+      "level": 54,
+      "is_root": false
+    },
+    {
+      "id": "1076.8",
+      "level": 55,
+      "is_root": false
+    },
+    {
+      "id": "1598.0",
+      "level": 55,
+      "is_root": false
+    },
+    {
+      "id": "28.28",
+      "level": 55,
+      "is_root": false
+    },
+    {
+      "id": "3.11",
+      "level": 55,
+      "is_root": false
+    },
+    {
+      "id": "31.82",
+      "level": 55,
+      "is_root": false
+    },
+    {
+      "id": "4.73",
+      "level": 55,
+      "is_root": false
+    },
+    {
+      "id": "9.1",
+      "level": 55,
+      "is_root": false
+    },
+    {
+      "id": "12.33",
+      "level": 56,
+      "is_root": false
+    },
+    {
+      "id": "1671.49",
+      "level": 56,
+      "is_root": false
+    },
+    {
+      "id": "19.05",
+      "level": 56,
+      "is_root": false
+    },
+    {
+      "id": "22.41",
+      "level": 56,
+      "is_root": false
+    },
+    {
+      "id": "245.25",
+      "level": 56,
+      "is_root": false
+    },
+    {
+      "id": "28.49",
+      "level": 56,
+      "is_root": false
+    },
+    {
+      "id": "4.22",
+      "level": 56,
+      "is_root": false
+    },
+    {
+      "id": "11.37",
+      "level": 57,
+      "is_root": false
+    },
+    {
+      "id": "13.07",
+      "level": 57,
+      "is_root": false
+    },
+    {
+      "id": "1427.89",
+      "level": 57,
+      "is_root": false
+    },
+    {
+      "id": "17.57",
+      "level": 57,
+      "is_root": false
+    },
+    {
+      "id": "183.7",
+      "level": 57,
+      "is_root": false
+    },
+    {
+      "id": "35.0",
+      "level": 57,
+      "is_root": false
+    },
+    {
+      "id": "136.09",
+      "level": 58,
+      "is_root": false
+    },
+    {
+      "id": "1372.16",
+      "level": 58,
+      "is_root": false
+    },
+    {
+      "id": "23.34",
+      "level": 58,
+      "is_root": false
+    },
+    {
+      "id": "41.2",
+      "level": 58,
+      "is_root": false
+    },
+    {
+      "id": "47.79",
+      "level": 58,
+      "is_root": false
+    },
+    {
+      "id": "6.84",
+      "level": 58,
+      "is_root": false
+    },
+    {
+      "id": "12.48",
+      "level": 59,
+      "is_root": false
+    },
+    {
+      "id": "1289.74",
+      "level": 59,
+      "is_root": false
+    },
+    {
+      "id": "25.66",
+      "level": 59,
+      "is_root": false
+    },
+    {
+      "id": "5.12",
+      "level": 59,
+      "is_root": false
+    },
+    {
+      "id": "577.55",
+      "level": 59,
+      "is_root": false
+    },
+    {
+      "id": "14.41",
+      "level": 60,
+      "is_root": false
+    },
+    {
+      "id": "155.71",
+      "level": 60,
+      "is_root": false
+    },
+    {
+      "id": "313.91",
+      "level": 60,
+      "is_root": false
+    },
+    {
+      "id": "36.57",
+      "level": 60,
+      "is_root": false
+    },
+    {
+      "id": "9.08",
+      "level": 60,
+      "is_root": false
+    },
+    {
+      "id": "1828.38",
+      "level": 61,
+      "is_root": false
+    },
+    {
+      "id": "2.16",
+      "level": 61,
+      "is_root": false
+    },
+    {
+      "id": "334.43",
+      "level": 61,
+      "is_root": false
+    },
+    {
+      "id": "8.4",
+      "level": 61,
+      "is_root": false
+    },
+    {
+      "id": "9.02",
+      "level": 61,
+      "is_root": false
+    },
+    {
+      "id": "2213.61",
+      "level": 62,
+      "is_root": false
+    },
+    {
+      "id": "373.58",
+      "level": 62,
+      "is_root": false
+    },
+    {
+      "id": "4.6",
+      "level": 62,
+      "is_root": false
+    },
+    {
+      "id": "6.25",
+      "level": 62,
+      "is_root": false
+    },
+    {
+      "id": "29.8",
+      "level": 63,
+      "is_root": false
+    },
+    {
+      "id": "4.18",
+      "level": 63,
+      "is_root": false
+    },
+    {
+      "id": "529.51",
+      "level": 63,
+      "is_root": false
+    },
+    {
+      "id": "2225.26",
+      "level": 64,
+      "is_root": false
+    },
+    {
+      "id": "33.07",
+      "level": 64,
+      "is_root": false
+    },
+    {
+      "id": "7.3",
+      "level": 64,
+      "is_root": false
+    },
+    {
+      "id": "16.8",
+      "level": 65,
+      "is_root": false
+    },
+    {
+      "id": "31.09",
+      "level": 65,
+      "is_root": false
+    },
+    {
+      "id": "666.75",
+      "level": 65,
+      "is_root": false
+    },
+    {
+      "id": "14.27",
+      "level": 66,
+      "is_root": false
+    },
+    {
+      "id": "237.41",
+      "level": 66,
+      "is_root": false
+    },
+    {
+      "id": "11.15",
+      "level": 67,
+      "is_root": false
+    },
+    {
+      "id": "16.39",
+      "level": 68,
+      "is_root": false
+    },
+    {
+      "id": "22.98",
+      "level": 69,
+      "is_root": false
+    },
+    {
+      "id": "3.57",
+      "level": 70,
+      "is_root": false
+    },
+    {
+      "id": "27.77",
+      "level": 71,
+      "is_root": false
+    },
+    {
+      "id": "26.44",
+      "level": 72,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "SOURCE",
+      "to": "11.39",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "SOURCE",
+      "to": "15.57",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "SOURCE",
+      "to": "2320.26",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "SOURCE",
+      "to": "35.27",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "SOURCE",
+      "to": "4481.22",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "SOURCE",
+      "to": "5.05",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "SOURCE",
+      "to": "6.12",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "SOURCE",
+      "to": "9.25",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "11.39",
+      "to": "14.52",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "15.57",
+      "to": "1036.01",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "2320.26",
+      "to": "317.56",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "35.27",
+      "to": "19.17",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "4481.22",
+      "to": "427.29",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "5.05",
+      "to": "6.22",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "6.12",
+      "to": "11.27",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "9.25",
+      "to": "4.72",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "1036.01",
+      "to": "1045.42",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "11.27",
+      "to": "7.67",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "14.52",
+      "to": "40.63",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "19.17",
+      "to": "9.58",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "317.56",
+      "to": "367.53",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "4.72",
+      "to": "11.0",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "427.29",
+      "to": "2045.37",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "6.22",
+      "to": "5.76",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "1045.42",
+      "to": "536.82",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "11.0",
+      "to": "1.44",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "2045.37",
+      "to": "73.22",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "367.53",
+      "to": "1136.17",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "40.63",
+      "to": "10.83",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "5.76",
+      "to": "28.43",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "7.67",
+      "to": "22.77",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "9.58",
+      "to": "5.67",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "1.44",
+      "to": "15.04",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "10.83",
+      "to": "21.73",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "1136.17",
+      "to": "932.69",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "22.77",
+      "to": "33.82",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "28.43",
+      "to": "3.44",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "5.67",
+      "to": "7.61",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "536.82",
+      "to": "369.75",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "73.22",
+      "to": "457.97",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "15.04",
+      "to": "9.53",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "21.73",
+      "to": "1.57",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "3.44",
+      "to": "20.04",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "3.44",
+      "to": "3.36",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "33.82",
+      "to": "15.08",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "369.75",
+      "to": "421.75",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "457.97",
+      "to": "621.55",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "7.61",
+      "to": "6.91",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "932.69",
+      "to": "1264.09",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "1.57",
+      "to": "18.07",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "1264.09",
+      "to": "1619.35",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "15.08",
+      "to": "7.62",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "20.04",
+      "to": "14.66",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "3.36",
+      "to": "6.18",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "421.75",
+      "to": "1839.22",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "621.55",
+      "to": "497.33",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "9.53",
+      "to": "8.17",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "14.66",
+      "to": "15.2",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "1619.35",
+      "to": "632.33",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "18.07",
+      "to": "31.48",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "1839.22",
+      "to": "206.17",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "497.33",
+      "to": "324.15",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "6.18",
+      "to": "35.11",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "6.18",
+      "to": "4.61",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "7.62",
+      "to": "11.23",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "8.17",
+      "to": "14.89",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "11.23",
+      "to": "35.29",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "14.89",
+      "to": "7.33",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "15.2",
+      "to": "22.65",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "15.2",
+      "to": "6.99",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "206.17",
+      "to": "3056.06",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "31.48",
+      "to": "17.94",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "324.15",
+      "to": "68.85",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "35.11",
+      "to": "8.98",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "4.61",
+      "to": "30.94",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "632.33",
+      "to": "845.73",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "17.94",
+      "to": "35.48",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "22.65",
+      "to": "12.4",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "30.94",
+      "to": "19.35",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "3056.06",
+      "to": "943.65",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "35.29",
+      "to": "15.43",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "6.99",
+      "to": "6.13",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "68.85",
+      "to": "459.22",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "8.98",
+      "to": "6.9",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "845.73",
+      "to": "1190.57",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "1190.57",
+      "to": "1752.01",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "12.4",
+      "to": "19.3",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "15.43",
+      "to": "25.61",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "19.35",
+      "to": "17.26",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "35.48",
+      "to": "8.7",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "459.22",
+      "to": "2020.25",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "6.13",
+      "to": "29.96",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "6.9",
+      "to": "28.41",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "943.65",
+      "to": "4243.86",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "1752.01",
+      "to": "638.27",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "19.3",
+      "to": "25.11",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "2020.25",
+      "to": "368.27",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "25.61",
+      "to": "3.26",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "28.41",
+      "to": "8.58",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "29.96",
+      "to": "45.96",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "4243.86",
+      "to": "1320.96",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "8.7",
+      "to": "13.8",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "13.8",
+      "to": "13.54",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "1320.96",
+      "to": "23.14",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "25.11",
+      "to": "1750.73",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "3.26",
+      "to": "5.15",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "368.27",
+      "to": "924.59",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "45.96",
+      "to": "10.09",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "638.27",
+      "to": "1359.88",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "8.58",
+      "to": "14.92",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "10.09",
+      "to": "7.86",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "13.54",
+      "to": "2.45",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "1359.88",
+      "to": "4209.6",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "14.92",
+      "to": "18.29",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "1750.73",
+      "to": "459.05",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "23.14",
+      "to": "1605.2",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "5.15",
+      "to": "2.51",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "924.59",
+      "to": "1610.63",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "1605.2",
+      "to": "999.67",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "1610.63",
+      "to": "835.81",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "18.29",
+      "to": "2.79",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "2.45",
+      "to": "7.87",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "2.51",
+      "to": "15.97",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "4209.6",
+      "to": "55.06",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "459.05",
+      "to": "2044.44",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "7.86",
+      "to": "19.89",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "15.97",
+      "to": "28.91",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "19.89",
+      "to": "10.87",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "19.89",
+      "to": "4.66",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "2.79",
+      "to": "21.46",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "2044.44",
+      "to": "2313.38",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "55.06",
+      "to": "825.58",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "7.87",
+      "to": "15.99",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "835.81",
+      "to": "423.73",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "999.67",
+      "to": "545.14",
+      "weight": 1,
+      "level": 16
+    },
+    {
+      "from": "10.87",
+      "to": "17.96",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "15.99",
+      "to": "3.34",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "21.46",
+      "to": "32.3",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "2313.38",
+      "to": "44.99",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "28.91",
+      "to": "2.44",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "4.66",
+      "to": "30.73",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "423.73",
+      "to": "4379.31",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "545.14",
+      "to": "1177.98",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "825.58",
+      "to": "133.24",
+      "weight": 1,
+      "level": 17
+    },
+    {
+      "from": "1177.98",
+      "to": "1357.37",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "133.24",
+      "to": "1495.93",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "17.96",
+      "to": "1.29",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "2.44",
+      "to": "1.47",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "3.34",
+      "to": "25.85",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "30.73",
+      "to": "16.94",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "30.73",
+      "to": "9.2",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "32.3",
+      "to": "4.24",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "4379.31",
+      "to": "1553.16",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "44.99",
+      "to": "3193.62",
+      "weight": 1,
+      "level": 18
+    },
+    {
+      "from": "1.29",
+      "to": "14.12",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "1.47",
+      "to": "7.85",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "1357.37",
+      "to": "2015.9",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "1495.93",
+      "to": "696.9",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "1553.16",
+      "to": "47.3",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "16.94",
+      "to": "10.86",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "25.85",
+      "to": "41.75",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "3193.62",
+      "to": "588.42",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "4.24",
+      "to": "7.7",
+      "weight": 1,
+      "level": 19
+    },
+    {
+      "from": "10.86",
+      "to": "13.85",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "2015.9",
+      "to": "1810.58",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "41.75",
+      "to": "34.16",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "47.3",
+      "to": "136.68",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "588.42",
+      "to": "1959.89",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "696.9",
+      "to": "1152.75",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "7.7",
+      "to": "7.31",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "7.85",
+      "to": "4.68",
+      "weight": 1,
+      "level": 20
+    },
+    {
+      "from": "1152.75",
+      "to": "889.88",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "13.85",
+      "to": "20.25",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "136.68",
+      "to": "2248.08",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "1810.58",
+      "to": "431.55",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "1959.89",
+      "to": "367.23",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "34.16",
+      "to": "29.68",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "4.68",
+      "to": "3.05",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "7.31",
+      "to": "7.0",
+      "weight": 1,
+      "level": 21
+    },
+    {
+      "from": "20.25",
+      "to": "5.57",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "2248.08",
+      "to": "3209.42",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "29.68",
+      "to": "12.57",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "3.05",
+      "to": "12.91",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "3.05",
+      "to": "9.15",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "367.23",
+      "to": "2205.52",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "431.55",
+      "to": "3127.25",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "7.0",
+      "to": "38.06",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "889.88",
+      "to": "638.28",
+      "weight": 1,
+      "level": 22
+    },
+    {
+      "from": "12.57",
+      "to": "30.07",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "12.91",
+      "to": "6.39",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "2205.52",
+      "to": "1351.33",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "3127.25",
+      "to": "2184.76",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "3209.42",
+      "to": "1426.09",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "38.06",
+      "to": "34.18",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "638.28",
+      "to": "1439.17",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "9.15",
+      "to": "40.41",
+      "weight": 1,
+      "level": 23
+    },
+    {
+      "from": "1351.33",
+      "to": "3955.96",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "1426.09",
+      "to": "1902.37",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "1439.17",
+      "to": "695.3",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "2184.76",
+      "to": "219.56",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "30.07",
+      "to": "30.09",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "34.18",
+      "to": "25.63",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "40.41",
+      "to": "22.15",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "6.39",
+      "to": "5.5",
+      "weight": 1,
+      "level": 24
+    },
+    {
+      "from": "1902.37",
+      "to": "2755.31",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "219.56",
+      "to": "227.55",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "22.15",
+      "to": "38.35",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "25.63",
+      "to": "15.1",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "30.09",
+      "to": "5.48",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "3955.96",
+      "to": "108.62",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "5.5",
+      "to": "29.76",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "695.3",
+      "to": "846.23",
+      "weight": 1,
+      "level": 25
+    },
+    {
+      "from": "108.62",
+      "to": "2652.09",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "15.1",
+      "to": "29.72",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "227.55",
+      "to": "3650.99",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "2755.31",
+      "to": "468.45",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "29.76",
+      "to": "5.11",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "38.35",
+      "to": "15.98",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "5.48",
+      "to": "7.54",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "846.23",
+      "to": "1171.7",
+      "weight": 1,
+      "level": 26
+    },
+    {
+      "from": "1171.7",
+      "to": "307.64",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "15.98",
+      "to": "36.82",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "2652.09",
+      "to": "3645.41",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "29.72",
+      "to": "5.25",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "3650.99",
+      "to": "342.49",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "468.45",
+      "to": "103.69",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "5.11",
+      "to": "30.31",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "5.11",
+      "to": "5.04",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "7.54",
+      "to": "23.51",
+      "weight": 1,
+      "level": 27
+    },
+    {
+      "from": "103.69",
+      "to": "1490.18",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "23.51",
+      "to": "35.51",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "30.31",
+      "to": "12.94",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "307.64",
+      "to": "1103.17",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "342.49",
+      "to": "141.34",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "36.82",
+      "to": "6.68",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "3645.41",
+      "to": "1501.44",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "5.04",
+      "to": "25.19",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "5.25",
+      "to": "7.4",
+      "weight": 1,
+      "level": 28
+    },
+    {
+      "from": "1103.17",
+      "to": "3067.53",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "12.94",
+      "to": "43.42",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "141.34",
+      "to": "418.66",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "1490.18",
+      "to": "1518.29",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "1501.44",
+      "to": "566.47",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "25.19",
+      "to": "43.97",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "35.51",
+      "to": "28.01",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "6.68",
+      "to": "7.42",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "6.68",
+      "to": "8.85",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "7.4",
+      "to": "32.23",
+      "weight": 1,
+      "level": 29
+    },
+    {
+      "from": "1518.29",
+      "to": "3569.24",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "28.01",
+      "to": "23.91",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "3067.53",
+      "to": "310.81",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "32.23",
+      "to": "2.75",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "418.66",
+      "to": "676.78",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "43.42",
+      "to": "4.82",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "43.97",
+      "to": "30.74",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "566.47",
+      "to": "2396.73",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "7.42",
+      "to": "33.79",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "8.85",
+      "to": "38.81",
+      "weight": 1,
+      "level": 30
+    },
+    {
+      "from": "2.75",
+      "to": "31.72",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "23.91",
+      "to": "7.77",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "2396.73",
+      "to": "1524.49",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "30.74",
+      "to": "16.27",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "310.81",
+      "to": "2362.18",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "33.79",
+      "to": "40.05",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "3569.24",
+      "to": "603.44",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "38.81",
+      "to": "7.11",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "4.82",
+      "to": "25.96",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "676.78",
+      "to": "90.85",
+      "weight": 1,
+      "level": 31
+    },
+    {
+      "from": "1524.49",
+      "to": "1775.86",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "16.27",
+      "to": "35.89",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "2362.18",
+      "to": "739.6",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "25.96",
+      "to": "6.66",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "31.72",
+      "to": "35.96",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "40.05",
+      "to": "28.0",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "40.05",
+      "to": "4.55",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "603.44",
+      "to": "448.37",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "7.11",
+      "to": "23.13",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "7.11",
+      "to": "9.48",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "7.77",
+      "to": "8.23",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "90.85",
+      "to": "245.02",
+      "weight": 1,
+      "level": 32
+    },
+    {
+      "from": "1775.86",
+      "to": "127.72",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "23.13",
+      "to": "8.86",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "245.02",
+      "to": "626.56",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "28.0",
+      "to": "4.57",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "35.89",
+      "to": "36.76",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "35.96",
+      "to": "1.62",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "448.37",
+      "to": "3932.88",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "6.66",
+      "to": "19.86",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "6.66",
+      "to": "6.92",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "739.6",
+      "to": "70.39",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "8.23",
+      "to": "16.37",
+      "weight": 1,
+      "level": 33
+    },
+    {
+      "from": "1.62",
+      "to": "6.56",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "127.72",
+      "to": "589.98",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "19.86",
+      "to": "16.72",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "36.76",
+      "to": "42.08",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "3932.88",
+      "to": "232.93",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "4.57",
+      "to": "31.75",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "6.92",
+      "to": "47.2",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "626.56",
+      "to": "773.84",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "70.39",
+      "to": "724.52",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "8.86",
+      "to": "8.93",
+      "weight": 1,
+      "level": 34
+    },
+    {
+      "from": "16.72",
+      "to": "18.63",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "232.93",
+      "to": "2453.64",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "31.75",
+      "to": "15.05",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "42.08",
+      "to": "13.3",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "47.2",
+      "to": "11.35",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "589.98",
+      "to": "1081.95",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "724.52",
+      "to": "1163.38",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "773.84",
+      "to": "741.11",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "8.93",
+      "to": "1.53",
+      "weight": 1,
+      "level": 35
+    },
+    {
+      "from": "1.53",
+      "to": "7.48",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "1081.95",
+      "to": "813.52",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "11.35",
+      "to": "46.06",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "11.35",
+      "to": "7.05",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "1163.38",
+      "to": "1616.12",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "13.3",
+      "to": "6.05",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "15.05",
+      "to": "25.69",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "2453.64",
+      "to": "1428.58",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "741.11",
+      "to": "1197.56",
+      "weight": 1,
+      "level": 36
+    },
+    {
+      "from": "1197.56",
+      "to": "270.95",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "1428.58",
+      "to": "2.55",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "1616.12",
+      "to": "1349.06",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "25.69",
+      "to": "21.85",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "46.06",
+      "to": "8.97",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "6.05",
+      "to": "29.75",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "7.05",
+      "to": "10.03",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "7.05",
+      "to": "18.09",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "7.48",
+      "to": "3.63",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "813.52",
+      "to": "1934.72",
+      "weight": 1,
+      "level": 37
+    },
+    {
+      "from": "10.03",
+      "to": "37.61",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "1349.06",
+      "to": "2607.94",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "18.09",
+      "to": "5.29",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "1934.72",
+      "to": "13.71",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "2.55",
+      "to": "3350.76",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "21.85",
+      "to": "13.4",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "270.95",
+      "to": "2643.28",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "29.75",
+      "to": "3.12",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "3.63",
+      "to": "2.48",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "8.97",
+      "to": "19.2",
+      "weight": 1,
+      "level": 38
+    },
+    {
+      "from": "13.71",
+      "to": "199.1",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "19.2",
+      "to": "19.83",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "2.48",
+      "to": "38.21",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "2607.94",
+      "to": "743.25",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "2643.28",
+      "to": "1167.74",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "3.12",
+      "to": "27.06",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "3350.76",
+      "to": "1315.46",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "37.61",
+      "to": "48.54",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "5.29",
+      "to": "7.96",
+      "weight": 1,
+      "level": 39
+    },
+    {
+      "from": "1167.74",
+      "to": "417.19",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "1315.46",
+      "to": "4425.1",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "19.83",
+      "to": "10.8",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "19.83",
+      "to": "4.56",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "199.1",
+      "to": "750.74",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "27.06",
+      "to": "16.16",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "38.21",
+      "to": "1.41",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "48.54",
+      "to": "18.2",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "743.25",
+      "to": "2151.55",
+      "weight": 1,
+      "level": 40
+    },
+    {
+      "from": "1.41",
+      "to": "4.52",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "10.8",
+      "to": "6.32",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "16.16",
+      "to": "11.32",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "18.2",
+      "to": "20.05",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "2151.55",
+      "to": "2248.18",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "4.56",
+      "to": "3.15",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "4.56",
+      "to": "7.19",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "417.19",
+      "to": "3462.57",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "750.74",
+      "to": "617.0",
+      "weight": 1,
+      "level": 41
+    },
+    {
+      "from": "11.32",
+      "to": "18.41",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "20.05",
+      "to": "11.72",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "2248.18",
+      "to": "3136.31",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "3.15",
+      "to": "1.69",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "3462.57",
+      "to": "1182.73",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "4.52",
+      "to": "3.2",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "6.32",
+      "to": "4.14",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "617.0",
+      "to": "654.38",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "7.19",
+      "to": "13.09",
+      "weight": 1,
+      "level": 42
+    },
+    {
+      "from": "1.69",
+      "to": "3.71",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "11.72",
+      "to": "34.96",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "1182.73",
+      "to": "816.98",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "13.09",
+      "to": "14.78",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "18.41",
+      "to": "15.48",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "3.2",
+      "to": "34.78",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "3136.31",
+      "to": "4005.58",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "4.14",
+      "to": "2.65",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "654.38",
+      "to": "1671.32",
+      "weight": 1,
+      "level": 43
+    },
+    {
+      "from": "14.78",
+      "to": "10.38",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "15.48",
+      "to": "5.14",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "2.65",
+      "to": "27.51",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "3.71",
+      "to": "44.75",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "34.78",
+      "to": "7.01",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "34.96",
+      "to": "3.82",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "4005.58",
+      "to": "751.62",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "816.98",
+      "to": "350.36",
+      "weight": 1,
+      "level": 44
+    },
+    {
+      "from": "10.38",
+      "to": "8.42",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "27.51",
+      "to": "11.01",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "3.82",
+      "to": "9.57",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "350.36",
+      "to": "2117.87",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "44.75",
+      "to": "13.08",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "5.14",
+      "to": "15.06",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "7.01",
+      "to": "1.83",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "751.62",
+      "to": "203.78",
+      "weight": 1,
+      "level": 45
+    },
+    {
+      "from": "1.83",
+      "to": "7.89",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "11.01",
+      "to": "21.04",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "13.08",
+      "to": "29.5",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "15.06",
+      "to": "12.31",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "203.78",
+      "to": "3217.99",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "2117.87",
+      "to": "2472.03",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "8.42",
+      "to": "35.94",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "9.57",
+      "to": "17.63",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "9.57",
+      "to": "30.77",
+      "weight": 1,
+      "level": 46
+    },
+    {
+      "from": "12.31",
+      "to": "15.95",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "17.63",
+      "to": "16.77",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "21.04",
+      "to": "4.27",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "2472.03",
+      "to": "2785.13",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "29.5",
+      "to": "29.62",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "3217.99",
+      "to": "296.27",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "35.94",
+      "to": "17.28",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "7.89",
+      "to": "6.86",
+      "weight": 1,
+      "level": 47
+    },
+    {
+      "from": "15.95",
+      "to": "23.24",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "16.77",
+      "to": "26.09",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "17.28",
+      "to": "17.3",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "2785.13",
+      "to": "3673.18",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "29.62",
+      "to": "7.23",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "296.27",
+      "to": "111.55",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "4.27",
+      "to": "13.11",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "6.86",
+      "to": "31.92",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "6.86",
+      "to": "8.05",
+      "weight": 1,
+      "level": 48
+    },
+    {
+      "from": "111.55",
+      "to": "1189.33",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "17.3",
+      "to": "7.71",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "23.24",
+      "to": "43.16",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "26.09",
+      "to": "38.97",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "31.92",
+      "to": "6.82",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "3673.18",
+      "to": "3713.71",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "7.23",
+      "to": "29.92",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "8.05",
+      "to": "3.56",
+      "weight": 1,
+      "level": 49
+    },
+    {
+      "from": "1189.33",
+      "to": "328.79",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "29.92",
+      "to": "5.19",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "3.56",
+      "to": "5.61",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "3713.71",
+      "to": "3337.06",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "38.97",
+      "to": "18.69",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "43.16",
+      "to": "17.42",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "6.82",
+      "to": "33.78",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "7.71",
+      "to": "16.48",
+      "weight": 1,
+      "level": 50
+    },
+    {
+      "from": "16.48",
+      "to": "22.5",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "17.42",
+      "to": "8.18",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "18.69",
+      "to": "33.19",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "328.79",
+      "to": "169.37",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "33.78",
+      "to": "23.1",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "3337.06",
+      "to": "797.74",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "5.19",
+      "to": "12.16",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "5.61",
+      "to": "3.93",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "5.61",
+      "to": "35.14",
+      "weight": 1,
+      "level": 51
+    },
+    {
+      "from": "12.16",
+      "to": "44.54",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "169.37",
+      "to": "3122.29",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "22.5",
+      "to": "26.58",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "23.1",
+      "to": "11.59",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "3.93",
+      "to": "10.31",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "33.19",
+      "to": "8.25",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "35.14",
+      "to": "16.26",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "797.74",
+      "to": "1882.37",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "8.18",
+      "to": "39.65",
+      "weight": 1,
+      "level": 52
+    },
+    {
+      "from": "10.31",
+      "to": "4.25",
+      "weight": 1,
+      "level": 53
+    },
+    {
+      "from": "16.26",
+      "to": "7.16",
+      "weight": 1,
+      "level": 53
+    },
+    {
+      "from": "1882.37",
+      "to": "747.52",
+      "weight": 1,
+      "level": 53
+    },
+    {
+      "from": "26.58",
+      "to": "8.09",
+      "weight": 1,
+      "level": 53
+    },
+    {
+      "from": "3122.29",
+      "to": "781.18",
+      "weight": 1,
+      "level": 53
+    },
+    {
+      "from": "44.54",
+      "to": "6.38",
+      "weight": 1,
+      "level": 53
+    },
+    {
+      "from": "8.25",
+      "to": "4.36",
+      "weight": 1,
+      "level": 53
+    },
+    {
+      "from": "4.25",
+      "to": "27.42",
+      "weight": 1,
+      "level": 54
+    },
+    {
+      "from": "4.36",
+      "to": "4.7",
+      "weight": 1,
+      "level": 54
+    },
+    {
+      "from": "6.38",
+      "to": "6.49",
+      "weight": 1,
+      "level": 54
+    },
+    {
+      "from": "7.16",
+      "to": "6.45",
+      "weight": 1,
+      "level": 54
+    },
+    {
+      "from": "747.52",
+      "to": "1983.79",
+      "weight": 1,
+      "level": 54
+    },
+    {
+      "from": "781.18",
+      "to": "1826.96",
+      "weight": 1,
+      "level": 54
+    },
+    {
+      "from": "8.09",
+      "to": "4.26",
+      "weight": 1,
+      "level": 54
+    },
+    {
+      "from": "1826.96",
+      "to": "1598.0",
+      "weight": 1,
+      "level": 55
+    },
+    {
+      "from": "1983.79",
+      "to": "1076.8",
+      "weight": 1,
+      "level": 55
+    },
+    {
+      "from": "27.42",
+      "to": "28.28",
+      "weight": 1,
+      "level": 55
+    },
+    {
+      "from": "4.26",
+      "to": "9.1",
+      "weight": 1,
+      "level": 55
+    },
+    {
+      "from": "4.7",
+      "to": "31.82",
+      "weight": 1,
+      "level": 55
+    },
+    {
+      "from": "6.45",
+      "to": "3.11",
+      "weight": 1,
+      "level": 55
+    },
+    {
+      "from": "6.49",
+      "to": "4.73",
+      "weight": 1,
+      "level": 55
+    },
+    {
+      "from": "1076.8",
+      "to": "1671.49",
+      "weight": 1,
+      "level": 56
+    },
+    {
+      "from": "1598.0",
+      "to": "245.25",
+      "weight": 1,
+      "level": 56
+    },
+    {
+      "from": "28.28",
+      "to": "4.22",
+      "weight": 1,
+      "level": 56
+    },
+    {
+      "from": "3.11",
+      "to": "19.05",
+      "weight": 1,
+      "level": 56
+    },
+    {
+      "from": "31.82",
+      "to": "22.41",
+      "weight": 1,
+      "level": 56
+    },
+    {
+      "from": "4.73",
+      "to": "12.33",
+      "weight": 1,
+      "level": 56
+    },
+    {
+      "from": "9.1",
+      "to": "28.49",
+      "weight": 1,
+      "level": 56
+    },
+    {
+      "from": "12.33",
+      "to": "13.07",
+      "weight": 1,
+      "level": 57
+    },
+    {
+      "from": "1671.49",
+      "to": "183.7",
+      "weight": 1,
+      "level": 57
+    },
+    {
+      "from": "19.05",
+      "to": "35.0",
+      "weight": 1,
+      "level": 57
+    },
+    {
+      "from": "245.25",
+      "to": "1427.89",
+      "weight": 1,
+      "level": 57
+    },
+    {
+      "from": "28.49",
+      "to": "17.57",
+      "weight": 1,
+      "level": 57
+    },
+    {
+      "from": "4.22",
+      "to": "11.37",
+      "weight": 1,
+      "level": 57
+    },
+    {
+      "from": "11.37",
+      "to": "47.79",
+      "weight": 1,
+      "level": 58
+    },
+    {
+      "from": "13.07",
+      "to": "23.34",
+      "weight": 1,
+      "level": 58
+    },
+    {
+      "from": "1427.89",
+      "to": "136.09",
+      "weight": 1,
+      "level": 58
+    },
+    {
+      "from": "17.57",
+      "to": "6.84",
+      "weight": 1,
+      "level": 58
+    },
+    {
+      "from": "183.7",
+      "to": "1372.16",
+      "weight": 1,
+      "level": 58
+    },
+    {
+      "from": "35.0",
+      "to": "41.2",
+      "weight": 1,
+      "level": 58
+    },
+    {
+      "from": "136.09",
+      "to": "577.55",
+      "weight": 1,
+      "level": 59
+    },
+    {
+      "from": "1372.16",
+      "to": "1289.74",
+      "weight": 1,
+      "level": 59
+    },
+    {
+      "from": "23.34",
+      "to": "12.48",
+      "weight": 1,
+      "level": 59
+    },
+    {
+      "from": "41.2",
+      "to": "25.66",
+      "weight": 1,
+      "level": 59
+    },
+    {
+      "from": "47.79",
+      "to": "5.12",
+      "weight": 1,
+      "level": 59
+    },
+    {
+      "from": "12.48",
+      "to": "9.08",
+      "weight": 1,
+      "level": 60
+    },
+    {
+      "from": "1289.74",
+      "to": "155.71",
+      "weight": 1,
+      "level": 60
+    },
+    {
+      "from": "25.66",
+      "to": "36.57",
+      "weight": 1,
+      "level": 60
+    },
+    {
+      "from": "5.12",
+      "to": "14.41",
+      "weight": 1,
+      "level": 60
+    },
+    {
+      "from": "577.55",
+      "to": "313.91",
+      "weight": 1,
+      "level": 60
+    },
+    {
+      "from": "14.41",
+      "to": "8.4",
+      "weight": 1,
+      "level": 61
+    },
+    {
+      "from": "155.71",
+      "to": "334.43",
+      "weight": 1,
+      "level": 61
+    },
+    {
+      "from": "313.91",
+      "to": "1828.38",
+      "weight": 1,
+      "level": 61
+    },
+    {
+      "from": "36.57",
+      "to": "9.02",
+      "weight": 1,
+      "level": 61
+    },
+    {
+      "from": "9.08",
+      "to": "2.16",
+      "weight": 1,
+      "level": 61
+    },
+    {
+      "from": "1828.38",
+      "to": "2213.61",
+      "weight": 1,
+      "level": 62
+    },
+    {
+      "from": "2.16",
+      "to": "6.25",
+      "weight": 1,
+      "level": 62
+    },
+    {
+      "from": "334.43",
+      "to": "373.58",
+      "weight": 1,
+      "level": 62
+    },
+    {
+      "from": "9.02",
+      "to": "4.6",
+      "weight": 1,
+      "level": 62
+    },
+    {
+      "from": "2213.61",
+      "to": "529.51",
+      "weight": 1,
+      "level": 63
+    },
+    {
+      "from": "4.6",
+      "to": "4.18",
+      "weight": 1,
+      "level": 63
+    },
+    {
+      "from": "6.25",
+      "to": "29.8",
+      "weight": 1,
+      "level": 63
+    },
+    {
+      "from": "29.8",
+      "to": "33.07",
+      "weight": 1,
+      "level": 64
+    },
+    {
+      "from": "4.18",
+      "to": "7.3",
+      "weight": 1,
+      "level": 64
+    },
+    {
+      "from": "529.51",
+      "to": "2225.26",
+      "weight": 1,
+      "level": 64
+    },
+    {
+      "from": "2225.26",
+      "to": "666.75",
+      "weight": 1,
+      "level": 65
+    },
+    {
+      "from": "33.07",
+      "to": "16.8",
+      "weight": 1,
+      "level": 65
+    },
+    {
+      "from": "7.3",
+      "to": "31.09",
+      "weight": 1,
+      "level": 65
+    },
+    {
+      "from": "16.8",
+      "to": "14.27",
+      "weight": 1,
+      "level": 66
+    },
+    {
+      "from": "666.75",
+      "to": "237.41",
+      "weight": 1,
+      "level": 66
+    },
+    {
+      "from": "14.27",
+      "to": "11.15",
+      "weight": 1,
+      "level": 67
+    },
+    {
+      "from": "11.15",
+      "to": "16.39",
+      "weight": 1,
+      "level": 68
+    },
+    {
+      "from": "16.39",
+      "to": "22.98",
+      "weight": 1,
+      "level": 69
+    },
+    {
+      "from": "22.98",
+      "to": "3.57",
+      "weight": 1,
+      "level": 70
+    },
+    {
+      "from": "3.57",
+      "to": "27.77",
+      "weight": 1,
+      "level": 71
+    },
+    {
+      "from": "27.77",
+      "to": "26.44",
+      "weight": 1,
+      "level": 72
+    }
+  ],
+  "warnings": [
+    "NÃ³ SOURCE adicionado a 8 nÃ³(s) sem entradas."
+  ]
+}

@@ -1,0 +1,4 @@
+From,To,Weight,Level,ParentPath,Reason
+B,C,2.0,1,B,top-2 outgoing edge
+B,D,1.0,1,B,top-2 outgoing edge
+C,D,1.0,2,B -> C,top-2 outgoing edge

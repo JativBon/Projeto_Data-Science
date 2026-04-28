@@ -1,0 +1,90 @@
+﻿event_id,timestamp,event
+1,2024-01-01 08:00:00,Bomba_ON
+1,2024-01-01 08:00:05,Fluxo_Aumenta
+1,2024-01-01 08:00:10,Pressao_Sobe
+1,2024-01-01 08:00:15,Nivel_Sobe
+1,2024-01-01 08:00:20,Valvula_Abre
+
+2,2024-01-01 09:00:00,Bomba_ON
+2,2024-01-01 09:00:04,Fluxo_Aumenta
+2,2024-01-01 09:00:09,Nivel_Sobe
+2,2024-01-01 09:00:14,Valvula_Abre
+
+3,2024-01-01 10:00:00,Valvula_Abre
+3,2024-01-01 10:00:03,Fluxo_Aumenta
+3,2024-01-01 10:00:08,Pressao_Sobe
+3,2024-01-01 10:00:12,Nivel_Sobe
+
+4,2024-01-01 11:00:00,Bomba_ON
+4,2024-01-01 11:00:05,Pressao_Sobe
+4,2024-01-01 11:00:09,Valvula_Abre
+
+5,2024-01-01 12:00:00,Fluxo_Aumenta
+5,2024-01-01 12:00:06,Nivel_Sobe
+
+6,2024-01-01 13:00:00,Bomba_ON
+6,2024-01-01 13:00:05,Fluxo_Aumenta
+6,2024-01-01 13:00:09,Pressao_Sobe
+6,2024-01-01 13:00:14,Nivel_Sobe
+6,2024-01-01 13:00:18,Valvula_Abre
+
+7,2024-01-01 14:00:00,Bomba_ON
+7,2024-01-01 14:00:05,Fluxo_Aumenta
+7,2024-01-01 14:00:10,Nivel_Sobe
+
+8,2024-01-01 15:00:00,Nivel_Sobe
+8,2024-01-01 15:00:03,Alarme_Nivel_Alto
+8,2024-01-01 15:00:07,Valvula_Abre
+
+9,2024-01-01 16:00:00,Bomba_ON
+9,2024-01-01 16:00:05,Fluxo_Aumenta
+9,2024-01-01 16:00:09,Pressao_Sobe
+
+10,2024-01-01 17:00:00,Pressao_Sobe
+10,2024-01-01 17:00:04,Valvula_Abre
+10,2024-01-01 17:00:08,Fluxo_Aumenta
+
+11,2024-01-01 18:00:00,Bomba_ON
+11,2024-01-01 18:00:06,Falha_Bomba
+11,2024-01-01 18:00:10,Alarme_Falha
+
+12,2024-01-01 19:00:00,Falha_Bomba
+12,2024-01-01 19:00:05,Alarme_Falha
+12,2024-01-01 19:00:10,Intervencao_Manual
+
+13,2024-01-01 20:00:00,Bomba_ON
+13,2024-01-01 20:00:05,Fluxo_Aumenta
+13,2024-01-01 20:00:09,Falha_Bomba
+13,2024-01-01 20:00:14,Alarme_Falha
+
+14,2024-01-01 21:00:00,Valvula_Abre
+14,2024-01-01 21:00:05,Fluxo_Aumenta
+14,2024-01-01 21:00:10,Nivel_Sobe
+14,2024-01-01 21:00:14,Alarme_Nivel_Alto
+
+15,2024-01-01 22:00:00,Bomba_ON
+15,2024-01-01 22:00:05,Fluxo_Aumenta
+15,2024-01-01 22:00:09,Pressao_Sobe
+15,2024-01-01 22:00:14,Nivel_Sobe
+
+16,2024-01-01 23:00:00,Nivel_Sobe
+16,2024-01-01 23:00:05,Valvula_Abre
+16,2024-01-01 23:00:09,Fluxo_Aumenta
+
+17,2024-01-02 00:00:00,Fluxo_Aumenta
+17,2024-01-02 00:00:05,Pressao_Sobe
+17,2024-01-02 00:00:09,Valvula_Abre
+
+18,2024-01-02 01:00:00,Bomba_ON
+18,2024-01-02 01:00:05,Fluxo_Aumenta
+18,2024-01-02 01:00:09,Pressao_Sobe
+18,2024-01-02 01:00:14,Valvula_Abre
+
+19,2024-01-02 02:00:00,Bomba_ON
+19,2024-01-02 02:00:05,Fluxo_Aumenta
+19,2024-01-02 02:00:09,Nivel_Sobe
+19,2024-01-02 02:00:13,Alarme_Nivel_Alto
+
+20,2024-01-02 03:00:00,Alarme_Nivel_Alto
+20,2024-01-02 03:00:05,Valvula_Abre
+20,2024-01-02 03:00:09,Fluxo_Aumenta

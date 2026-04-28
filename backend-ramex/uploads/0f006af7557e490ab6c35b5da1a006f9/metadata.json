@@ -1,0 +1,15 @@
+{
+  "job_id": "0f006af7557e490ab6c35b5da1a006f9",
+  "original_filename": "dataset 03.xlsx",
+  "filename": "dataset_03.xlsx",
+  "path": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\backend-ramex\\uploads\\0f006af7557e490ab6c35b5da1a006f9\\dataset_03.xlsx",
+  "columns": [
+    "Order Date",
+    "Unnamed: 1",
+    "Customer ID",
+    "Product Name",
+    "Category",
+    "Quantity",
+    "Sales"
+  ]
+}

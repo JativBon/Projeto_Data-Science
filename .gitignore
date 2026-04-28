@@ -31,8 +31,6 @@ Thumbs.db
 .matplotlib-cache/
 frontend-ramex/.next/
 frontend-ramex/node_modules/
-backend-ramex/uploads/
-backend-ramex/outputs/
 backend-ramex/tmp_test/
 
 # Temporary outputs and local test files

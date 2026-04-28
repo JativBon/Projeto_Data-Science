@@ -1,0 +1,699 @@
+{
+  "root": "Smartphone",
+  "strategy": "top-k",
+  "metrics": {
+    "original_nodes": 8,
+    "original_edges": 56,
+    "polytree_nodes": 8,
+    "polytree_edges": 62,
+    "original_weight_sum": 445,
+    "polytree_weight_sum": 268,
+    "preserved_weight_percent": 60.22471910112359,
+    "max_depth": 5,
+    "average_branching": 7.75,
+    "repeated_nodes": 55,
+    "density_before": 1.0,
+    "density_after": 0.5178571428571429,
+    "edge_reduction_percent": 48.21428571428571,
+    "coverage_by_level": {
+      "1": 24.0,
+      "2": 44.0,
+      "3": 77.0,
+      "4": 150.0,
+      "5": 299.0
+    },
+    "strategy": "top-k"
+  },
+  "parameters": {
+    "alpha": 0.35,
+    "beta": 0.25,
+    "gamma": 0.15,
+    "delta": 0.15,
+    "epsilon": 0.05,
+    "zeta": 0.05,
+    "preserve_weight_target": 0.7,
+    "max_branching": 3,
+    "min_score": 0.0,
+    "max_depth": 5,
+    "strategy": "top-k",
+    "top_k_per_node": 2,
+    "min_weight": 0
+  },
+  "nodes": [
+    {
+      "id": "Smartphone",
+      "level": 0
+    },
+    {
+      "id": "Caf\u00e9 Mo\u00eddo",
+      "level": 1
+    },
+    {
+      "id": "Detergente Roupa",
+      "level": 1
+    },
+    {
+      "id": "Arroz 1kg",
+      "level": 2
+    },
+    {
+      "id": "Leite 1L",
+      "level": 2
+    },
+    {
+      "id": "Port\u00e1til",
+      "level": 2
+    },
+    {
+      "id": "Champ\u00f4",
+      "level": 3
+    },
+    {
+      "id": "Televis\u00e3o LED",
+      "level": 3
+    }
+  ],
+  "edges": [
+    {
+      "From": "Smartphone",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 13,
+      "Level": 1,
+      "ParentPath": "Smartphone",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Smartphone",
+      "To": "Detergente Roupa",
+      "Weight": 11,
+      "Level": 1,
+      "ParentPath": "Smartphone",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Port\u00e1til",
+      "Weight": 11,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Arroz 1kg",
+      "Weight": 10,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Detergente Roupa",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Leite 1L",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Champ\u00f4",
+      "Weight": 10,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Televis\u00e3o LED",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Port\u00e1til",
+      "Weight": 12,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Leite 1L",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Champ\u00f4",
+      "Weight": 8,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Televis\u00e3o LED",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Port\u00e1til",
+      "Weight": 12,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Detergente Roupa",
+      "Weight": 6,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Detergente Roupa",
+      "Weight": 11,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Arroz 1kg",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televis\u00e3o LED",
+      "To": "Champ\u00f4",
+      "Weight": 11,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Televis\u00e3o LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televis\u00e3o LED",
+      "To": "Leite 1L",
+      "Weight": 11,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Televis\u00e3o LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Champ\u00f4",
+      "Weight": 10,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Champ\u00f4",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Televis\u00e3o LED",
+      "Weight": 7,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Port\u00e1til",
+      "Weight": 12,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 7,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Port\u00e1til",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Port\u00e1til",
+      "Weight": 12,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Televis\u00e3o LED",
+      "Weight": 6,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televis\u00e3o LED",
+      "To": "Champ\u00f4",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Detergente Roupa -> Televis\u00e3o LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televis\u00e3o LED",
+      "To": "Leite 1L",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Detergente Roupa -> Televis\u00e3o LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Champ\u00f4",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Leite 1L -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Televis\u00e3o LED",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Leite 1L -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Televis\u00e3o LED",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Leite 1L -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Port\u00e1til",
+      "Weight": 7,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Arroz 1kg -> Leite 1L -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Champ\u00f4 -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Arroz 1kg",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Champ\u00f4 -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Detergente Roupa",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Champ\u00f4 -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Leite 1L",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Champ\u00f4 -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Detergente Roupa",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Televis\u00e3o LED -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Arroz 1kg",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Televis\u00e3o LED -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Televis\u00e3o LED -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Detergente Roupa",
+      "Weight": 6,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Caf\u00e9 Mo\u00eddo -> Port\u00e1til -> Televis\u00e3o LED -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Port\u00e1til -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Arroz 1kg",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Port\u00e1til -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Port\u00e1til -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Champ\u00f4",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Port\u00e1til -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champ\u00f4",
+      "To": "Port\u00e1til",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Champ\u00f4",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televis\u00e3o LED",
+      "To": "Champ\u00f4",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Televis\u00e3o LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televis\u00e3o LED",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 7,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Televis\u00e3o LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Champ\u00f4",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Port\u00e1til",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Champ\u00f4",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Port\u00e1til",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champ\u00f4 -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Caf\u00e9 Mo\u00eddo",
+      "To": "Leite 1L",
+      "Weight": 6,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champ\u00f4 -> Caf\u00e9 Mo\u00eddo",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Caf\u00e9 Mo\u00eddo",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champ\u00f4 -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Port\u00e1til",
+      "To": "Televis\u00e3o LED",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champ\u00f4 -> Port\u00e1til",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    }
+  ],
+  "scoring_formula": "top-k"
+}

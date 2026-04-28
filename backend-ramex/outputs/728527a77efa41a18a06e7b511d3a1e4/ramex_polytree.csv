@@ -1,0 +1,11 @@
+From,To,Weight,Level,ParentPath,Reason
+Tecnologia,Mercearia,75.0,1,Tecnologia,top-2 outgoing edge
+Tecnologia,Higiene,26.0,1,Tecnologia,top-2 outgoing edge
+Mercearia,Higiene,23.0,2,Tecnologia -> Mercearia,top-2 outgoing edge
+Mercearia,Limpeza,18.0,2,Tecnologia -> Mercearia,top-2 outgoing edge
+Higiene,Mercearia,23.0,2,Tecnologia -> Higiene,top-2 outgoing edge
+Higiene,Limpeza,11.0,2,Tecnologia -> Higiene,top-2 outgoing edge
+Higiene,Limpeza,11.0,3,Tecnologia -> Mercearia -> Higiene,top-2 outgoing edge
+Limpeza,Higiene,4.0,3,Tecnologia -> Mercearia -> Limpeza,top-2 outgoing edge
+Mercearia,Limpeza,18.0,3,Tecnologia -> Higiene -> Mercearia,top-2 outgoing edge
+Limpeza,Mercearia,29.0,3,Tecnologia -> Higiene -> Limpeza,top-2 outgoing edge

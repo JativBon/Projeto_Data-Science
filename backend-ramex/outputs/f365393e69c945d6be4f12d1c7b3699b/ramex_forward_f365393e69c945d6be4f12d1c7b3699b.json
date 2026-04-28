@@ -1,0 +1,101 @@
+{
+  "algorithm": "RAMEX Forward Heuristic",
+  "root": "Smartphone",
+  "metrics": {
+    "original_nodes": 8,
+    "original_edges": 56,
+    "selected_nodes": 8,
+    "selected_edges": 7,
+    "original_weight_sum": 445.0,
+    "selected_weight_sum": 77.0,
+    "preserved_weight_percent": 17.303370786516854,
+    "is_acyclic": true
+  },
+  "nodes": [
+    {
+      "id": "Smartphone",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "Café Moído",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Detergente Roupa",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Arroz 1kg",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Champô",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Leite 1L",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Portátil",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Televisão LED",
+      "level": 3,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "Smartphone",
+      "to": "Café Moído",
+      "weight": 13.0,
+      "level": 1
+    },
+    {
+      "from": "Smartphone",
+      "to": "Detergente Roupa",
+      "weight": 11.0,
+      "level": 1
+    },
+    {
+      "from": "Café Moído",
+      "to": "Arroz 1kg",
+      "weight": 11.0,
+      "level": 2
+    },
+    {
+      "from": "Café Moído",
+      "to": "Champô",
+      "weight": 10.0,
+      "level": 2
+    },
+    {
+      "from": "Café Moído",
+      "to": "Portátil",
+      "weight": 11.0,
+      "level": 2
+    },
+    {
+      "from": "Detergente Roupa",
+      "to": "Leite 1L",
+      "weight": 12.0,
+      "level": 2
+    },
+    {
+      "from": "Portátil",
+      "to": "Televisão LED",
+      "weight": 9.0,
+      "level": 3
+    }
+  ],
+  "root_selection_method": "from_10A"
+}

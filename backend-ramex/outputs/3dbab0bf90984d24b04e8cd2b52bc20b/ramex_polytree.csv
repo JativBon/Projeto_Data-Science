@@ -1,0 +1,11 @@
+From,To,Weight,Level,Strategy,Score,Reason,ParentPath
+Tecnologia,Mercearia,75,1,top-k,,Selecionada via top-K de peso na origem,Tecnologia
+Tecnologia,Higiene,26,1,top-k,,Selecionada via top-K de peso na origem,Tecnologia
+Mercearia,Higiene,23,2,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Mercearia
+Mercearia,Limpeza,18,2,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Mercearia
+Higiene,Mercearia,23,2,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Higiene
+Higiene,Limpeza,11,2,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Higiene
+Higiene,Limpeza,11,3,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Mercearia -> Higiene
+Limpeza,Higiene,4,3,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Mercearia -> Limpeza
+Mercearia,Limpeza,18,3,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Higiene -> Mercearia
+Limpeza,Mercearia,29,3,top-k,,Selecionada via top-K de peso na origem,Tecnologia -> Higiene -> Limpeza

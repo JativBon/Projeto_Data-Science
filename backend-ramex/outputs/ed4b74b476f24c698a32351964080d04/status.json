@@ -1,0 +1,2811 @@
+{
+  "status": "completed",
+  "analysis_type": "pure",
+  "metrics": {
+    "nodes": 8,
+    "edges": 56,
+    "total_weight": 445.0,
+    "ramex_edges": 7,
+    "ramex_weight": 77.0,
+    "preserved_percentage": 17.303370786516854,
+    "density": 1.0,
+    "root": "Smartphone",
+    "sequences": 50,
+    "pairs": 445,
+    "dense": false
+  },
+  "interpretation": "O dataset apresenta padrões sequenciais fortes e recorrentes. O desempenho do RAMEX é diretamente condicionado pela estrutura do grafo, nomeadamente pela densidade, repetição de transições e presença de caminhos dominantes. A percentagem de peso preservado reflete diretamente a capacidade do RAMEX em identificar padrões dominantes no conjunto de dados (17.30%).",
+  "top_transitions": [
+    {
+      "From": "Arroz 1kg",
+      "To": "Smartphone",
+      "Weight": 13
+    },
+    {
+      "From": "Smartphone",
+      "To": "Café Moído",
+      "Weight": 13
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Portátil",
+      "Weight": 12
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Arroz 1kg",
+      "Weight": 11
+    }
+  ],
+  "matrix": {
+    "columns": [
+      "",
+      "Arroz 1kg",
+      "Café Moído",
+      "Champô",
+      "Detergente Roupa",
+      "Leite 1L",
+      "Portátil",
+      "Smartphone",
+      "Televisão LED"
+    ],
+    "rows": [
+      {
+        "": "Arroz 1kg",
+        "Arroz 1kg": 0,
+        "Café Moído": 6,
+        "Champô": 8,
+        "Detergente Roupa": 9,
+        "Leite 1L": 9,
+        "Portátil": 5,
+        "Smartphone": 13,
+        "Televisão LED": 7
+      },
+      {
+        "": "Café Moído",
+        "Arroz 1kg": 11,
+        "Café Moído": 0,
+        "Champô": 10,
+        "Detergente Roupa": 3,
+        "Leite 1L": 6,
+        "Portátil": 11,
+        "Smartphone": 8,
+        "Televisão LED": 5
+      },
+      {
+        "": "Champô",
+        "Arroz 1kg": 8,
+        "Café Moído": 9,
+        "Champô": 0,
+        "Detergente Roupa": 11,
+        "Leite 1L": 6,
+        "Portátil": 9,
+        "Smartphone": 7,
+        "Televisão LED": 8
+      },
+      {
+        "": "Detergente Roupa",
+        "Arroz 1kg": 10,
+        "Café Moído": 7,
+        "Champô": 4,
+        "Detergente Roupa": 0,
+        "Leite 1L": 12,
+        "Portátil": 7,
+        "Smartphone": 8,
+        "Televisão LED": 8
+      },
+      {
+        "": "Leite 1L",
+        "Arroz 1kg": 11,
+        "Café Moído": 7,
+        "Champô": 5,
+        "Detergente Roupa": 6,
+        "Leite 1L": 0,
+        "Portátil": 12,
+        "Smartphone": 7,
+        "Televisão LED": 6
+      },
+      {
+        "": "Portátil",
+        "Arroz 1kg": 6,
+        "Café Moído": 9,
+        "Champô": 10,
+        "Detergente Roupa": 5,
+        "Leite 1L": 6,
+        "Portátil": 0,
+        "Smartphone": 6,
+        "Televisão LED": 9
+      },
+      {
+        "": "Smartphone",
+        "Arroz 1kg": 8,
+        "Café Moído": 13,
+        "Champô": 5,
+        "Detergente Roupa": 11,
+        "Leite 1L": 9,
+        "Portátil": 6,
+        "Smartphone": 0,
+        "Televisão LED": 9
+      },
+      {
+        "": "Televisão LED",
+        "Arroz 1kg": 6,
+        "Café Moído": 7,
+        "Champô": 11,
+        "Detergente Roupa": 6,
+        "Leite 1L": 11,
+        "Portátil": 5,
+        "Smartphone": 8,
+        "Televisão LED": 0
+      }
+    ],
+    "total_rows": 8,
+    "total_columns": 8,
+    "is_truncated": false
+  },
+  "graph_edges": [
+    {
+      "From": "Arroz 1kg",
+      "To": "Smartphone",
+      "Weight": 13
+    },
+    {
+      "From": "Smartphone",
+      "To": "Café Moído",
+      "Weight": 13
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Portátil",
+      "Weight": 12
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Arroz 1kg",
+      "Weight": 11
+    },
+    {
+      "From": "Champô",
+      "To": "Detergente Roupa",
+      "Weight": 11
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Champô",
+      "Weight": 11
+    },
+    {
+      "From": "Café Moído",
+      "To": "Arroz 1kg",
+      "Weight": 11
+    },
+    {
+      "From": "Café Moído",
+      "To": "Portátil",
+      "Weight": 11
+    },
+    {
+      "From": "Smartphone",
+      "To": "Detergente Roupa",
+      "Weight": 11
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Leite 1L",
+      "Weight": 11
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Arroz 1kg",
+      "Weight": 10
+    },
+    {
+      "From": "Portátil",
+      "To": "Champô",
+      "Weight": 10
+    },
+    {
+      "From": "Café Moído",
+      "To": "Champô",
+      "Weight": 10
+    },
+    {
+      "From": "Smartphone",
+      "To": "Leite 1L",
+      "Weight": 9
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Detergente Roupa",
+      "Weight": 9
+    },
+    {
+      "From": "Smartphone",
+      "To": "Televisão LED",
+      "Weight": 9
+    },
+    {
+      "From": "Champô",
+      "To": "Portátil",
+      "Weight": 9
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Leite 1L",
+      "Weight": 9
+    },
+    {
+      "From": "Champô",
+      "To": "Café Moído",
+      "Weight": 9
+    },
+    {
+      "From": "Portátil",
+      "To": "Café Moído",
+      "Weight": 9
+    },
+    {
+      "From": "Portátil",
+      "To": "Televisão LED",
+      "Weight": 9
+    },
+    {
+      "From": "Smartphone",
+      "To": "Arroz 1kg",
+      "Weight": 8
+    },
+    {
+      "From": "Café Moído",
+      "To": "Smartphone",
+      "Weight": 8
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Smartphone",
+      "Weight": 8
+    },
+    {
+      "From": "Champô",
+      "To": "Televisão LED",
+      "Weight": 8
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Champô",
+      "Weight": 8
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Smartphone",
+      "Weight": 8
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Televisão LED",
+      "Weight": 8
+    },
+    {
+      "From": "Champô",
+      "To": "Arroz 1kg",
+      "Weight": 8
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Smartphone",
+      "Weight": 7
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Café Moído",
+      "Weight": 7
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Portátil",
+      "Weight": 7
+    },
+    {
+      "From": "Champô",
+      "To": "Smartphone",
+      "Weight": 7
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Café Moído",
+      "Weight": 7
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Café Moído",
+      "Weight": 7
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Televisão LED",
+      "Weight": 7
+    },
+    {
+      "From": "Smartphone",
+      "To": "Portátil",
+      "Weight": 6
+    },
+    {
+      "From": "Portátil",
+      "To": "Leite 1L",
+      "Weight": 6
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Televisão LED",
+      "Weight": 6
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Detergente Roupa",
+      "Weight": 6
+    },
+    {
+      "From": "Portátil",
+      "To": "Arroz 1kg",
+      "Weight": 6
+    },
+    {
+      "From": "Café Moído",
+      "To": "Leite 1L",
+      "Weight": 6
+    },
+    {
+      "From": "Portátil",
+      "To": "Smartphone",
+      "Weight": 6
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Detergente Roupa",
+      "Weight": 6
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Arroz 1kg",
+      "Weight": 6
+    },
+    {
+      "From": "Champô",
+      "To": "Leite 1L",
+      "Weight": 6
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Café Moído",
+      "Weight": 6
+    },
+    {
+      "From": "Smartphone",
+      "To": "Champô",
+      "Weight": 5
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Portátil",
+      "Weight": 5
+    },
+    {
+      "From": "Café Moído",
+      "To": "Televisão LED",
+      "Weight": 5
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Champô",
+      "Weight": 5
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Portátil",
+      "Weight": 5
+    },
+    {
+      "From": "Portátil",
+      "To": "Detergente Roupa",
+      "Weight": 5
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Champô",
+      "Weight": 4
+    },
+    {
+      "From": "Café Moído",
+      "To": "Detergente Roupa",
+      "Weight": 3
+    }
+  ],
+  "ramex_edges": [
+    {
+      "From": "Smartphone",
+      "To": "Café Moído",
+      "Weight": 13,
+      "Level": 1
+    },
+    {
+      "From": "Café Moído",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 2
+    },
+    {
+      "From": "Café Moído",
+      "To": "Portátil",
+      "Weight": 11,
+      "Level": 2
+    },
+    {
+      "From": "Smartphone",
+      "To": "Detergente Roupa",
+      "Weight": 11,
+      "Level": 1
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12,
+      "Level": 2
+    },
+    {
+      "From": "Café Moído",
+      "To": "Champô",
+      "Weight": 10,
+      "Level": 2
+    },
+    {
+      "From": "Portátil",
+      "To": "Televisão LED",
+      "Weight": 9,
+      "Level": 3
+    }
+  ],
+  "polytree": {
+    "root": "Smartphone",
+    "strategy": "top-k",
+    "metrics": {
+      "original_nodes": 8,
+      "original_edges": 56,
+      "polytree_nodes": 8,
+      "polytree_edges": 62,
+      "original_weight_sum": 445,
+      "polytree_weight_sum": 268,
+      "preserved_weight_percent": 60.22471910112359,
+      "max_depth": 5,
+      "average_branching": 7.75,
+      "repeated_nodes": 55,
+      "density_before": 1.0,
+      "density_after": 0.5178571428571429,
+      "edge_reduction_percent": 48.21428571428571,
+      "coverage_by_level": {
+        "1": 24.0,
+        "2": 44.0,
+        "3": 77.0,
+        "4": 150.0,
+        "5": 299.0
+      },
+      "strategy": "top-k"
+    },
+    "parameters": {
+      "alpha": 0.35,
+      "beta": 0.25,
+      "gamma": 0.15,
+      "delta": 0.15,
+      "epsilon": 0.05,
+      "zeta": 0.05,
+      "preserve_weight_target": 0.7,
+      "max_branching": 3,
+      "min_score": 0.0,
+      "max_depth": 5,
+      "strategy": "top-k",
+      "top_k_per_node": 2,
+      "min_weight": 0
+    },
+    "nodes": [
+      {
+        "id": "Smartphone",
+        "level": 0
+      },
+      {
+        "id": "Café Moído",
+        "level": 1
+      },
+      {
+        "id": "Detergente Roupa",
+        "level": 1
+      },
+      {
+        "id": "Arroz 1kg",
+        "level": 2
+      },
+      {
+        "id": "Leite 1L",
+        "level": 2
+      },
+      {
+        "id": "Portátil",
+        "level": 2
+      },
+      {
+        "id": "Champô",
+        "level": 3
+      },
+      {
+        "id": "Televisão LED",
+        "level": 3
+      }
+    ],
+    "edges": [
+      {
+        "From": "Smartphone",
+        "To": "Café Moído",
+        "Weight": 13,
+        "Level": 1,
+        "ParentPath": "Smartphone",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Smartphone",
+        "To": "Detergente Roupa",
+        "Weight": 11,
+        "Level": 1,
+        "ParentPath": "Smartphone",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Arroz 1kg",
+        "Weight": 11,
+        "Level": 2,
+        "ParentPath": "Smartphone -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Portátil",
+        "Weight": 11,
+        "Level": 2,
+        "ParentPath": "Smartphone -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Leite 1L",
+        "Weight": 12,
+        "Level": 2,
+        "ParentPath": "Smartphone -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Arroz 1kg",
+        "Weight": 10,
+        "Level": 2,
+        "ParentPath": "Smartphone -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Detergente Roupa",
+        "Weight": 9,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Leite 1L",
+        "Weight": 9,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Champô",
+        "Weight": 10,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Televisão LED",
+        "Weight": 9,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Portátil",
+        "Weight": 12,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Arroz 1kg",
+        "Weight": 11,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Leite 1L",
+        "Weight": 9,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Champô",
+        "Weight": 8,
+        "Level": 3,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Leite 1L",
+        "Weight": 12,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Televisão LED",
+        "Weight": 8,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Portátil",
+        "Weight": 12,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Detergente Roupa",
+        "Weight": 6,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Detergente Roupa",
+        "Weight": 11,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Arroz 1kg",
+        "Weight": 8,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Champô",
+        "Weight": 11,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Leite 1L",
+        "Weight": 11,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Champô",
+        "Weight": 10,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Café Moído",
+        "Weight": 9,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Champô",
+        "Weight": 8,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Televisão LED",
+        "Weight": 7,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Portátil",
+        "Weight": 12,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Café Moído",
+        "Weight": 7,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Café Moído",
+        "Weight": 9,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Portátil",
+        "Weight": 9,
+        "Level": 4,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Portátil",
+        "Weight": 12,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Televisão LED",
+        "Weight": 6,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Champô",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Televisão LED",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Leite 1L",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Televisão LED",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Champô",
+        "Weight": 10,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Televisão LED",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Televisão LED",
+        "Weight": 8,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Portátil",
+        "Weight": 7,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Leite 1L",
+        "Weight": 12,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Arroz 1kg",
+        "Weight": 10,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Detergente Roupa",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Detergente Roupa",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Leite 1L",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Arroz 1kg",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Detergente Roupa",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Arroz 1kg",
+        "Weight": 8,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Arroz 1kg",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Detergente Roupa",
+        "Weight": 6,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Leite 1L",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Café Moído",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Arroz 1kg",
+        "Weight": 8,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Arroz 1kg",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Champô",
+        "Weight": 10,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Café Moído",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Champô",
+        "To": "Portátil",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Champô",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Champô",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Televisão LED",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Café Moído",
+        "Weight": 7,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Televisão LED",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Champô",
+        "Weight": 10,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Café Moído",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Portátil",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Champô",
+        "Weight": 10,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Portátil",
+        "Weight": 11,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Café Moído",
+        "To": "Leite 1L",
+        "Weight": 6,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Café Moído",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Café Moído",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      },
+      {
+        "From": "Portátil",
+        "To": "Televisão LED",
+        "Weight": 9,
+        "Level": 5,
+        "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Portátil",
+        "Strategy": "top-k",
+        "Score": "",
+        "Reason": "Selecionada via top-K de peso na origem"
+      }
+    ],
+    "scoring_formula": "top-k"
+  },
+  "polytree_edges": [
+    {
+      "From": "Smartphone",
+      "To": "Café Moído",
+      "Weight": 13,
+      "Level": 1,
+      "ParentPath": "Smartphone",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Smartphone",
+      "To": "Detergente Roupa",
+      "Weight": 11,
+      "Level": 1,
+      "ParentPath": "Smartphone",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Portátil",
+      "Weight": 11,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Arroz 1kg",
+      "Weight": 10,
+      "Level": 2,
+      "ParentPath": "Smartphone -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Detergente Roupa",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Leite 1L",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Champô",
+      "Weight": 10,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Televisão LED",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Portátil",
+      "Weight": 12,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Leite 1L",
+      "Weight": 9,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Champô",
+      "Weight": 8,
+      "Level": 3,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Televisão LED",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Portátil",
+      "Weight": 12,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Detergente Roupa",
+      "Weight": 6,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Detergente Roupa",
+      "Weight": 11,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Arroz 1kg",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Champô",
+      "Weight": 11,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Leite 1L",
+      "Weight": 11,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Champô",
+      "Weight": 10,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Café Moído",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Champô",
+      "Weight": 8,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Televisão LED",
+      "Weight": 7,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Portátil",
+      "Weight": 12,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Café Moído",
+      "Weight": 7,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Café Moído",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Portátil",
+      "Weight": 9,
+      "Level": 4,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Portátil",
+      "Weight": 12,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Televisão LED",
+      "Weight": 6,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Champô",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Televisão LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Leite 1L",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Detergente Roupa -> Televisão LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Champô",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Televisão LED",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Televisão LED",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Portátil",
+      "Weight": 7,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Arroz 1kg -> Leite 1L -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Leite 1L",
+      "Weight": 12,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Detergente Roupa",
+      "To": "Arroz 1kg",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Detergente Roupa",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Detergente Roupa",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Arroz 1kg",
+      "To": "Leite 1L",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Champô -> Arroz 1kg",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Detergente Roupa",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Arroz 1kg",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Leite 1L",
+      "To": "Detergente Roupa",
+      "Weight": 6,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Café Moído -> Portátil -> Televisão LED -> Leite 1L",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Café Moído",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Arroz 1kg",
+      "Weight": 8,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Arroz 1kg",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Champô",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Portátil -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Café Moído",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Champô",
+      "To": "Portátil",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Champô",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Champô",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Televisão LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Televisão LED",
+      "To": "Café Moído",
+      "Weight": 7,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Leite 1L -> Arroz 1kg -> Televisão LED",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Champô",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Café Moído",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Portátil",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Champô",
+      "Weight": 10,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Leite 1L -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Portátil",
+      "Weight": 11,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Café Moído",
+      "To": "Leite 1L",
+      "Weight": 6,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Café Moído",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Café Moído",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "Portátil",
+      "To": "Televisão LED",
+      "Weight": 9,
+      "Level": 5,
+      "ParentPath": "Smartphone -> Detergente Roupa -> Arroz 1kg -> Champô -> Portátil",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    }
+  ],
+  "files": {
+    "pairs_csv": "pares_frequencias.csv",
+    "matrix_csv": "matriz_adjacencia.csv",
+    "graph_edges_csv": "grafo_edges.csv",
+    "ramex_csv": "ramex_simplificado.csv",
+    "polytree_csv": "ramex_polytree.csv",
+    "polytree_json": "ramex_polytree.json",
+    "graph_png": "grafo.png",
+    "ramex_png": "ramex_simplificado.png",
+    "polytree_png": "ramex_polytree.png",
+    "transition_matrix_json": "transition_matrix.json",
+    "ramex2007_csv": "ramex2007_ed4b74b476f24c698a32351964080d04.csv",
+    "ramex2007_json": "ramex2007_ed4b74b476f24c698a32351964080d04.json",
+    "ramex2007_png": "ramex2007_ed4b74b476f24c698a32351964080d04.png",
+    "forward_csv": "ramex_forward_ed4b74b476f24c698a32351964080d04.csv",
+    "forward_json": "ramex_forward_ed4b74b476f24c698a32351964080d04.json",
+    "forward_png": "ramex_forward_ed4b74b476f24c698a32351964080d04.png",
+    "back_forward_formal_csv": "ramex_back_forward_formal_ed4b74b476f24c698a32351964080d04.csv",
+    "back_forward_formal_json": "ramex_back_forward_formal_ed4b74b476f24c698a32351964080d04.json",
+    "back_forward_formal_png": "ramex_back_forward_formal_ed4b74b476f24c698a32351964080d04.png",
+    "validation_pure_csv": "validacao_ramex_puro_ed4b74b476f24c698a32351964080d04.csv",
+    "validation_pure_json": "validacao_ramex_puro_ed4b74b476f24c698a32351964080d04.json",
+    "validation_pure_md": "validacao_ramex_puro_ed4b74b476f24c698a32351964080d04.md",
+    "graph_edges": "grafo_edges.csv"
+  },
+  "transition_matrix": {
+    "Arroz 1kg": {
+      "Arroz 1kg": 0.0,
+      "Café Moído": 6.0,
+      "Champô": 8.0,
+      "Detergente Roupa": 9.0,
+      "Leite 1L": 9.0,
+      "Portátil": 5.0,
+      "Smartphone": 13.0,
+      "Televisão LED": 7.0
+    },
+    "Café Moído": {
+      "Arroz 1kg": 11.0,
+      "Café Moído": 0.0,
+      "Champô": 10.0,
+      "Detergente Roupa": 3.0,
+      "Leite 1L": 6.0,
+      "Portátil": 11.0,
+      "Smartphone": 8.0,
+      "Televisão LED": 5.0
+    },
+    "Champô": {
+      "Arroz 1kg": 8.0,
+      "Café Moído": 9.0,
+      "Champô": 0.0,
+      "Detergente Roupa": 11.0,
+      "Leite 1L": 6.0,
+      "Portátil": 9.0,
+      "Smartphone": 7.0,
+      "Televisão LED": 8.0
+    },
+    "Detergente Roupa": {
+      "Arroz 1kg": 10.0,
+      "Café Moído": 7.0,
+      "Champô": 4.0,
+      "Detergente Roupa": 0.0,
+      "Leite 1L": 12.0,
+      "Portátil": 7.0,
+      "Smartphone": 8.0,
+      "Televisão LED": 8.0
+    },
+    "Leite 1L": {
+      "Arroz 1kg": 11.0,
+      "Café Moído": 7.0,
+      "Champô": 5.0,
+      "Detergente Roupa": 6.0,
+      "Leite 1L": 0.0,
+      "Portátil": 12.0,
+      "Smartphone": 7.0,
+      "Televisão LED": 6.0
+    },
+    "Portátil": {
+      "Arroz 1kg": 6.0,
+      "Café Moído": 9.0,
+      "Champô": 10.0,
+      "Detergente Roupa": 5.0,
+      "Leite 1L": 6.0,
+      "Portátil": 0.0,
+      "Smartphone": 6.0,
+      "Televisão LED": 9.0
+    },
+    "Smartphone": {
+      "Arroz 1kg": 8.0,
+      "Café Moído": 13.0,
+      "Champô": 5.0,
+      "Detergente Roupa": 11.0,
+      "Leite 1L": 9.0,
+      "Portátil": 6.0,
+      "Smartphone": 0.0,
+      "Televisão LED": 9.0
+    },
+    "Televisão LED": {
+      "Arroz 1kg": 6.0,
+      "Café Moído": 7.0,
+      "Champô": 11.0,
+      "Detergente Roupa": 6.0,
+      "Leite 1L": 11.0,
+      "Portátil": 5.0,
+      "Smartphone": 8.0,
+      "Televisão LED": 0.0
+    }
+  },
+  "pure": {
+    "ramex2007": {
+      "algorithm": "RAMEX 2007 Rooted Branching",
+      "method": "networkx_arborescence",
+      "root": "Smartphone",
+      "source": "SOURCE",
+      "sink": "SINK",
+      "include_sink": false,
+      "metrics": {
+        "original_nodes": 8,
+        "original_edges": 56,
+        "reachable_nodes": 8,
+        "selected_nodes": 8,
+        "selected_edges": 7,
+        "original_weight_sum": 445,
+        "selected_weight_sum": 79,
+        "preserved_weight_percent": 17.752808988764045,
+        "is_acyclic": true,
+        "max_indegree_except_root": 1
+      },
+      "nodes": [
+        {
+          "id": "Smartphone",
+          "level": 0,
+          "is_root": true
+        },
+        {
+          "id": "Café Moído",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Detergente Roupa",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Televisão LED",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Arroz 1kg",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Champô",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Leite 1L",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Portátil",
+          "level": 3,
+          "is_root": false
+        }
+      ],
+      "edges": [
+        {
+          "from": "Smartphone",
+          "to": "Café Moído",
+          "weight": 13,
+          "level": 1
+        },
+        {
+          "from": "Smartphone",
+          "to": "Detergente Roupa",
+          "weight": 11,
+          "level": 1
+        },
+        {
+          "from": "Smartphone",
+          "to": "Televisão LED",
+          "weight": 9,
+          "level": 1
+        },
+        {
+          "from": "Café Moído",
+          "to": "Arroz 1kg",
+          "weight": 11,
+          "level": 2
+        },
+        {
+          "from": "Detergente Roupa",
+          "to": "Leite 1L",
+          "weight": 12,
+          "level": 2
+        },
+        {
+          "from": "Televisão LED",
+          "to": "Champô",
+          "weight": 11,
+          "level": 2
+        },
+        {
+          "from": "Leite 1L",
+          "to": "Portátil",
+          "weight": 12,
+          "level": 3
+        }
+      ],
+      "warnings": [
+        "NÃ³ SOURCE nÃ£o existe e o grafo nÃ£o tem nÃ³s sem entradas.",
+        "Raiz pedida 'SOURCE' nÃ£o existe. Escolhida automaticamente: Smartphone."
+      ]
+    },
+    "forward": {
+      "algorithm": "RAMEX Forward Heuristic",
+      "root": "Smartphone",
+      "metrics": {
+        "original_nodes": 8,
+        "original_edges": 56,
+        "selected_nodes": 8,
+        "selected_edges": 7,
+        "original_weight_sum": 445.0,
+        "selected_weight_sum": 77.0,
+        "preserved_weight_percent": 17.303370786516854,
+        "is_acyclic": true
+      },
+      "nodes": [
+        {
+          "id": "Smartphone",
+          "level": 0,
+          "is_root": true
+        },
+        {
+          "id": "Café Moído",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Detergente Roupa",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Arroz 1kg",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Champô",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Leite 1L",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Portátil",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Televisão LED",
+          "level": 3,
+          "is_root": false
+        }
+      ],
+      "edges": [
+        {
+          "from": "Smartphone",
+          "to": "Café Moído",
+          "weight": 13.0,
+          "level": 1
+        },
+        {
+          "from": "Smartphone",
+          "to": "Detergente Roupa",
+          "weight": 11.0,
+          "level": 1
+        },
+        {
+          "from": "Café Moído",
+          "to": "Arroz 1kg",
+          "weight": 11.0,
+          "level": 2
+        },
+        {
+          "from": "Café Moído",
+          "to": "Champô",
+          "weight": 10.0,
+          "level": 2
+        },
+        {
+          "from": "Café Moído",
+          "to": "Portátil",
+          "weight": 11.0,
+          "level": 2
+        },
+        {
+          "from": "Detergente Roupa",
+          "to": "Leite 1L",
+          "weight": 12.0,
+          "level": 2
+        },
+        {
+          "from": "Portátil",
+          "to": "Televisão LED",
+          "weight": 9.0,
+          "level": 3
+        }
+      ],
+      "root_selection_method": "from_10A"
+    },
+    "back_forward_formal": {
+      "algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+      "method": "ramex_back_forward_polytree_formal",
+      "initial_edge": {
+        "from": "Arroz 1kg",
+        "to": "Smartphone",
+        "weight": 13.0
+      },
+      "metrics": {
+        "original_nodes": 8,
+        "original_edges": 56,
+        "selected_nodes": 8,
+        "selected_edges": 7,
+        "original_weight_sum": 445.0,
+        "selected_weight_sum": 83.0,
+        "preserved_weight_percent": 18.651685393258425,
+        "is_acyclic": true,
+        "is_connected": true,
+        "is_polytree": true,
+        "is_tree_undirected": true,
+        "rejected_edges_count": 0
+      },
+      "nodes": [
+        {
+          "id": "Arroz 1kg",
+          "level": 0
+        },
+        {
+          "id": "Leite 1L",
+          "level": 1
+        },
+        {
+          "id": "Smartphone",
+          "level": 1
+        },
+        {
+          "id": "Café Moído",
+          "level": 2
+        },
+        {
+          "id": "Detergente Roupa",
+          "level": 2
+        },
+        {
+          "id": "Portátil",
+          "level": 2
+        },
+        {
+          "id": "Champô",
+          "level": 3
+        },
+        {
+          "id": "Televisão LED",
+          "level": 4
+        }
+      ],
+      "edges": [
+        {
+          "from": "Arroz 1kg",
+          "to": "Smartphone",
+          "weight": 13.0,
+          "level": 0,
+          "direction": "INITIAL"
+        },
+        {
+          "from": "Smartphone",
+          "to": "Café Moído",
+          "weight": 13.0,
+          "level": 2,
+          "direction": "FORWARD"
+        },
+        {
+          "from": "Leite 1L",
+          "to": "Arroz 1kg",
+          "weight": 11.0,
+          "level": 1,
+          "direction": "BACKWARD"
+        },
+        {
+          "from": "Detergente Roupa",
+          "to": "Leite 1L",
+          "weight": 12.0,
+          "level": 2,
+          "direction": "BACKWARD"
+        },
+        {
+          "from": "Leite 1L",
+          "to": "Portátil",
+          "weight": 12.0,
+          "level": 2,
+          "direction": "FORWARD"
+        },
+        {
+          "from": "Champô",
+          "to": "Detergente Roupa",
+          "weight": 11.0,
+          "level": 3,
+          "direction": "BACKWARD"
+        },
+        {
+          "from": "Televisão LED",
+          "to": "Champô",
+          "weight": 11.0,
+          "level": 4,
+          "direction": "BACKWARD"
+        }
+      ],
+      "rejected_edges": [],
+      "warnings": []
+    },
+    "validation": {
+      "dataset": "ed4b74b476f24c698a32351964080d04",
+      "best_algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+      "structural_type": "grafo pequeno e completo",
+      "rows": [
+        {
+          "Algoritmo": "RAMEX 2007 Rooted Branching",
+          "Metodo": "networkx_arborescence",
+          "Nos selecionados": 8,
+          "Arestas selecionadas": 7,
+          "Soma pesos selecionados": 79,
+          "Peso preservado (%)": 17.752808988764045,
+          "Aciclico": true,
+          "Conectado": null,
+          "Raiz ou aresta inicial": "Smartphone"
+        },
+        {
+          "Algoritmo": "RAMEX Forward Heuristic",
+          "Metodo": "RAMEX Forward Heuristic",
+          "Nos selecionados": 8,
+          "Arestas selecionadas": 7,
+          "Soma pesos selecionados": 77.0,
+          "Peso preservado (%)": 17.303370786516854,
+          "Aciclico": true,
+          "Conectado": null,
+          "Raiz ou aresta inicial": "Smartphone"
+        },
+        {
+          "Algoritmo": "RAMEX Back-and-Forward Poly-tree Formal",
+          "Metodo": "ramex_back_forward_polytree_formal",
+          "Nos selecionados": 8,
+          "Arestas selecionadas": 7,
+          "Soma pesos selecionados": 83.0,
+          "Peso preservado (%)": 18.651685393258425,
+          "Aciclico": true,
+          "Conectado": true,
+          "Raiz ou aresta inicial": "Arroz 1kg -> Smartphone"
+        }
+      ],
+      "summary": "Os resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi RAMEX Back-and-Forward Poly-tree Formal (18.65%). Tipo estrutural: grafo pequeno e completo."
+    },
+    "files": {
+      "ramex2007_csv": "ramex2007_ed4b74b476f24c698a32351964080d04.csv",
+      "ramex2007_json": "ramex2007_ed4b74b476f24c698a32351964080d04.json",
+      "ramex2007_png": "ramex2007_ed4b74b476f24c698a32351964080d04.png",
+      "forward_csv": "ramex_forward_ed4b74b476f24c698a32351964080d04.csv",
+      "forward_json": "ramex_forward_ed4b74b476f24c698a32351964080d04.json",
+      "forward_png": "ramex_forward_ed4b74b476f24c698a32351964080d04.png",
+      "back_forward_formal_csv": "ramex_back_forward_formal_ed4b74b476f24c698a32351964080d04.csv",
+      "back_forward_formal_json": "ramex_back_forward_formal_ed4b74b476f24c698a32351964080d04.json",
+      "back_forward_formal_png": "ramex_back_forward_formal_ed4b74b476f24c698a32351964080d04.png",
+      "validation_pure_csv": "validacao_ramex_puro_ed4b74b476f24c698a32351964080d04.csv",
+      "validation_pure_json": "validacao_ramex_puro_ed4b74b476f24c698a32351964080d04.json",
+      "validation_pure_md": "validacao_ramex_puro_ed4b74b476f24c698a32351964080d04.md"
+    }
+  },
+  "forum": null,
+  "pure_ramex": {
+    "ramex2007": {
+      "algorithm": "RAMEX 2007 Rooted Branching",
+      "method": "networkx_arborescence",
+      "root": "Smartphone",
+      "source": "SOURCE",
+      "sink": "SINK",
+      "include_sink": false,
+      "metrics": {
+        "original_nodes": 8,
+        "original_edges": 56,
+        "reachable_nodes": 8,
+        "selected_nodes": 8,
+        "selected_edges": 7,
+        "original_weight_sum": 445,
+        "selected_weight_sum": 79,
+        "preserved_weight_percent": 17.752808988764045,
+        "is_acyclic": true,
+        "max_indegree_except_root": 1
+      },
+      "nodes": [
+        {
+          "id": "Smartphone",
+          "level": 0,
+          "is_root": true
+        },
+        {
+          "id": "Café Moído",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Detergente Roupa",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Televisão LED",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Arroz 1kg",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Champô",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Leite 1L",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Portátil",
+          "level": 3,
+          "is_root": false
+        }
+      ],
+      "edges": [
+        {
+          "from": "Smartphone",
+          "to": "Café Moído",
+          "weight": 13,
+          "level": 1
+        },
+        {
+          "from": "Smartphone",
+          "to": "Detergente Roupa",
+          "weight": 11,
+          "level": 1
+        },
+        {
+          "from": "Smartphone",
+          "to": "Televisão LED",
+          "weight": 9,
+          "level": 1
+        },
+        {
+          "from": "Café Moído",
+          "to": "Arroz 1kg",
+          "weight": 11,
+          "level": 2
+        },
+        {
+          "from": "Detergente Roupa",
+          "to": "Leite 1L",
+          "weight": 12,
+          "level": 2
+        },
+        {
+          "from": "Televisão LED",
+          "to": "Champô",
+          "weight": 11,
+          "level": 2
+        },
+        {
+          "from": "Leite 1L",
+          "to": "Portátil",
+          "weight": 12,
+          "level": 3
+        }
+      ],
+      "warnings": [
+        "NÃ³ SOURCE nÃ£o existe e o grafo nÃ£o tem nÃ³s sem entradas.",
+        "Raiz pedida 'SOURCE' nÃ£o existe. Escolhida automaticamente: Smartphone."
+      ]
+    },
+    "forward": {
+      "algorithm": "RAMEX Forward Heuristic",
+      "root": "Smartphone",
+      "metrics": {
+        "original_nodes": 8,
+        "original_edges": 56,
+        "selected_nodes": 8,
+        "selected_edges": 7,
+        "original_weight_sum": 445.0,
+        "selected_weight_sum": 77.0,
+        "preserved_weight_percent": 17.303370786516854,
+        "is_acyclic": true
+      },
+      "nodes": [
+        {
+          "id": "Smartphone",
+          "level": 0,
+          "is_root": true
+        },
+        {
+          "id": "Café Moído",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Detergente Roupa",
+          "level": 1,
+          "is_root": false
+        },
+        {
+          "id": "Arroz 1kg",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Champô",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Leite 1L",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Portátil",
+          "level": 2,
+          "is_root": false
+        },
+        {
+          "id": "Televisão LED",
+          "level": 3,
+          "is_root": false
+        }
+      ],
+      "edges": [
+        {
+          "from": "Smartphone",
+          "to": "Café Moído",
+          "weight": 13.0,
+          "level": 1
+        },
+        {
+          "from": "Smartphone",
+          "to": "Detergente Roupa",
+          "weight": 11.0,
+          "level": 1
+        },
+        {
+          "from": "Café Moído",
+          "to": "Arroz 1kg",
+          "weight": 11.0,
+          "level": 2
+        },
+        {
+          "from": "Café Moído",
+          "to": "Champô",
+          "weight": 10.0,
+          "level": 2
+        },
+        {
+          "from": "Café Moído",
+          "to": "Portátil",
+          "weight": 11.0,
+          "level": 2
+        },
+        {
+          "from": "Detergente Roupa",
+          "to": "Leite 1L",
+          "weight": 12.0,
+          "level": 2
+        },
+        {
+          "from": "Portátil",
+          "to": "Televisão LED",
+          "weight": 9.0,
+          "level": 3
+        }
+      ],
+      "root_selection_method": "from_10A"
+    },
+    "backForward": {
+      "algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+      "method": "ramex_back_forward_polytree_formal",
+      "initial_edge": {
+        "from": "Arroz 1kg",
+        "to": "Smartphone",
+        "weight": 13.0
+      },
+      "metrics": {
+        "original_nodes": 8,
+        "original_edges": 56,
+        "selected_nodes": 8,
+        "selected_edges": 7,
+        "original_weight_sum": 445.0,
+        "selected_weight_sum": 83.0,
+        "preserved_weight_percent": 18.651685393258425,
+        "is_acyclic": true,
+        "is_connected": true,
+        "is_polytree": true,
+        "is_tree_undirected": true,
+        "rejected_edges_count": 0
+      },
+      "nodes": [
+        {
+          "id": "Arroz 1kg",
+          "level": 0
+        },
+        {
+          "id": "Leite 1L",
+          "level": 1
+        },
+        {
+          "id": "Smartphone",
+          "level": 1
+        },
+        {
+          "id": "Café Moído",
+          "level": 2
+        },
+        {
+          "id": "Detergente Roupa",
+          "level": 2
+        },
+        {
+          "id": "Portátil",
+          "level": 2
+        },
+        {
+          "id": "Champô",
+          "level": 3
+        },
+        {
+          "id": "Televisão LED",
+          "level": 4
+        }
+      ],
+      "edges": [
+        {
+          "from": "Arroz 1kg",
+          "to": "Smartphone",
+          "weight": 13.0,
+          "level": 0,
+          "direction": "INITIAL"
+        },
+        {
+          "from": "Smartphone",
+          "to": "Café Moído",
+          "weight": 13.0,
+          "level": 2,
+          "direction": "FORWARD"
+        },
+        {
+          "from": "Leite 1L",
+          "to": "Arroz 1kg",
+          "weight": 11.0,
+          "level": 1,
+          "direction": "BACKWARD"
+        },
+        {
+          "from": "Detergente Roupa",
+          "to": "Leite 1L",
+          "weight": 12.0,
+          "level": 2,
+          "direction": "BACKWARD"
+        },
+        {
+          "from": "Leite 1L",
+          "to": "Portátil",
+          "weight": 12.0,
+          "level": 2,
+          "direction": "FORWARD"
+        },
+        {
+          "from": "Champô",
+          "to": "Detergente Roupa",
+          "weight": 11.0,
+          "level": 3,
+          "direction": "BACKWARD"
+        },
+        {
+          "from": "Televisão LED",
+          "to": "Champô",
+          "weight": 11.0,
+          "level": 4,
+          "direction": "BACKWARD"
+        }
+      ],
+      "rejected_edges": [],
+      "warnings": []
+    },
+    "comparisonRows": [
+      {
+        "Algoritmo": "RAMEX 2007 Rooted Branching",
+        "Metodo": "networkx_arborescence",
+        "Nos selecionados": 8,
+        "Arestas selecionadas": 7,
+        "Soma pesos selecionados": 79,
+        "Peso preservado (%)": 17.752808988764045,
+        "Aciclico": true,
+        "Conectado": null,
+        "Raiz ou aresta inicial": "Smartphone"
+      },
+      {
+        "Algoritmo": "RAMEX Forward Heuristic",
+        "Metodo": "RAMEX Forward Heuristic",
+        "Nos selecionados": 8,
+        "Arestas selecionadas": 7,
+        "Soma pesos selecionados": 77.0,
+        "Peso preservado (%)": 17.303370786516854,
+        "Aciclico": true,
+        "Conectado": null,
+        "Raiz ou aresta inicial": "Smartphone"
+      },
+      {
+        "Algoritmo": "RAMEX Back-and-Forward Poly-tree Formal",
+        "Metodo": "ramex_back_forward_polytree_formal",
+        "Nos selecionados": 8,
+        "Arestas selecionadas": 7,
+        "Soma pesos selecionados": 83.0,
+        "Peso preservado (%)": 18.651685393258425,
+        "Aciclico": true,
+        "Conectado": true,
+        "Raiz ou aresta inicial": "Arroz 1kg -> Smartphone"
+      }
+    ],
+    "comparisonMarkdown": "# Validação RAMEX Puro\n\nOs resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi RAMEX Back-and-Forward Poly-tree Formal (18.65%). Tipo estrutural: grafo pequeno e completo.",
+    "multidatasetMarkdown": "",
+    "missing": []
+  },
+  "formal_polytree": {
+    "algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+    "method": "ramex_back_forward_polytree_formal",
+    "initial_edge": {
+      "from": "Arroz 1kg",
+      "to": "Smartphone",
+      "weight": 13.0
+    },
+    "metrics": {
+      "original_nodes": 8,
+      "original_edges": 56,
+      "selected_nodes": 8,
+      "selected_edges": 7,
+      "original_weight_sum": 445.0,
+      "selected_weight_sum": 83.0,
+      "preserved_weight_percent": 18.651685393258425,
+      "is_acyclic": true,
+      "is_connected": true,
+      "is_polytree": true,
+      "is_tree_undirected": true,
+      "rejected_edges_count": 0
+    },
+    "nodes": [
+      {
+        "id": "Arroz 1kg",
+        "level": 0
+      },
+      {
+        "id": "Leite 1L",
+        "level": 1
+      },
+      {
+        "id": "Smartphone",
+        "level": 1
+      },
+      {
+        "id": "Café Moído",
+        "level": 2
+      },
+      {
+        "id": "Detergente Roupa",
+        "level": 2
+      },
+      {
+        "id": "Portátil",
+        "level": 2
+      },
+      {
+        "id": "Champô",
+        "level": 3
+      },
+      {
+        "id": "Televisão LED",
+        "level": 4
+      }
+    ],
+    "edges": [
+      {
+        "from": "Arroz 1kg",
+        "to": "Smartphone",
+        "weight": 13.0,
+        "level": 0,
+        "direction": "INITIAL"
+      },
+      {
+        "from": "Smartphone",
+        "to": "Café Moído",
+        "weight": 13.0,
+        "level": 2,
+        "direction": "FORWARD"
+      },
+      {
+        "from": "Leite 1L",
+        "to": "Arroz 1kg",
+        "weight": 11.0,
+        "level": 1,
+        "direction": "BACKWARD"
+      },
+      {
+        "from": "Detergente Roupa",
+        "to": "Leite 1L",
+        "weight": 12.0,
+        "level": 2,
+        "direction": "BACKWARD"
+      },
+      {
+        "from": "Leite 1L",
+        "to": "Portátil",
+        "weight": 12.0,
+        "level": 2,
+        "direction": "FORWARD"
+      },
+      {
+        "from": "Champô",
+        "to": "Detergente Roupa",
+        "weight": 11.0,
+        "level": 3,
+        "direction": "BACKWARD"
+      },
+      {
+        "from": "Televisão LED",
+        "to": "Champô",
+        "weight": 11.0,
+        "level": 4,
+        "direction": "BACKWARD"
+      }
+    ],
+    "rejected_edges": [],
+    "warnings": []
+  },
+  "pure_validation": {
+    "dataset": "ed4b74b476f24c698a32351964080d04",
+    "best_algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+    "structural_type": "grafo pequeno e completo",
+    "rows": [
+      {
+        "Algoritmo": "RAMEX 2007 Rooted Branching",
+        "Metodo": "networkx_arborescence",
+        "Nos selecionados": 8,
+        "Arestas selecionadas": 7,
+        "Soma pesos selecionados": 79,
+        "Peso preservado (%)": 17.752808988764045,
+        "Aciclico": true,
+        "Conectado": null,
+        "Raiz ou aresta inicial": "Smartphone"
+      },
+      {
+        "Algoritmo": "RAMEX Forward Heuristic",
+        "Metodo": "RAMEX Forward Heuristic",
+        "Nos selecionados": 8,
+        "Arestas selecionadas": 7,
+        "Soma pesos selecionados": 77.0,
+        "Peso preservado (%)": 17.303370786516854,
+        "Aciclico": true,
+        "Conectado": null,
+        "Raiz ou aresta inicial": "Smartphone"
+      },
+      {
+        "Algoritmo": "RAMEX Back-and-Forward Poly-tree Formal",
+        "Metodo": "ramex_back_forward_polytree_formal",
+        "Nos selecionados": 8,
+        "Arestas selecionadas": 7,
+        "Soma pesos selecionados": 83.0,
+        "Peso preservado (%)": 18.651685393258425,
+        "Aciclico": true,
+        "Conectado": true,
+        "Raiz ou aresta inicial": "Arroz 1kg -> Smartphone"
+      }
+    ],
+    "summary": "Os resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi RAMEX Back-and-Forward Poly-tree Formal (18.65%). Tipo estrutural: grafo pequeno e completo."
+  },
+  "ramex_forum": null,
+  "pipeline_steps": [
+    "ficheiro recebido",
+    "parsing",
+    "sequencias",
+    "pares",
+    "matriz",
+    "grafo",
+    "RAMEX 2007",
+    "Forward",
+    "Back-and-Forward formal",
+    "Validação RAMEX puro"
+  ],
+  "job_id": "ed4b74b476f24c698a32351964080d04",
+  "filename": "dataset 03.xlsx"
+}

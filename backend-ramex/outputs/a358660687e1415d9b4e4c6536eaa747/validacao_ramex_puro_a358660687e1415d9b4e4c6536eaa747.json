@@ -1,0 +1,41 @@
+{
+  "dataset": "a358660687e1415d9b4e4c6536eaa747",
+  "best_algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+  "structural_type": "grafo denso",
+  "rows": [
+    {
+      "Algoritmo": "RAMEX 2007 Rooted Branching",
+      "Metodo": "networkx_arborescence",
+      "Nos selecionados": 200,
+      "Arestas selecionadas": 199,
+      "Soma pesos selecionados": 1909,
+      "Peso preservado (%)": 1.3718515324637994,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "150"
+    },
+    {
+      "Algoritmo": "RAMEX Forward Heuristic",
+      "Metodo": "RAMEX Forward Heuristic",
+      "Nos selecionados": 200,
+      "Arestas selecionadas": 199,
+      "Soma pesos selecionados": 1842.0,
+      "Peso preservado (%)": 1.3237037835507168,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "150"
+    },
+    {
+      "Algoritmo": "RAMEX Back-and-Forward Poly-tree Formal",
+      "Metodo": "ramex_back_forward_polytree_formal",
+      "Nos selecionados": 200,
+      "Arestas selecionadas": 199,
+      "Soma pesos selecionados": 1981.0,
+      "Peso preservado (%)": 1.4235923969674105,
+      "Aciclico": true,
+      "Conectado": true,
+      "Raiz ou aresta inicial": "118 -> 55"
+    }
+  ],
+  "summary": "Os resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi RAMEX Back-and-Forward Poly-tree Formal (1.42%). Tipo estrutural: grafo denso."
+}

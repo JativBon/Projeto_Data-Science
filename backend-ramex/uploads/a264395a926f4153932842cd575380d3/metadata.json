@@ -1,0 +1,11 @@
+{
+  "job_id": "a264395a926f4153932842cd575380d3",
+  "original_filename": "testes_SCADA.csv",
+  "filename": "testes_SCADA.csv",
+  "path": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\backend-ramex\\uploads\\a264395a926f4153932842cd575380d3\\testes_SCADA.csv",
+  "columns": [
+    "event_id",
+    "timestamp",
+    "event"
+  ]
+}

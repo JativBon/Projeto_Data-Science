@@ -1,0 +1,63 @@
+From,To,Weight,Level,Strategy,Score,Reason,ParentPath
+150,120,9.0,1,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150
+150,132,9.0,1,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150
+120,15,10.0,2,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120
+120,122,8.0,2,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120
+132,72,10.0,2,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132
+132,109,9.0,2,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132
+15,125,8.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15
+15,126,8.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15
+122,139,9.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122
+122,100,8.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122
+72,78,9.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72
+72,160,8.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72
+109,168,10.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109
+109,37,9.0,3,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109
+125,174,10.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 125
+125,57,9.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 125
+126,30,8.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 126
+126,84,8.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 126
+139,82,9.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 139
+139,117,8.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 139
+100,166,12.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 100
+100,143,9.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 100
+78,141,9.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 78
+78,15,9.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 78
+160,135,9.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 160
+160,154,8.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 160
+168,179,11.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 168
+168,155,9.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 168
+37,106,8.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 37
+37,117,8.0,4,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 37
+174,156,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 125 -> 174
+174,134,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 125 -> 174
+57,102,10.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 125 -> 57
+57,41,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 125 -> 57
+30,85,10.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 126 -> 30
+30,115,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 126 -> 30
+84,197,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 126 -> 84
+84,10,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 15 -> 126 -> 84
+82,159,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 139 -> 82
+82,161,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 139 -> 82
+117,64,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 139 -> 117
+117,115,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 139 -> 117
+166,81,10.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 100 -> 166
+166,72,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 100 -> 166
+143,99,10.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 100 -> 143
+143,192,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 120 -> 122 -> 100 -> 143
+141,200,10.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 78 -> 141
+141,167,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 78 -> 141
+15,125,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 78 -> 15
+15,126,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 78 -> 15
+135,152,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 160 -> 135
+135,179,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 160 -> 135
+154,29,10.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 160 -> 154
+154,25,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 72 -> 160 -> 154
+179,45,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 168 -> 179
+179,1,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 168 -> 179
+155,7,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 168 -> 155
+155,139,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 168 -> 155
+106,162,10.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 37 -> 106
+106,158,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 37 -> 106
+117,64,9.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 37 -> 117
+117,115,8.0,5,top-k,,Selecionada por estar entre as transições de maior peso do nó de origem,150 -> 132 -> 109 -> 37 -> 117

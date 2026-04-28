@@ -1,0 +1,261 @@
+{
+  "root": "11.35",
+  "strategy": "top-k",
+  "metrics": {
+    "original_nodes": 536,
+    "original_edges": 549,
+    "polytree_nodes": 16,
+    "polytree_edges": 15,
+    "original_weight_sum": 549,
+    "polytree_weight_sum": 15,
+    "preserved_weight_percent": 2.73224043715847,
+    "max_depth": 5,
+    "average_branching": 1.25,
+    "repeated_nodes": 0,
+    "density_before": 0.0019144929557818385,
+    "density_after": 0.0625,
+    "edge_reduction_percent": 97.26775956284153,
+    "coverage_by_level": {
+      "1": 2.0,
+      "2": 3.0,
+      "3": 3.0,
+      "4": 3.0,
+      "5": 4.0
+    },
+    "strategy": "top-k"
+  },
+  "parameters": {
+    "alpha": 0.35,
+    "beta": 0.25,
+    "gamma": 0.15,
+    "delta": 0.15,
+    "epsilon": 0.05,
+    "zeta": 0.05,
+    "preserve_weight_target": 0.7,
+    "max_branching": 3,
+    "min_score": 0.0,
+    "max_depth": 5,
+    "strategy": "top-k",
+    "top_k_per_node": 2,
+    "min_weight": 0
+  },
+  "nodes": [
+    {
+      "id": "11.35",
+      "level": 0
+    },
+    {
+      "id": "46.06",
+      "level": 1
+    },
+    {
+      "id": "7.05",
+      "level": 1
+    },
+    {
+      "id": "10.03",
+      "level": 2
+    },
+    {
+      "id": "18.09",
+      "level": 2
+    },
+    {
+      "id": "8.97",
+      "level": 2
+    },
+    {
+      "id": "19.2",
+      "level": 3
+    },
+    {
+      "id": "37.61",
+      "level": 3
+    },
+    {
+      "id": "5.29",
+      "level": 3
+    },
+    {
+      "id": "19.83",
+      "level": 4
+    },
+    {
+      "id": "48.54",
+      "level": 4
+    },
+    {
+      "id": "7.96",
+      "level": 4
+    },
+    {
+      "id": "10.8",
+      "level": 5
+    },
+    {
+      "id": "18.2",
+      "level": 5
+    },
+    {
+      "id": "4.56",
+      "level": 5
+    },
+    {
+      "id": "6.86",
+      "level": 5
+    }
+  ],
+  "edges": [
+    {
+      "From": "11.35",
+      "To": "46.06",
+      "Weight": 1,
+      "Level": 1,
+      "ParentPath": "11.35",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "11.35",
+      "To": "7.05",
+      "Weight": 1,
+      "Level": 1,
+      "ParentPath": "11.35",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "46.06",
+      "To": "8.97",
+      "Weight": 1,
+      "Level": 2,
+      "ParentPath": "11.35 -> 46.06",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "7.05",
+      "To": "10.03",
+      "Weight": 1,
+      "Level": 2,
+      "ParentPath": "11.35 -> 7.05",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "7.05",
+      "To": "18.09",
+      "Weight": 1,
+      "Level": 2,
+      "ParentPath": "11.35 -> 7.05",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "8.97",
+      "To": "19.2",
+      "Weight": 1,
+      "Level": 3,
+      "ParentPath": "11.35 -> 46.06 -> 8.97",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "10.03",
+      "To": "37.61",
+      "Weight": 1,
+      "Level": 3,
+      "ParentPath": "11.35 -> 7.05 -> 10.03",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "18.09",
+      "To": "5.29",
+      "Weight": 1,
+      "Level": 3,
+      "ParentPath": "11.35 -> 7.05 -> 18.09",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "19.2",
+      "To": "19.83",
+      "Weight": 1,
+      "Level": 4,
+      "ParentPath": "11.35 -> 46.06 -> 8.97 -> 19.2",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "37.61",
+      "To": "48.54",
+      "Weight": 1,
+      "Level": 4,
+      "ParentPath": "11.35 -> 7.05 -> 10.03 -> 37.61",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "5.29",
+      "To": "7.96",
+      "Weight": 1,
+      "Level": 4,
+      "ParentPath": "11.35 -> 7.05 -> 18.09 -> 5.29",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "19.83",
+      "To": "10.8",
+      "Weight": 1,
+      "Level": 5,
+      "ParentPath": "11.35 -> 46.06 -> 8.97 -> 19.2 -> 19.83",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "19.83",
+      "To": "4.56",
+      "Weight": 1,
+      "Level": 5,
+      "ParentPath": "11.35 -> 46.06 -> 8.97 -> 19.2 -> 19.83",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "48.54",
+      "To": "18.2",
+      "Weight": 1,
+      "Level": 5,
+      "ParentPath": "11.35 -> 7.05 -> 10.03 -> 37.61 -> 48.54",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    },
+    {
+      "From": "7.96",
+      "To": "6.86",
+      "Weight": 1,
+      "Level": 5,
+      "ParentPath": "11.35 -> 7.05 -> 18.09 -> 5.29 -> 7.96",
+      "Strategy": "top-k",
+      "Score": "",
+      "Reason": "Selecionada via top-K de peso na origem"
+    }
+  ],
+  "scoring_formula": "top-k"
+}

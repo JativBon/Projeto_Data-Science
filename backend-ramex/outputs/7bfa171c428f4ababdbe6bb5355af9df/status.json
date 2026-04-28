@@ -1,0 +1,4 @@
+{
+  "status": "error",
+  "message": "Este tipo de dataset requer ficheiro CSV ou XLSX."
+}

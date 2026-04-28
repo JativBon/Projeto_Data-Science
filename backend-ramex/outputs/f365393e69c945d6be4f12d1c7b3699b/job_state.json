@@ -1,0 +1,212 @@
+{
+  "job_id": "f365393e69c945d6be4f12d1c7b3699b",
+  "status": "completed",
+  "progress": 100,
+  "current_step": "Concluído",
+  "steps": [
+    {
+      "id": "upload",
+      "label": "Ficheiro recebido",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:19.613228+00:00",
+      "finished_at": "2026-04-28T22:46:19.626542+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "parsing",
+      "label": "Leitura e parsing do dataset",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:19.626542+00:00",
+      "finished_at": "2026-04-28T22:46:19.685697+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "sequencias",
+      "label": "Reconstrução de sequências",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:19.685697+00:00",
+      "finished_at": "2026-04-28T22:46:19.701001+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "pares",
+      "label": "Geração de pares A -> B",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:19.701001+00:00",
+      "finished_at": "2026-04-28T22:46:19.718234+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "frequencias",
+      "label": "Cálculo de frequências absolutas",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:19.718234+00:00",
+      "finished_at": "2026-04-28T22:46:19.727436+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "matriz",
+      "label": "Construção da matriz de adjacência",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:19.727436+00:00",
+      "finished_at": "2026-04-28T22:46:19.736604+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "grafo",
+      "label": "Construção do grafo dirigido ponderado",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:19.736604+00:00",
+      "finished_at": "2026-04-28T22:46:21.865927+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "ramex2007",
+      "label": "Execução RAMEX 2007 Rooted Branching",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:21.865927+00:00",
+      "finished_at": "2026-04-28T22:46:23.454690+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "forward",
+      "label": "Execução RAMEX Forward",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:23.454690+00:00",
+      "finished_at": "2026-04-28T22:46:24.891627+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "polytree_formal",
+      "label": "Execução Back-and-Forward Poly-tree Formal",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:24.891627+00:00",
+      "finished_at": "2026-04-28T22:46:26.258550+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "forum",
+      "label": "Execução RAMEX-Forum",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:26.284301+00:00",
+      "finished_at": "2026-04-28T22:46:27.468945+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "validacao",
+      "label": "Validação comparativa RAMEX puro",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:26.258550+00:00",
+      "finished_at": "2026-04-28T22:46:26.284301+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "relatorio",
+      "label": "Geração de relatório técnico",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:46:27.468945+00:00",
+      "finished_at": "2026-04-28T22:46:27.483019+00:00",
+      "message": "Concluído"
+    }
+  ],
+  "logs": [
+    {
+      "timestamp": "2026-04-28T22:46:19.613228+00:00",
+      "message": "Ficheiro recebido"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.626542+00:00",
+      "message": "Leitura e parsing do dataset"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.681436+00:00",
+      "message": "Dataset lido com 50 sequências válidas"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.685697+00:00",
+      "message": "Reconstrução de sequências"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.691370+00:00",
+      "message": "50 sequências válidas reconstruídas"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.701516+00:00",
+      "message": "Geração de pares A -> B"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.709052+00:00",
+      "message": "445 pares gerados"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.718234+00:00",
+      "message": "Cálculo de frequências absolutas"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.727436+00:00",
+      "message": "Construção da matriz de adjacência"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.736604+00:00",
+      "message": "Construção do grafo dirigido ponderado"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.741384+00:00",
+      "message": "56 transições distintas identificadas"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:19.756224+00:00",
+      "message": "Grafo completo criado com 8 nós e 56 arestas"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:21.865927+00:00",
+      "message": "Execução RAMEX 2007 Rooted Branching"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:23.443731+00:00",
+      "message": "RAMEX 2007 concluído: 7 arestas selecionadas"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:23.454690+00:00",
+      "message": "Execução RAMEX Forward"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:24.891627+00:00",
+      "message": "Execução Back-and-Forward Poly-tree Formal"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:26.258550+00:00",
+      "message": "Validação comparativa RAMEX puro"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:26.284301+00:00",
+      "message": "Execução RAMEX-Forum"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:27.461416+00:00",
+      "message": "RAMEX-Forum concluído com pesos relativos e análise de influência"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:27.468945+00:00",
+      "message": "Geração de relatório técnico"
+    },
+    {
+      "timestamp": "2026-04-28T22:46:27.483019+00:00",
+      "message": "Pipeline RAMEX concluída com sucesso"
+    }
+  ],
+  "error": null
+}

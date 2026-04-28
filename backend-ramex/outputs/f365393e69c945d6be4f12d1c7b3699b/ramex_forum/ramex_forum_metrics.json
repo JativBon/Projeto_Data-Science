@@ -1,0 +1,718 @@
+{
+  "mode": "ramex_forum",
+  "metrics": {
+    "nodes": 8,
+    "edges": 56,
+    "total_weight": 445.0,
+    "density": 1.0,
+    "normalized_relations": 56,
+    "most_influential_node": "Smartphone",
+    "most_received_node": "Arroz 1kg",
+    "top_relation": {
+      "from": "Arroz 1kg",
+      "to": "Smartphone",
+      "weight": 13.0,
+      "relative_weight": 22.807017543859647
+    },
+    "dominant_path": [
+      "Smartphone",
+      "Café Moído",
+      "Arroz 1kg",
+      "Detergente Roupa",
+      "Leite 1L",
+      "Portátil"
+    ],
+    "average_relative_weight": 14.285714285714286
+  },
+  "influence_graph": {
+    "mode": "influence_graph",
+    "normalized": true,
+    "edges": [
+      {
+        "From": "Arroz 1kg",
+        "To": "Smartphone",
+        "Weight": 13,
+        "RelativeWeight": 22.807017543859647,
+        "Rank": 1
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Detergente Roupa",
+        "Weight": 9,
+        "RelativeWeight": 15.789473684210526,
+        "Rank": 2
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Leite 1L",
+        "Weight": 9,
+        "RelativeWeight": 15.789473684210526,
+        "Rank": 3
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Champô",
+        "Weight": 8,
+        "RelativeWeight": 14.035087719298245,
+        "Rank": 4
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Televisão LED",
+        "Weight": 7,
+        "RelativeWeight": 12.280701754385964,
+        "Rank": 5
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Café Moído",
+        "Weight": 6,
+        "RelativeWeight": 10.526315789473683,
+        "Rank": 6
+      },
+      {
+        "From": "Arroz 1kg",
+        "To": "Portátil",
+        "Weight": 5,
+        "RelativeWeight": 8.771929824561402,
+        "Rank": 7
+      },
+      {
+        "From": "Café Moído",
+        "To": "Arroz 1kg",
+        "Weight": 11,
+        "RelativeWeight": 20.37037037037037,
+        "Rank": 1
+      },
+      {
+        "From": "Café Moído",
+        "To": "Portátil",
+        "Weight": 11,
+        "RelativeWeight": 20.37037037037037,
+        "Rank": 2
+      },
+      {
+        "From": "Café Moído",
+        "To": "Champô",
+        "Weight": 10,
+        "RelativeWeight": 18.51851851851852,
+        "Rank": 3
+      },
+      {
+        "From": "Café Moído",
+        "To": "Smartphone",
+        "Weight": 8,
+        "RelativeWeight": 14.814814814814813,
+        "Rank": 4
+      },
+      {
+        "From": "Café Moído",
+        "To": "Leite 1L",
+        "Weight": 6,
+        "RelativeWeight": 11.11111111111111,
+        "Rank": 5
+      },
+      {
+        "From": "Café Moído",
+        "To": "Televisão LED",
+        "Weight": 5,
+        "RelativeWeight": 9.25925925925926,
+        "Rank": 6
+      },
+      {
+        "From": "Café Moído",
+        "To": "Detergente Roupa",
+        "Weight": 3,
+        "RelativeWeight": 5.555555555555555,
+        "Rank": 7
+      },
+      {
+        "From": "Champô",
+        "To": "Detergente Roupa",
+        "Weight": 11,
+        "RelativeWeight": 18.96551724137931,
+        "Rank": 1
+      },
+      {
+        "From": "Champô",
+        "To": "Café Moído",
+        "Weight": 9,
+        "RelativeWeight": 15.517241379310345,
+        "Rank": 2
+      },
+      {
+        "From": "Champô",
+        "To": "Portátil",
+        "Weight": 9,
+        "RelativeWeight": 15.517241379310345,
+        "Rank": 3
+      },
+      {
+        "From": "Champô",
+        "To": "Arroz 1kg",
+        "Weight": 8,
+        "RelativeWeight": 13.793103448275861,
+        "Rank": 4
+      },
+      {
+        "From": "Champô",
+        "To": "Televisão LED",
+        "Weight": 8,
+        "RelativeWeight": 13.793103448275861,
+        "Rank": 5
+      },
+      {
+        "From": "Champô",
+        "To": "Smartphone",
+        "Weight": 7,
+        "RelativeWeight": 12.068965517241379,
+        "Rank": 6
+      },
+      {
+        "From": "Champô",
+        "To": "Leite 1L",
+        "Weight": 6,
+        "RelativeWeight": 10.344827586206897,
+        "Rank": 7
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Leite 1L",
+        "Weight": 12,
+        "RelativeWeight": 21.428571428571427,
+        "Rank": 1
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Arroz 1kg",
+        "Weight": 10,
+        "RelativeWeight": 17.857142857142858,
+        "Rank": 2
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Smartphone",
+        "Weight": 8,
+        "RelativeWeight": 14.285714285714285,
+        "Rank": 3
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Televisão LED",
+        "Weight": 8,
+        "RelativeWeight": 14.285714285714285,
+        "Rank": 4
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Café Moído",
+        "Weight": 7,
+        "RelativeWeight": 12.5,
+        "Rank": 5
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Portátil",
+        "Weight": 7,
+        "RelativeWeight": 12.5,
+        "Rank": 6
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Champô",
+        "Weight": 4,
+        "RelativeWeight": 7.142857142857142,
+        "Rank": 7
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Portátil",
+        "Weight": 12,
+        "RelativeWeight": 22.22222222222222,
+        "Rank": 1
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Arroz 1kg",
+        "Weight": 11,
+        "RelativeWeight": 20.37037037037037,
+        "Rank": 2
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Café Moído",
+        "Weight": 7,
+        "RelativeWeight": 12.962962962962962,
+        "Rank": 3
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Smartphone",
+        "Weight": 7,
+        "RelativeWeight": 12.962962962962962,
+        "Rank": 4
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Detergente Roupa",
+        "Weight": 6,
+        "RelativeWeight": 11.11111111111111,
+        "Rank": 5
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Televisão LED",
+        "Weight": 6,
+        "RelativeWeight": 11.11111111111111,
+        "Rank": 6
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Champô",
+        "Weight": 5,
+        "RelativeWeight": 9.25925925925926,
+        "Rank": 7
+      },
+      {
+        "From": "Portátil",
+        "To": "Champô",
+        "Weight": 10,
+        "RelativeWeight": 19.607843137254903,
+        "Rank": 1
+      },
+      {
+        "From": "Portátil",
+        "To": "Café Moído",
+        "Weight": 9,
+        "RelativeWeight": 17.647058823529413,
+        "Rank": 2
+      },
+      {
+        "From": "Portátil",
+        "To": "Televisão LED",
+        "Weight": 9,
+        "RelativeWeight": 17.647058823529413,
+        "Rank": 3
+      },
+      {
+        "From": "Portátil",
+        "To": "Arroz 1kg",
+        "Weight": 6,
+        "RelativeWeight": 11.76470588235294,
+        "Rank": 4
+      },
+      {
+        "From": "Portátil",
+        "To": "Leite 1L",
+        "Weight": 6,
+        "RelativeWeight": 11.76470588235294,
+        "Rank": 5
+      },
+      {
+        "From": "Portátil",
+        "To": "Smartphone",
+        "Weight": 6,
+        "RelativeWeight": 11.76470588235294,
+        "Rank": 6
+      },
+      {
+        "From": "Portátil",
+        "To": "Detergente Roupa",
+        "Weight": 5,
+        "RelativeWeight": 9.803921568627452,
+        "Rank": 7
+      },
+      {
+        "From": "Smartphone",
+        "To": "Café Moído",
+        "Weight": 13,
+        "RelativeWeight": 21.311475409836063,
+        "Rank": 1
+      },
+      {
+        "From": "Smartphone",
+        "To": "Detergente Roupa",
+        "Weight": 11,
+        "RelativeWeight": 18.0327868852459,
+        "Rank": 2
+      },
+      {
+        "From": "Smartphone",
+        "To": "Leite 1L",
+        "Weight": 9,
+        "RelativeWeight": 14.754098360655737,
+        "Rank": 3
+      },
+      {
+        "From": "Smartphone",
+        "To": "Televisão LED",
+        "Weight": 9,
+        "RelativeWeight": 14.754098360655737,
+        "Rank": 4
+      },
+      {
+        "From": "Smartphone",
+        "To": "Arroz 1kg",
+        "Weight": 8,
+        "RelativeWeight": 13.114754098360656,
+        "Rank": 5
+      },
+      {
+        "From": "Smartphone",
+        "To": "Portátil",
+        "Weight": 6,
+        "RelativeWeight": 9.836065573770492,
+        "Rank": 6
+      },
+      {
+        "From": "Smartphone",
+        "To": "Champô",
+        "Weight": 5,
+        "RelativeWeight": 8.19672131147541,
+        "Rank": 7
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Champô",
+        "Weight": 11,
+        "RelativeWeight": 20.37037037037037,
+        "Rank": 1
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Leite 1L",
+        "Weight": 11,
+        "RelativeWeight": 20.37037037037037,
+        "Rank": 2
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Smartphone",
+        "Weight": 8,
+        "RelativeWeight": 14.814814814814813,
+        "Rank": 3
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Café Moído",
+        "Weight": 7,
+        "RelativeWeight": 12.962962962962962,
+        "Rank": 4
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Arroz 1kg",
+        "Weight": 6,
+        "RelativeWeight": 11.11111111111111,
+        "Rank": 5
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Detergente Roupa",
+        "Weight": 6,
+        "RelativeWeight": 11.11111111111111,
+        "Rank": 6
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Portátil",
+        "Weight": 5,
+        "RelativeWeight": 9.25925925925926,
+        "Rank": 7
+      }
+    ]
+  },
+  "simplified_influence": {
+    "mode": "simplified_influence",
+    "selection_rule": "highest_relative_weight_per_origin",
+    "edges": [
+      {
+        "From": "Arroz 1kg",
+        "To": "Smartphone",
+        "Weight": 13,
+        "RelativeWeight": 22.807017543859647,
+        "Rank": 1
+      },
+      {
+        "From": "Leite 1L",
+        "To": "Portátil",
+        "Weight": 12,
+        "RelativeWeight": 22.22222222222222,
+        "Rank": 1
+      },
+      {
+        "From": "Detergente Roupa",
+        "To": "Leite 1L",
+        "Weight": 12,
+        "RelativeWeight": 21.428571428571427,
+        "Rank": 1
+      },
+      {
+        "From": "Smartphone",
+        "To": "Café Moído",
+        "Weight": 13,
+        "RelativeWeight": 21.311475409836063,
+        "Rank": 1
+      },
+      {
+        "From": "Café Moído",
+        "To": "Portátil",
+        "Weight": 11,
+        "RelativeWeight": 20.37037037037037,
+        "Rank": 2
+      },
+      {
+        "From": "Televisão LED",
+        "To": "Champô",
+        "Weight": 11,
+        "RelativeWeight": 20.37037037037037,
+        "Rank": 1
+      },
+      {
+        "From": "Portátil",
+        "To": "Champô",
+        "Weight": 10,
+        "RelativeWeight": 19.607843137254903,
+        "Rank": 1
+      }
+    ]
+  },
+  "path_analysis": {
+    "central_nodes": [
+      {
+        "id": "Arroz 1kg",
+        "out_strength": 57.0,
+        "in_strength": 60.0,
+        "out_relative_strength": 12.808988764044942,
+        "in_relative_strength": 13.48314606741573,
+        "degree": 14,
+        "betweenness": 0.0
+      },
+      {
+        "id": "Café Moído",
+        "out_strength": 54.0,
+        "in_strength": 58.0,
+        "out_relative_strength": 12.134831460674157,
+        "in_relative_strength": 13.03370786516854,
+        "degree": 14,
+        "betweenness": 0.011904761904761904
+      },
+      {
+        "id": "Champô",
+        "out_strength": 58.0,
+        "in_strength": 53.0,
+        "out_relative_strength": 13.03370786516854,
+        "in_relative_strength": 11.910112359550562,
+        "degree": 14,
+        "betweenness": 0.023809523809523808
+      },
+      {
+        "id": "Detergente Roupa",
+        "out_strength": 56.0,
+        "in_strength": 51.0,
+        "out_relative_strength": 12.584269662921349,
+        "in_relative_strength": 11.46067415730337,
+        "degree": 14,
+        "betweenness": 0.08333333333333333
+      },
+      {
+        "id": "Leite 1L",
+        "out_strength": 54.0,
+        "in_strength": 59.0,
+        "out_relative_strength": 12.134831460674157,
+        "in_relative_strength": 13.258426966292136,
+        "degree": 14,
+        "betweenness": 0.0
+      },
+      {
+        "id": "Portátil",
+        "out_strength": 51.0,
+        "in_strength": 55.0,
+        "out_relative_strength": 11.46067415730337,
+        "in_relative_strength": 12.359550561797752,
+        "degree": 14,
+        "betweenness": 0.047619047619047616
+      },
+      {
+        "id": "Smartphone",
+        "out_strength": 61.0,
+        "in_strength": 57.0,
+        "out_relative_strength": 13.707865168539326,
+        "in_relative_strength": 12.808988764044942,
+        "degree": 14,
+        "betweenness": 0.0
+      },
+      {
+        "id": "Televisão LED",
+        "out_strength": 54.0,
+        "in_strength": 52.0,
+        "out_relative_strength": 12.134831460674157,
+        "in_relative_strength": 11.685393258426966,
+        "degree": 14,
+        "betweenness": 0.047619047619047616
+      }
+    ],
+    "dominant_paths": [
+      {
+        "start": "Smartphone",
+        "path": [
+          "Smartphone",
+          "Café Moído",
+          "Arroz 1kg",
+          "Detergente Roupa",
+          "Leite 1L",
+          "Portátil"
+        ],
+        "edges": [
+          {
+            "From": "Smartphone",
+            "To": "Café Moído",
+            "Weight": 13,
+            "RelativeWeight": 21.311475409836063,
+            "Rank": 1
+          },
+          {
+            "From": "Café Moído",
+            "To": "Arroz 1kg",
+            "Weight": 11,
+            "RelativeWeight": 20.37037037037037,
+            "Rank": 1
+          },
+          {
+            "From": "Arroz 1kg",
+            "To": "Detergente Roupa",
+            "Weight": 9,
+            "RelativeWeight": 15.789473684210526,
+            "Rank": 2
+          },
+          {
+            "From": "Detergente Roupa",
+            "To": "Leite 1L",
+            "Weight": 12,
+            "RelativeWeight": 21.428571428571427,
+            "Rank": 1
+          },
+          {
+            "From": "Leite 1L",
+            "To": "Portátil",
+            "Weight": 12,
+            "RelativeWeight": 22.22222222222222,
+            "Rank": 1
+          }
+        ],
+        "total_weight": 57.0,
+        "average_relative_weight": 20.224422623042123
+      },
+      {
+        "start": "Champô",
+        "path": [
+          "Champô",
+          "Detergente Roupa",
+          "Leite 1L",
+          "Portátil",
+          "Café Moído",
+          "Arroz 1kg"
+        ],
+        "edges": [
+          {
+            "From": "Champô",
+            "To": "Detergente Roupa",
+            "Weight": 11,
+            "RelativeWeight": 18.96551724137931,
+            "Rank": 1
+          },
+          {
+            "From": "Detergente Roupa",
+            "To": "Leite 1L",
+            "Weight": 12,
+            "RelativeWeight": 21.428571428571427,
+            "Rank": 1
+          },
+          {
+            "From": "Leite 1L",
+            "To": "Portátil",
+            "Weight": 12,
+            "RelativeWeight": 22.22222222222222,
+            "Rank": 1
+          },
+          {
+            "From": "Portátil",
+            "To": "Café Moído",
+            "Weight": 9,
+            "RelativeWeight": 17.647058823529413,
+            "Rank": 2
+          },
+          {
+            "From": "Café Moído",
+            "To": "Arroz 1kg",
+            "Weight": 11,
+            "RelativeWeight": 20.37037037037037,
+            "Rank": 1
+          }
+        ],
+        "total_weight": 55.0,
+        "average_relative_weight": 20.12674801721455
+      },
+      {
+        "start": "Arroz 1kg",
+        "path": [
+          "Arroz 1kg",
+          "Smartphone",
+          "Café Moído",
+          "Portátil",
+          "Champô",
+          "Detergente Roupa"
+        ],
+        "edges": [
+          {
+            "From": "Arroz 1kg",
+            "To": "Smartphone",
+            "Weight": 13,
+            "RelativeWeight": 22.807017543859647,
+            "Rank": 1
+          },
+          {
+            "From": "Smartphone",
+            "To": "Café Moído",
+            "Weight": 13,
+            "RelativeWeight": 21.311475409836063,
+            "Rank": 1
+          },
+          {
+            "From": "Café Moído",
+            "To": "Portátil",
+            "Weight": 11,
+            "RelativeWeight": 20.37037037037037,
+            "Rank": 2
+          },
+          {
+            "From": "Portátil",
+            "To": "Champô",
+            "Weight": 10,
+            "RelativeWeight": 19.607843137254903,
+            "Rank": 1
+          },
+          {
+            "From": "Champô",
+            "To": "Detergente Roupa",
+            "Weight": 11,
+            "RelativeWeight": 18.96551724137931,
+            "Rank": 1
+          }
+        ],
+        "total_weight": 58.0,
+        "average_relative_weight": 20.61244474054006
+      }
+    ],
+    "most_influential_node": "Smartphone",
+    "most_received_node": "Arroz 1kg"
+  },
+  "interpretation": "O RAMEX-Forum complementa o RAMEX Puro ao destacar relações normalizadas, nós influentes e caminhos dominantes, sem substituir a validação formal da Poly-tree.",
+  "files": {
+    "edges_csv": "ramex_forum_edges.csv",
+    "metrics_json": "ramex_forum_metrics.json",
+    "graph_png": "ramex_forum_graph.png",
+    "simplified_png": "ramex_forum_simplified.png",
+    "report_md": "ramex_forum_report.md"
+  }
+}

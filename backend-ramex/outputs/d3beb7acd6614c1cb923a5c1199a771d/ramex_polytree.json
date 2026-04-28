@@ -1,0 +1,821 @@
+{
+  "root": "150",
+  "strategy": "top-k",
+  "nodes": [
+    {
+      "id": "150",
+      "level": 0
+    },
+    {
+      "id": "120",
+      "level": 1
+    },
+    {
+      "id": "132",
+      "level": 1
+    },
+    {
+      "id": "109",
+      "level": 2
+    },
+    {
+      "id": "122",
+      "level": 2
+    },
+    {
+      "id": "15",
+      "level": 2
+    },
+    {
+      "id": "72",
+      "level": 2
+    },
+    {
+      "id": "100",
+      "level": 3
+    },
+    {
+      "id": "125",
+      "level": 3
+    },
+    {
+      "id": "126",
+      "level": 3
+    },
+    {
+      "id": "139",
+      "level": 3
+    },
+    {
+      "id": "160",
+      "level": 3
+    },
+    {
+      "id": "168",
+      "level": 3
+    },
+    {
+      "id": "37",
+      "level": 3
+    },
+    {
+      "id": "78",
+      "level": 3
+    },
+    {
+      "id": "106",
+      "level": 4
+    },
+    {
+      "id": "117",
+      "level": 4
+    },
+    {
+      "id": "135",
+      "level": 4
+    },
+    {
+      "id": "141",
+      "level": 4
+    },
+    {
+      "id": "143",
+      "level": 4
+    },
+    {
+      "id": "154",
+      "level": 4
+    },
+    {
+      "id": "155",
+      "level": 4
+    },
+    {
+      "id": "166",
+      "level": 4
+    },
+    {
+      "id": "174",
+      "level": 4
+    },
+    {
+      "id": "179",
+      "level": 4
+    },
+    {
+      "id": "30",
+      "level": 4
+    },
+    {
+      "id": "57",
+      "level": 4
+    },
+    {
+      "id": "82",
+      "level": 4
+    },
+    {
+      "id": "84",
+      "level": 4
+    },
+    {
+      "id": "1",
+      "level": 5
+    },
+    {
+      "id": "10",
+      "level": 5
+    },
+    {
+      "id": "102",
+      "level": 5
+    },
+    {
+      "id": "115",
+      "level": 5
+    },
+    {
+      "id": "134",
+      "level": 5
+    },
+    {
+      "id": "152",
+      "level": 5
+    },
+    {
+      "id": "156",
+      "level": 5
+    },
+    {
+      "id": "158",
+      "level": 5
+    },
+    {
+      "id": "159",
+      "level": 5
+    },
+    {
+      "id": "161",
+      "level": 5
+    },
+    {
+      "id": "162",
+      "level": 5
+    },
+    {
+      "id": "167",
+      "level": 5
+    },
+    {
+      "id": "192",
+      "level": 5
+    },
+    {
+      "id": "197",
+      "level": 5
+    },
+    {
+      "id": "200",
+      "level": 5
+    },
+    {
+      "id": "25",
+      "level": 5
+    },
+    {
+      "id": "29",
+      "level": 5
+    },
+    {
+      "id": "41",
+      "level": 5
+    },
+    {
+      "id": "45",
+      "level": 5
+    },
+    {
+      "id": "64",
+      "level": 5
+    },
+    {
+      "id": "7",
+      "level": 5
+    },
+    {
+      "id": "81",
+      "level": 5
+    },
+    {
+      "id": "85",
+      "level": 5
+    },
+    {
+      "id": "99",
+      "level": 5
+    }
+  ],
+  "edges": [
+    {
+      "from": "150",
+      "to": "120",
+      "weight": 9.0,
+      "level": 1,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "150",
+      "to": "132",
+      "weight": 9.0,
+      "level": 1,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "120",
+      "to": "15",
+      "weight": 10.0,
+      "level": 2,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "120",
+      "to": "122",
+      "weight": 8.0,
+      "level": 2,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "132",
+      "to": "72",
+      "weight": 10.0,
+      "level": 2,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "132",
+      "to": "109",
+      "weight": 9.0,
+      "level": 2,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "15",
+      "to": "125",
+      "weight": 8.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "15",
+      "to": "126",
+      "weight": 8.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "122",
+      "to": "139",
+      "weight": 9.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "122",
+      "to": "100",
+      "weight": 8.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "72",
+      "to": "78",
+      "weight": 9.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "72",
+      "to": "160",
+      "weight": 8.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "109",
+      "to": "168",
+      "weight": 10.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "109",
+      "to": "37",
+      "weight": 9.0,
+      "level": 3,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "125",
+      "to": "174",
+      "weight": 10.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "125",
+      "to": "57",
+      "weight": 9.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "126",
+      "to": "30",
+      "weight": 8.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "126",
+      "to": "84",
+      "weight": 8.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "139",
+      "to": "82",
+      "weight": 9.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "139",
+      "to": "117",
+      "weight": 8.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "100",
+      "to": "166",
+      "weight": 12.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "100",
+      "to": "143",
+      "weight": 9.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "78",
+      "to": "141",
+      "weight": 9.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "78",
+      "to": "15",
+      "weight": 9.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "160",
+      "to": "135",
+      "weight": 9.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "160",
+      "to": "154",
+      "weight": 8.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "168",
+      "to": "179",
+      "weight": 11.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "168",
+      "to": "155",
+      "weight": 9.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "37",
+      "to": "106",
+      "weight": 8.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "37",
+      "to": "117",
+      "weight": 8.0,
+      "level": 4,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "174",
+      "to": "156",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "174",
+      "to": "134",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "57",
+      "to": "102",
+      "weight": 10.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "57",
+      "to": "41",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "30",
+      "to": "85",
+      "weight": 10.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "30",
+      "to": "115",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "84",
+      "to": "197",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "84",
+      "to": "10",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "82",
+      "to": "159",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "82",
+      "to": "161",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "117",
+      "to": "64",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "117",
+      "to": "115",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "166",
+      "to": "81",
+      "weight": 10.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "166",
+      "to": "72",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "143",
+      "to": "99",
+      "weight": 10.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "143",
+      "to": "192",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "141",
+      "to": "200",
+      "weight": 10.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "141",
+      "to": "167",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "15",
+      "to": "125",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "15",
+      "to": "126",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "135",
+      "to": "152",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "135",
+      "to": "179",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "154",
+      "to": "29",
+      "weight": 10.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "154",
+      "to": "25",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "179",
+      "to": "45",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "179",
+      "to": "1",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "155",
+      "to": "7",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "155",
+      "to": "139",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "106",
+      "to": "162",
+      "weight": 10.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "106",
+      "to": "158",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "117",
+      "to": "64",
+      "weight": 9.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    },
+    {
+      "from": "117",
+      "to": "115",
+      "weight": 8.0,
+      "level": 5,
+      "score": null,
+      "strategy": "top-k",
+      "reason": "Selecionada por estar entre as transições de maior peso do nó de origem"
+    }
+  ],
+  "metrics": {
+    "original_nodes": 200,
+    "original_edges": 38625,
+    "polytree_nodes": 53,
+    "polytree_edges": 62,
+    "original_weight_sum": 139155.0,
+    "polytree_weight_sum": 517.0,
+    "preserved_weight_percent": 0.3715281520606518,
+    "max_depth": 5,
+    "coverage_by_level": {
+      "1": 18.0,
+      "2": 37.0,
+      "3": 69.0,
+      "4": 144.0,
+      "5": 282.0
+    },
+    "average_branching": 2.1379310344827585,
+    "branching_average": 2.1379310344827585,
+    "repeated_nodes": 10,
+    "average_score": null,
+    "max_depth_reached": 5,
+    "density_before": 0.9704773869346733,
+    "density_after": 0.02104499274310595,
+    "edge_reduction_percent": 99.84983818770226,
+    "interpretability_score": 39.143013085414765,
+    "strategy": "top-k"
+  },
+  "parameters": {
+    "strategy": "top-k",
+    "top_k_per_node": 2,
+    "max_depth": 5,
+    "min_weight": 0,
+    "alpha": 0.35,
+    "beta": 0.25,
+    "gamma": 0.15,
+    "delta": 0.15,
+    "epsilon": 0.05,
+    "zeta": 0.05,
+    "preserve_weight_target": 0.7,
+    "max_branching": 3,
+    "min_score": 0.0
+  },
+  "scoring_formula": "top-k: seleciona ate K arestas de saida mais fortes por no/caminho"
+}

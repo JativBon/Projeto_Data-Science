@@ -1,0 +1,63 @@
+From,To,Weight,Level,ParentPath,Reason
+150,120,9.0,1,150,top-2 outgoing edge
+150,132,9.0,1,150,top-2 outgoing edge
+120,15,10.0,2,150 -> 120,top-2 outgoing edge
+120,122,8.0,2,150 -> 120,top-2 outgoing edge
+132,72,10.0,2,150 -> 132,top-2 outgoing edge
+132,109,9.0,2,150 -> 132,top-2 outgoing edge
+15,125,8.0,3,150 -> 120 -> 15,top-2 outgoing edge
+15,126,8.0,3,150 -> 120 -> 15,top-2 outgoing edge
+122,139,9.0,3,150 -> 120 -> 122,top-2 outgoing edge
+122,100,8.0,3,150 -> 120 -> 122,top-2 outgoing edge
+72,78,9.0,3,150 -> 132 -> 72,top-2 outgoing edge
+72,160,8.0,3,150 -> 132 -> 72,top-2 outgoing edge
+109,168,10.0,3,150 -> 132 -> 109,top-2 outgoing edge
+109,37,9.0,3,150 -> 132 -> 109,top-2 outgoing edge
+125,174,10.0,4,150 -> 120 -> 15 -> 125,top-2 outgoing edge
+125,57,9.0,4,150 -> 120 -> 15 -> 125,top-2 outgoing edge
+126,30,8.0,4,150 -> 120 -> 15 -> 126,top-2 outgoing edge
+126,84,8.0,4,150 -> 120 -> 15 -> 126,top-2 outgoing edge
+139,82,9.0,4,150 -> 120 -> 122 -> 139,top-2 outgoing edge
+139,117,8.0,4,150 -> 120 -> 122 -> 139,top-2 outgoing edge
+100,166,12.0,4,150 -> 120 -> 122 -> 100,top-2 outgoing edge
+100,143,9.0,4,150 -> 120 -> 122 -> 100,top-2 outgoing edge
+78,141,9.0,4,150 -> 132 -> 72 -> 78,top-2 outgoing edge
+78,15,9.0,4,150 -> 132 -> 72 -> 78,top-2 outgoing edge
+160,135,9.0,4,150 -> 132 -> 72 -> 160,top-2 outgoing edge
+160,154,8.0,4,150 -> 132 -> 72 -> 160,top-2 outgoing edge
+168,179,11.0,4,150 -> 132 -> 109 -> 168,top-2 outgoing edge
+168,155,9.0,4,150 -> 132 -> 109 -> 168,top-2 outgoing edge
+37,106,8.0,4,150 -> 132 -> 109 -> 37,top-2 outgoing edge
+37,117,8.0,4,150 -> 132 -> 109 -> 37,top-2 outgoing edge
+174,156,9.0,5,150 -> 120 -> 15 -> 125 -> 174,top-2 outgoing edge
+174,134,8.0,5,150 -> 120 -> 15 -> 125 -> 174,top-2 outgoing edge
+57,102,10.0,5,150 -> 120 -> 15 -> 125 -> 57,top-2 outgoing edge
+57,41,9.0,5,150 -> 120 -> 15 -> 125 -> 57,top-2 outgoing edge
+30,85,10.0,5,150 -> 120 -> 15 -> 126 -> 30,top-2 outgoing edge
+30,115,8.0,5,150 -> 120 -> 15 -> 126 -> 30,top-2 outgoing edge
+84,197,9.0,5,150 -> 120 -> 15 -> 126 -> 84,top-2 outgoing edge
+84,10,8.0,5,150 -> 120 -> 15 -> 126 -> 84,top-2 outgoing edge
+82,159,8.0,5,150 -> 120 -> 122 -> 139 -> 82,top-2 outgoing edge
+82,161,8.0,5,150 -> 120 -> 122 -> 139 -> 82,top-2 outgoing edge
+117,64,9.0,5,150 -> 120 -> 122 -> 139 -> 117,top-2 outgoing edge
+117,115,8.0,5,150 -> 120 -> 122 -> 139 -> 117,top-2 outgoing edge
+166,81,10.0,5,150 -> 120 -> 122 -> 100 -> 166,top-2 outgoing edge
+166,72,9.0,5,150 -> 120 -> 122 -> 100 -> 166,top-2 outgoing edge
+143,99,10.0,5,150 -> 120 -> 122 -> 100 -> 143,top-2 outgoing edge
+143,192,9.0,5,150 -> 120 -> 122 -> 100 -> 143,top-2 outgoing edge
+141,200,10.0,5,150 -> 132 -> 72 -> 78 -> 141,top-2 outgoing edge
+141,167,8.0,5,150 -> 132 -> 72 -> 78 -> 141,top-2 outgoing edge
+15,125,8.0,5,150 -> 132 -> 72 -> 78 -> 15,top-2 outgoing edge
+15,126,8.0,5,150 -> 132 -> 72 -> 78 -> 15,top-2 outgoing edge
+135,152,9.0,5,150 -> 132 -> 72 -> 160 -> 135,top-2 outgoing edge
+135,179,9.0,5,150 -> 132 -> 72 -> 160 -> 135,top-2 outgoing edge
+154,29,10.0,5,150 -> 132 -> 72 -> 160 -> 154,top-2 outgoing edge
+154,25,8.0,5,150 -> 132 -> 72 -> 160 -> 154,top-2 outgoing edge
+179,45,9.0,5,150 -> 132 -> 109 -> 168 -> 179,top-2 outgoing edge
+179,1,8.0,5,150 -> 132 -> 109 -> 168 -> 179,top-2 outgoing edge
+155,7,9.0,5,150 -> 132 -> 109 -> 168 -> 155,top-2 outgoing edge
+155,139,8.0,5,150 -> 132 -> 109 -> 168 -> 155,top-2 outgoing edge
+106,162,10.0,5,150 -> 132 -> 109 -> 37 -> 106,top-2 outgoing edge
+106,158,9.0,5,150 -> 132 -> 109 -> 37 -> 106,top-2 outgoing edge
+117,64,9.0,5,150 -> 132 -> 109 -> 37 -> 117,top-2 outgoing edge
+117,115,8.0,5,150 -> 132 -> 109 -> 37 -> 117,top-2 outgoing edge

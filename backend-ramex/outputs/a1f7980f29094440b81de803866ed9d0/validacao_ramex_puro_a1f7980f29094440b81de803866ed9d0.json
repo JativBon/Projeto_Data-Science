@@ -1,0 +1,41 @@
+{
+  "dataset": "a1f7980f29094440b81de803866ed9d0",
+  "best_algorithm": "RAMEX 2007 Rooted Branching",
+  "structural_type": "grafo quase linear",
+  "rows": [
+    {
+      "Algoritmo": "RAMEX 2007 Rooted Branching",
+      "Metodo": "networkx_arborescence",
+      "Nos selecionados": 537,
+      "Arestas selecionadas": 536,
+      "Soma pesos selecionados": 536,
+      "Peso preservado (%)": 96.22980251346499,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "SOURCE"
+    },
+    {
+      "Algoritmo": "RAMEX Forward Heuristic",
+      "Metodo": "RAMEX Forward Heuristic",
+      "Nos selecionados": 296,
+      "Arestas selecionadas": 295,
+      "Soma pesos selecionados": 295.0,
+      "Peso preservado (%)": 53.73406193078324,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "15.2"
+    },
+    {
+      "Algoritmo": "RAMEX Back-and-Forward Poly-tree Formal",
+      "Metodo": "ramex_back_forward_polytree_formal",
+      "Nos selecionados": 408,
+      "Arestas selecionadas": 407,
+      "Soma pesos selecionados": 407.0,
+      "Peso preservado (%)": 74.13479052823315,
+      "Aciclico": true,
+      "Conectado": true,
+      "Raiz ou aresta inicial": "16.16 -> 11.32"
+    }
+  ],
+  "summary": "Os resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi RAMEX 2007 Rooted Branching (96.23%). Tipo estrutural: grafo quase linear."
+}

@@ -1,0 +1,144 @@
+{
+  "job_id": "56a1aa58b32146f0a938983acff9b644",
+  "status": "failed",
+  "progress": 14,
+  "current_step": "Leitura e parsing do dataset",
+  "steps": [
+    {
+      "id": "upload",
+      "label": "Ficheiro recebido",
+      "status": "completed",
+      "progress": 100,
+      "started_at": "2026-04-28T22:05:35.842980+00:00",
+      "finished_at": "2026-04-28T22:05:35.857280+00:00",
+      "message": "Concluído"
+    },
+    {
+      "id": "parsing",
+      "label": "Leitura e parsing do dataset",
+      "status": "failed",
+      "progress": 20,
+      "started_at": "2026-04-28T22:05:35.857280+00:00",
+      "finished_at": "2026-04-28T22:05:35.911480+00:00",
+      "message": "Todas as sequências foram descartadas por terem tamanho inferior a 2."
+    },
+    {
+      "id": "sequencias",
+      "label": "Reconstrução de sequências",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "pares",
+      "label": "Geração de pares A -> B",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "frequencias",
+      "label": "Cálculo de frequências absolutas",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "matriz",
+      "label": "Construção da matriz de adjacência",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "grafo",
+      "label": "Construção do grafo dirigido ponderado",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "ramex2007",
+      "label": "Execução RAMEX 2007 Rooted Branching",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "forward",
+      "label": "Execução RAMEX Forward",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "polytree_formal",
+      "label": "Execução Back-and-Forward Poly-tree Formal",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "forum",
+      "label": "Execução RAMEX-Forum",
+      "status": "completed",
+      "progress": 100,
+      "started_at": null,
+      "finished_at": null,
+      "message": "Não aplicável ao tipo de análise selecionado"
+    },
+    {
+      "id": "validacao",
+      "label": "Validação comparativa RAMEX puro",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    },
+    {
+      "id": "relatorio",
+      "label": "Geração de relatório técnico",
+      "status": "pending",
+      "progress": 0,
+      "started_at": null,
+      "finished_at": null,
+      "message": ""
+    }
+  ],
+  "logs": [
+    {
+      "timestamp": "2026-04-28T22:05:35.842980+00:00",
+      "message": "Ficheiro recebido"
+    },
+    {
+      "timestamp": "2026-04-28T22:05:35.857280+00:00",
+      "message": "Leitura e parsing do dataset"
+    },
+    {
+      "timestamp": "2026-04-28T22:05:35.911480+00:00",
+      "message": "Erro na etapa Leitura e parsing do dataset: Todas as sequências foram descartadas por terem tamanho inferior a 2. No RAMEX, uma sequência só é válida se tiver pelo menos:2 eventos consecutivos. Porque o algoritmo trabalha com:(A → B)"
+    }
+  ],
+  "error": {
+    "step": "Leitura e parsing do dataset",
+    "message": "Todas as sequências foram descartadas por terem tamanho inferior a 2.",
+    "technical": "ValueError('Todas as sequências foram descartadas por terem tamanho inferior a 2.')"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "status": "completed",
+  "metrics": {
+    "nodes": 4,
+    "edges": 12,
+    "total_weight": 352.0,
+    "ramex_edges": 9,
+    "ramex_weight": 339.0,
+    "preserved_percentage": 96.31,
+    "density": 1.0,
+    "root": "Tecnologia",
+    "sequences": 50,
+    "pairs": 352,
+    "dense": true
+  },
+  "files": {
+    "graph": "grafo.png",
+    "poly_png": "ramex_polytree.png",
+    "poly_csv": "ramex_polytree.csv",
+    "graph_edges": "grafo_edges.csv"
+  },
+  "job_id": "0f006af7557e490ab6c35b5da1a006f9",
+  "filename": "dataset 03.xlsx"
+}

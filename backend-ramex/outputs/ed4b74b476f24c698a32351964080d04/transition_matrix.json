@@ -1,0 +1,82 @@
+{
+  "Arroz 1kg": {
+    "Arroz 1kg": 0.0,
+    "Café Moído": 6.0,
+    "Champô": 8.0,
+    "Detergente Roupa": 9.0,
+    "Leite 1L": 9.0,
+    "Portátil": 5.0,
+    "Smartphone": 13.0,
+    "Televisão LED": 7.0
+  },
+  "Café Moído": {
+    "Arroz 1kg": 11.0,
+    "Café Moído": 0.0,
+    "Champô": 10.0,
+    "Detergente Roupa": 3.0,
+    "Leite 1L": 6.0,
+    "Portátil": 11.0,
+    "Smartphone": 8.0,
+    "Televisão LED": 5.0
+  },
+  "Champô": {
+    "Arroz 1kg": 8.0,
+    "Café Moído": 9.0,
+    "Champô": 0.0,
+    "Detergente Roupa": 11.0,
+    "Leite 1L": 6.0,
+    "Portátil": 9.0,
+    "Smartphone": 7.0,
+    "Televisão LED": 8.0
+  },
+  "Detergente Roupa": {
+    "Arroz 1kg": 10.0,
+    "Café Moído": 7.0,
+    "Champô": 4.0,
+    "Detergente Roupa": 0.0,
+    "Leite 1L": 12.0,
+    "Portátil": 7.0,
+    "Smartphone": 8.0,
+    "Televisão LED": 8.0
+  },
+  "Leite 1L": {
+    "Arroz 1kg": 11.0,
+    "Café Moído": 7.0,
+    "Champô": 5.0,
+    "Detergente Roupa": 6.0,
+    "Leite 1L": 0.0,
+    "Portátil": 12.0,
+    "Smartphone": 7.0,
+    "Televisão LED": 6.0
+  },
+  "Portátil": {
+    "Arroz 1kg": 6.0,
+    "Café Moído": 9.0,
+    "Champô": 10.0,
+    "Detergente Roupa": 5.0,
+    "Leite 1L": 6.0,
+    "Portátil": 0.0,
+    "Smartphone": 6.0,
+    "Televisão LED": 9.0
+  },
+  "Smartphone": {
+    "Arroz 1kg": 8.0,
+    "Café Moído": 13.0,
+    "Champô": 5.0,
+    "Detergente Roupa": 11.0,
+    "Leite 1L": 9.0,
+    "Portátil": 6.0,
+    "Smartphone": 0.0,
+    "Televisão LED": 9.0
+  },
+  "Televisão LED": {
+    "Arroz 1kg": 6.0,
+    "Café Moído": 7.0,
+    "Champô": 11.0,
+    "Detergente Roupa": 6.0,
+    "Leite 1L": 11.0,
+    "Portátil": 5.0,
+    "Smartphone": 8.0,
+    "Televisão LED": 0.0
+  }
+}

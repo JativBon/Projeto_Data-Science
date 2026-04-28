@@ -1,0 +1,9 @@
+From,To,Weight,Level,Direction,Method
+Bomba_ON,Fluxo_Aumenta,9,0,INITIAL,ramex_back_forward_polytree_formal
+Fluxo_Aumenta,Pressao_Sobe,7,2,FORWARD,ramex_back_forward_polytree_formal
+Valvula_Abre,Fluxo_Aumenta,5,2,BACKWARD,ramex_back_forward_polytree_formal
+Fluxo_Aumenta,Nivel_Sobe,5,2,FORWARD,ramex_back_forward_polytree_formal
+Nivel_Sobe,Alarme_Nivel_Alto,3,3,FORWARD,ramex_back_forward_polytree_formal
+Bomba_ON,Falha_Bomba,1,1,FORWARD,ramex_back_forward_polytree_formal
+Falha_Bomba,Alarme_Falha,3,2,FORWARD,ramex_back_forward_polytree_formal
+Alarme_Falha,Intervencao_Manual,1,3,FORWARD,ramex_back_forward_polytree_formal

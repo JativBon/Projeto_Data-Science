@@ -1,0 +1,110 @@
+{
+  "algorithm": "RAMEX 2007 Rooted Branching",
+  "method": "networkx_arborescence",
+  "root": "Smartphone",
+  "source": "SOURCE",
+  "sink": "SINK",
+  "include_sink": false,
+  "metrics": {
+    "original_nodes": 8,
+    "original_edges": 56,
+    "reachable_nodes": 8,
+    "selected_nodes": 8,
+    "selected_edges": 7,
+    "original_weight_sum": 445,
+    "selected_weight_sum": 79,
+    "preserved_weight_percent": 17.752808988764045,
+    "is_acyclic": true,
+    "max_indegree_except_root": 1
+  },
+  "nodes": [
+    {
+      "id": "Smartphone",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "Café Moído",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Detergente Roupa",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Televisão LED",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Arroz 1kg",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Champô",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Leite 1L",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Portátil",
+      "level": 3,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "Smartphone",
+      "to": "Café Moído",
+      "weight": 13,
+      "level": 1
+    },
+    {
+      "from": "Smartphone",
+      "to": "Detergente Roupa",
+      "weight": 11,
+      "level": 1
+    },
+    {
+      "from": "Smartphone",
+      "to": "Televisão LED",
+      "weight": 9,
+      "level": 1
+    },
+    {
+      "from": "Café Moído",
+      "to": "Arroz 1kg",
+      "weight": 11,
+      "level": 2
+    },
+    {
+      "from": "Detergente Roupa",
+      "to": "Leite 1L",
+      "weight": 12,
+      "level": 2
+    },
+    {
+      "from": "Televisão LED",
+      "to": "Champô",
+      "weight": 11,
+      "level": 2
+    },
+    {
+      "from": "Leite 1L",
+      "to": "Portátil",
+      "weight": 12,
+      "level": 3
+    }
+  ],
+  "warnings": [
+    "NÃ³ SOURCE nÃ£o existe e o grafo nÃ£o tem nÃ³s sem entradas.",
+    "Raiz pedida 'SOURCE' nÃ£o existe. Escolhida automaticamente: Smartphone."
+  ]
+}

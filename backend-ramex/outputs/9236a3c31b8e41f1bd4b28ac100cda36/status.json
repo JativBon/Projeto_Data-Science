@@ -1,0 +1,207 @@
+{
+  "status": "completed",
+  "metrics": {
+    "nodes": 4,
+    "edges": 4,
+    "total_weight": 6.0,
+    "ramex_edges": 2,
+    "ramex_weight": 3.0,
+    "preserved_percentage": 50.0,
+    "density": 0.3333333333333333,
+    "root": "B",
+    "sequences": 3,
+    "pairs": 6,
+    "dense": false
+  },
+  "top_transitions": [
+    {
+      "From": "A",
+      "To": "B",
+      "Weight": 2.0
+    },
+    {
+      "From": "B",
+      "To": "C",
+      "Weight": 2.0
+    },
+    {
+      "From": "B",
+      "To": "D",
+      "Weight": 1.0
+    },
+    {
+      "From": "C",
+      "To": "D",
+      "Weight": 1.0
+    }
+  ],
+  "matrix": {
+    "columns": [
+      "",
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "rows": [
+      {
+        "": "A",
+        "A": 0,
+        "B": 2,
+        "C": 0,
+        "D": 0
+      },
+      {
+        "": "B",
+        "A": 0,
+        "B": 0,
+        "C": 2,
+        "D": 1
+      },
+      {
+        "": "C",
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 1
+      },
+      {
+        "": "D",
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0
+      }
+    ],
+    "total_rows": 4,
+    "total_columns": 4,
+    "is_truncated": false
+  },
+  "graph_edges": [
+    {
+      "From": "A",
+      "To": "B",
+      "Weight": 2.0
+    },
+    {
+      "From": "B",
+      "To": "C",
+      "Weight": 2.0
+    },
+    {
+      "From": "B",
+      "To": "D",
+      "Weight": 1.0
+    },
+    {
+      "From": "C",
+      "To": "D",
+      "Weight": 1.0
+    }
+  ],
+  "ramex_edges": [
+    {
+      "From": "B",
+      "To": "C",
+      "Weight": 2.0,
+      "Level": 1
+    },
+    {
+      "From": "B",
+      "To": "D",
+      "Weight": 1.0,
+      "Level": 1
+    }
+  ],
+  "polytree": {
+    "root": "B",
+    "nodes": [
+      {
+        "id": "B",
+        "level": 0
+      },
+      {
+        "id": "C",
+        "level": 1
+      },
+      {
+        "id": "D",
+        "level": 1
+      }
+    ],
+    "edges": [
+      {
+        "from": "B",
+        "to": "C",
+        "weight": 2.0,
+        "level": 1
+      },
+      {
+        "from": "B",
+        "to": "D",
+        "weight": 1.0,
+        "level": 1
+      },
+      {
+        "from": "C",
+        "to": "D",
+        "weight": 1.0,
+        "level": 2
+      }
+    ],
+    "metrics": {
+      "original_nodes": 4,
+      "original_edges": 4,
+      "polytree_nodes": 3,
+      "polytree_edges": 3,
+      "original_weight_sum": 6.0,
+      "polytree_weight_sum": 4.0,
+      "preserved_weight_percent": 66.66666666666666,
+      "max_depth": 2
+    }
+  },
+  "polytree_edges": [
+    {
+      "From": "B",
+      "To": "C",
+      "Weight": 2.0,
+      "Level": 1
+    },
+    {
+      "From": "B",
+      "To": "D",
+      "Weight": 1.0,
+      "Level": 1
+    },
+    {
+      "From": "C",
+      "To": "D",
+      "Weight": 1.0,
+      "Level": 2
+    }
+  ],
+  "files": {
+    "pairs_csv": "pares_frequencias.csv",
+    "matrix_csv": "matriz_adjacencia.csv",
+    "graph_edges_csv": "grafo_edges.csv",
+    "ramex_csv": "ramex_simplificado.csv",
+    "polytree_csv": "ramex_polytree.csv",
+    "polytree_json": "ramex_polytree.json",
+    "graph_png": "grafo.png",
+    "ramex_png": "ramex_simplificado.png",
+    "polytree_png": "ramex_polytree.png"
+  },
+  "interpretation": "O dataset apresenta uma estrutura intermédia que deve ser interpretada em conjunto com os pesos. A estrutura RAMEX simplificada representa bem o comportamento dominante.",
+  "pipeline_steps": [
+    "ficheiro recebido",
+    "parsing concluido",
+    "sequencias criadas",
+    "pares gerados",
+    "matriz criada",
+    "grafo criado",
+    "RAMEX gerado",
+    "RAMEX Poly-tree gerado"
+  ],
+  "job_id": "9236a3c31b8e41f1bd4b28ac100cda36",
+  "filename": "seq.txt"
+}

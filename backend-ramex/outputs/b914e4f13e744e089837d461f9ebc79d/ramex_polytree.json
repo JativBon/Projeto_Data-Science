@@ -1,0 +1,47 @@
+{
+  "root": "B",
+  "nodes": [
+    {
+      "id": "B",
+      "level": 0
+    },
+    {
+      "id": "C",
+      "level": 1
+    },
+    {
+      "id": "D",
+      "level": 1
+    }
+  ],
+  "edges": [
+    {
+      "from": "B",
+      "to": "C",
+      "weight": 2.0,
+      "level": 1
+    },
+    {
+      "from": "B",
+      "to": "D",
+      "weight": 1.0,
+      "level": 1
+    },
+    {
+      "from": "C",
+      "to": "D",
+      "weight": 1.0,
+      "level": 2
+    }
+  ],
+  "metrics": {
+    "original_nodes": 4,
+    "original_edges": 4,
+    "polytree_nodes": 3,
+    "polytree_edges": 3,
+    "original_weight_sum": 6.0,
+    "polytree_weight_sum": 4.0,
+    "preserved_weight_percent": 66.66666666666666,
+    "max_depth": 2
+  }
+}

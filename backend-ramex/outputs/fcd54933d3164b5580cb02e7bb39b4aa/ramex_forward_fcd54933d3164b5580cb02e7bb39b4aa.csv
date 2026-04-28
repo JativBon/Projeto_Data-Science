@@ -1,0 +1,8 @@
+From,To,Weight,Level,Method
+Fluxo_Aumenta,Falha_Bomba,1,1,ramex_forward_heuristic
+Fluxo_Aumenta,Nivel_Sobe,5,1,ramex_forward_heuristic
+Fluxo_Aumenta,Pressao_Sobe,7,1,ramex_forward_heuristic
+Falha_Bomba,Alarme_Falha,3,2,ramex_forward_heuristic
+Nivel_Sobe,Alarme_Nivel_Alto,3,2,ramex_forward_heuristic
+Nivel_Sobe,Valvula_Abre,4,2,ramex_forward_heuristic
+Alarme_Falha,Intervencao_Manual,1,3,ramex_forward_heuristic

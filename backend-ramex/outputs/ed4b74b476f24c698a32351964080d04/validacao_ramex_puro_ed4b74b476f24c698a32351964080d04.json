@@ -1,0 +1,41 @@
+{
+  "dataset": "ed4b74b476f24c698a32351964080d04",
+  "best_algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+  "structural_type": "grafo pequeno e completo",
+  "rows": [
+    {
+      "Algoritmo": "RAMEX 2007 Rooted Branching",
+      "Metodo": "networkx_arborescence",
+      "Nos selecionados": 8,
+      "Arestas selecionadas": 7,
+      "Soma pesos selecionados": 79,
+      "Peso preservado (%)": 17.752808988764045,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "Smartphone"
+    },
+    {
+      "Algoritmo": "RAMEX Forward Heuristic",
+      "Metodo": "RAMEX Forward Heuristic",
+      "Nos selecionados": 8,
+      "Arestas selecionadas": 7,
+      "Soma pesos selecionados": 77.0,
+      "Peso preservado (%)": 17.303370786516854,
+      "Aciclico": true,
+      "Conectado": null,
+      "Raiz ou aresta inicial": "Smartphone"
+    },
+    {
+      "Algoritmo": "RAMEX Back-and-Forward Poly-tree Formal",
+      "Metodo": "ramex_back_forward_polytree_formal",
+      "Nos selecionados": 8,
+      "Arestas selecionadas": 7,
+      "Soma pesos selecionados": 83.0,
+      "Peso preservado (%)": 18.651685393258425,
+      "Aciclico": true,
+      "Conectado": true,
+      "Raiz ou aresta inicial": "Arroz 1kg -> Smartphone"
+    }
+  ],
+  "summary": "Os resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi RAMEX Back-and-Forward Poly-tree Formal (18.65%). Tipo estrutural: grafo pequeno e completo."
+}
