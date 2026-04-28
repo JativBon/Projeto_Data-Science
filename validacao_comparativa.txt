@@ -1,0 +1,42 @@
+VALIDACAO COMPARATIVA DA FRAMEWORK
+==========================================
+
+Dataset 01
+----------
+Número de nós no grafo: 200
+Número de arestas no grafo: 38815
+Soma total dos pesos: 139834
+Arestas RAMEX selecionadas: 199
+Soma dos pesos RAMEX: 1842
+Percentagem de peso preservado: 1.32%
+Densidade aproximada do grafo: 0.9753
+Top 5 transições mais fortes: 118->55 (15); 41->139 (14); 62->169 (13); 65->43 (13); 98->65 (13)
+Interpretação: Dataset 01: muitos nós e elevada densidade; grafo denso/disperso e com baixa legibilidade visual; baixa percentagem RAMEX; a estrutura simplificada preserva apenas parte do comportamento.
+
+Dataset 02
+----------
+Número de nós no grafo: 281
+Número de arestas no grafo: 272
+Soma total dos pesos: 272
+Arestas RAMEX selecionadas: 16
+Soma dos pesos RAMEX: 16
+Percentagem de peso preservado: 5.88%
+Densidade aproximada do grafo: 0.0035
+Top 5 transições mais fortes: 1005->987 (1); 10053->427 (1); 10065->4204 (1); 1021->7399 (1); 1022->2933 (1)
+Interpretação: Dataset 02: muitos nós e poucas repetições; sequência pouco recorrente; baixa percentagem RAMEX; a estrutura simplificada preserva apenas parte do comportamento.
+
+Dataset 03
+----------
+Número de nós no grafo: 4
+Número de arestas no grafo: 12
+Soma total dos pesos: 352
+Arestas RAMEX selecionadas: 3
+Soma dos pesos RAMEX: 123
+Percentagem de peso preservado: 34.94%
+Densidade aproximada do grafo: 1.0000
+Top 5 transições mais fortes: Tecnologia->Mercearia (75); Mercearia->Tecnologia (74); Limpeza->Mercearia (29); Tecnologia->Higiene (26); Higiene->Tecnologia (24)
+Interpretação: Dataset 03: poucos nós e transições fortes; apresenta padrões sequenciais interpretáveis; percentagem RAMEX moderada; a estrutura simplificada resume uma parte relevante do grafo.
+
+Conclusão comparativa final
+-----------------------------
+O Dataset 03 apresenta maior potencial para extracao de padroes sequenciais interpretaveis, por possuir poucos nos, transicoes recorrentes e uma estrutura RAMEX simplificada compreensivel. O Dataset 01 revela elevada dispersao e densidade, exigindo filtragem para tornar a leitura do grafo mais clara. O Dataset 02 apresenta muitas transicoes unicas, sugerindo baixa repeticao de padroes.

@@ -1,0 +1,61 @@
+{
+  "algorithm": "RAMEX Back-and-Forward Heuristic",
+  "initial_edge": {
+    "from": "Tecnologia",
+    "to": "Mercearia",
+    "weight": 75.0
+  },
+  "metrics": {
+    "original_nodes": 4,
+    "original_edges": 12,
+    "selected_nodes": 4,
+    "selected_edges": 3,
+    "original_weight_sum": 352.0,
+    "selected_weight_sum": 130.0,
+    "preserved_weight_percent": 36.93181818181818,
+    "is_acyclic": true,
+    "is_connected": true
+  },
+  "nodes": [
+    {
+      "id": "Tecnologia",
+      "level": 0
+    },
+    {
+      "id": "Higiene",
+      "level": 1
+    },
+    {
+      "id": "Mercearia",
+      "level": 1
+    },
+    {
+      "id": "Limpeza",
+      "level": 2
+    }
+  ],
+  "edges": [
+    {
+      "from": "Tecnologia",
+      "to": "Mercearia",
+      "weight": 75.0,
+      "level": 0,
+      "direction": "INITIAL"
+    },
+    {
+      "from": "Limpeza",
+      "to": "Mercearia",
+      "weight": 29.0,
+      "level": 2,
+      "direction": "BACKWARD"
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Higiene",
+      "weight": 26.0,
+      "level": 1,
+      "direction": "FORWARD"
+    }
+  ],
+  "warnings": []
+}

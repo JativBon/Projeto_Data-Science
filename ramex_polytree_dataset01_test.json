@@ -1,0 +1,160 @@
+{
+  "root": "150",
+  "nodes": [
+    {
+      "id": "150",
+      "level": 0
+    },
+    {
+      "id": "120",
+      "level": 1
+    },
+    {
+      "id": "132",
+      "level": 1
+    },
+    {
+      "id": "109",
+      "level": 2
+    },
+    {
+      "id": "122",
+      "level": 2
+    },
+    {
+      "id": "15",
+      "level": 2
+    },
+    {
+      "id": "72",
+      "level": 2
+    },
+    {
+      "id": "100",
+      "level": 3
+    },
+    {
+      "id": "125",
+      "level": 3
+    },
+    {
+      "id": "126",
+      "level": 3
+    },
+    {
+      "id": "139",
+      "level": 3
+    },
+    {
+      "id": "160",
+      "level": 3
+    },
+    {
+      "id": "168",
+      "level": 3
+    },
+    {
+      "id": "37",
+      "level": 3
+    },
+    {
+      "id": "78",
+      "level": 3
+    }
+  ],
+  "edges": [
+    {
+      "from": "150",
+      "to": "120",
+      "weight": 9.0,
+      "level": 1
+    },
+    {
+      "from": "150",
+      "to": "132",
+      "weight": 9.0,
+      "level": 1
+    },
+    {
+      "from": "120",
+      "to": "15",
+      "weight": 10.0,
+      "level": 2
+    },
+    {
+      "from": "120",
+      "to": "122",
+      "weight": 8.0,
+      "level": 2
+    },
+    {
+      "from": "132",
+      "to": "72",
+      "weight": 10.0,
+      "level": 2
+    },
+    {
+      "from": "132",
+      "to": "109",
+      "weight": 9.0,
+      "level": 2
+    },
+    {
+      "from": "15",
+      "to": "125",
+      "weight": 8.0,
+      "level": 3
+    },
+    {
+      "from": "15",
+      "to": "126",
+      "weight": 8.0,
+      "level": 3
+    },
+    {
+      "from": "122",
+      "to": "139",
+      "weight": 9.0,
+      "level": 3
+    },
+    {
+      "from": "122",
+      "to": "100",
+      "weight": 8.0,
+      "level": 3
+    },
+    {
+      "from": "72",
+      "to": "78",
+      "weight": 9.0,
+      "level": 3
+    },
+    {
+      "from": "72",
+      "to": "160",
+      "weight": 8.0,
+      "level": 3
+    },
+    {
+      "from": "109",
+      "to": "168",
+      "weight": 10.0,
+      "level": 3
+    },
+    {
+      "from": "109",
+      "to": "37",
+      "weight": 9.0,
+      "level": 3
+    }
+  ],
+  "metrics": {
+    "original_nodes": 200,
+    "original_edges": 38815,
+    "polytree_nodes": 15,
+    "polytree_edges": 14,
+    "original_weight_sum": 139834.0,
+    "polytree_weight_sum": 124.0,
+    "preserved_weight_percent": 0.08867657365161549
+  }
+}

@@ -1,0 +1,15 @@
+From,To,Weight,Level,ParentPath,Reason
+150,120,9,1,150,top-2 outgoing edge
+150,132,9,1,150,top-2 outgoing edge
+120,15,10,2,150 -> 120,top-2 outgoing edge
+120,122,8,2,150 -> 120,top-2 outgoing edge
+132,72,10,2,150 -> 132,top-2 outgoing edge
+132,109,9,2,150 -> 132,top-2 outgoing edge
+15,125,8,3,150 -> 120 -> 15,top-2 outgoing edge
+15,126,8,3,150 -> 120 -> 15,top-2 outgoing edge
+122,139,9,3,150 -> 120 -> 122,top-2 outgoing edge
+122,100,8,3,150 -> 120 -> 122,top-2 outgoing edge
+72,78,9,3,150 -> 132 -> 72,top-2 outgoing edge
+72,160,8,3,150 -> 132 -> 72,top-2 outgoing edge
+109,168,10,3,150 -> 132 -> 109,top-2 outgoing edge
+109,37,9,3,150 -> 132 -> 109,top-2 outgoing edge

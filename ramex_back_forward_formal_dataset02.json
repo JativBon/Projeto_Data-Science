@@ -1,0 +1,211 @@
+{
+  "algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+  "method": "ramex_back_forward_polytree_formal",
+  "initial_edge": {
+    "from": "10838",
+    "to": "11168",
+    "weight": 1.0
+  },
+  "metrics": {
+    "original_nodes": 281,
+    "original_edges": 272,
+    "selected_nodes": 17,
+    "selected_edges": 16,
+    "original_weight_sum": 272.0,
+    "selected_weight_sum": 16.0,
+    "preserved_weight_percent": 5.88235294117647,
+    "is_acyclic": true,
+    "is_connected": true,
+    "is_polytree": true,
+    "is_tree_undirected": true,
+    "rejected_edges_count": 0
+  },
+  "nodes": [
+    {
+      "id": "10838",
+      "level": 0
+    },
+    {
+      "id": "11168",
+      "level": 1
+    },
+    {
+      "id": "222134",
+      "level": 1
+    },
+    {
+      "id": "3019",
+      "level": 2
+    },
+    {
+      "id": "45475",
+      "level": 2
+    },
+    {
+      "id": "9533",
+      "level": 3
+    },
+    {
+      "id": "6317",
+      "level": 4
+    },
+    {
+      "id": "6562",
+      "level": 5
+    },
+    {
+      "id": "2450",
+      "level": 6
+    },
+    {
+      "id": "7681",
+      "level": 7
+    },
+    {
+      "id": "3491",
+      "level": 8
+    },
+    {
+      "id": "10053",
+      "level": 9
+    },
+    {
+      "id": "427",
+      "level": 10
+    },
+    {
+      "id": "8527",
+      "level": 11
+    },
+    {
+      "id": "5870",
+      "level": 12
+    },
+    {
+      "id": "181",
+      "level": 13
+    },
+    {
+      "id": "696",
+      "level": 14
+    }
+  ],
+  "edges": [
+    {
+      "from": "10838",
+      "to": "11168",
+      "weight": 1.0,
+      "level": 0,
+      "direction": "INITIAL"
+    },
+    {
+      "from": "222134",
+      "to": "10838",
+      "weight": 1.0,
+      "level": 1,
+      "direction": "BACKWARD"
+    },
+    {
+      "from": "45475",
+      "to": "222134",
+      "weight": 1.0,
+      "level": 2,
+      "direction": "BACKWARD"
+    },
+    {
+      "from": "11168",
+      "to": "3019",
+      "weight": 1.0,
+      "level": 2,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "3019",
+      "to": "9533",
+      "weight": 1.0,
+      "level": 3,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "9533",
+      "to": "6317",
+      "weight": 1.0,
+      "level": 4,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "6317",
+      "to": "6562",
+      "weight": 1.0,
+      "level": 5,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "6562",
+      "to": "2450",
+      "weight": 1.0,
+      "level": 6,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "2450",
+      "to": "7681",
+      "weight": 1.0,
+      "level": 7,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "7681",
+      "to": "3491",
+      "weight": 1.0,
+      "level": 8,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "3491",
+      "to": "10053",
+      "weight": 1.0,
+      "level": 9,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "10053",
+      "to": "427",
+      "weight": 1.0,
+      "level": 10,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "427",
+      "to": "8527",
+      "weight": 1.0,
+      "level": 11,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "8527",
+      "to": "5870",
+      "weight": 1.0,
+      "level": 12,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "5870",
+      "to": "181",
+      "weight": 1.0,
+      "level": 13,
+      "direction": "FORWARD"
+    },
+    {
+      "from": "181",
+      "to": "696",
+      "weight": 1.0,
+      "level": 14,
+      "direction": "FORWARD"
+    }
+  ],
+  "rejected_edges": [],
+  "warnings": [
+    "Incluídos 17 de 281 nós originais."
+  ]
+}

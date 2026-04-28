@@ -1,0 +1,12 @@
+From,To,Weight,Level,Strategy,Score,Reason,ParentPath
+Tecnologia,Mercearia,75,1,multiobjective,0.8287,alto peso e elevada probabilidade local,Tecnologia
+Tecnologia,Higiene,26,1,multiobjective,0.3744,boa cobertura global,Tecnologia
+Tecnologia,Limpeza,22,1,multiobjective,0.3373,boa cobertura global,Tecnologia
+Limpeza,Mercearia,29,2,multiobjective,0.4676,boa cobertura global,Tecnologia -> Limpeza
+Higiene,Mercearia,23,2,multiobjective,0.3866,boa cobertura global,Tecnologia -> Higiene
+Mercearia,Higiene,23,2,multiobjective,0.3178,boa cobertura global,Tecnologia -> Mercearia
+Mercearia,Limpeza,18,2,multiobjective,0.2705,boa cobertura global,Tecnologia -> Mercearia
+Mercearia,Higiene,23,3,multiobjective,0.2937,destino central no grafo,Tecnologia -> Limpeza -> Mercearia
+Mercearia,Limpeza,18,3,multiobjective,0.2485,destino central no grafo,Tecnologia -> Higiene -> Mercearia
+Higiene,Limpeza,11,3,multiobjective,0.2228,destino central no grafo,Tecnologia -> Mercearia -> Higiene
+Limpeza,Higiene,4,3,multiobjective,0.1364,destino central no grafo,Tecnologia -> Mercearia -> Limpeza

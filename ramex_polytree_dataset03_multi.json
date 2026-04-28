@@ -1,0 +1,163 @@
+{
+  "root": "Tecnologia",
+  "strategy": "multiobjective",
+  "nodes": [
+    {
+      "id": "Tecnologia",
+      "level": 0
+    },
+    {
+      "id": "Higiene",
+      "level": 1
+    },
+    {
+      "id": "Limpeza",
+      "level": 1
+    },
+    {
+      "id": "Mercearia",
+      "level": 1
+    }
+  ],
+  "edges": [
+    {
+      "from": "Tecnologia",
+      "to": "Mercearia",
+      "weight": 75.0,
+      "level": 1,
+      "strategy": "multiobjective",
+      "score": 0.8287,
+      "reason": "alto peso e elevada probabilidade local"
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Higiene",
+      "weight": 26.0,
+      "level": 1,
+      "strategy": "multiobjective",
+      "score": 0.3744,
+      "reason": "boa cobertura global"
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Limpeza",
+      "weight": 22.0,
+      "level": 1,
+      "strategy": "multiobjective",
+      "score": 0.3373,
+      "reason": "boa cobertura global"
+    },
+    {
+      "from": "Limpeza",
+      "to": "Mercearia",
+      "weight": 29.0,
+      "level": 2,
+      "strategy": "multiobjective",
+      "score": 0.4676,
+      "reason": "boa cobertura global"
+    },
+    {
+      "from": "Higiene",
+      "to": "Mercearia",
+      "weight": 23.0,
+      "level": 2,
+      "strategy": "multiobjective",
+      "score": 0.3866,
+      "reason": "boa cobertura global"
+    },
+    {
+      "from": "Mercearia",
+      "to": "Higiene",
+      "weight": 23.0,
+      "level": 2,
+      "strategy": "multiobjective",
+      "score": 0.3178,
+      "reason": "boa cobertura global"
+    },
+    {
+      "from": "Mercearia",
+      "to": "Limpeza",
+      "weight": 18.0,
+      "level": 2,
+      "strategy": "multiobjective",
+      "score": 0.2705,
+      "reason": "boa cobertura global"
+    },
+    {
+      "from": "Mercearia",
+      "to": "Higiene",
+      "weight": 23.0,
+      "level": 3,
+      "strategy": "multiobjective",
+      "score": 0.2937,
+      "reason": "destino central no grafo"
+    },
+    {
+      "from": "Mercearia",
+      "to": "Limpeza",
+      "weight": 18.0,
+      "level": 3,
+      "strategy": "multiobjective",
+      "score": 0.2485,
+      "reason": "destino central no grafo"
+    },
+    {
+      "from": "Higiene",
+      "to": "Limpeza",
+      "weight": 11.0,
+      "level": 3,
+      "strategy": "multiobjective",
+      "score": 0.2228,
+      "reason": "destino central no grafo"
+    },
+    {
+      "from": "Limpeza",
+      "to": "Higiene",
+      "weight": 4.0,
+      "level": 3,
+      "strategy": "multiobjective",
+      "score": 0.1364,
+      "reason": "destino central no grafo"
+    }
+  ],
+  "metrics": {
+    "original_nodes": 4,
+    "original_edges": 12,
+    "polytree_nodes": 4,
+    "polytree_edges": 11,
+    "original_weight_sum": 352.0,
+    "polytree_weight_sum": 231.0,
+    "preserved_weight_percent": 65.625,
+    "coverage_by_level": {
+      "1": 123.0,
+      "2": 93.0,
+      "3": 56.0
+    },
+    "average_branching": 2.75,
+    "branching_average": 2.75,
+    "max_depth": 3,
+    "max_depth_reached": 3,
+    "repeated_nodes": 8,
+    "average_score": 0.35311818181818183,
+    "density_before": 1.0,
+    "density_after": 0.75,
+    "edge_reduction_percent": 25.0,
+    "interpretability_score": 56.75
+  },
+  "parameters": {
+    "strategy": "multiobjective",
+    "min_weight": null,
+    "top_k_per_node": 2,
+    "max_depth": 3,
+    "alpha": 0.45,
+    "beta": 0.35,
+    "gamma": 0.15,
+    "delta": 0.15,
+    "epsilon": 0.05,
+    "zeta": 0.05,
+    "preserve_weight_target": 0.8,
+    "max_branching": 4,
+    "min_score": 0.0
+  },
+  "scoring_formula": "score = alpha * normalized_weight + beta * transition_probability + gamma * coverage_gain + delta * target_centrality - epsilon * redundancy_penalty - zeta * complexity_penalty"
+}

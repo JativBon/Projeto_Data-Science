@@ -1,0 +1,10 @@
+digraph ramex_back_forward {
+  rankdir="LR";
+  "Tecnologia";
+  "Mercearia";
+  "Limpeza";
+  "Higiene";
+  "Tecnologia" -> "Mercearia" [label="75 (INITIAL)", weight="75.0"];
+  "Tecnologia" -> "Higiene" [label="26 (FORWARD)", weight="26.0"];
+  "Limpeza" -> "Mercearia" [label="29 (BACKWARD)", weight="29.0"];
+}

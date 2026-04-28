@@ -1,0 +1,17 @@
+From,To,Weight,Level,Direction,Method
+10838,11168,1,0,INITIAL,ramex_back_forward_heuristic
+222134,10838,1,1,BACKWARD,ramex_back_forward_heuristic
+45475,222134,1,2,BACKWARD,ramex_back_forward_heuristic
+11168,3019,1,2,FORWARD,ramex_back_forward_heuristic
+3019,9533,1,3,FORWARD,ramex_back_forward_heuristic
+9533,6317,1,4,FORWARD,ramex_back_forward_heuristic
+6317,6562,1,5,FORWARD,ramex_back_forward_heuristic
+6562,2450,1,6,FORWARD,ramex_back_forward_heuristic
+2450,7681,1,7,FORWARD,ramex_back_forward_heuristic
+7681,3491,1,8,FORWARD,ramex_back_forward_heuristic
+3491,10053,1,9,FORWARD,ramex_back_forward_heuristic
+10053,427,1,10,FORWARD,ramex_back_forward_heuristic
+427,8527,1,11,FORWARD,ramex_back_forward_heuristic
+8527,5870,1,12,FORWARD,ramex_back_forward_heuristic
+5870,181,1,13,FORWARD,ramex_back_forward_heuristic
+181,696,1,14,FORWARD,ramex_back_forward_heuristic

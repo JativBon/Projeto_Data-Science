@@ -1,0 +1,4 @@
+Fase,Ficheiro,Algoritmo,Metodo,Nos originais,Arestas originais,Nos selecionados,Arestas selecionadas,Soma pesos originais,Soma pesos selecionados,Peso preservado (%),Aciclico,Conectado,Raiz ou aresta inicial,Observacoes
+10A,ramex2007_dataset03.json,RAMEX 2007 Rooted Branching,networkx_arborescence,4,12,4,3,352.0,123.0,34.94318181818182,True,Nao disponivel,Tecnologia,Nó SOURCE não existe e o grafo não tem nós sem entradas; será usada uma raiz real se necessário. | Versao base inspirada no RAMEX 2007 com rooted branching.
+10B,ramex_forward_dataset03.json,RAMEX Forward Heuristic,ramex_forward_heuristic,4,12,4,3,352.0,123.0,34.94318181818182,True,Nao disponivel,Tecnologia,Heuristica simples enraizada numa raiz conhecida.
+10C,ramex_back_forward_dataset03.json,RAMEX Back-and-Forward Heuristic,ramex_back_forward_heuristic,4,12,4,3,352.0,130.0,36.93181818181818,True,True,Tecnologia -> Mercearia (75.0),"Heuristica sem raiz explicita, com expansao forward e backward."

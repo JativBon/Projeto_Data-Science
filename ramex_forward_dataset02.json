@@ -1,0 +1,199 @@
+{
+  "algorithm": "RAMEX Forward Heuristic",
+  "root": "45",
+  "metrics": {
+    "original_nodes": 281,
+    "original_edges": 272,
+    "selected_nodes": 17,
+    "selected_edges": 16,
+    "original_weight_sum": 272.0,
+    "selected_weight_sum": 16.0,
+    "preserved_weight_percent": 5.88235294117647,
+    "is_acyclic": true
+  },
+  "nodes": [
+    {
+      "id": "45",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "137",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "22144",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "284",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "27",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "16",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "12",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "19",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "2",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "49",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "18",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "4443",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "262",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "50",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "145",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "9",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "402",
+      "level": 10,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "45",
+      "to": "137",
+      "weight": 1.0,
+      "level": 1
+    },
+    {
+      "from": "45",
+      "to": "22144",
+      "weight": 1.0,
+      "level": 1
+    },
+    {
+      "from": "137",
+      "to": "284",
+      "weight": 1.0,
+      "level": 2
+    },
+    {
+      "from": "284",
+      "to": "27",
+      "weight": 1.0,
+      "level": 3
+    },
+    {
+      "from": "27",
+      "to": "16",
+      "weight": 1.0,
+      "level": 4
+    },
+    {
+      "from": "16",
+      "to": "12",
+      "weight": 1.0,
+      "level": 5
+    },
+    {
+      "from": "16",
+      "to": "19",
+      "weight": 1.0,
+      "level": 5
+    },
+    {
+      "from": "12",
+      "to": "2",
+      "weight": 1.0,
+      "level": 6
+    },
+    {
+      "from": "19",
+      "to": "49",
+      "weight": 1.0,
+      "level": 6
+    },
+    {
+      "from": "2",
+      "to": "4443",
+      "weight": 1.0,
+      "level": 7
+    },
+    {
+      "from": "49",
+      "to": "18",
+      "weight": 1.0,
+      "level": 7
+    },
+    {
+      "from": "18",
+      "to": "262",
+      "weight": 1.0,
+      "level": 8
+    },
+    {
+      "from": "18",
+      "to": "50",
+      "weight": 1.0,
+      "level": 8
+    },
+    {
+      "from": "262",
+      "to": "145",
+      "weight": 1.0,
+      "level": 9
+    },
+    {
+      "from": "50",
+      "to": "9",
+      "weight": 1.0,
+      "level": 9
+    },
+    {
+      "from": "9",
+      "to": "402",
+      "weight": 1.0,
+      "level": 10
+    }
+  ]
+}

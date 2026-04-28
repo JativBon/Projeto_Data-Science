@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(8, 145, 178, 0.24),
+      transparent 30rem
+    ),
+    radial-gradient(
+      circle at 90% 16%,
+      rgba(245, 158, 11, 0.14),
+      transparent 28rem
+    ),
+    linear-gradient(135deg, #020617 0%, #0f172a 58%, #1e293b 100%);
+  color: #e2e8f0;
+  font-family:
+    "Space Grotesk",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+code,
+pre,
+.font-mono {
+  font-family:
+    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+button,
+select {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  color: #0f172a;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+select option {
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+@keyframes ramexPulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.76;
+    transform: scale(1.08);
+  }
+}
+
+.ramex-pulse {
+  animation: ramexPulse 2.4s ease-in-out infinite;
+  transform-origin: center;
+}

@@ -1,0 +1,3559 @@
+{
+  "root": "150",
+  "nodes": [
+    {
+      "id": "150",
+      "level": 0
+    },
+    {
+      "id": "120",
+      "level": 1
+    },
+    {
+      "id": "132",
+      "level": 1
+    },
+    {
+      "id": "185",
+      "level": 1
+    },
+    {
+      "id": "109",
+      "level": 2
+    },
+    {
+      "id": "122",
+      "level": 2
+    },
+    {
+      "id": "131",
+      "level": 2
+    },
+    {
+      "id": "149",
+      "level": 2
+    },
+    {
+      "id": "15",
+      "level": 2
+    },
+    {
+      "id": "189",
+      "level": 2
+    },
+    {
+      "id": "72",
+      "level": 2
+    },
+    {
+      "id": "84",
+      "level": 2
+    },
+    {
+      "id": "10",
+      "level": 3
+    },
+    {
+      "id": "100",
+      "level": 3
+    },
+    {
+      "id": "108",
+      "level": 3
+    },
+    {
+      "id": "125",
+      "level": 3
+    },
+    {
+      "id": "126",
+      "level": 3
+    },
+    {
+      "id": "139",
+      "level": 3
+    },
+    {
+      "id": "151",
+      "level": 3
+    },
+    {
+      "id": "153",
+      "level": 3
+    },
+    {
+      "id": "160",
+      "level": 3
+    },
+    {
+      "id": "168",
+      "level": 3
+    },
+    {
+      "id": "177",
+      "level": 3
+    },
+    {
+      "id": "18",
+      "level": 3
+    },
+    {
+      "id": "194",
+      "level": 3
+    },
+    {
+      "id": "195",
+      "level": 3
+    },
+    {
+      "id": "197",
+      "level": 3
+    },
+    {
+      "id": "200",
+      "level": 3
+    },
+    {
+      "id": "37",
+      "level": 3
+    },
+    {
+      "id": "48",
+      "level": 3
+    },
+    {
+      "id": "7",
+      "level": 3
+    },
+    {
+      "id": "78",
+      "level": 3
+    },
+    {
+      "id": "81",
+      "level": 3
+    },
+    {
+      "id": "89",
+      "level": 3
+    },
+    {
+      "id": "92",
+      "level": 3
+    },
+    {
+      "id": "93",
+      "level": 3
+    },
+    {
+      "id": "1",
+      "level": 4
+    },
+    {
+      "id": "102",
+      "level": 4
+    },
+    {
+      "id": "104",
+      "level": 4
+    },
+    {
+      "id": "106",
+      "level": 4
+    },
+    {
+      "id": "111",
+      "level": 4
+    },
+    {
+      "id": "117",
+      "level": 4
+    },
+    {
+      "id": "119",
+      "level": 4
+    },
+    {
+      "id": "124",
+      "level": 4
+    },
+    {
+      "id": "129",
+      "level": 4
+    },
+    {
+      "id": "133",
+      "level": 4
+    },
+    {
+      "id": "135",
+      "level": 4
+    },
+    {
+      "id": "141",
+      "level": 4
+    },
+    {
+      "id": "143",
+      "level": 4
+    },
+    {
+      "id": "147",
+      "level": 4
+    },
+    {
+      "id": "155",
+      "level": 4
+    },
+    {
+      "id": "159",
+      "level": 4
+    },
+    {
+      "id": "16",
+      "level": 4
+    },
+    {
+      "id": "162",
+      "level": 4
+    },
+    {
+      "id": "163",
+      "level": 4
+    },
+    {
+      "id": "166",
+      "level": 4
+    },
+    {
+      "id": "167",
+      "level": 4
+    },
+    {
+      "id": "172",
+      "level": 4
+    },
+    {
+      "id": "174",
+      "level": 4
+    },
+    {
+      "id": "175",
+      "level": 4
+    },
+    {
+      "id": "178",
+      "level": 4
+    },
+    {
+      "id": "179",
+      "level": 4
+    },
+    {
+      "id": "181",
+      "level": 4
+    },
+    {
+      "id": "184",
+      "level": 4
+    },
+    {
+      "id": "2",
+      "level": 4
+    },
+    {
+      "id": "21",
+      "level": 4
+    },
+    {
+      "id": "24",
+      "level": 4
+    },
+    {
+      "id": "27",
+      "level": 4
+    },
+    {
+      "id": "28",
+      "level": 4
+    },
+    {
+      "id": "30",
+      "level": 4
+    },
+    {
+      "id": "32",
+      "level": 4
+    },
+    {
+      "id": "34",
+      "level": 4
+    },
+    {
+      "id": "38",
+      "level": 4
+    },
+    {
+      "id": "39",
+      "level": 4
+    },
+    {
+      "id": "45",
+      "level": 4
+    },
+    {
+      "id": "47",
+      "level": 4
+    },
+    {
+      "id": "51",
+      "level": 4
+    },
+    {
+      "id": "53",
+      "level": 4
+    },
+    {
+      "id": "56",
+      "level": 4
+    },
+    {
+      "id": "57",
+      "level": 4
+    },
+    {
+      "id": "64",
+      "level": 4
+    },
+    {
+      "id": "66",
+      "level": 4
+    },
+    {
+      "id": "68",
+      "level": 4
+    },
+    {
+      "id": "70",
+      "level": 4
+    },
+    {
+      "id": "74",
+      "level": 4
+    },
+    {
+      "id": "77",
+      "level": 4
+    },
+    {
+      "id": "8",
+      "level": 4
+    },
+    {
+      "id": "82",
+      "level": 4
+    },
+    {
+      "id": "85",
+      "level": 4
+    },
+    {
+      "id": "87",
+      "level": 4
+    },
+    {
+      "id": "9",
+      "level": 4
+    },
+    {
+      "id": "90",
+      "level": 4
+    },
+    {
+      "id": "99",
+      "level": 4
+    },
+    {
+      "id": "103",
+      "level": 5
+    },
+    {
+      "id": "107",
+      "level": 5
+    },
+    {
+      "id": "11",
+      "level": 5
+    },
+    {
+      "id": "110",
+      "level": 5
+    },
+    {
+      "id": "113",
+      "level": 5
+    },
+    {
+      "id": "115",
+      "level": 5
+    },
+    {
+      "id": "118",
+      "level": 5
+    },
+    {
+      "id": "12",
+      "level": 5
+    },
+    {
+      "id": "121",
+      "level": 5
+    },
+    {
+      "id": "123",
+      "level": 5
+    },
+    {
+      "id": "13",
+      "level": 5
+    },
+    {
+      "id": "130",
+      "level": 5
+    },
+    {
+      "id": "136",
+      "level": 5
+    },
+    {
+      "id": "140",
+      "level": 5
+    },
+    {
+      "id": "148",
+      "level": 5
+    },
+    {
+      "id": "152",
+      "level": 5
+    },
+    {
+      "id": "156",
+      "level": 5
+    },
+    {
+      "id": "157",
+      "level": 5
+    },
+    {
+      "id": "158",
+      "level": 5
+    },
+    {
+      "id": "161",
+      "level": 5
+    },
+    {
+      "id": "165",
+      "level": 5
+    },
+    {
+      "id": "17",
+      "level": 5
+    },
+    {
+      "id": "173",
+      "level": 5
+    },
+    {
+      "id": "176",
+      "level": 5
+    },
+    {
+      "id": "182",
+      "level": 5
+    },
+    {
+      "id": "186",
+      "level": 5
+    },
+    {
+      "id": "192",
+      "level": 5
+    },
+    {
+      "id": "198",
+      "level": 5
+    },
+    {
+      "id": "199",
+      "level": 5
+    },
+    {
+      "id": "20",
+      "level": 5
+    },
+    {
+      "id": "23",
+      "level": 5
+    },
+    {
+      "id": "29",
+      "level": 5
+    },
+    {
+      "id": "3",
+      "level": 5
+    },
+    {
+      "id": "35",
+      "level": 5
+    },
+    {
+      "id": "36",
+      "level": 5
+    },
+    {
+      "id": "40",
+      "level": 5
+    },
+    {
+      "id": "41",
+      "level": 5
+    },
+    {
+      "id": "42",
+      "level": 5
+    },
+    {
+      "id": "43",
+      "level": 5
+    },
+    {
+      "id": "52",
+      "level": 5
+    },
+    {
+      "id": "54",
+      "level": 5
+    },
+    {
+      "id": "59",
+      "level": 5
+    },
+    {
+      "id": "60",
+      "level": 5
+    },
+    {
+      "id": "62",
+      "level": 5
+    },
+    {
+      "id": "63",
+      "level": 5
+    },
+    {
+      "id": "65",
+      "level": 5
+    },
+    {
+      "id": "67",
+      "level": 5
+    },
+    {
+      "id": "69",
+      "level": 5
+    },
+    {
+      "id": "71",
+      "level": 5
+    },
+    {
+      "id": "73",
+      "level": 5
+    },
+    {
+      "id": "76",
+      "level": 5
+    },
+    {
+      "id": "79",
+      "level": 5
+    },
+    {
+      "id": "80",
+      "level": 5
+    },
+    {
+      "id": "83",
+      "level": 5
+    },
+    {
+      "id": "88",
+      "level": 5
+    },
+    {
+      "id": "91",
+      "level": 5
+    },
+    {
+      "id": "96",
+      "level": 5
+    },
+    {
+      "id": "97",
+      "level": 5
+    },
+    {
+      "id": "98",
+      "level": 5
+    }
+  ],
+  "edges": [
+    {
+      "from": "150",
+      "to": "185",
+      "weight": 9.0,
+      "level": 1,
+      "score": 0.35580297816802586,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "150",
+      "to": "120",
+      "weight": 9.0,
+      "level": 1,
+      "score": 0.3539090387740864,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "150",
+      "to": "132",
+      "weight": 9.0,
+      "level": 1,
+      "score": 0.3531514630165107,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "185",
+      "to": "131",
+      "weight": 11.0,
+      "level": 2,
+      "score": 0.396646886528654,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "185",
+      "to": "15",
+      "weight": 9.0,
+      "level": 2,
+      "score": 0.3485182515124249,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "185",
+      "to": "149",
+      "weight": 8.0,
+      "level": 2,
+      "score": 0.3263478733982497,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "120",
+      "to": "15",
+      "weight": 10.0,
+      "level": 2,
+      "score": 0.34400884688985833,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "120",
+      "to": "122",
+      "weight": 8.0,
+      "level": 2,
+      "score": 0.3064585926634018,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "120",
+      "to": "84",
+      "weight": 8.0,
+      "level": 2,
+      "score": 0.30607980478461394,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "132",
+      "to": "72",
+      "weight": 10.0,
+      "level": 2,
+      "score": 0.3359334791161539,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "132",
+      "to": "109",
+      "weight": 9.0,
+      "level": 2,
+      "score": 0.31033255544696275,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "132",
+      "to": "189",
+      "weight": 8.0,
+      "level": 2,
+      "score": 0.28586799541413527,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "131",
+      "to": "89",
+      "weight": 10.0,
+      "level": 3,
+      "score": 0.36632099221136877,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "131",
+      "to": "177",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3426237414750804,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "131",
+      "to": "18",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.32157800589030716,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "126",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.2991802987756189,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "93",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.2991802987756189,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "92",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.29880151089683105,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "149",
+      "to": "48",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3093952592964825,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "149",
+      "to": "151",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3063649562661795,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "149",
+      "to": "125",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.2849506681961999,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "126",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28479076479076476,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "93",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28479076479076476,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "89",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28442055851587866,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "139",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3079580690880644,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "100",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28767148228703365,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "81",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28691390652945786,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "197",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3109374960217049,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "10",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.2880050469687882,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "153",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28762625909000034,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "72",
+      "to": "78",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3106048923996276,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "72",
+      "to": "160",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.287288523883844,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "72",
+      "to": "7",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28690973600505615,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "109",
+      "to": "168",
+      "weight": 10.0,
+      "level": 3,
+      "score": 0.3334265895408514,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "109",
+      "to": "37",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.31087938513222085,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "109",
+      "to": "200",
+      "weight": 8.0,
+      "level": 3,
+      "score": 0.28871096860237816,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "189",
+      "to": "194",
+      "weight": 10.0,
+      "level": 3,
+      "score": 0.33314298212421983,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "189",
+      "to": "195",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3113438354269494,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "189",
+      "to": "108",
+      "weight": 9.0,
+      "level": 3,
+      "score": 0.3102074717905858,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "89",
+      "to": "28",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3371562554509906,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "89",
+      "to": "74",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3352623160570512,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "89",
+      "to": "129",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.33488352817826333,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "177",
+      "to": "2",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.3401792955353704,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "177",
+      "to": "159",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.29243434551920544,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "177",
+      "to": "9",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2901616182464782,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "18",
+      "to": "160",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.3333662165047808,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "18",
+      "to": "178",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31193868576339373,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "18",
+      "to": "51",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28788489239574394,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "126",
+      "to": "30",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28723538218764283,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "126",
+      "to": "84",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28695129127855196,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "126",
+      "to": "87",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2864778064300671,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "93",
+      "to": "66",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.33240610940025955,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "93",
+      "to": "166",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2880460996414198,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "93",
+      "to": "21",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2853945844899047,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "92",
+      "to": "68",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.30832282195208954,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "92",
+      "to": "27",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28765900671835565,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "92",
+      "to": "167",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2861438552032041,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "48",
+      "to": "162",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.33162783060906836,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "48",
+      "to": "111",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3121014111845251,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "48",
+      "to": "45",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31172262330573725,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "151",
+      "to": "1",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31283488109458446,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "151",
+      "to": "56",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31207730533700867,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "151",
+      "to": "104",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28720844649484945,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "125",
+      "to": "174",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.3322756572531176,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "125",
+      "to": "57",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3101086975884119,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "125",
+      "to": "32",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2860477985297668,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "126",
+      "to": "30",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2864692248261654,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "126",
+      "to": "84",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2864692248261653,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "126",
+      "to": "87",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2857116490685896,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "93",
+      "to": "66",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.331670744714223,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "93",
+      "to": "166",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2873128803563586,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "93",
+      "to": "77",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28501579661111676,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "89",
+      "to": "28",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3104521567021567,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "89",
+      "to": "181",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.30888352817826337,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "89",
+      "to": "74",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3085582173082173,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "139",
+      "to": "82",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3098709122325079,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "139",
+      "to": "53",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2888246492571787,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "139",
+      "to": "117",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28579434622687566,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "100",
+      "to": "166",
+      "weight": 12.0,
+      "level": 4,
+      "score": 0.38148309492870675,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "100",
+      "to": "143",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3109374960217049,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "100",
+      "to": "68",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3076449552291641,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "81",
+      "to": "159",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.30957176775142925,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "81",
+      "to": "90",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2891495274388562,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "81",
+      "to": "10",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28739587985187526,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "197",
+      "to": "24",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3101753740013592,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "197",
+      "to": "38",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3094177982437834,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "197",
+      "to": "39",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.30903901036499554,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "10",
+      "to": "102",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.30983332201598823,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "10",
+      "to": "119",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.30945453413720037,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "10",
+      "to": "179",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3086969583796246,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "153",
+      "to": "175",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3095257402742199,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "153",
+      "to": "106",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28771816643903725,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "153",
+      "to": "160",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28622826744913826,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "78",
+      "to": "15",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3095156289563597,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "78",
+      "to": "141",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.30793938262204884,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "78",
+      "to": "47",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28803365997380775,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "135",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31167696389249117,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "16",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2876101631906319,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "70",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2860950116754803,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "7",
+      "to": "184",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.3314656875694268,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "7",
+      "to": "172",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31081911881248414,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "7",
+      "to": "163",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31006154305490835,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "168",
+      "to": "179",
+      "weight": 11.0,
+      "level": 4,
+      "score": 0.3557968942979946,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "168",
+      "to": "155",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31151450645123563,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "168",
+      "to": "66",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3078825991428577,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "37",
+      "to": "85",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.2876222179675381,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "37",
+      "to": "106",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28714602749134766,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "37",
+      "to": "195",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28714602749134766,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "200",
+      "to": "147",
+      "weight": 7.0,
+      "level": 4,
+      "score": 0.26388083886506114,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "200",
+      "to": "34",
+      "weight": 7.0,
+      "level": 4,
+      "score": 0.26388083886506114,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "200",
+      "to": "124",
+      "weight": 7.0,
+      "level": 4,
+      "score": 0.2631232631074854,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "194",
+      "to": "122",
+      "weight": 12.0,
+      "level": 4,
+      "score": 0.38251882775969337,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "194",
+      "to": "1",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31187120517685446,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "194",
+      "to": "177",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.309977265782915,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "195",
+      "to": "122",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.31095273369082593,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "195",
+      "to": "133",
+      "weight": 9.0,
+      "level": 4,
+      "score": 0.3095571994005548,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "195",
+      "to": "64",
+      "weight": 8.0,
+      "level": 4,
+      "score": 0.28703064189140226,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "108",
+      "to": "8",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.3361125776694923,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "108",
+      "to": "99",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.33308227463918927,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "108",
+      "to": "15",
+      "weight": 10.0,
+      "level": 4,
+      "score": 0.33293658699350165,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "28",
+      "to": "35",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.3088373805421898,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "28",
+      "to": "81",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.3065267744815837,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "28",
+      "to": "9",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.30387525933006854,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "74",
+      "to": "40",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.3587300076093691,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "74",
+      "to": "23",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.3572148560942176,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "74",
+      "to": "182",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2876507493357395,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "129",
+      "to": "159",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.35689269169638904,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "129",
+      "to": "76",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33587876865485716,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "129",
+      "to": "67",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3110408917893715,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "2",
+      "to": "69",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28810994926279154,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "2",
+      "to": "72",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2881011402423546,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "2",
+      "to": "45",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28772235236356675,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "159",
+      "to": "103",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3332374793366493,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "159",
+      "to": "59",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3084364586757117,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "159",
+      "to": "53",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2881808925602286,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "9",
+      "to": "198",
+      "weight": 12.0,
+      "level": 5,
+      "score": 0.3810680672110474,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "9",
+      "to": "189",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30919961943185464,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "9",
+      "to": "51",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28776591686123704,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "135",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.311304990747522,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "16",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28723926274615036,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "79",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2860950116754803,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "178",
+      "to": "159",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.35642511567739954,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "178",
+      "to": "36",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3101218093746451,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "178",
+      "to": "174",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3082520479304156,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "51",
+      "to": "149",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31149440617667434,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "51",
+      "to": "115",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31032647688374504,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "51",
+      "to": "175",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30884289102515916,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "30",
+      "to": "85",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33471748849735294,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "30",
+      "to": "115",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28656959995063436,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "30",
+      "to": "120",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2861908120718465,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "197",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31059450838398206,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "10",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2873297986982198,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "153",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28728434415276516,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "87",
+      "to": "18",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33648466933261734,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "87",
+      "to": "172",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3342119420598901,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "87",
+      "to": "43",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3108575927736872,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "97",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28690143096077986,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "23",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2858233423826913,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "13",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2853862794456284,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "81",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3335406658294469,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "72",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31137370616474125,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "135",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28731280710609614,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "21",
+      "to": "80",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33426397375812394,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "21",
+      "to": "20",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3094360612307964,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "21",
+      "to": "113",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2891536032489234,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "68",
+      "to": "163",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3098998166730619,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "68",
+      "to": "62",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2865102747531594,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "68",
+      "to": "89",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28628300202588663,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "27",
+      "to": "54",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.35617358399298144,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "27",
+      "to": "60",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31035414447910603,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "27",
+      "to": "71",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28820200047974404,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "167",
+      "to": "161",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33469452147128037,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "167",
+      "to": "122",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3112569672507871,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "167",
+      "to": "56",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2877662498192359,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "162",
+      "to": "165",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.335939039985429,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "162",
+      "to": "7",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28672145142407984,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "162",
+      "to": "176",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2858724441095553,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "111",
+      "to": "78",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3341082841630601,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "111",
+      "to": "110",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33136046700846333,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "111",
+      "to": "108",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31002526776524414,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "45",
+      "to": "141",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.331423574365748,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "45",
+      "to": "100",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28743178878552766,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "45",
+      "to": "153",
+      "weight": 7.0,
+      "level": 5,
+      "score": 0.26345357276309433,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "1",
+      "to": "47",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31146335367347605,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "1",
+      "to": "181",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3088118385219609,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "1",
+      "to": "66",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3078866025557413,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "56",
+      "to": "40",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33467292385170194,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "56",
+      "to": "102",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2857906362465619,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "56",
+      "to": "9",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2836278796483215,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "104",
+      "to": "195",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3344620969024227,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "104",
+      "to": "90",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28886477131703203,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "104",
+      "to": "85",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28708506953733015,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "174",
+      "to": "156",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3090711081542221,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "174",
+      "to": "166",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2872482872145274,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "174",
+      "to": "28",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2871299160024061,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "57",
+      "to": "102",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33311491110241426,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "57",
+      "to": "41",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3080301099688629,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "57",
+      "to": "136",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2865991549891576,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "32",
+      "to": "3",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.35671534419055057,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "32",
+      "to": "89",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33341202088948124,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "32",
+      "to": "118",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3104874854671998,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "30",
+      "to": "85",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33430062889018114,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "30",
+      "to": "115",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28640364196334345,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "30",
+      "to": "57",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2862821919073628,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "197",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31043764563888404,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "10",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2872611712472394,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "84",
+      "to": "195",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2868909649723533,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "87",
+      "to": "18",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33631764792592145,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "87",
+      "to": "172",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3340449206531942,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "87",
+      "to": "43",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31060639257557787,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "97",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2866547541187829,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "23",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2856590831231119,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "13",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28513960260363136,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "81",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3334546442900671,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "72",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31128875732584915,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "135",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2872289309676918,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "77",
+      "to": "148",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3099289657621625,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "77",
+      "to": "110",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3074247570079537,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "77",
+      "to": "113",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28902355879195585,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "28",
+      "to": "35",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2886004884360049,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "28",
+      "to": "81",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28602161753521615,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "28",
+      "to": "9",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28359841288598414,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "181",
+      "to": "121",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3330872549966594,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "181",
+      "to": "167",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30955330427176825,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "181",
+      "to": "82",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30955330427176825,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "74",
+      "to": "40",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.3582737634595597,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "74",
+      "to": "23",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.35653638972218604,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "74",
+      "to": "73",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2876507493357395,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "82",
+      "to": "161",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2871243992228154,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "82",
+      "to": "195",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28684529236476114,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "82",
+      "to": "159",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2857089287283975,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "53",
+      "to": "69",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31146502141131466,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "53",
+      "to": "167",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.309354631800925,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "53",
+      "to": "28",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2869648194170801,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "117",
+      "to": "64",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31106655890460116,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "117",
+      "to": "157",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28868849093341736,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "117",
+      "to": "35",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28863992838485486,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "81",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3331040173215047,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "72",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3111491008214217,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "166",
+      "to": "88",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28718416216613046,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "143",
+      "to": "99",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33277250575124495,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "143",
+      "to": "192",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3096827551761205,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "143",
+      "to": "52",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30892517941854475,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "68",
+      "to": "163",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30978167003795787,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "68",
+      "to": "62",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28629593183238516,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "68",
+      "to": "89",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28605743576055576,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "159",
+      "to": "103",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3330235002992518,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "159",
+      "to": "59",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3082235523388019,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "159",
+      "to": "53",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28814459477007404,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "90",
+      "to": "7",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31028001869467525,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "90",
+      "to": "34",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2875347154126698,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "90",
+      "to": "197",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2867543211081791,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "10",
+      "to": "119",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3092464671343982,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "10",
+      "to": "102",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30922842961636066,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "10",
+      "to": "179",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3082904786784097,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "24",
+      "to": "88",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3107643443022954,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "24",
+      "to": "107",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30944527121851645,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "24",
+      "to": "73",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2874505599581505,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "38",
+      "to": "165",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3355350250127978,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "38",
+      "to": "155",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3110909305453447,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "38",
+      "to": "34",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28721061338585496,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "39",
+      "to": "98",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28738759562470684,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "39",
+      "to": "93",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2870044538622547,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "39",
+      "to": "123",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28549365623076745,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "102",
+      "to": "181",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.3559366079538246,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "102",
+      "to": "147",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3110383541660769,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "102",
+      "to": "177",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31009138446910717,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "119",
+      "to": "90",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31260953876327197,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "119",
+      "to": "74",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2854934635789293,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "119",
+      "to": "123",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2853019416177444,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "179",
+      "to": "45",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3113615424908101,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "179",
+      "to": "1",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28842499998434895,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "179",
+      "to": "140",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28803779459714357,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "175",
+      "to": "7",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30996880096297436,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "175",
+      "to": "173",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30938188787606125,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "175",
+      "to": "65",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28645393400431035,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "106",
+      "to": "162",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33137604501714074,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "106",
+      "to": "158",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31052269611489963,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "106",
+      "to": "60",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3103415366946098,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "135",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3109504637099655,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "16",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2872431586476619,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "160",
+      "to": "70",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28590721860204454,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "126",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28681710724263915,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "93",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2866398022781001,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "92",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2866156243283903,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "141",
+      "to": "200",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33585932184621253,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "141",
+      "to": "167",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.285498462261659,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "141",
+      "to": "54",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28509176369706574,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "47",
+      "to": "42",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30982868391179785,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "47",
+      "to": "12",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2880295372145274,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "47",
+      "to": "163",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2859935523660425,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "135",
+      "to": "179",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30806940158343415,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "135",
+      "to": "152",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30744850186459627,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "135",
+      "to": "200",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.288347955005331,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "16",
+      "to": "42",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30965399107009345,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "16",
+      "to": "66",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30800742335209713,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "16",
+      "to": "199",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28764663838952303,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "70",
+      "to": "11",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33279533867877975,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "70",
+      "to": "17",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33241655079999183,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "70",
+      "to": "54",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30876243780753476,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "184",
+      "to": "45",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.287396074867592,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "184",
+      "to": "182",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2873506203221375,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "184",
+      "to": "67",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2869718324433496,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "172",
+      "to": "153",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31072411368136166,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "172",
+      "to": "106",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2872098965629839,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "172",
+      "to": "130",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2860247780511327,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "163",
+      "to": "165",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.3589165166555652,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "163",
+      "to": "11",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33237873252920447,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "163",
+      "to": "110",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3070293025323743,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "179",
+      "to": "45",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3110750093658525,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "179",
+      "to": "1",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28830135185761363,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "179",
+      "to": "140",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2878674006955071,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "155",
+      "to": "7",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3099313992261344,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "155",
+      "to": "148",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28596304380836396,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "155",
+      "to": "163",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2858610624563826,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "97",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2865753890394178,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "23",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2855003529643817,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "66",
+      "to": "13",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2850602375242663,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "85",
+      "to": "15",
+      "weight": 12.0,
+      "level": 5,
+      "score": 0.38088180403008837,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "85",
+      "to": "106",
+      "weight": 11.0,
+      "level": 5,
+      "score": 0.3581164249921322,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "85",
+      "to": "35",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33557260112856135,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "106",
+      "to": "162",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3312349509528026,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "106",
+      "to": "158",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3103572785706348,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "106",
+      "to": "60",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31020151533075935,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "195",
+      "to": "122",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3112029884182753,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "195",
+      "to": "133",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.309393224108511,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "195",
+      "to": "64",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2867134183121918,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "147",
+      "to": "32",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30968973312447573,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "147",
+      "to": "83",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28917830477218404,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "147",
+      "to": "186",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2857692138630931,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "34",
+      "to": "185",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2882485998117312,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "34",
+      "to": "84",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.287566781629913,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "34",
+      "to": "106",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2870364785996099,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "124",
+      "to": "45",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28738997193611177,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "124",
+      "to": "160",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2869326964788363,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "124",
+      "to": "178",
+      "weight": 7.0,
+      "level": 5,
+      "score": 0.26466237614024857,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "139",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3077996052598654,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "100",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28736528163551284,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "91",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28653511865067,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "1",
+      "to": "47",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.31143193816206494,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "1",
+      "to": "181",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3086329303851811,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "1",
+      "to": "66",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3079591572556557,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "177",
+      "to": "2",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33402236970008387,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "177",
+      "to": "159",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28569476976325686,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "177",
+      "to": "9",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.283568241320939,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "139",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.30765855971121114,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "100",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2872281180744362,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "122",
+      "to": "91",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2863816095105364,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "133",
+      "to": "15",
+      "weight": 12.0,
+      "level": 5,
+      "score": 0.3808742781563688,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "133",
+      "to": "98",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.33445374799342126,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "133",
+      "to": "41",
+      "weight": 10.0,
+      "level": 5,
+      "score": 0.3314234449631182,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "64",
+      "to": "12",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28792040423270554,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "64",
+      "to": "63",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28654770286000414,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "64",
+      "to": "87",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28626280257510384,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "8",
+      "to": "1",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3116791280719971,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "8",
+      "to": "76",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28805721616443675,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "8",
+      "to": "29",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2874408833447141,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "99",
+      "to": "47",
+      "weight": 9.0,
+      "level": 5,
+      "score": 0.3112658240837132,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "99",
+      "to": "199",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2874781322868442,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "99",
+      "to": "96",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2872394004304653,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "126",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.28675505050505046,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "93",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2866161616161616,
+      "reason": "mantida por diversidade estrutural"
+    },
+    {
+      "from": "15",
+      "to": "92",
+      "weight": 8.0,
+      "level": 5,
+      "score": 0.2865151515151515,
+      "reason": "mantida por diversidade estrutural"
+    }
+  ],
+  "metrics": {
+    "original_nodes": 200,
+    "original_edges": 38815,
+    "polytree_nodes": 152,
+    "polytree_edges": 363,
+    "original_weight_sum": 139834.0,
+    "polytree_weight_sum": 2535.0,
+    "preserved_weight_percent": 1.8128638242487523,
+    "coverage_by_level": {
+      "1": 27.0,
+      "2": 81.0,
+      "3": 231.0,
+      "4": 711.0,
+      "5": 2133.0
+    },
+    "average_branching": 3.903225806451613,
+    "max_depth": 5,
+    "repeated_nodes": 212,
+    "average_score": 0.3063710705997357,
+    "density_before": 0.9752512562814071,
+    "density_after": 0.012547926106657371,
+    "edge_reduction_percent": 99.25801880716219,
+    "interpretability_score": 32.231550021912945
+  },
+  "parameters": {
+    "strategy": "multiobjective",
+    "min_weight": null,
+    "top_k_per_node": 2,
+    "max_depth": 5,
+    "alpha": 0.35,
+    "beta": 0.25,
+    "gamma": 0.15,
+    "delta": 0.15,
+    "epsilon": 0.05,
+    "zeta": 0.05,
+    "preserve_weight_target": 0.6,
+    "max_branching": 3,
+    "min_score": 0.0
+  },
+  "scoring_formula": "score = alpha * normalized_weight + beta * transition_probability + gamma * coverage_gain + delta * target_centrality - epsilon * redundancy_penalty - zeta * complexity_penalty"
+}

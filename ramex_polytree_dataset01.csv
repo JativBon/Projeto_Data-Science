@@ -1,0 +1,364 @@
+From,To,Weight,Level,ParentPath,Score,Strategy,Reason
+150,185,9,1,150,0.35580297816802586,multiobjective,mantida por diversidade estrutural
+150,120,9,1,150,0.3539090387740864,multiobjective,mantida por diversidade estrutural
+150,132,9,1,150,0.3531514630165107,multiobjective,mantida por diversidade estrutural
+185,131,11,2,150 -> 185,0.396646886528654,multiobjective,mantida por diversidade estrutural
+185,15,9,2,150 -> 185,0.3485182515124249,multiobjective,mantida por diversidade estrutural
+185,149,8,2,150 -> 185,0.3263478733982497,multiobjective,mantida por diversidade estrutural
+120,15,10,2,150 -> 120,0.34400884688985833,multiobjective,mantida por diversidade estrutural
+120,122,8,2,150 -> 120,0.3064585926634018,multiobjective,mantida por diversidade estrutural
+120,84,8,2,150 -> 120,0.30607980478461394,multiobjective,mantida por diversidade estrutural
+132,72,10,2,150 -> 132,0.3359334791161539,multiobjective,mantida por diversidade estrutural
+132,109,9,2,150 -> 132,0.31033255544696275,multiobjective,mantida por diversidade estrutural
+132,189,8,2,150 -> 132,0.28586799541413527,multiobjective,mantida por diversidade estrutural
+131,89,10,3,150 -> 185 -> 131,0.36632099221136877,multiobjective,mantida por diversidade estrutural
+131,177,9,3,150 -> 185 -> 131,0.3426237414750804,multiobjective,mantida por diversidade estrutural
+131,18,8,3,150 -> 185 -> 131,0.32157800589030716,multiobjective,mantida por diversidade estrutural
+15,126,8,3,150 -> 185 -> 15,0.2991802987756189,multiobjective,mantida por diversidade estrutural
+15,93,8,3,150 -> 185 -> 15,0.2991802987756189,multiobjective,mantida por diversidade estrutural
+15,92,8,3,150 -> 185 -> 15,0.29880151089683105,multiobjective,mantida por diversidade estrutural
+149,48,9,3,150 -> 185 -> 149,0.3093952592964825,multiobjective,mantida por diversidade estrutural
+149,151,9,3,150 -> 185 -> 149,0.3063649562661795,multiobjective,mantida por diversidade estrutural
+149,125,8,3,150 -> 185 -> 149,0.2849506681961999,multiobjective,mantida por diversidade estrutural
+15,126,8,3,150 -> 120 -> 15,0.28479076479076476,multiobjective,mantida por diversidade estrutural
+15,93,8,3,150 -> 120 -> 15,0.28479076479076476,multiobjective,mantida por diversidade estrutural
+15,89,8,3,150 -> 120 -> 15,0.28442055851587866,multiobjective,mantida por diversidade estrutural
+122,139,9,3,150 -> 120 -> 122,0.3079580690880644,multiobjective,mantida por diversidade estrutural
+122,100,8,3,150 -> 120 -> 122,0.28767148228703365,multiobjective,mantida por diversidade estrutural
+122,81,8,3,150 -> 120 -> 122,0.28691390652945786,multiobjective,mantida por diversidade estrutural
+84,197,9,3,150 -> 120 -> 84,0.3109374960217049,multiobjective,mantida por diversidade estrutural
+84,10,8,3,150 -> 120 -> 84,0.2880050469687882,multiobjective,mantida por diversidade estrutural
+84,153,8,3,150 -> 120 -> 84,0.28762625909000034,multiobjective,mantida por diversidade estrutural
+72,78,9,3,150 -> 132 -> 72,0.3106048923996276,multiobjective,mantida por diversidade estrutural
+72,160,8,3,150 -> 132 -> 72,0.287288523883844,multiobjective,mantida por diversidade estrutural
+72,7,8,3,150 -> 132 -> 72,0.28690973600505615,multiobjective,mantida por diversidade estrutural
+109,168,10,3,150 -> 132 -> 109,0.3334265895408514,multiobjective,mantida por diversidade estrutural
+109,37,9,3,150 -> 132 -> 109,0.31087938513222085,multiobjective,mantida por diversidade estrutural
+109,200,8,3,150 -> 132 -> 109,0.28871096860237816,multiobjective,mantida por diversidade estrutural
+189,194,10,3,150 -> 132 -> 189,0.33314298212421983,multiobjective,mantida por diversidade estrutural
+189,195,9,3,150 -> 132 -> 189,0.3113438354269494,multiobjective,mantida por diversidade estrutural
+189,108,9,3,150 -> 132 -> 189,0.3102074717905858,multiobjective,mantida por diversidade estrutural
+89,28,9,4,150 -> 185 -> 131 -> 89,0.3371562554509906,multiobjective,mantida por diversidade estrutural
+89,74,9,4,150 -> 185 -> 131 -> 89,0.3352623160570512,multiobjective,mantida por diversidade estrutural
+89,129,9,4,150 -> 185 -> 131 -> 89,0.33488352817826333,multiobjective,mantida por diversidade estrutural
+177,2,10,4,150 -> 185 -> 131 -> 177,0.3401792955353704,multiobjective,mantida por diversidade estrutural
+177,159,8,4,150 -> 185 -> 131 -> 177,0.29243434551920544,multiobjective,mantida por diversidade estrutural
+177,9,8,4,150 -> 185 -> 131 -> 177,0.2901616182464782,multiobjective,mantida por diversidade estrutural
+18,160,10,4,150 -> 185 -> 131 -> 18,0.3333662165047808,multiobjective,mantida por diversidade estrutural
+18,178,9,4,150 -> 185 -> 131 -> 18,0.31193868576339373,multiobjective,mantida por diversidade estrutural
+18,51,8,4,150 -> 185 -> 131 -> 18,0.28788489239574394,multiobjective,mantida por diversidade estrutural
+126,30,8,4,150 -> 185 -> 15 -> 126,0.28723538218764283,multiobjective,mantida por diversidade estrutural
+126,84,8,4,150 -> 185 -> 15 -> 126,0.28695129127855196,multiobjective,mantida por diversidade estrutural
+126,87,8,4,150 -> 185 -> 15 -> 126,0.2864778064300671,multiobjective,mantida por diversidade estrutural
+93,66,10,4,150 -> 185 -> 15 -> 93,0.33240610940025955,multiobjective,mantida por diversidade estrutural
+93,166,8,4,150 -> 185 -> 15 -> 93,0.2880460996414198,multiobjective,mantida por diversidade estrutural
+93,21,8,4,150 -> 185 -> 15 -> 93,0.2853945844899047,multiobjective,mantida por diversidade estrutural
+92,68,9,4,150 -> 185 -> 15 -> 92,0.30832282195208954,multiobjective,mantida por diversidade estrutural
+92,27,8,4,150 -> 185 -> 15 -> 92,0.28765900671835565,multiobjective,mantida por diversidade estrutural
+92,167,8,4,150 -> 185 -> 15 -> 92,0.2861438552032041,multiobjective,mantida por diversidade estrutural
+48,162,10,4,150 -> 185 -> 149 -> 48,0.33162783060906836,multiobjective,mantida por diversidade estrutural
+48,111,9,4,150 -> 185 -> 149 -> 48,0.3121014111845251,multiobjective,mantida por diversidade estrutural
+48,45,9,4,150 -> 185 -> 149 -> 48,0.31172262330573725,multiobjective,mantida por diversidade estrutural
+151,1,9,4,150 -> 185 -> 149 -> 151,0.31283488109458446,multiobjective,mantida por diversidade estrutural
+151,56,9,4,150 -> 185 -> 149 -> 151,0.31207730533700867,multiobjective,mantida por diversidade estrutural
+151,104,8,4,150 -> 185 -> 149 -> 151,0.28720844649484945,multiobjective,mantida por diversidade estrutural
+125,174,10,4,150 -> 185 -> 149 -> 125,0.3322756572531176,multiobjective,mantida por diversidade estrutural
+125,57,9,4,150 -> 185 -> 149 -> 125,0.3101086975884119,multiobjective,mantida por diversidade estrutural
+125,32,8,4,150 -> 185 -> 149 -> 125,0.2860477985297668,multiobjective,mantida por diversidade estrutural
+126,30,8,4,150 -> 120 -> 15 -> 126,0.2864692248261654,multiobjective,mantida por diversidade estrutural
+126,84,8,4,150 -> 120 -> 15 -> 126,0.2864692248261653,multiobjective,mantida por diversidade estrutural
+126,87,8,4,150 -> 120 -> 15 -> 126,0.2857116490685896,multiobjective,mantida por diversidade estrutural
+93,66,10,4,150 -> 120 -> 15 -> 93,0.331670744714223,multiobjective,mantida por diversidade estrutural
+93,166,8,4,150 -> 120 -> 15 -> 93,0.2873128803563586,multiobjective,mantida por diversidade estrutural
+93,77,8,4,150 -> 120 -> 15 -> 93,0.28501579661111676,multiobjective,mantida por diversidade estrutural
+89,28,9,4,150 -> 120 -> 15 -> 89,0.3104521567021567,multiobjective,mantida por diversidade estrutural
+89,181,9,4,150 -> 120 -> 15 -> 89,0.30888352817826337,multiobjective,mantida por diversidade estrutural
+89,74,9,4,150 -> 120 -> 15 -> 89,0.3085582173082173,multiobjective,mantida por diversidade estrutural
+139,82,9,4,150 -> 120 -> 122 -> 139,0.3098709122325079,multiobjective,mantida por diversidade estrutural
+139,53,8,4,150 -> 120 -> 122 -> 139,0.2888246492571787,multiobjective,mantida por diversidade estrutural
+139,117,8,4,150 -> 120 -> 122 -> 139,0.28579434622687566,multiobjective,mantida por diversidade estrutural
+100,166,12,4,150 -> 120 -> 122 -> 100,0.38148309492870675,multiobjective,mantida por diversidade estrutural
+100,143,9,4,150 -> 120 -> 122 -> 100,0.3109374960217049,multiobjective,mantida por diversidade estrutural
+100,68,9,4,150 -> 120 -> 122 -> 100,0.3076449552291641,multiobjective,mantida por diversidade estrutural
+81,159,9,4,150 -> 120 -> 122 -> 81,0.30957176775142925,multiobjective,mantida por diversidade estrutural
+81,90,8,4,150 -> 120 -> 122 -> 81,0.2891495274388562,multiobjective,mantida por diversidade estrutural
+81,10,8,4,150 -> 120 -> 122 -> 81,0.28739587985187526,multiobjective,mantida por diversidade estrutural
+197,24,9,4,150 -> 120 -> 84 -> 197,0.3101753740013592,multiobjective,mantida por diversidade estrutural
+197,38,9,4,150 -> 120 -> 84 -> 197,0.3094177982437834,multiobjective,mantida por diversidade estrutural
+197,39,9,4,150 -> 120 -> 84 -> 197,0.30903901036499554,multiobjective,mantida por diversidade estrutural
+10,102,9,4,150 -> 120 -> 84 -> 10,0.30983332201598823,multiobjective,mantida por diversidade estrutural
+10,119,9,4,150 -> 120 -> 84 -> 10,0.30945453413720037,multiobjective,mantida por diversidade estrutural
+10,179,9,4,150 -> 120 -> 84 -> 10,0.3086969583796246,multiobjective,mantida por diversidade estrutural
+153,175,9,4,150 -> 120 -> 84 -> 153,0.3095257402742199,multiobjective,mantida por diversidade estrutural
+153,106,8,4,150 -> 120 -> 84 -> 153,0.28771816643903725,multiobjective,mantida por diversidade estrutural
+153,160,8,4,150 -> 120 -> 84 -> 153,0.28622826744913826,multiobjective,mantida por diversidade estrutural
+78,15,9,4,150 -> 132 -> 72 -> 78,0.3095156289563597,multiobjective,mantida por diversidade estrutural
+78,141,9,4,150 -> 132 -> 72 -> 78,0.30793938262204884,multiobjective,mantida por diversidade estrutural
+78,47,8,4,150 -> 132 -> 72 -> 78,0.28803365997380775,multiobjective,mantida por diversidade estrutural
+160,135,9,4,150 -> 132 -> 72 -> 160,0.31167696389249117,multiobjective,mantida por diversidade estrutural
+160,16,8,4,150 -> 132 -> 72 -> 160,0.2876101631906319,multiobjective,mantida por diversidade estrutural
+160,70,8,4,150 -> 132 -> 72 -> 160,0.2860950116754803,multiobjective,mantida por diversidade estrutural
+7,184,10,4,150 -> 132 -> 72 -> 7,0.3314656875694268,multiobjective,mantida por diversidade estrutural
+7,172,9,4,150 -> 132 -> 72 -> 7,0.31081911881248414,multiobjective,mantida por diversidade estrutural
+7,163,9,4,150 -> 132 -> 72 -> 7,0.31006154305490835,multiobjective,mantida por diversidade estrutural
+168,179,11,4,150 -> 132 -> 109 -> 168,0.3557968942979946,multiobjective,mantida por diversidade estrutural
+168,155,9,4,150 -> 132 -> 109 -> 168,0.31151450645123563,multiobjective,mantida por diversidade estrutural
+168,66,9,4,150 -> 132 -> 109 -> 168,0.3078825991428577,multiobjective,mantida por diversidade estrutural
+37,85,8,4,150 -> 132 -> 109 -> 37,0.2876222179675381,multiobjective,mantida por diversidade estrutural
+37,106,8,4,150 -> 132 -> 109 -> 37,0.28714602749134766,multiobjective,mantida por diversidade estrutural
+37,195,8,4,150 -> 132 -> 109 -> 37,0.28714602749134766,multiobjective,mantida por diversidade estrutural
+200,147,7,4,150 -> 132 -> 109 -> 200,0.26388083886506114,multiobjective,mantida por diversidade estrutural
+200,34,7,4,150 -> 132 -> 109 -> 200,0.26388083886506114,multiobjective,mantida por diversidade estrutural
+200,124,7,4,150 -> 132 -> 109 -> 200,0.2631232631074854,multiobjective,mantida por diversidade estrutural
+194,122,12,4,150 -> 132 -> 189 -> 194,0.38251882775969337,multiobjective,mantida por diversidade estrutural
+194,1,9,4,150 -> 132 -> 189 -> 194,0.31187120517685446,multiobjective,mantida por diversidade estrutural
+194,177,9,4,150 -> 132 -> 189 -> 194,0.309977265782915,multiobjective,mantida por diversidade estrutural
+195,122,9,4,150 -> 132 -> 189 -> 195,0.31095273369082593,multiobjective,mantida por diversidade estrutural
+195,133,9,4,150 -> 132 -> 189 -> 195,0.3095571994005548,multiobjective,mantida por diversidade estrutural
+195,64,8,4,150 -> 132 -> 189 -> 195,0.28703064189140226,multiobjective,mantida por diversidade estrutural
+108,8,10,4,150 -> 132 -> 189 -> 108,0.3361125776694923,multiobjective,mantida por diversidade estrutural
+108,99,10,4,150 -> 132 -> 189 -> 108,0.33308227463918927,multiobjective,mantida por diversidade estrutural
+108,15,10,4,150 -> 132 -> 189 -> 108,0.33293658699350165,multiobjective,mantida por diversidade estrutural
+28,35,8,5,150 -> 185 -> 131 -> 89 -> 28,0.3088373805421898,multiobjective,mantida por diversidade estrutural
+28,81,8,5,150 -> 185 -> 131 -> 89 -> 28,0.3065267744815837,multiobjective,mantida por diversidade estrutural
+28,9,8,5,150 -> 185 -> 131 -> 89 -> 28,0.30387525933006854,multiobjective,mantida por diversidade estrutural
+74,40,11,5,150 -> 185 -> 131 -> 89 -> 74,0.3587300076093691,multiobjective,mantida por diversidade estrutural
+74,23,11,5,150 -> 185 -> 131 -> 89 -> 74,0.3572148560942176,multiobjective,mantida por diversidade estrutural
+74,182,8,5,150 -> 185 -> 131 -> 89 -> 74,0.2876507493357395,multiobjective,mantida por diversidade estrutural
+129,159,11,5,150 -> 185 -> 131 -> 89 -> 129,0.35689269169638904,multiobjective,mantida por diversidade estrutural
+129,76,10,5,150 -> 185 -> 131 -> 89 -> 129,0.33587876865485716,multiobjective,mantida por diversidade estrutural
+129,67,9,5,150 -> 185 -> 131 -> 89 -> 129,0.3110408917893715,multiobjective,mantida por diversidade estrutural
+2,69,8,5,150 -> 185 -> 131 -> 177 -> 2,0.28810994926279154,multiobjective,mantida por diversidade estrutural
+2,72,8,5,150 -> 185 -> 131 -> 177 -> 2,0.2881011402423546,multiobjective,mantida por diversidade estrutural
+2,45,8,5,150 -> 185 -> 131 -> 177 -> 2,0.28772235236356675,multiobjective,mantida por diversidade estrutural
+159,103,10,5,150 -> 185 -> 131 -> 177 -> 159,0.3332374793366493,multiobjective,mantida por diversidade estrutural
+159,59,9,5,150 -> 185 -> 131 -> 177 -> 159,0.3084364586757117,multiobjective,mantida por diversidade estrutural
+159,53,8,5,150 -> 185 -> 131 -> 177 -> 159,0.2881808925602286,multiobjective,mantida por diversidade estrutural
+9,198,12,5,150 -> 185 -> 131 -> 177 -> 9,0.3810680672110474,multiobjective,mantida por diversidade estrutural
+9,189,9,5,150 -> 185 -> 131 -> 177 -> 9,0.30919961943185464,multiobjective,mantida por diversidade estrutural
+9,51,8,5,150 -> 185 -> 131 -> 177 -> 9,0.28776591686123704,multiobjective,mantida por diversidade estrutural
+160,135,9,5,150 -> 185 -> 131 -> 18 -> 160,0.311304990747522,multiobjective,mantida por diversidade estrutural
+160,16,8,5,150 -> 185 -> 131 -> 18 -> 160,0.28723926274615036,multiobjective,mantida por diversidade estrutural
+160,79,8,5,150 -> 185 -> 131 -> 18 -> 160,0.2860950116754803,multiobjective,mantida por diversidade estrutural
+178,159,11,5,150 -> 185 -> 131 -> 18 -> 178,0.35642511567739954,multiobjective,mantida por diversidade estrutural
+178,36,9,5,150 -> 185 -> 131 -> 18 -> 178,0.3101218093746451,multiobjective,mantida por diversidade estrutural
+178,174,9,5,150 -> 185 -> 131 -> 18 -> 178,0.3082520479304156,multiobjective,mantida por diversidade estrutural
+51,149,9,5,150 -> 185 -> 131 -> 18 -> 51,0.31149440617667434,multiobjective,mantida por diversidade estrutural
+51,115,9,5,150 -> 185 -> 131 -> 18 -> 51,0.31032647688374504,multiobjective,mantida por diversidade estrutural
+51,175,9,5,150 -> 185 -> 131 -> 18 -> 51,0.30884289102515916,multiobjective,mantida por diversidade estrutural
+30,85,10,5,150 -> 185 -> 15 -> 126 -> 30,0.33471748849735294,multiobjective,mantida por diversidade estrutural
+30,115,8,5,150 -> 185 -> 15 -> 126 -> 30,0.28656959995063436,multiobjective,mantida por diversidade estrutural
+30,120,8,5,150 -> 185 -> 15 -> 126 -> 30,0.2861908120718465,multiobjective,mantida por diversidade estrutural
+84,197,9,5,150 -> 185 -> 15 -> 126 -> 84,0.31059450838398206,multiobjective,mantida por diversidade estrutural
+84,10,8,5,150 -> 185 -> 15 -> 126 -> 84,0.2873297986982198,multiobjective,mantida por diversidade estrutural
+84,153,8,5,150 -> 185 -> 15 -> 126 -> 84,0.28728434415276516,multiobjective,mantida por diversidade estrutural
+87,18,10,5,150 -> 185 -> 15 -> 126 -> 87,0.33648466933261734,multiobjective,mantida por diversidade estrutural
+87,172,10,5,150 -> 185 -> 15 -> 126 -> 87,0.3342119420598901,multiobjective,mantida por diversidade estrutural
+87,43,9,5,150 -> 185 -> 15 -> 126 -> 87,0.3108575927736872,multiobjective,mantida por diversidade estrutural
+66,97,8,5,150 -> 185 -> 15 -> 93 -> 66,0.28690143096077986,multiobjective,mantida por diversidade estrutural
+66,23,8,5,150 -> 185 -> 15 -> 93 -> 66,0.2858233423826913,multiobjective,mantida por diversidade estrutural
+66,13,8,5,150 -> 185 -> 15 -> 93 -> 66,0.2853862794456284,multiobjective,mantida por diversidade estrutural
+166,81,10,5,150 -> 185 -> 15 -> 93 -> 166,0.3335406658294469,multiobjective,mantida por diversidade estrutural
+166,72,9,5,150 -> 185 -> 15 -> 93 -> 166,0.31137370616474125,multiobjective,mantida por diversidade estrutural
+166,135,8,5,150 -> 185 -> 15 -> 93 -> 166,0.28731280710609614,multiobjective,mantida por diversidade estrutural
+21,80,10,5,150 -> 185 -> 15 -> 93 -> 21,0.33426397375812394,multiobjective,mantida por diversidade estrutural
+21,20,9,5,150 -> 185 -> 15 -> 93 -> 21,0.3094360612307964,multiobjective,mantida por diversidade estrutural
+21,113,8,5,150 -> 185 -> 15 -> 93 -> 21,0.2891536032489234,multiobjective,mantida por diversidade estrutural
+68,163,9,5,150 -> 185 -> 15 -> 92 -> 68,0.3098998166730619,multiobjective,mantida por diversidade estrutural
+68,62,8,5,150 -> 185 -> 15 -> 92 -> 68,0.2865102747531594,multiobjective,mantida por diversidade estrutural
+68,89,8,5,150 -> 185 -> 15 -> 92 -> 68,0.28628300202588663,multiobjective,mantida por diversidade estrutural
+27,54,11,5,150 -> 185 -> 15 -> 92 -> 27,0.35617358399298144,multiobjective,mantida por diversidade estrutural
+27,60,9,5,150 -> 185 -> 15 -> 92 -> 27,0.31035414447910603,multiobjective,mantida por diversidade estrutural
+27,71,8,5,150 -> 185 -> 15 -> 92 -> 27,0.28820200047974404,multiobjective,mantida por diversidade estrutural
+167,161,10,5,150 -> 185 -> 15 -> 92 -> 167,0.33469452147128037,multiobjective,mantida por diversidade estrutural
+167,122,9,5,150 -> 185 -> 15 -> 92 -> 167,0.3112569672507871,multiobjective,mantida por diversidade estrutural
+167,56,8,5,150 -> 185 -> 15 -> 92 -> 167,0.2877662498192359,multiobjective,mantida por diversidade estrutural
+162,165,10,5,150 -> 185 -> 149 -> 48 -> 162,0.335939039985429,multiobjective,mantida por diversidade estrutural
+162,7,8,5,150 -> 185 -> 149 -> 48 -> 162,0.28672145142407984,multiobjective,mantida por diversidade estrutural
+162,176,8,5,150 -> 185 -> 149 -> 48 -> 162,0.2858724441095553,multiobjective,mantida por diversidade estrutural
+111,78,10,5,150 -> 185 -> 149 -> 48 -> 111,0.3341082841630601,multiobjective,mantida por diversidade estrutural
+111,110,10,5,150 -> 185 -> 149 -> 48 -> 111,0.33136046700846333,multiobjective,mantida por diversidade estrutural
+111,108,9,5,150 -> 185 -> 149 -> 48 -> 111,0.31002526776524414,multiobjective,mantida por diversidade estrutural
+45,141,10,5,150 -> 185 -> 149 -> 48 -> 45,0.331423574365748,multiobjective,mantida por diversidade estrutural
+45,100,8,5,150 -> 185 -> 149 -> 48 -> 45,0.28743178878552766,multiobjective,mantida por diversidade estrutural
+45,153,7,5,150 -> 185 -> 149 -> 48 -> 45,0.26345357276309433,multiobjective,mantida por diversidade estrutural
+1,47,9,5,150 -> 185 -> 149 -> 151 -> 1,0.31146335367347605,multiobjective,mantida por diversidade estrutural
+1,181,9,5,150 -> 185 -> 149 -> 151 -> 1,0.3088118385219609,multiobjective,mantida por diversidade estrutural
+1,66,9,5,150 -> 185 -> 149 -> 151 -> 1,0.3078866025557413,multiobjective,mantida por diversidade estrutural
+56,40,10,5,150 -> 185 -> 149 -> 151 -> 56,0.33467292385170194,multiobjective,mantida por diversidade estrutural
+56,102,8,5,150 -> 185 -> 149 -> 151 -> 56,0.2857906362465619,multiobjective,mantida por diversidade estrutural
+56,9,8,5,150 -> 185 -> 149 -> 151 -> 56,0.2836278796483215,multiobjective,mantida por diversidade estrutural
+104,195,10,5,150 -> 185 -> 149 -> 151 -> 104,0.3344620969024227,multiobjective,mantida por diversidade estrutural
+104,90,8,5,150 -> 185 -> 149 -> 151 -> 104,0.28886477131703203,multiobjective,mantida por diversidade estrutural
+104,85,8,5,150 -> 185 -> 149 -> 151 -> 104,0.28708506953733015,multiobjective,mantida por diversidade estrutural
+174,156,9,5,150 -> 185 -> 149 -> 125 -> 174,0.3090711081542221,multiobjective,mantida por diversidade estrutural
+174,166,8,5,150 -> 185 -> 149 -> 125 -> 174,0.2872482872145274,multiobjective,mantida por diversidade estrutural
+174,28,8,5,150 -> 185 -> 149 -> 125 -> 174,0.2871299160024061,multiobjective,mantida por diversidade estrutural
+57,102,10,5,150 -> 185 -> 149 -> 125 -> 57,0.33311491110241426,multiobjective,mantida por diversidade estrutural
+57,41,9,5,150 -> 185 -> 149 -> 125 -> 57,0.3080301099688629,multiobjective,mantida por diversidade estrutural
+57,136,8,5,150 -> 185 -> 149 -> 125 -> 57,0.2865991549891576,multiobjective,mantida por diversidade estrutural
+32,3,11,5,150 -> 185 -> 149 -> 125 -> 32,0.35671534419055057,multiobjective,mantida por diversidade estrutural
+32,89,10,5,150 -> 185 -> 149 -> 125 -> 32,0.33341202088948124,multiobjective,mantida por diversidade estrutural
+32,118,9,5,150 -> 185 -> 149 -> 125 -> 32,0.3104874854671998,multiobjective,mantida por diversidade estrutural
+30,85,10,5,150 -> 120 -> 15 -> 126 -> 30,0.33430062889018114,multiobjective,mantida por diversidade estrutural
+30,115,8,5,150 -> 120 -> 15 -> 126 -> 30,0.28640364196334345,multiobjective,mantida por diversidade estrutural
+30,57,8,5,150 -> 120 -> 15 -> 126 -> 30,0.2862821919073628,multiobjective,mantida por diversidade estrutural
+84,197,9,5,150 -> 120 -> 15 -> 126 -> 84,0.31043764563888404,multiobjective,mantida por diversidade estrutural
+84,10,8,5,150 -> 120 -> 15 -> 126 -> 84,0.2872611712472394,multiobjective,mantida por diversidade estrutural
+84,195,8,5,150 -> 120 -> 15 -> 126 -> 84,0.2868909649723533,multiobjective,mantida por diversidade estrutural
+87,18,10,5,150 -> 120 -> 15 -> 126 -> 87,0.33631764792592145,multiobjective,mantida por diversidade estrutural
+87,172,10,5,150 -> 120 -> 15 -> 126 -> 87,0.3340449206531942,multiobjective,mantida por diversidade estrutural
+87,43,9,5,150 -> 120 -> 15 -> 126 -> 87,0.31060639257557787,multiobjective,mantida por diversidade estrutural
+66,97,8,5,150 -> 120 -> 15 -> 93 -> 66,0.2866547541187829,multiobjective,mantida por diversidade estrutural
+66,23,8,5,150 -> 120 -> 15 -> 93 -> 66,0.2856590831231119,multiobjective,mantida por diversidade estrutural
+66,13,8,5,150 -> 120 -> 15 -> 93 -> 66,0.28513960260363136,multiobjective,mantida por diversidade estrutural
+166,81,10,5,150 -> 120 -> 15 -> 93 -> 166,0.3334546442900671,multiobjective,mantida por diversidade estrutural
+166,72,9,5,150 -> 120 -> 15 -> 93 -> 166,0.31128875732584915,multiobjective,mantida por diversidade estrutural
+166,135,8,5,150 -> 120 -> 15 -> 93 -> 166,0.2872289309676918,multiobjective,mantida por diversidade estrutural
+77,148,9,5,150 -> 120 -> 15 -> 93 -> 77,0.3099289657621625,multiobjective,mantida por diversidade estrutural
+77,110,9,5,150 -> 120 -> 15 -> 93 -> 77,0.3074247570079537,multiobjective,mantida por diversidade estrutural
+77,113,8,5,150 -> 120 -> 15 -> 93 -> 77,0.28902355879195585,multiobjective,mantida por diversidade estrutural
+28,35,8,5,150 -> 120 -> 15 -> 89 -> 28,0.2886004884360049,multiobjective,mantida por diversidade estrutural
+28,81,8,5,150 -> 120 -> 15 -> 89 -> 28,0.28602161753521615,multiobjective,mantida por diversidade estrutural
+28,9,8,5,150 -> 120 -> 15 -> 89 -> 28,0.28359841288598414,multiobjective,mantida por diversidade estrutural
+181,121,10,5,150 -> 120 -> 15 -> 89 -> 181,0.3330872549966594,multiobjective,mantida por diversidade estrutural
+181,167,9,5,150 -> 120 -> 15 -> 89 -> 181,0.30955330427176825,multiobjective,mantida por diversidade estrutural
+181,82,9,5,150 -> 120 -> 15 -> 89 -> 181,0.30955330427176825,multiobjective,mantida por diversidade estrutural
+74,40,11,5,150 -> 120 -> 15 -> 89 -> 74,0.3582737634595597,multiobjective,mantida por diversidade estrutural
+74,23,11,5,150 -> 120 -> 15 -> 89 -> 74,0.35653638972218604,multiobjective,mantida por diversidade estrutural
+74,73,8,5,150 -> 120 -> 15 -> 89 -> 74,0.2876507493357395,multiobjective,mantida por diversidade estrutural
+82,161,8,5,150 -> 120 -> 122 -> 139 -> 82,0.2871243992228154,multiobjective,mantida por diversidade estrutural
+82,195,8,5,150 -> 120 -> 122 -> 139 -> 82,0.28684529236476114,multiobjective,mantida por diversidade estrutural
+82,159,8,5,150 -> 120 -> 122 -> 139 -> 82,0.2857089287283975,multiobjective,mantida por diversidade estrutural
+53,69,9,5,150 -> 120 -> 122 -> 139 -> 53,0.31146502141131466,multiobjective,mantida por diversidade estrutural
+53,167,9,5,150 -> 120 -> 122 -> 139 -> 53,0.309354631800925,multiobjective,mantida por diversidade estrutural
+53,28,8,5,150 -> 120 -> 122 -> 139 -> 53,0.2869648194170801,multiobjective,mantida por diversidade estrutural
+117,64,9,5,150 -> 120 -> 122 -> 139 -> 117,0.31106655890460116,multiobjective,mantida por diversidade estrutural
+117,157,8,5,150 -> 120 -> 122 -> 139 -> 117,0.28868849093341736,multiobjective,mantida por diversidade estrutural
+117,35,8,5,150 -> 120 -> 122 -> 139 -> 117,0.28863992838485486,multiobjective,mantida por diversidade estrutural
+166,81,10,5,150 -> 120 -> 122 -> 100 -> 166,0.3331040173215047,multiobjective,mantida por diversidade estrutural
+166,72,9,5,150 -> 120 -> 122 -> 100 -> 166,0.3111491008214217,multiobjective,mantida por diversidade estrutural
+166,88,8,5,150 -> 120 -> 122 -> 100 -> 166,0.28718416216613046,multiobjective,mantida por diversidade estrutural
+143,99,10,5,150 -> 120 -> 122 -> 100 -> 143,0.33277250575124495,multiobjective,mantida por diversidade estrutural
+143,192,9,5,150 -> 120 -> 122 -> 100 -> 143,0.3096827551761205,multiobjective,mantida por diversidade estrutural
+143,52,9,5,150 -> 120 -> 122 -> 100 -> 143,0.30892517941854475,multiobjective,mantida por diversidade estrutural
+68,163,9,5,150 -> 120 -> 122 -> 100 -> 68,0.30978167003795787,multiobjective,mantida por diversidade estrutural
+68,62,8,5,150 -> 120 -> 122 -> 100 -> 68,0.28629593183238516,multiobjective,mantida por diversidade estrutural
+68,89,8,5,150 -> 120 -> 122 -> 100 -> 68,0.28605743576055576,multiobjective,mantida por diversidade estrutural
+159,103,10,5,150 -> 120 -> 122 -> 81 -> 159,0.3330235002992518,multiobjective,mantida por diversidade estrutural
+159,59,9,5,150 -> 120 -> 122 -> 81 -> 159,0.3082235523388019,multiobjective,mantida por diversidade estrutural
+159,53,8,5,150 -> 120 -> 122 -> 81 -> 159,0.28814459477007404,multiobjective,mantida por diversidade estrutural
+90,7,9,5,150 -> 120 -> 122 -> 81 -> 90,0.31028001869467525,multiobjective,mantida por diversidade estrutural
+90,34,8,5,150 -> 120 -> 122 -> 81 -> 90,0.2875347154126698,multiobjective,mantida por diversidade estrutural
+90,197,8,5,150 -> 120 -> 122 -> 81 -> 90,0.2867543211081791,multiobjective,mantida por diversidade estrutural
+10,119,9,5,150 -> 120 -> 122 -> 81 -> 10,0.3092464671343982,multiobjective,mantida por diversidade estrutural
+10,102,9,5,150 -> 120 -> 122 -> 81 -> 10,0.30922842961636066,multiobjective,mantida por diversidade estrutural
+10,179,9,5,150 -> 120 -> 122 -> 81 -> 10,0.3082904786784097,multiobjective,mantida por diversidade estrutural
+24,88,9,5,150 -> 120 -> 84 -> 197 -> 24,0.3107643443022954,multiobjective,mantida por diversidade estrutural
+24,107,9,5,150 -> 120 -> 84 -> 197 -> 24,0.30944527121851645,multiobjective,mantida por diversidade estrutural
+24,73,8,5,150 -> 120 -> 84 -> 197 -> 24,0.2874505599581505,multiobjective,mantida por diversidade estrutural
+38,165,10,5,150 -> 120 -> 84 -> 197 -> 38,0.3355350250127978,multiobjective,mantida por diversidade estrutural
+38,155,9,5,150 -> 120 -> 84 -> 197 -> 38,0.3110909305453447,multiobjective,mantida por diversidade estrutural
+38,34,8,5,150 -> 120 -> 84 -> 197 -> 38,0.28721061338585496,multiobjective,mantida por diversidade estrutural
+39,98,8,5,150 -> 120 -> 84 -> 197 -> 39,0.28738759562470684,multiobjective,mantida por diversidade estrutural
+39,93,8,5,150 -> 120 -> 84 -> 197 -> 39,0.2870044538622547,multiobjective,mantida por diversidade estrutural
+39,123,8,5,150 -> 120 -> 84 -> 197 -> 39,0.28549365623076745,multiobjective,mantida por diversidade estrutural
+102,181,11,5,150 -> 120 -> 84 -> 10 -> 102,0.3559366079538246,multiobjective,mantida por diversidade estrutural
+102,147,9,5,150 -> 120 -> 84 -> 10 -> 102,0.3110383541660769,multiobjective,mantida por diversidade estrutural
+102,177,9,5,150 -> 120 -> 84 -> 10 -> 102,0.31009138446910717,multiobjective,mantida por diversidade estrutural
+119,90,9,5,150 -> 120 -> 84 -> 10 -> 119,0.31260953876327197,multiobjective,mantida por diversidade estrutural
+119,74,8,5,150 -> 120 -> 84 -> 10 -> 119,0.2854934635789293,multiobjective,mantida por diversidade estrutural
+119,123,8,5,150 -> 120 -> 84 -> 10 -> 119,0.2853019416177444,multiobjective,mantida por diversidade estrutural
+179,45,9,5,150 -> 120 -> 84 -> 10 -> 179,0.3113615424908101,multiobjective,mantida por diversidade estrutural
+179,1,8,5,150 -> 120 -> 84 -> 10 -> 179,0.28842499998434895,multiobjective,mantida por diversidade estrutural
+179,140,8,5,150 -> 120 -> 84 -> 10 -> 179,0.28803779459714357,multiobjective,mantida por diversidade estrutural
+175,7,9,5,150 -> 120 -> 84 -> 153 -> 175,0.30996880096297436,multiobjective,mantida por diversidade estrutural
+175,173,9,5,150 -> 120 -> 84 -> 153 -> 175,0.30938188787606125,multiobjective,mantida por diversidade estrutural
+175,65,8,5,150 -> 120 -> 84 -> 153 -> 175,0.28645393400431035,multiobjective,mantida por diversidade estrutural
+106,162,10,5,150 -> 120 -> 84 -> 153 -> 106,0.33137604501714074,multiobjective,mantida por diversidade estrutural
+106,158,9,5,150 -> 120 -> 84 -> 153 -> 106,0.31052269611489963,multiobjective,mantida por diversidade estrutural
+106,60,9,5,150 -> 120 -> 84 -> 153 -> 106,0.3103415366946098,multiobjective,mantida por diversidade estrutural
+160,135,9,5,150 -> 120 -> 84 -> 153 -> 160,0.3109504637099655,multiobjective,mantida por diversidade estrutural
+160,16,8,5,150 -> 120 -> 84 -> 153 -> 160,0.2872431586476619,multiobjective,mantida por diversidade estrutural
+160,70,8,5,150 -> 120 -> 84 -> 153 -> 160,0.28590721860204454,multiobjective,mantida por diversidade estrutural
+15,126,8,5,150 -> 132 -> 72 -> 78 -> 15,0.28681710724263915,multiobjective,mantida por diversidade estrutural
+15,93,8,5,150 -> 132 -> 72 -> 78 -> 15,0.2866398022781001,multiobjective,mantida por diversidade estrutural
+15,92,8,5,150 -> 132 -> 72 -> 78 -> 15,0.2866156243283903,multiobjective,mantida por diversidade estrutural
+141,200,10,5,150 -> 132 -> 72 -> 78 -> 141,0.33585932184621253,multiobjective,mantida por diversidade estrutural
+141,167,8,5,150 -> 132 -> 72 -> 78 -> 141,0.285498462261659,multiobjective,mantida por diversidade estrutural
+141,54,8,5,150 -> 132 -> 72 -> 78 -> 141,0.28509176369706574,multiobjective,mantida por diversidade estrutural
+47,42,9,5,150 -> 132 -> 72 -> 78 -> 47,0.30982868391179785,multiobjective,mantida por diversidade estrutural
+47,12,8,5,150 -> 132 -> 72 -> 78 -> 47,0.2880295372145274,multiobjective,mantida por diversidade estrutural
+47,163,8,5,150 -> 132 -> 72 -> 78 -> 47,0.2859935523660425,multiobjective,mantida por diversidade estrutural
+135,179,9,5,150 -> 132 -> 72 -> 160 -> 135,0.30806940158343415,multiobjective,mantida por diversidade estrutural
+135,152,9,5,150 -> 132 -> 72 -> 160 -> 135,0.30744850186459627,multiobjective,mantida por diversidade estrutural
+135,200,8,5,150 -> 132 -> 72 -> 160 -> 135,0.288347955005331,multiobjective,mantida por diversidade estrutural
+16,42,9,5,150 -> 132 -> 72 -> 160 -> 16,0.30965399107009345,multiobjective,mantida por diversidade estrutural
+16,66,9,5,150 -> 132 -> 72 -> 160 -> 16,0.30800742335209713,multiobjective,mantida por diversidade estrutural
+16,199,8,5,150 -> 132 -> 72 -> 160 -> 16,0.28764663838952303,multiobjective,mantida por diversidade estrutural
+70,11,10,5,150 -> 132 -> 72 -> 160 -> 70,0.33279533867877975,multiobjective,mantida por diversidade estrutural
+70,17,10,5,150 -> 132 -> 72 -> 160 -> 70,0.33241655079999183,multiobjective,mantida por diversidade estrutural
+70,54,9,5,150 -> 132 -> 72 -> 160 -> 70,0.30876243780753476,multiobjective,mantida por diversidade estrutural
+184,45,8,5,150 -> 132 -> 72 -> 7 -> 184,0.287396074867592,multiobjective,mantida por diversidade estrutural
+184,182,8,5,150 -> 132 -> 72 -> 7 -> 184,0.2873506203221375,multiobjective,mantida por diversidade estrutural
+184,67,8,5,150 -> 132 -> 72 -> 7 -> 184,0.2869718324433496,multiobjective,mantida por diversidade estrutural
+172,153,9,5,150 -> 132 -> 72 -> 7 -> 172,0.31072411368136166,multiobjective,mantida por diversidade estrutural
+172,106,8,5,150 -> 132 -> 72 -> 7 -> 172,0.2872098965629839,multiobjective,mantida por diversidade estrutural
+172,130,8,5,150 -> 132 -> 72 -> 7 -> 172,0.2860247780511327,multiobjective,mantida por diversidade estrutural
+163,165,11,5,150 -> 132 -> 72 -> 7 -> 163,0.3589165166555652,multiobjective,mantida por diversidade estrutural
+163,11,10,5,150 -> 132 -> 72 -> 7 -> 163,0.33237873252920447,multiobjective,mantida por diversidade estrutural
+163,110,9,5,150 -> 132 -> 72 -> 7 -> 163,0.3070293025323743,multiobjective,mantida por diversidade estrutural
+179,45,9,5,150 -> 132 -> 109 -> 168 -> 179,0.3110750093658525,multiobjective,mantida por diversidade estrutural
+179,1,8,5,150 -> 132 -> 109 -> 168 -> 179,0.28830135185761363,multiobjective,mantida por diversidade estrutural
+179,140,8,5,150 -> 132 -> 109 -> 168 -> 179,0.2878674006955071,multiobjective,mantida por diversidade estrutural
+155,7,9,5,150 -> 132 -> 109 -> 168 -> 155,0.3099313992261344,multiobjective,mantida por diversidade estrutural
+155,148,8,5,150 -> 132 -> 109 -> 168 -> 155,0.28596304380836396,multiobjective,mantida por diversidade estrutural
+155,163,8,5,150 -> 132 -> 109 -> 168 -> 155,0.2858610624563826,multiobjective,mantida por diversidade estrutural
+66,97,8,5,150 -> 132 -> 109 -> 168 -> 66,0.2865753890394178,multiobjective,mantida por diversidade estrutural
+66,23,8,5,150 -> 132 -> 109 -> 168 -> 66,0.2855003529643817,multiobjective,mantida por diversidade estrutural
+66,13,8,5,150 -> 132 -> 109 -> 168 -> 66,0.2850602375242663,multiobjective,mantida por diversidade estrutural
+85,15,12,5,150 -> 132 -> 109 -> 37 -> 85,0.38088180403008837,multiobjective,mantida por diversidade estrutural
+85,106,11,5,150 -> 132 -> 109 -> 37 -> 85,0.3581164249921322,multiobjective,mantida por diversidade estrutural
+85,35,10,5,150 -> 132 -> 109 -> 37 -> 85,0.33557260112856135,multiobjective,mantida por diversidade estrutural
+106,162,10,5,150 -> 132 -> 109 -> 37 -> 106,0.3312349509528026,multiobjective,mantida por diversidade estrutural
+106,158,9,5,150 -> 132 -> 109 -> 37 -> 106,0.3103572785706348,multiobjective,mantida por diversidade estrutural
+106,60,9,5,150 -> 132 -> 109 -> 37 -> 106,0.31020151533075935,multiobjective,mantida por diversidade estrutural
+195,122,9,5,150 -> 132 -> 109 -> 37 -> 195,0.3112029884182753,multiobjective,mantida por diversidade estrutural
+195,133,9,5,150 -> 132 -> 109 -> 37 -> 195,0.309393224108511,multiobjective,mantida por diversidade estrutural
+195,64,8,5,150 -> 132 -> 109 -> 37 -> 195,0.2867134183121918,multiobjective,mantida por diversidade estrutural
+147,32,9,5,150 -> 132 -> 109 -> 200 -> 147,0.30968973312447573,multiobjective,mantida por diversidade estrutural
+147,83,8,5,150 -> 132 -> 109 -> 200 -> 147,0.28917830477218404,multiobjective,mantida por diversidade estrutural
+147,186,8,5,150 -> 132 -> 109 -> 200 -> 147,0.2857692138630931,multiobjective,mantida por diversidade estrutural
+34,185,8,5,150 -> 132 -> 109 -> 200 -> 34,0.2882485998117312,multiobjective,mantida por diversidade estrutural
+34,84,8,5,150 -> 132 -> 109 -> 200 -> 34,0.287566781629913,multiobjective,mantida por diversidade estrutural
+34,106,8,5,150 -> 132 -> 109 -> 200 -> 34,0.2870364785996099,multiobjective,mantida por diversidade estrutural
+124,45,8,5,150 -> 132 -> 109 -> 200 -> 124,0.28738997193611177,multiobjective,mantida por diversidade estrutural
+124,160,8,5,150 -> 132 -> 109 -> 200 -> 124,0.2869326964788363,multiobjective,mantida por diversidade estrutural
+124,178,7,5,150 -> 132 -> 109 -> 200 -> 124,0.26466237614024857,multiobjective,mantida por diversidade estrutural
+122,139,9,5,150 -> 132 -> 189 -> 194 -> 122,0.3077996052598654,multiobjective,mantida por diversidade estrutural
+122,100,8,5,150 -> 132 -> 189 -> 194 -> 122,0.28736528163551284,multiobjective,mantida por diversidade estrutural
+122,91,8,5,150 -> 132 -> 189 -> 194 -> 122,0.28653511865067,multiobjective,mantida por diversidade estrutural
+1,47,9,5,150 -> 132 -> 189 -> 194 -> 1,0.31143193816206494,multiobjective,mantida por diversidade estrutural
+1,181,9,5,150 -> 132 -> 189 -> 194 -> 1,0.3086329303851811,multiobjective,mantida por diversidade estrutural
+1,66,9,5,150 -> 132 -> 189 -> 194 -> 1,0.3079591572556557,multiobjective,mantida por diversidade estrutural
+177,2,10,5,150 -> 132 -> 189 -> 194 -> 177,0.33402236970008387,multiobjective,mantida por diversidade estrutural
+177,159,8,5,150 -> 132 -> 189 -> 194 -> 177,0.28569476976325686,multiobjective,mantida por diversidade estrutural
+177,9,8,5,150 -> 132 -> 189 -> 194 -> 177,0.283568241320939,multiobjective,mantida por diversidade estrutural
+122,139,9,5,150 -> 132 -> 189 -> 195 -> 122,0.30765855971121114,multiobjective,mantida por diversidade estrutural
+122,100,8,5,150 -> 132 -> 189 -> 195 -> 122,0.2872281180744362,multiobjective,mantida por diversidade estrutural
+122,91,8,5,150 -> 132 -> 189 -> 195 -> 122,0.2863816095105364,multiobjective,mantida por diversidade estrutural
+133,15,12,5,150 -> 132 -> 189 -> 195 -> 133,0.3808742781563688,multiobjective,mantida por diversidade estrutural
+133,98,10,5,150 -> 132 -> 189 -> 195 -> 133,0.33445374799342126,multiobjective,mantida por diversidade estrutural
+133,41,10,5,150 -> 132 -> 189 -> 195 -> 133,0.3314234449631182,multiobjective,mantida por diversidade estrutural
+64,12,8,5,150 -> 132 -> 189 -> 195 -> 64,0.28792040423270554,multiobjective,mantida por diversidade estrutural
+64,63,8,5,150 -> 132 -> 189 -> 195 -> 64,0.28654770286000414,multiobjective,mantida por diversidade estrutural
+64,87,8,5,150 -> 132 -> 189 -> 195 -> 64,0.28626280257510384,multiobjective,mantida por diversidade estrutural
+8,1,9,5,150 -> 132 -> 189 -> 108 -> 8,0.3116791280719971,multiobjective,mantida por diversidade estrutural
+8,76,8,5,150 -> 132 -> 189 -> 108 -> 8,0.28805721616443675,multiobjective,mantida por diversidade estrutural
+8,29,8,5,150 -> 132 -> 189 -> 108 -> 8,0.2874408833447141,multiobjective,mantida por diversidade estrutural
+99,47,9,5,150 -> 132 -> 189 -> 108 -> 99,0.3112658240837132,multiobjective,mantida por diversidade estrutural
+99,199,8,5,150 -> 132 -> 189 -> 108 -> 99,0.2874781322868442,multiobjective,mantida por diversidade estrutural
+99,96,8,5,150 -> 132 -> 189 -> 108 -> 99,0.2872394004304653,multiobjective,mantida por diversidade estrutural
+15,126,8,5,150 -> 132 -> 189 -> 108 -> 15,0.28675505050505046,multiobjective,mantida por diversidade estrutural
+15,93,8,5,150 -> 132 -> 189 -> 108 -> 15,0.2866161616161616,multiobjective,mantida por diversidade estrutural
+15,92,8,5,150 -> 132 -> 189 -> 108 -> 15,0.2865151515151515,multiobjective,mantida por diversidade estrutural

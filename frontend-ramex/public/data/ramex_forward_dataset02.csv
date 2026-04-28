@@ -1,0 +1,17 @@
+From,To,Weight,Level,Method
+45,137,1,1,ramex_forward_heuristic
+45,22144,1,1,ramex_forward_heuristic
+137,284,1,2,ramex_forward_heuristic
+284,27,1,3,ramex_forward_heuristic
+27,16,1,4,ramex_forward_heuristic
+16,12,1,5,ramex_forward_heuristic
+16,19,1,5,ramex_forward_heuristic
+12,2,1,6,ramex_forward_heuristic
+19,49,1,6,ramex_forward_heuristic
+2,4443,1,7,ramex_forward_heuristic
+49,18,1,7,ramex_forward_heuristic
+18,262,1,8,ramex_forward_heuristic
+18,50,1,8,ramex_forward_heuristic
+262,145,1,9,ramex_forward_heuristic
+50,9,1,9,ramex_forward_heuristic
+9,402,1,10,ramex_forward_heuristic

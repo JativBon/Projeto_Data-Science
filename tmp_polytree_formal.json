@@ -1,0 +1,88 @@
+{
+  "algorithm": "RAMEX Back-and-Forward Poly-tree Formal",
+  "method": "ramex_back_forward_polytree_formal",
+  "initial_edge": {
+    "from": "Higiene",
+    "to": "END",
+    "weight": 1.0
+  },
+  "metrics": {
+    "original_nodes": 6,
+    "original_edges": 20,
+    "selected_nodes": 6,
+    "selected_edges": 5,
+    "original_weight_sum": 20.0,
+    "selected_weight_sum": 5.0,
+    "preserved_weight_percent": 25.0,
+    "is_acyclic": true,
+    "is_connected": true,
+    "is_polytree": true,
+    "is_tree_undirected": true,
+    "rejected_edges_count": 0
+  },
+  "nodes": [
+    {
+      "id": "Higiene",
+      "level": 0
+    },
+    {
+      "id": "END",
+      "level": 1
+    },
+    {
+      "id": "START",
+      "level": 1
+    },
+    {
+      "id": "Limpeza",
+      "level": 2
+    },
+    {
+      "id": "Mercearia",
+      "level": 2
+    },
+    {
+      "id": "Tecnologia",
+      "level": 2
+    }
+  ],
+  "edges": [
+    {
+      "from": "Higiene",
+      "to": "END",
+      "weight": 1.0,
+      "level": 0,
+      "direction": "INITIAL"
+    },
+    {
+      "from": "Limpeza",
+      "to": "END",
+      "weight": 1.0,
+      "level": 2,
+      "direction": "BACKWARD"
+    },
+    {
+      "from": "Mercearia",
+      "to": "END",
+      "weight": 1.0,
+      "level": 2,
+      "direction": "BACKWARD"
+    },
+    {
+      "from": "START",
+      "to": "Higiene",
+      "weight": 1.0,
+      "level": 1,
+      "direction": "BACKWARD"
+    },
+    {
+      "from": "Tecnologia",
+      "to": "END",
+      "weight": 1.0,
+      "level": 2,
+      "direction": "BACKWARD"
+    }
+  ],
+  "rejected_edges": [],
+  "warnings": []
+}

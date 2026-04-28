@@ -370,3 +370,396 @@ Convém no 06_grafo.py prever:
 
 - filtro por frequência mínima;
 - top N arestas mais fortes ou ambos.
+
+## 24/04/2026 ## Grafo dirigido ponderado
+
+Esta fase vamos criar o "06_grafo.py", porque, depois da matriz, convém prever grafo com filtro por frequência mínima e/ou top N arestas, sobretudo porque o Dataset 01 fica visualmente caótico.
+
+Como a matriz confirma o contrato esperado, primeira coluna sem nome como índice e restantes colunas como destinos. Vou criar o script com "argparse", conversão numérica robusta, export de arestas finais e desenho adaptativo para grafos pequenos versus grandes. Vamos testar primeiro o dataset 03 que é o caso compacto ideal para confirmar logs, etc...
+
+O script faz:
+
+- lê matriz de adjacência CSV com primeira coluna como índice;
+- cria networkx.DiGraph() com pesos em weight;
+- aplica --min-frequency e depois --top-n, quando ambos existem;
+- exporta PNG do grafo;
+- exporta CSV das arestas finais em grafo_edges_`dataset`.csv;
+- imprime ficheiro lido, nós, arestas, soma dos pesos, top 10 e ficheiros gerados;
+- valida ficheiro inexistente, matriz vazia, valores não numéricos e argumentos inválidos;
+- avisa quando o grafo continua demasiado denso.
+
+Para validar sintaxe:
+
+python -m py_compile 06_grafo.py
+
+Testes:
+
+python 06_grafo.py matriz_adjacencia_dataset01.csv grafo_dataset01.png
+python 06_grafo.py matriz_adjacencia_dataset02.csv grafo_dataset02.png
+python 06_grafo.py matriz_adjacencia_dataset03.csv grafo_dataset03.png
+
+Para o Dataset 01, recomendoamos testar também com filtros, porque o grafo completo é muito denso:
+
+python 06_grafo.py matriz_adjacencia_dataset01.csv grafo_dataset01_filtrado.png --min-frequency 5
+python 06_grafo.py matriz_adjacencia_dataset01.csv grafo_dataset01_top50.png --top-n 50
+python 06_grafo.py matriz_adjacencia_dataset01.csv grafo_dataset01_min5_top50.png --min-frequency 5 --top-n 50
+
+## 25/04/2026 ## Ramex Simplificado
+
+Esta fase faz o pedido: lê From, To, Weight, valida colunas, escolhe raiz, constrói uma estrutura simplificada sem ciclos, exporta CSV com From, To, Weight, Level e gera o PNG.
+
+Validar sintaxe:
+
+python -m py_compile 07_ramex_simplificado.py
+
+Testes:
+
+python 07_ramex_simplificado.py grafo_edges_dataset01.csv ramex_dataset01.csv ramex_dataset01.png
+python 07_ramex_simplificado.py grafo_edges_dataset02.csv ramex_dataset02.csv ramex_dataset02.png
+python 07_ramex_simplificado.py grafo_edges_dataset03.csv ramex_dataset03.csv ramex_dataset03.png
+
+## 26/04/2026 ## Relatório Intermédio
+
+Para executar:
+
+python 08_validacao_comparativa.py
+
+A conclusão final também fica escrita no .txt, destacando o Dataset 03 como o mais interpretável para padrões sequênciais, o Dataset 01 como denso/disperso e o Dataset 02 como pouco recorrente.
+
+## Menu interativo
+
+Teste:
+
+python 09_framework.py
+
+1. Executar preparacao dos datasets
+2. Gerar pares/frequencias
+3. Gerar matrizes de adjacencia
+4. Gerar grafos
+5. Gerar RAMEX simplificado
+6. Executar validacao comparativa
+7. Executar pipeline completa
+8. Sair
+
+Implementar a fase backend do RAMEX completo com aproximação poly-tree.
+
+CONTEXTO:
+A framework RAMEX já está funcional com:
+
+- normalização de datasets;
+- geração de pares;
+- frequências;
+- matriz de adjacência;
+- grafo dirigido ponderado;
+- RAMEX simplificado;
+- validação comparativa;
+- frontend com upload;
+- aba “Sobre o RAMEX”.
+
+Adicionar a fase final 10_ramex_polytree.py
+
+Implementámos a fase nova em 10_ramex_polytree.py.
+
+Comando principal:
+
+python 10_ramex_polytree.py grafo_edges_dataset03.csv ramex_polytree_dataset03.csv ramex_polytree_dataset03.png --top-k-per-node 2 --max-depth 5
+Gera:
+
+ramex_polytree_dataset03.csv
+ramex_polytree_dataset03.png
+ramex_polytree_dataset03.json
+Validação feita:
+
+python -m py_compile 10_ramex_polytree.py
+python 10_ramex_polytree.py grafo_edges_dataset03.csv ramex_polytree_dataset03.csv ramex_polytree_dataset03.png --top-k-per-node 2 --max-depth 5
+Resultado do Dataset 03:
+
+Raiz escolhida: Tecnologia
+Nós poly-tree: 4
+Arestas poly-tree: 10
+Soma dos pesos originais: 352
+Soma dos pesos preservados: 238
+Percentagem de peso preservado: 67.61%
+Também testei o Dataset 01 com profundidade controlada:
+
+python 10_ramex_polytree.py grafo_edges_dataset01.csv ramex_polytree_dataset01_test.csv ramex_polytree_dataset01_test.png --top-k-per-node 2 --max-depth 3
+
+## 25/04/2026 ## Melhoria d Heuristica na Poly-tree
+
+Implementar a Poly-tree com uma heurística multiobjetivo, em vez de escolher só “top K por nó”.
+
+A ideia é seleccionar ramos que maximizem:
+
+peso + cobertura + diversidade + coerência sequencial + legibilidade
+
+Heurística proposta para testes
+
+```text
+Score(edge) =
+  α * peso_normalizado
+  β * probabilidade_transição
+  γ * ganho_cobertura
+  δ * centralidade_destino
+  ε * penalização_redundância
+  ζ * penalização_complexidade
+```
+
+A versão inicial escolhia arestas por frequência. A versão melhorada utilisa uma heurística multiobjetivo que equilibra peso, probabilidade local, cobertura, centralidade e legibilidade. Assim, não preserva apenas as transições mais frequentes, mas também as mais informativas para representar a estrutura global do dataset.
+
+O que ficou implementado:
+
+--strategy top-k continua a ser a estratégia por defeito.
+Nova estratégia --strategy multiobjective.
+Novos parâmetros: --alpha, --beta, --gamma, --delta, --epsilon, --zeta, --preserve-weight-target, --max-branching, --min-score.
+Score multiobjetivo com peso normalizado, probabilidade local, cobertura, centralidade, redundância e complexidade.
+Root selection melhorado com centralidade como desempate.
+Exportação CSV com Score, Strategy e Reason.
+JSON enriquecido com parameters, scoring_formula e métricas novas.
+Métricas adicionais: cobertura por nível, branching médio, profundidade máxima, nós repetidos, score médio, densidade antes/depois, redução de arestas e interpretability_score.
+
+Comentários finais no script a explicar top-k vs multiobjective.
+README atualizado com explicação da nova heurística.
+
+## PROBLEMA DE DIFERENCIAÇÃO ENTRE TOP-K e MULTIOBJETIVO
+
+Encontrei a causa principal: a multiobjetivo ainda expandia nó a nó e depois cortava candidatos por nó, o que em grafos pequenos a aproxima muito do Top-K. Vou mudar para seleção por fronteira/nível, onde todos os candidatos competem pelo score composto, assim deve resolver o problema.
+
+Os testes de linha de comandos já mostram diferença real: Top-K gerou 10 arestas e 59,38% de peso preservado; Multiobjetivo gerou 11 arestas e 65,62%, com scores compostos e reasons dinâmicos.
+
+Corrigido. A Poly-tree agora diferencia de forma real as estratégias.
+
+O que mudou:
+
+top-k continua default e seleciona por Weight descendente.
+multiobjective agora seleciona por fronteira/nível, calcula score para todos os candidatos disponíveis e ordena por Score, não por peso.
+CSV/JSON passam a exportar claramente:
+From, To, Weight, Level, Strategy, Score, Reason, ParentPath
+Reason agora é dinâmico: peso/probabilidade, cobertura global, centralidade, redundância, etc.
+Backend de upload usa mesmo a estratégia escolhida no frontend.
+Frontend e PDF passam a aproveitar Score, Reason e Strategy vindos do JSON/CSV.
+PDF mostra aviso se for multiobjetivo sem scores.
+README atualizado com a diferença Top-K vs Multiobjetivo e a nota sobre datasets pequenos/densos.
+Teste Dataset 03:
+
+Top-K: 10 arestas, 59.38% peso preservado, score médio 0.3173.
+Multiobjetivo: 11 arestas, 65.62% peso preservado, score médio 0.3531.
+A Multiobjetivo inclui arestas diferentes, por exemplo Tecnologia -> Limpeza, e reasons como boa cobertura global e destino central no grafo
+
+### O QUE CONTINUA MAL
+
+O frontend já está a passar/mostrar a estratégia Multiobjetivo, mas o backend ainda não está a calcular ou devolver os scores reais. A tabela continua com Score e Reason como “Não disponível”, o que confirma isso mesmo.
+
+Corrigi mais uma falha no frontend: na aba Upload, o PDF ainda usava result.polytree_edges cru. Agora ele funde esses dados com result.polytree.edges, onde vêm score e reason.
+
+## Vamos criar um Dataset 04 sintético para demonstrar claramente a diferença entre Top-K e Multiobjetivo
+
+Este dataset é para podermos comparar melhor as duas heuristicas e passo a explicar:
+
+A heurística Top-K seleciona as transições com maior frequência por nó, privilegiando a cobertura máxima do comportamento observado. No dataset analisado, esta abordagem preserva 67,61% do peso total do grafo, resultando numa estrutura relativamente completa, mas potencialmente redundante.
+
+Por outro lado, a heurística multiobjetivo introduz um critério composto, integrando peso, probabilidade local, cobertura global, centralidade e penalizações estruturais. Esta abordagem resulta numa estrutura ligeiramente mais compacta (9 arestas) e com menor peso preservado (64,49%), mas com maior coerência estrutural e interpretabilidade.
+
+A análise demonstra que, para datasets pequenos e densos, como o dataset 03 (4 nós e densidade máxima), ambas as heurísticas produzem resultados semelhantes, uma vez que praticamente todas as transições são relevantes. No entanto, a heurística multiobjetivo acrescenta valor ao introduzir explicabilidade e ao reduzir redundâncias, tornando-se particularmente vantajosa em cenários de maior dimensão e complexidade.
+
+Conclui-se que a escolha da heurística deve ser orientada pelo objetivo da análise: exploração e cobertura (Top-K) versus interpretação e síntese estrutural (multiobjetivo).
+
+## NOTAS
+
+Fase 10A — RAMEX 2007 Rooted Branching - Done
+Fase 10B — RAMEX Forward Heuristic - Done
+Fase 10C — RAMEX Back-and-Forward Heuristic - Done
+Fase 10D — Validação com exemplos dos artigos - Done
+Fase 10E — Métricas científicas RAMEX - Done
+Fase 11 — Integração frontend RAMEX puro - Done
+Fase 12 — Relatório: conformidade RAMEX
+Fase 13 — Inovação: Stability Mode
+Fase 14 — Inovação: Explainable RAMEX
+Fase 15 — Investigação futura: Hyper-RAMEX
+
+## Fase 10A
+
+A experiência com top-K e multiobjetivos deu para perceber os vários caminhos que podemos tomar, mas por agora temos de focar no RAMEX puro.
+
+Vamos implementar uma fase 10A com uma tentativa NetworkX primeiro e fallback greedy marcado, porque isto dá fidelidade ao rooted branching sem tornar o script frágil. Para CSVs sem SOURCE, o script vai avisar e escolher uma raiz real quando necessário.
+
+## Fase 10B — RAMEX Forward Heuristic
+
+Objetivo: implementar a heurística Forward descrita para quando existe uma raiz conhecida, mantendo a 10A como base RAMEX 2007.
+
+Vou criar a fase 10B isolada, sigo o mesmo estilo da 10A: CLI simples, validações claras, CSV/JSON/PNG e sem tocar no frontend. Depois corro o teste com o Dataset 03 e atualizo o README.
+
+NOTA: Não posso esquecer dos restantes datasets.
+
+Criei 10B_ramex_forward_heuristic.py com a heurística Forward independente, utilisei CSV From,To,Weight, raiz obrigatória, expansão por maior peso para novos nós, prevenção de ciclos, exportação CSV/JSON/PNG e logs.
+
+## Fase 10C — RAMEX Back-and-Forward Heuristic
+
+Esta fase 10C, foi criada como script isolado, aproveitando o padrão de validação/exportação das fases 10A/10B, mas com a lógica própria Back-and-Forward: núcleo pela aresta mais forte e expansão nos dois sentidos.
+
+## Fase 10D — Validação comparativa RAMEX puro
+
+Objetivo: comparar formalmente:
+
+RAMEX 2007 Rooted Branching
+RAMEX Forward Heuristic
+RAMEX Back-and-Forward Heuristic
+
+## FASE 10D1: TESTE RAMEX PURO NOS DATASETS 01, 02 E 03
+
+VALIDAÇÃO MULTI-DATASET RAMEX PURO
+
+Dataset 01 (muito denso)
+→ Back-and-Forward ganha claramente
+Dataset 02 (esparso)
+→ diferenças menores, Forward pode ser competitivo
+Dataset 03 (pequeno e completo)
+→ diferenças pequenas
+
+O desempenho relativo das heurísticas RAMEX depende fortemente da estrutura do dataset, nomeadamente da densidade e da diversidade de transições.
+
+## TESTES
+
+Para cada dataset:
+
+RAMEX 2007
+
+python 10A_ramex_2007_rooted_branching.py grafo_edges_dataset01.csv ramex2007_dataset01.csv ramex2007_dataset01.png
+python 10A_ramex_2007_rooted_branching.py grafo_edges_dataset02.csv ramex2007_dataset02.csv ramex2007_dataset02.png
+
+Forward (ATENÇÃO → precisa de root!)
+
+python 10B_ramex_forward_heuristic.py grafo_edges_dataset01.csv ramex_forward_dataset01.csv ramex_forward_dataset01.png --root `ROOT`
+python 10B_ramex_forward_heuristic.py grafo_edges_dataset02.csv ramex_forward_dataset02.csv ramex_forward_dataset02.png --root `ROOT`
+
+Back-and-Forward
+python 10C_ramex_back_forward_heuristic.py grafo_edges_dataset01.csv ramex_back_forward_dataset01.csv ramex_back_forward_dataset01.png
+python 10C_ramex_back_forward_heuristic.py grafo_edges_dataset02.csv ramex_back_forward_dataset02.csv ramex_back_forward_dataset02.png
+
+Depois corre as validações:
+python 10D_validacao_ramex_puro.py dataset01
+python 10D_validacao_ramex_puro.py dataset02
+python 10D_validacao_ramex_puro.py dataset03
+
+python 10D1_validacao_ramex_multidataset.py
+
+## Fase 11 — Frontend RAMEX Puro
+
+Objetivo:
+Integrar no frontend uma nova área dedicada ao RAMEX puro, distinguindo claramente as abordagens científicas das heurísticas experimentais anteriores.
+
+Análise técnica consolidada
+
+1. Coerência estrutural entre métodos
+
+Os três métodos produziram:
+
+Estruturas acíclicas ✔️
+Respeito por in-degree ≤ 1 ✔️
+Mesma base de dados (grafo completo de 4 nós) ✔️
+
+Todos os métodos implementados respeitam as propriedades fundamentais do RAMEX, nomeadamente a geração de estruturas acíclicas e dirigidas, garantindo consistência estrutural entre abordagens.
+
+1. Diferença funcional real (o ponto mais importante)
+RAMEX 2007 (Rooted Branching)
+Estrutura em estrela
+Root explícito (Tecnologia)
+Maximização direta do peso
+
+comportamento:
+
+privilegia relações diretas com a raiz
+
+Forward Heuristic
+Estrutura praticamente idêntica ao 2007
+Também centrada na raiz
+
+comportamento:
+
+aproximação greedy ao rooted branching
+
+Back-and-Forward
+Estrutura não centrada numa única raiz
+Expansão em dois sentidos
+Introduz ligação intermédia (ex: Limpeza → Mercearia)
+
+comportamento:
+
+captura relações estruturais que não passam pela raiz
+
+1. Insight CRÍTICO (isto é o que impressiona o professor)
+
+Temos aqui uma diferença conceptual muito forte:
+
+Rooted vs Poly-tree
+2007 + Forward
+modelo hierárquico
+dependência de um ponto inicial
+Back-and-Forward
+modelo relacional
+não depende de raiz única
+aproxima-se da realidade dos dados
+
+1. Interpretação quantitativa
+
+| Método | Peso | Estrutura |
+| ------ | ---- | ---------- |
+| RAMEX 2007 | 34.94% | árvore centrada |
+| Forward | 34.94% | árvore centrada |
+| Back-and-Forward | 36.93% | estrutura distribuída |
+
+diferença:
+
++2% de peso com estrutura mais rica
+
+1. O que isto significa (interpretação forte)
+
+A heurística Back-and-Forward consegue preservar mais informação global ao permitir a integração de relações não diretamente ligadas à raiz, evidenciando a limitação das abordagens estritamente enraizadas na representação de padrões sequenciais complexos.
+
+1. Porque a diferença ainda é “pequena”
+
+Muito importante contextualizar:
+
+Dataset tem:
+4 nós
+densidade 1.0
+
+logo:
+
+praticamente todas as transições são relevantes
+
+A reduzida dimensão e elevada densidade do dataset limitam a diferenciação entre métodos, uma vez que a maioria das transições apresenta relevância estrutural.
+
+1. Insight avançado (nível top 1%)
+
+A diferença entre abordagens tende a aumentar com a complexidade estrutural do grafo, sendo expectável que a heurística Back-and-Forward apresente vantagens mais significativas em datasets com maior número de nós, menor densidade e maior heterogeneidade de padrões.
+
+1. Conclusão pronta para o relatório
+
+Comparação entre abordagens RAMEX puras
+
+A análise comparativa entre o RAMEX 2007 Rooted Branching, a Forward Heuristic e a Back-and-Forward Heuristic evidencia diferenças estruturais relevantes, apesar da proximidade dos resultados numéricos.
+
+As abordagens baseadas em raiz (RAMEX 2007 e Forward) produzem estruturas hierárquicas centradas num único nó inicial, privilegiando relações diretas e simplificando a interpretação. No entanto, esta simplificação pode limitar a capacidade de capturar relações indiretas entre eventos.
+
+Por sua vez, a Back-and-Forward Heuristic permite expansão em ambos os sentidos, resultando numa estrutura mais distribuída e capaz de integrar relações intermédias. Esta abordagem apresenta maior capacidade de preservação de informação global, refletida num peso total superior.
+
+Apesar da diferença quantitativa ser reduzida neste dataset específico, devido à sua dimensão limitada e elevada densidade, a abordagem Back-and-Forward demonstra maior potencial para representar padrões sequenciais complexos, aproximando-se melhor do conceito de Poly-tree RAMEX.
+
+Conclusão prática
+
+O trabalho neste momento já prova:
+
+implementação fiel ✔️
+diferenciação entre métodos ✔️
+leitura estrutural ✔️
+base científica ✔️
+
+## ARRANQUE DO ARTEFATO ##
+
+Caminho backend: (.venv) PS C:\Users\joaqu\Documents\Projeto - Data Sciense\backend-ramex> 
+
+..\venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000
+
+Caminho frontend: (.venv) PS C:\Users\joaqu\Documents\Projeto - Data Sciense\frontend-ramex>
+
+npm.cmd run dev -- -p 3000

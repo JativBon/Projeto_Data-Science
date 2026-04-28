@@ -1,0 +1,77 @@
+{
+  "algorithm": "RAMEX 2007 Rooted Branching",
+  "method": "networkx_arborescence",
+  "root": "SOURCE",
+  "source": "SOURCE",
+  "sink": "SINK",
+  "include_sink": false,
+  "metrics": {
+    "original_nodes": 6,
+    "original_edges": 20,
+    "reachable_nodes": 5,
+    "selected_nodes": 5,
+    "selected_edges": 4,
+    "original_weight_sum": 452.0,
+    "selected_weight_sum": 140.0,
+    "preserved_weight_percent": 30.973451327433626,
+    "is_acyclic": true,
+    "max_indegree_except_root": 1
+  },
+  "nodes": [
+    {
+      "id": "SOURCE",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "Tecnologia",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Higiene",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Limpeza",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Mercearia",
+      "level": 2,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "SOURCE",
+      "to": "Tecnologia",
+      "weight": 17.0,
+      "level": 1
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Mercearia",
+      "weight": 75.0,
+      "level": 2
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Higiene",
+      "weight": 26.0,
+      "level": 2
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Limpeza",
+      "weight": 22.0,
+      "level": 2
+    }
+  ],
+  "warnings": [
+    "Sequências válidas lidas: 50.",
+    "Nó SINK excluído da obrigação de expansão."
+  ]
+}

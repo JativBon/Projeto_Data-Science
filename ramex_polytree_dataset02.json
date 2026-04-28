@@ -1,0 +1,120 @@
+{
+  "root": "16",
+  "nodes": [
+    {
+      "id": "16",
+      "level": 0
+    },
+    {
+      "id": "12",
+      "level": 1
+    },
+    {
+      "id": "19",
+      "level": 1
+    },
+    {
+      "id": "2",
+      "level": 2
+    },
+    {
+      "id": "49",
+      "level": 2
+    },
+    {
+      "id": "18",
+      "level": 3
+    },
+    {
+      "id": "4443",
+      "level": 3
+    },
+    {
+      "id": "262",
+      "level": 4
+    },
+    {
+      "id": "50",
+      "level": 4
+    },
+    {
+      "id": "145",
+      "level": 5
+    },
+    {
+      "id": "9",
+      "level": 5
+    }
+  ],
+  "edges": [
+    {
+      "from": "16",
+      "to": "12",
+      "weight": 1.0,
+      "level": 1
+    },
+    {
+      "from": "16",
+      "to": "19",
+      "weight": 1.0,
+      "level": 1
+    },
+    {
+      "from": "12",
+      "to": "2",
+      "weight": 1.0,
+      "level": 2
+    },
+    {
+      "from": "19",
+      "to": "49",
+      "weight": 1.0,
+      "level": 2
+    },
+    {
+      "from": "2",
+      "to": "4443",
+      "weight": 1.0,
+      "level": 3
+    },
+    {
+      "from": "49",
+      "to": "18",
+      "weight": 1.0,
+      "level": 3
+    },
+    {
+      "from": "18",
+      "to": "262",
+      "weight": 1.0,
+      "level": 4
+    },
+    {
+      "from": "18",
+      "to": "50",
+      "weight": 1.0,
+      "level": 4
+    },
+    {
+      "from": "262",
+      "to": "145",
+      "weight": 1.0,
+      "level": 5
+    },
+    {
+      "from": "50",
+      "to": "9",
+      "weight": 1.0,
+      "level": 5
+    }
+  ],
+  "metrics": {
+    "original_nodes": 281,
+    "original_edges": 272,
+    "polytree_nodes": 11,
+    "polytree_edges": 10,
+    "original_weight_sum": 272.0,
+    "polytree_weight_sum": 10.0,
+    "preserved_weight_percent": 3.6764705882352944
+  }
+}

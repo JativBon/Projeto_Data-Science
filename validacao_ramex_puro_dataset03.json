@@ -1,0 +1,253 @@
+{
+  "dataset": "dataset03",
+  "rows": [
+    {
+      "Fase": "10A",
+      "Ficheiro": "ramex2007_dataset03.json",
+      "Algoritmo": "RAMEX 2007 Rooted Branching",
+      "Metodo": "networkx_arborescence",
+      "Nos originais": "4",
+      "Arestas originais": "12",
+      "Nos selecionados": "4",
+      "Arestas selecionadas": "3",
+      "Soma pesos originais": "352.00",
+      "Soma pesos selecionados": "123.00",
+      "Peso preservado (%)": "34.94",
+      "Aciclico": "True",
+      "Conectado": "Nao disponivel",
+      "Raiz ou aresta inicial": "Tecnologia",
+      "Observacoes": "Nó SOURCE não existe e o grafo não tem nós sem entradas; será usada uma raiz real se necessário. | Versao base inspirada no RAMEX 2007 com rooted branching."
+    },
+    {
+      "Fase": "10B",
+      "Ficheiro": "ramex_forward_dataset03.json",
+      "Algoritmo": "RAMEX Forward Heuristic",
+      "Metodo": "ramex_forward_heuristic",
+      "Nos originais": "4",
+      "Arestas originais": "12",
+      "Nos selecionados": "4",
+      "Arestas selecionadas": "3",
+      "Soma pesos originais": "352.00",
+      "Soma pesos selecionados": "123.00",
+      "Peso preservado (%)": "34.94",
+      "Aciclico": "True",
+      "Conectado": "Nao disponivel",
+      "Raiz ou aresta inicial": "Tecnologia",
+      "Observacoes": "Heuristica simples enraizada numa raiz conhecida."
+    },
+    {
+      "Fase": "10C",
+      "Ficheiro": "ramex_back_forward_dataset03.json",
+      "Algoritmo": "RAMEX Back-and-Forward Heuristic",
+      "Metodo": "ramex_back_forward_heuristic",
+      "Nos originais": "4",
+      "Arestas originais": "12",
+      "Nos selecionados": "4",
+      "Arestas selecionadas": "3",
+      "Soma pesos originais": "352.00",
+      "Soma pesos selecionados": "130.00",
+      "Peso preservado (%)": "36.93",
+      "Aciclico": "True",
+      "Conectado": "True",
+      "Raiz ou aresta inicial": "Tecnologia -> Mercearia (75.0)",
+      "Observacoes": "Heuristica sem raiz explicita, com expansao forward e backward."
+    }
+  ],
+  "warnings": [],
+  "source_payloads": [
+    {
+      "phase": "10A",
+      "file": "ramex2007_dataset03.json",
+      "payload": {
+        "algorithm": "RAMEX 2007 Rooted Branching",
+        "method": "networkx_arborescence",
+        "root": "Tecnologia",
+        "source": "SOURCE",
+        "sink": "SINK",
+        "include_sink": false,
+        "metrics": {
+          "original_nodes": 4,
+          "original_edges": 12,
+          "reachable_nodes": 4,
+          "selected_nodes": 4,
+          "selected_edges": 3,
+          "original_weight_sum": 352.0,
+          "selected_weight_sum": 123.0,
+          "preserved_weight_percent": 34.94318181818182,
+          "is_acyclic": true,
+          "max_indegree_except_root": 1
+        },
+        "nodes": [
+          {
+            "id": "Tecnologia",
+            "level": 0,
+            "is_root": true
+          },
+          {
+            "id": "Higiene",
+            "level": 1,
+            "is_root": false
+          },
+          {
+            "id": "Limpeza",
+            "level": 1,
+            "is_root": false
+          },
+          {
+            "id": "Mercearia",
+            "level": 1,
+            "is_root": false
+          }
+        ],
+        "edges": [
+          {
+            "from": "Tecnologia",
+            "to": "Mercearia",
+            "weight": 75.0,
+            "level": 1
+          },
+          {
+            "from": "Tecnologia",
+            "to": "Higiene",
+            "weight": 26.0,
+            "level": 1
+          },
+          {
+            "from": "Tecnologia",
+            "to": "Limpeza",
+            "weight": 22.0,
+            "level": 1
+          }
+        ],
+        "warnings": [
+          "Nó SOURCE não existe e o grafo não tem nós sem entradas; será usada uma raiz real se necessário."
+        ]
+      }
+    },
+    {
+      "phase": "10B",
+      "file": "ramex_forward_dataset03.json",
+      "payload": {
+        "algorithm": "RAMEX Forward Heuristic",
+        "root": "Tecnologia",
+        "metrics": {
+          "original_nodes": 4,
+          "original_edges": 12,
+          "selected_nodes": 4,
+          "selected_edges": 3,
+          "original_weight_sum": 352.0,
+          "selected_weight_sum": 123.0,
+          "preserved_weight_percent": 34.94318181818182,
+          "is_acyclic": true
+        },
+        "nodes": [
+          {
+            "id": "Tecnologia",
+            "level": 0,
+            "is_root": true
+          },
+          {
+            "id": "Higiene",
+            "level": 1,
+            "is_root": false
+          },
+          {
+            "id": "Limpeza",
+            "level": 1,
+            "is_root": false
+          },
+          {
+            "id": "Mercearia",
+            "level": 1,
+            "is_root": false
+          }
+        ],
+        "edges": [
+          {
+            "from": "Tecnologia",
+            "to": "Mercearia",
+            "weight": 75.0,
+            "level": 1
+          },
+          {
+            "from": "Tecnologia",
+            "to": "Higiene",
+            "weight": 26.0,
+            "level": 1
+          },
+          {
+            "from": "Tecnologia",
+            "to": "Limpeza",
+            "weight": 22.0,
+            "level": 1
+          }
+        ]
+      }
+    },
+    {
+      "phase": "10C",
+      "file": "ramex_back_forward_dataset03.json",
+      "payload": {
+        "algorithm": "RAMEX Back-and-Forward Heuristic",
+        "initial_edge": {
+          "from": "Tecnologia",
+          "to": "Mercearia",
+          "weight": 75.0
+        },
+        "metrics": {
+          "original_nodes": 4,
+          "original_edges": 12,
+          "selected_nodes": 4,
+          "selected_edges": 3,
+          "original_weight_sum": 352.0,
+          "selected_weight_sum": 130.0,
+          "preserved_weight_percent": 36.93181818181818,
+          "is_acyclic": true,
+          "is_connected": true
+        },
+        "nodes": [
+          {
+            "id": "Tecnologia",
+            "level": 0
+          },
+          {
+            "id": "Higiene",
+            "level": 1
+          },
+          {
+            "id": "Mercearia",
+            "level": 1
+          },
+          {
+            "id": "Limpeza",
+            "level": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "Tecnologia",
+            "to": "Mercearia",
+            "weight": 75.0,
+            "level": 0,
+            "direction": "INITIAL"
+          },
+          {
+            "from": "Limpeza",
+            "to": "Mercearia",
+            "weight": 29.0,
+            "level": 2,
+            "direction": "BACKWARD"
+          },
+          {
+            "from": "Tecnologia",
+            "to": "Higiene",
+            "weight": 26.0,
+            "level": 1,
+            "direction": "FORWARD"
+          }
+        ],
+        "warnings": []
+      }
+    }
+  ]
+}
