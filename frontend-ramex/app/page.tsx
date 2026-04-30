@@ -371,24 +371,20 @@ const dataPath = (fileName: string) => `/data/${fileName}`;
 const API_BASE_URL = process.env.NEXT_PUBLIC_RAMEX_API_URL ?? "http://localhost:8000";
 
 function friendlyApiError(error: unknown): string {
-  if (error instanceof TypeError) {
-    return `Não foi possível contactar o backend RAMEX em ${API_BASE_URL}. Confirme se o FastAPI está ativo na porta 8000.`;
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
+  if (error instanceof TypeError) return `Não foi possível contactar o backend RAMEX em ${API_BASE_URL}. Confirme se o FastAPI está ativo na porta 8000.`;
+  if (error instanceof Error) return error.message;
   return "Erro inesperado ao contactar o backend RAMEX.";
 }
 
 function findColumn(columns: string[], candidates: string[]): string {
-  const normalized = columns.map((column) => ({ original: column, key: column.trim().toLowerCase() }));
+  const normalized = columns.map((col) => ({ original: col, key: col.trim().toLowerCase() }));
   for (const candidate of candidates) {
-    const exact = normalized.find((column) => column.key === candidate.toLowerCase());
-    if (exact) return exact.original;
+    const match = normalized.find((c) => c.key === candidate.toLowerCase());
+    if (match) return match.original;
   }
   for (const candidate of candidates) {
-    const partial = normalized.find((column) => column.key.includes(candidate.toLowerCase()));
-    if (partial) return partial.original;
+    const match = normalized.find((c) => c.key.includes(candidate.toLowerCase()));
+    if (match) return match.original;
   }
   return "";
 }
@@ -423,38 +419,24 @@ function parseDecimalInput(value: string, fallback: number): number {
 
 async function loadCsv<T>(fileName: string, mapper: (row: CsvRow) => T): Promise<T[]> {
   const response = await fetch(dataPath(fileName));
-  if (!response.ok) {
-    throw new Error(`Ficheiro não encontrado: ${fileName}`);
-  }
+  if (!response.ok) throw new Error(`Ficheiro não encontrado: ${fileName}`);
 
   const text = await response.text();
-  const parsed = Papa.parse<CsvRow>(text, {
-    header: true,
-    skipEmptyLines: true,
-  });
+  const parsed = Papa.parse<CsvRow>(text, { header: true, skipEmptyLines: true });
 
-  if (parsed.errors.length > 0) {
-    throw new Error(`Erro ao ler CSV: ${fileName}`);
-  }
+  if (parsed.errors.length > 0) throw new Error(`Erro ao ler CSV: ${fileName}`);
 
   return parsed.data.map(mapper);
 }
 
 async function loadMatrix(fileName: string): Promise<MatrixData> {
   const response = await fetch(dataPath(fileName));
-  if (!response.ok) {
-    throw new Error(`Ficheiro não encontrado: ${fileName}`);
-  }
+  if (!response.ok) throw new Error(`Ficheiro não encontrado: ${fileName}`);
 
   const text = await response.text();
-  const parsed = Papa.parse<CsvRow>(text, {
-    header: true,
-    skipEmptyLines: true,
-  });
+  const parsed = Papa.parse<CsvRow>(text, { header: true, skipEmptyLines: true });
 
-  if (parsed.errors.length > 0 || parsed.data.length === 0) {
-    throw new Error(`Não foi possível ler a matriz: ${fileName}`);
-  }
+  if (parsed.errors.length > 0 || parsed.data.length === 0) throw new Error(`Não foi possível ler a matriz: ${fileName}`);
 
   const columns = parsed.meta.fields ?? Object.keys(parsed.data[0]);
   return { columns, rows: parsed.data };
@@ -462,25 +444,16 @@ async function loadMatrix(fileName: string): Promise<MatrixData> {
 
 async function loadJson<T>(fileName: string): Promise<T> {
   const response = await fetch(dataPath(fileName));
-  if (!response.ok) {
-    throw new Error(`Ficheiro não encontrado: ${fileName}`);
-  }
+  if (!response.ok) throw new Error(`Ficheiro não encontrado: ${fileName}`);
   return response.json();
 }
 
 async function uploadDataset(file: File): Promise<{ job_id: string; filename: string; columns: string[]; message: string }> {
   const formData = new FormData();
   formData.append("file", file);
-
-  const response = await fetch(`${API_BASE_URL}/api/upload`, {
-    method: "POST",
-    body: formData,
-  });
-
+  const response = await fetch(`${API_BASE_URL}/api/upload`, { method: "POST", body: formData });
   const payload = await response.json();
-  if (!response.ok) {
-    throw new Error(payload.detail ?? "Erro ao enviar ficheiro.");
-  }
+  if (!response.ok) throw new Error(payload.detail ?? "Erro ao enviar ficheiro.");
   return payload;
 }
 
@@ -513,50 +486,37 @@ async function startAnalyzeUploadedDataset(payload: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-
   const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail ?? "Erro ao iniciar análise RAMEX assíncrona.");
-  }
+  if (!response.ok) throw new Error(data.detail ?? "Erro ao iniciar análise RAMEX assíncrona.");
   return data;
 }
 
 async function getJobState(jobId: string): Promise<JobState> {
   const response = await fetch(`${API_BASE_URL}/api/ramex/jobs/${jobId}`);
   const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail ?? "Erro ao obter estado do job.");
-  }
+  if (!response.ok) throw new Error(data.detail ?? "Erro ao obter estado do job.");
   return data as JobState;
 }
 
 async function getJobResult(jobId: string): Promise<UploadResult | null> {
   const response = await fetch(`${API_BASE_URL}/api/ramex/jobs/${jobId}/result`);
-  if (response.status === 202) {
-    return null;
-  }
+  if (response.status === 202) return null;
   const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail ?? "Erro ao obter resultado final do job.");
-  }
+  if (!response.ok) throw new Error(data.detail ?? "Erro ao obter resultado final do job.");
   return data as UploadResult;
 }
 
 async function getHistoryJobs(): Promise<HistoryJob[]> {
   const response = await fetch(`${API_BASE_URL}/api/ramex/history`);
   const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail ?? "Erro ao carregar histórico RAMEX.");
-  }
+  if (!response.ok) throw new Error(data.detail ?? "Erro ao carregar histórico RAMEX.");
   return data.jobs ?? [];
 }
 
 async function getHistoryJobDetail(jobId: string): Promise<HistoryJobDetail> {
   const response = await fetch(`${API_BASE_URL}/api/ramex/history/${jobId}`);
   const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail ?? "Erro ao carregar detalhe do histórico.");
-  }
+  if (!response.ok) throw new Error(data.detail ?? "Erro ao carregar detalhe do histórico.");
   return data as HistoryJobDetail;
 }
 
@@ -634,11 +594,8 @@ function sanitizeReportName(value: string): string {
 }
 
 function downloadMarkdown(filename: string, content: string) {
-  const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
+  const url = URL.createObjectURL(new Blob([content], { type: "text/markdown;charset=utf-8" }));
+  const link = Object.assign(document.createElement("a"), { href: url, download: filename });
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -667,36 +624,37 @@ function formatDateTime(value?: string): string {
 }
 
 function analysisTypeLabel(value: HistoryAnalysisType): string {
-  if (value === "pure") return "RAMEX Puro";
-  if (value === "forum") return "RAMEX-Forum";
-  if (value === "both") return "Both";
-  return "Desconhecido";
+  const labels: Record<HistoryAnalysisType, string> = {
+    pure: "RAMEX Puro",
+    forum: "RAMEX-Forum",
+    both: "Both",
+    unknown: "Desconhecido",
+  };
+  return labels[value] ?? "Desconhecido";
 }
 
 function graphInterpretation(nodes?: number, edges?: number, density?: number, ramexPreserved?: number): string {
-  const safeNodes = nodes ?? 0;
-  const safeEdges = edges ?? 0;
-  const safeDensity = density ?? 0;
+  const n = nodes ?? 0;
+  const e = edges ?? 0;
+  const d = density ?? 0;
   const preserved = ramexPreserved ?? 0;
-  const parts = [];
 
-  if (safeDensity >= 0.2 && safeEdges > 1000) {
-    parts.push("O grafo apresenta elevada densidade/dispersÃ£o e pode exigir filtragem para leitura visual.");
-  } else if (safeNodes >= 50 && safeEdges <= safeNodes * 2) {
-    parts.push("O dataset apresenta baixa recorrência, com poucas ligações face ao número de nós.");
-  } else if (safeNodes <= 10 && safeEdges > 0) {
-    parts.push("O dataset apresenta poucos nós e transições concentradas, favorecendo padrões fortes e interpretáveis.");
+  let structural: string;
+  if (d >= 0.2 && e > 1000) {
+    structural = "O grafo apresenta elevada densidade/dispersão e pode exigir filtragem para leitura visual.";
+  } else if (n >= 50 && e <= n * 2) {
+    structural = "O dataset apresenta baixa recorrência, com poucas ligações face ao número de nós.";
+  } else if (n <= 10 && e > 0) {
+    structural = "O dataset apresenta poucos nós e transições concentradas, favorecendo padrões fortes e interpretáveis.";
   } else {
-    parts.push("O grafo apresenta uma estrutura intermédia, devendo ser interpretado em conjunto com pesos e densidade.");
+    structural = "O grafo apresenta uma estrutura intermédia, devendo ser interpretado em conjunto com pesos e densidade.";
   }
 
-  if (preserved < 20) {
-    parts.push("A estrutura RAMEX pura formal preserva apenas parte do comportamento observado.");
-  } else {
-    parts.push("A estrutura RAMEX representa uma parte significativa do dataset.");
-  }
+  const preservation = preserved < 20
+    ? "A estrutura RAMEX pura formal preserva apenas parte do comportamento observado."
+    : "A estrutura RAMEX representa uma parte significativa do dataset.";
 
-  return parts.join(" ");
+  return `${structural} ${preservation}`;
 }
 
 function buildTechnicalReport(input: {
@@ -824,6 +782,21 @@ O dataset apresenta ${dynamicInterpretation.toLowerCase()} A implementação atu
 `;
 }
 
+function uploadResultToValidationRow(result: UploadResult): ValidationRow {
+  return {
+    Dataset: `Upload: ${result.filename}`,
+    Nos_Grafo: result.metrics.nodes,
+    Arestas_Grafo: result.metrics.edges,
+    Soma_Pesos_Grafo: result.metrics.total_weight,
+    Arestas_RAMEX: result.metrics.ramex_edges,
+    Soma_Pesos_RAMEX: result.metrics.ramex_weight,
+    Percentagem_Peso_Preservado: result.metrics.preserved_percentage,
+    Densidade_Aproximada: result.metrics.density,
+    Top_5_Transicoes: "",
+    Interpretacao: result.interpretation,
+  };
+}
+
 function edgeToReport(edge: Edge) {
   return {
     from: edge.From,
@@ -937,22 +910,14 @@ function forumCompletenessError(result?: UploadResult | null): string | undefine
 function reportCompletenessError(result?: UploadResult | null): string | undefined {
   if (!result) return undefined;
   const type = result.analysis_type ?? "pure";
-  if (type === "pure" || type === "both") {
-    const pureError = pureCompletenessError(result);
-    if (pureError) return pureError;
-  }
-  if (type === "forum" || type === "both") {
-    const forumError = forumCompletenessError(result);
-    if (forumError) return forumError;
-  }
-  return undefined;
+  if ((type === "pure" || type === "both") && pureCompletenessError(result)) return pureCompletenessError(result);
+  if ((type === "forum" || type === "both") && forumCompletenessError(result)) return forumCompletenessError(result);
 }
 
 function pure_anchor_frontend(payload?: PureRamexResult): string | undefined {
   if (!payload) return undefined;
   if (payload.root) return payload.root;
   if (payload.initial_edge) return `${payload.initial_edge.from} -> ${payload.initial_edge.to}`;
-  return undefined;
 }
 
 function polytreeEdgeToReport(edge: PolyTreeTableRow) {
@@ -1005,19 +970,17 @@ function pureRamexRowsForReport(data?: PureRamexData) {
 }
 
 function pureRamexBest(data?: PureRamexData): string | undefined {
-  const best = [...(data?.comparisonRows ?? [])].sort(
-    (a, b) => (b["Peso preservado (%)"] ?? 0) - (a["Peso preservado (%)"] ?? 0),
-  )[0];
-  return best?.Algoritmo;
+  return [...(data?.comparisonRows ?? [])]
+    .sort((a, b) => (b["Peso preservado (%)"] ?? 0) - (a["Peso preservado (%)"] ?? 0))[0]?.Algoritmo;
 }
 
 function pureRamexStructuralType(validation?: ValidationRow, data?: PureRamexData): string {
   const density = validation?.Densidade_Aproximada ?? 0;
   const nodes = validation?.Nos_Grafo ?? 0;
-  const ramex2007 = data?.ramex2007?.metrics?.preserved_weight_percent ?? 0;
+  const ramex2007Preserved = data?.ramex2007?.metrics?.preserved_weight_percent ?? 0;
 
   if (nodes <= 10 && density > 0.7) return "grafo pequeno e completo";
-  if (density < 0.05 && ramex2007 > 80) return "grafo quase linear / sequencial";
+  if (density < 0.05 && ramex2007Preserved > 80) return "grafo quase linear / sequencial";
   if (density > 0.7) return "grafo denso / altamente conectado";
   return "grafo de estrutura intermédia";
 }
@@ -1037,13 +1000,12 @@ function pureRamexStructuralInterpretation(structuralType: string): string {
 
 function pureRamexSimplestLabels(data?: PureRamexData): string {
   const rows = data?.comparisonRows ?? [];
-  if (rows.length === 0) return "Sem dados gerados";
-  const edgeCounts = rows.map((row) => row["Arestas selecionadas"]).filter((value): value is number => typeof value === "number");
+  const edgeCounts = rows.map((r) => r["Arestas selecionadas"]).filter((v): v is number => typeof v === "number");
   if (edgeCounts.length === 0) return "Sem dados gerados";
   const minEdges = Math.min(...edgeCounts);
   return rows
-    .filter((row) => row["Arestas selecionadas"] === minEdges)
-    .map((row) => row.Algoritmo ?? "Sem dados gerados")
+    .filter((r) => r["Arestas selecionadas"] === minEdges)
+    .map((r) => r.Algoritmo ?? "Sem dados gerados")
     .join(", ");
 }
 
@@ -1091,7 +1053,7 @@ function MetricCard({ label, value, note }: { label: string; value: string; note
       <p className="mt-3 break-words font-mono text-3xl font-semibold tabular-nums tracking-tight text-slate-950 lg:text-4xl">
         {value}
       </p>
-      {note ? <p className="mt-1 text-xs leading-5 text-slate-500">{note}</p> : <p className="mt-1 text-xs leading-5 text-slate-500">Métrica analítica derivada da pipeline RAMEX.</p>}
+      {note && <p className="mt-1 text-xs leading-5 text-slate-500">{note}</p>}
       <div className="mt-4 h-1.5 rounded-full bg-slate-100">
         <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500" />
       </div>
@@ -1215,20 +1177,15 @@ function GraphCanvas({
   const graph = useMemo(() => {
     const nodeSet = new Set<string>();
     const degree = new Map<string, { in: number; out: number; weight: number }>();
-    edges.forEach((edge) => {
+
+    for (const edge of edges) {
       nodeSet.add(edge.From);
       nodeSet.add(edge.To);
-      degree.set(edge.From, {
-        in: degree.get(edge.From)?.in ?? 0,
-        out: (degree.get(edge.From)?.out ?? 0) + 1,
-        weight: (degree.get(edge.From)?.weight ?? 0) + edge.Weight,
-      });
-      degree.set(edge.To, {
-        in: (degree.get(edge.To)?.in ?? 0) + 1,
-        out: degree.get(edge.To)?.out ?? 0,
-        weight: (degree.get(edge.To)?.weight ?? 0) + edge.Weight,
-      });
-    });
+      const from = degree.get(edge.From) ?? { in: 0, out: 0, weight: 0 };
+      const to = degree.get(edge.To) ?? { in: 0, out: 0, weight: 0 };
+      degree.set(edge.From, { ...from, out: from.out + 1, weight: from.weight + edge.Weight });
+      degree.set(edge.To, { ...to, in: to.in + 1, weight: to.weight + edge.Weight });
+    }
 
     const nodes = Array.from(nodeSet).slice(0, denseHint ? 80 : 140);
     const nodeIndex = new Map(nodes.map((node, index) => [node, index]));
@@ -1390,25 +1347,25 @@ function GraphCanvas({
 function PolyTreeCanvas({ data }: { data: PolyTreeData }) {
   const graph = useMemo(() => {
     const levels = new Map<number, Array<{ id: string; level: number }>>();
-    data.nodes.forEach((node) => {
-      const levelNodes = levels.get(node.level) ?? [];
-      levelNodes.push(node);
-      levels.set(node.level, levelNodes);
-    });
+    for (const node of data.nodes) {
+      const bucket = levels.get(node.level) ?? [];
+      bucket.push(node);
+      levels.set(node.level, bucket);
+    }
 
     const width = 920;
     const height = 520;
     const maxLevel = Math.max(...data.nodes.map((node) => node.level), 1);
     const pointMap = new Map<string, { x: number; y: number }>();
 
-    Array.from(levels.entries()).forEach(([level, nodes]) => {
+    for (const [level, nodes] of levels.entries()) {
       nodes.forEach((node, index) => {
         pointMap.set(node.id, {
           x: 80 + (level / Math.max(maxLevel, 1)) * (width - 160),
           y: ((index + 1) / (nodes.length + 1)) * (height - 80) + 40,
         });
       });
-    });
+    }
 
     const maxWeight = Math.max(...data.edges.map((edge) => edge.weight), 1);
     return { width, height, pointMap, maxWeight };
@@ -1661,12 +1618,9 @@ function PureRamexMethodPanel({
 
   const metrics = data.metrics ?? {};
   const anchor = data.root
-    ? data.root
-    : data.initial_edge
-      ? `${data.initial_edge.from} → ${data.initial_edge.to} (${formatNumber(data.initial_edge.weight ?? 0)})`
-      : "Sem dados gerados";
-  const forwardCount = data.edges?.filter((edge) => edge.direction === "FORWARD").length ?? 0;
-  const backwardCount = data.edges?.filter((edge) => edge.direction === "BACKWARD").length ?? 0;
+    ?? (data.initial_edge ? `${data.initial_edge.from} → ${data.initial_edge.to} (${formatNumber(data.initial_edge.weight ?? 0)})` : "Sem dados gerados");
+  const forwardCount = data.edges?.filter((e) => e.direction === "FORWARD").length ?? 0;
+  const backwardCount = data.edges?.filter((e) => e.direction === "BACKWARD").length ?? 0;
 
   return (
     <section className="space-y-4">
@@ -1822,13 +1776,7 @@ function RamexPurePanel({
 }) {
   const [tab, setTab] = useState<"overview" | "ramex2007" | "forward" | "backforward" | "comparison">("overview");
   const uploadedPure: PureRamexData | undefined = uploaded?.pure_ramex
-    ? {
-        ...uploaded.pure_ramex,
-        comparisonRows: uploaded.pure_ramex.comparisonRows ?? [],
-        comparisonMarkdown: uploaded.pure_ramex.comparisonMarkdown,
-        multidatasetMarkdown: uploaded.pure_ramex.multidatasetMarkdown,
-        missing: uploaded.pure_ramex.missing ?? [],
-      }
+    ? { ...uploaded.pure_ramex, comparisonRows: uploaded.pure_ramex.comparisonRows ?? [], missing: uploaded.pure_ramex.missing ?? [] }
     : uploaded?.pure
       ? {
           ramex2007: uploaded.pure.ramex2007,
@@ -1841,20 +1789,7 @@ function RamexPurePanel({
         }
       : undefined;
   const effectiveData = uploadedPure ?? data;
-  const uploadedValidation = uploaded
-    ? ({
-        Dataset: `Upload: ${uploaded.filename}`,
-        Nos_Grafo: uploaded.metrics.nodes,
-        Arestas_Grafo: uploaded.metrics.edges,
-        Soma_Pesos_Grafo: uploaded.metrics.total_weight,
-        Arestas_RAMEX: uploaded.metrics.ramex_edges,
-        Soma_Pesos_RAMEX: uploaded.metrics.ramex_weight,
-        Percentagem_Peso_Preservado: uploaded.metrics.preserved_percentage,
-        Densidade_Aproximada: uploaded.metrics.density,
-        Top_5_Transicoes: "",
-        Interpretacao: uploaded.interpretation,
-      } satisfies ValidationRow)
-    : validation;
+  const uploadedValidation = uploaded ? uploadResultToValidationRow(uploaded) : validation;
 
   const available = [effectiveData?.ramex2007, effectiveData?.forward, effectiveData?.backForward].filter(Boolean).length;
   const rows = effectiveData?.comparisonRows ?? [];
@@ -2004,12 +1939,10 @@ function RamexForumPanel({
   const centralNodes = data.path_analysis?.central_nodes ?? [];
   const topRelation = metrics.top_relation;
   const dominantPath = metrics.dominant_path?.join(" → ") || "Sem dados gerados";
-  const forumImage = graphImage ?? (jobId && data.files?.graph_png
-    ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.files.graph_png}`
-    : undefined);
-  const simplifiedImage = staticSimplifiedImage ?? (jobId && data.files?.simplified_png
-    ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.files.simplified_png}`
-    : undefined);
+  const forumImage = graphImage
+    ?? (jobId && data.files?.graph_png ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.files.graph_png}` : undefined);
+  const simplifiedImage = staticSimplifiedImage
+    ?? (jobId && data.files?.simplified_png ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.files.simplified_png}` : undefined);
 
   return (
     <section className="space-y-5">
@@ -2197,22 +2130,22 @@ function GraphViewer({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  function clampPosition(nextPosition: { x: number; y: number }, nextScale = scale) {
+  function clampPosition(pos: { x: number; y: number }, s = scale) {
     const rect = viewportRef.current?.getBoundingClientRect();
-    const width = rect?.width ?? 900;
-    const height = rect?.height ?? 720;
-    const maxX = Math.max(0, (width * nextScale - width) / 2 + width * 0.18);
-    const maxY = Math.max(0, (height * nextScale - height) / 2 + height * 0.18);
+    const w = rect?.width ?? 900;
+    const h = rect?.height ?? 720;
+    const maxX = Math.max(0, (w * s - w) / 2 + w * 0.18);
+    const maxY = Math.max(0, (h * s - h) / 2 + h * 0.18);
     return {
-      x: Math.max(-maxX, Math.min(maxX, nextPosition.x)),
-      y: Math.max(-maxY, Math.min(maxY, nextPosition.y)),
+      x: Math.max(-maxX, Math.min(maxX, pos.x)),
+      y: Math.max(-maxY, Math.min(maxY, pos.y)),
     };
   }
 
   function updateScale(nextScale: number) {
-    const clampedScale = Math.max(0.5, Math.min(4, nextScale));
-    setScale(clampedScale);
-    setPosition((current) => clampPosition(current, clampedScale));
+    const s = Math.max(0.5, Math.min(4, nextScale));
+    setScale(s);
+    setPosition((current) => clampPosition(current, s));
   }
 
   function resetView() {
@@ -2222,11 +2155,9 @@ function GraphViewer({
 
   useEffect(() => {
     if (!isModalOpen) return;
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setIsModalOpen(false);
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") setIsModalOpen(false); };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [isModalOpen]);
 
   return (
@@ -2456,10 +2387,9 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
     setIsLoading(true);
     setError("");
     try {
-      const loadedJobs = await getHistoryJobs();
-      setJobs(loadedJobs);
-    } catch (loadError) {
-      setError(friendlyApiError(loadError));
+      setJobs(await getHistoryJobs());
+    } catch (err) {
+      setError(friendlyApiError(err));
     } finally {
       setIsLoading(false);
     }
@@ -2471,8 +2401,8 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
     setError("");
     try {
       setDetail(await getHistoryJobDetail(jobId));
-    } catch (loadError) {
-      setError(friendlyApiError(loadError));
+    } catch (err) {
+      setError(friendlyApiError(err));
     } finally {
       setIsDetailLoading(false);
       setLoadingDetailJobId(null);
@@ -2483,14 +2413,11 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
     setError("");
     try {
       const result = await getJobResult(jobId);
-      if (!result) {
-        setError("O job ainda não tem resultado completo para reutilizar.");
-        return;
-      }
+      if (!result) { setError("O job ainda não tem resultado completo para reutilizar."); return; }
       onReuse?.(result);
       setDetail(await getHistoryJobDetail(jobId));
-    } catch (loadError) {
-      setError(friendlyApiError(loadError));
+    } catch (err) {
+      setError(friendlyApiError(err));
     }
   }
 
@@ -2511,12 +2438,9 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
   );
 
   const filteredJobs = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
     return jobs.filter((job) => {
-      const matchesQuery =
-        !normalizedQuery ||
-        job.job_id.toLowerCase().includes(normalizedQuery) ||
-        job.dataset_name.toLowerCase().includes(normalizedQuery);
+      const matchesQuery = !q || job.job_id.toLowerCase().includes(q) || job.dataset_name.toLowerCase().includes(q);
       const matchesDataset = !datasetFilter || job.dataset_name === datasetFilter;
       const matchesType = typeFilter === "all" || job.analysis_type === typeFilter;
       const matchesStatus = statusFilter === "all" || job.status === statusFilter;
@@ -2533,7 +2457,7 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
         ["Poly-tree", detail.files.polytree_png],
         ["RAMEX-Forum", detail.files.forum_graph_png],
         ["RAMEX-Forum simplificado", detail.files.forum_simplified_png],
-      ].filter((entry): entry is [string, string] => Boolean(entry[1])))
+      ] as Array<[string, string | null | undefined]>).filter((e): e is [string, string] => Boolean(e[1]))
     : [];
 
   const detailFiles = detail?.available_files ?? [];
@@ -3198,11 +3122,7 @@ function ReportsPanel({
   const reportBody = pureData?.comparisonMarkdown || executiveText || "Relatório ainda não gerado para este dataset.";
 
   async function handleCopyReport() {
-    try {
-      await navigator.clipboard.writeText(reportBody);
-    } catch {
-      // noop
-    }
+    await navigator.clipboard.writeText(reportBody).catch(() => {});
   }
 
   return (
@@ -3369,10 +3289,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
   const canMapColumns = datasetType !== "simple_sequences";
 
   async function handleUpload() {
-    if (!file) {
-      setError("Selecione um ficheiro antes de enviar.");
-      return;
-    }
+    if (!file) { setError("Selecione um ficheiro antes de enviar."); return; }
 
     setError("");
     setResult(null);
@@ -3388,18 +3305,15 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
         setTimeColumn(mapping.timeColumn);
         setEventColumn(mapping.eventColumn);
       }
-    } catch (uploadError) {
-      setError(friendlyApiError(uploadError));
+    } catch (err) {
+      setError(friendlyApiError(err));
     } finally {
       setIsUploading(false);
     }
   }
 
   async function handleAnalyze() {
-    if (!jobId) {
-      setError("Envie primeiro um ficheiro para criar um job.");
-      return;
-    }
+    if (!jobId) { setError("Envie primeiro um ficheiro para criar um job."); return; }
 
     if (canMapColumns && (!caseColumn || !timeColumn || !eventColumn)) {
       setError("Complete o mapeamento de colunas antes de executar a análise.");
@@ -3438,8 +3352,8 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
       });
       setJobId(started.job_id);
       setIsAnalyzing(true);
-    } catch (analysisError) {
-      setError(friendlyApiError(analysisError));
+    } catch (err) {
+      setError(friendlyApiError(err));
       setIsAnalyzing(false);
     }
   }
@@ -3472,13 +3386,11 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
           setError(`Erro${failedStep}: ${failedMsg}`);
           setIsAnalyzing(false);
         }
-      } catch (pollError) {
+      } catch (err) {
         if (canceled) return;
-        const errorMessage = pollError instanceof Error ? pollError.message : String(pollError);
-        if (errorMessage.includes("Job não encontrado")) {
-          return;
-        }
-        setError(friendlyApiError(pollError));
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes("Job não encontrado")) return;
+        setError(friendlyApiError(err));
         setIsAnalyzing(false);
       }
     };
@@ -3544,23 +3456,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
   const uploadBest = result?.pure_validation?.best_algorithm ?? pureRamexBest(result?.pure_ramex);
   const uploadStructuralType =
     result?.pure_validation?.structural_type ??
-    pureRamexStructuralType(
-      result
-        ? {
-            Dataset: result.filename,
-            Nos_Grafo: result.metrics.nodes,
-            Arestas_Grafo: result.metrics.edges,
-            Soma_Pesos_Grafo: result.metrics.total_weight,
-            Arestas_RAMEX: result.metrics.ramex_edges,
-            Soma_Pesos_RAMEX: result.metrics.ramex_weight,
-            Percentagem_Peso_Preservado: result.metrics.preserved_percentage,
-            Densidade_Aproximada: result.metrics.density,
-            Top_5_Transicoes: "",
-            Interpretacao: result.interpretation,
-          }
-        : undefined,
-      result?.pure_ramex,
-    );
+    pureRamexStructuralType(result ? uploadResultToValidationRow(result) : undefined, result?.pure_ramex);
   const uploadReportProblem = reportCompletenessError(result);
   const uploadReportData: ReportData | undefined = result && !uploadReportProblem
     ? {
@@ -4220,38 +4116,33 @@ export default function Home() {
 
   useEffect(() => {
     let mounted = true;
-    const currentErrors: string[] = [];
+    const errs: string[] = [];
 
     async function loadData() {
       try {
         const validation = await loadCsv("validacao_comparativa.csv", validationMapper);
         if (mounted) setValidationRows(validation);
-      } catch (error) {
-        currentErrors.push(error instanceof Error ? error.message : "Erro ao carregar validação comparativa.");
+      } catch (err) {
+        errs.push(err instanceof Error ? err.message : "Erro ao carregar validação comparativa.");
       }
 
       try {
-        const textResponse = await fetch(dataPath("validacao_comparativa.txt"));
-        if (textResponse.ok) {
-          const text = await textResponse.text();
-          if (mounted) setExecutiveText(text);
-        }
+        const res = await fetch(dataPath("validacao_comparativa.txt"));
+        if (res.ok && mounted) setExecutiveText(await res.text());
       } catch {
-        currentErrors.push("Não foi possível carregar o relatório TXT.");
+        errs.push("Não foi possível carregar o relatório TXT.");
       }
 
-      if (mounted) setErrors(currentErrors);
+      if (mounted) setErrors(errs);
     }
 
     loadData();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
     let mounted = true;
-    const currentErrors: string[] = [];
+    const errs: string[] = [];
 
     async function loadDatasetData() {
       setMatrix(undefined);
@@ -4264,39 +4155,35 @@ export default function Home() {
       setPureRamexData(undefined);
 
       try {
-        const loadedMatrix = await loadMatrix(`matriz_adjacencia_dataset${datasetId}.csv`);
-        if (mounted) setMatrix(loadedMatrix);
-      } catch (error) {
-        currentErrors.push(error instanceof Error ? error.message : "Erro ao carregar matriz.");
+        if (mounted) setMatrix(await loadMatrix(`matriz_adjacencia_dataset${datasetId}.csv`));
+      } catch (err) {
+        errs.push(err instanceof Error ? err.message : "Erro ao carregar matriz.");
       }
 
       try {
-        const loadedGraphEdges = await loadCsv(`grafo_edges_dataset${datasetId}.csv`, edgeMapper);
-        if (mounted) setGraphEdges(loadedGraphEdges);
-      } catch (error) {
-        currentErrors.push(error instanceof Error ? error.message : "Erro ao carregar grafo.");
+        if (mounted) setGraphEdges(await loadCsv(`grafo_edges_dataset${datasetId}.csv`, edgeMapper));
+      } catch (err) {
+        errs.push(err instanceof Error ? err.message : "Erro ao carregar grafo.");
       }
 
       try {
-        const loadedRamexEdges = await loadCsv(`ramex_dataset${datasetId}.csv`, edgeMapper);
-        if (mounted) setRamexEdges(loadedRamexEdges);
-      } catch (error) {
-        currentErrors.push(error instanceof Error ? error.message : "Erro ao carregar RAMEX.");
+        if (mounted) setRamexEdges(await loadCsv(`ramex_dataset${datasetId}.csv`, edgeMapper));
+      } catch (err) {
+        errs.push(err instanceof Error ? err.message : "Erro ao carregar RAMEX.");
       }
 
       try {
-        const loadedPolytree = await loadJson<PolyTreeData>(`ramex_polytree_dataset${datasetId}.json`);
+        const poly = await loadJson<PolyTreeData>(`ramex_polytree_dataset${datasetId}.json`);
         if (mounted) {
-          setPolytreeData(loadedPolytree);
-          setPolytreeViewStrategy(loadedPolytree.strategy === "multiobjective" ? "multiobjective" : "top-k");
+          setPolytreeData(poly);
+          setPolytreeViewStrategy(poly.strategy === "multiobjective" ? "multiobjective" : "top-k");
         }
-      } catch (error) {
+      } catch {
         if (mounted) setPolytreeError("Poly-tree ainda não gerado para este dataset.");
       }
 
       try {
-        const loadedPolytreeRows = await loadCsv(`ramex_polytree_dataset${datasetId}.csv`, polytreeRowMapper);
-        if (mounted) setPolytreeRows(loadedPolytreeRows);
+        if (mounted) setPolytreeRows(await loadCsv(`ramex_polytree_dataset${datasetId}.csv`, polytreeRowMapper));
       } catch {
         if (mounted) setPolytreeRows([]);
       }
@@ -4306,68 +4193,47 @@ export default function Home() {
       let forward: PureRamexResult | undefined;
       let backForward: PureRamexResult | undefined;
       let comparisonRows: PureRamexComparisonRow[] = [];
-      let comparisonMarkdown: string | undefined;
-      let multidatasetMarkdown: string | undefined;
+
+      try { ramex2007 = await loadJson<PureRamexResult>(`ramex2007_dataset${datasetId}.json`); }
+      catch { pureMissing.push(`ramex2007_dataset${datasetId}.json`); }
+
+      try { forward = await loadJson<PureRamexResult>(`ramex_forward_dataset${datasetId}.json`); }
+      catch { pureMissing.push(`ramex_forward_dataset${datasetId}.json`); }
+
+      try { backForward = await loadJson<PureRamexResult>(`ramex_back_forward_dataset${datasetId}.json`); }
+      catch { pureMissing.push(`ramex_back_forward_dataset${datasetId}.json`); }
+
+      try { comparisonRows = await loadCsv(`validacao_ramex_puro_dataset${datasetId}.csv`, pureComparisonMapper); }
+      catch { pureMissing.push(`validacao_ramex_puro_dataset${datasetId}.csv`); }
+
+      const comparisonMarkdown = await loadOptionalText(`validacao_ramex_puro_dataset${datasetId}.md`);
+      const multidatasetMarkdown = await loadOptionalText("validacao_ramex_multidataset.md");
+
+      if (mounted) setPureRamexData({ ramex2007, forward, backForward, comparisonRows, comparisonMarkdown, multidatasetMarkdown, missing: pureMissing });
 
       try {
-        ramex2007 = await loadJson<PureRamexResult>(`ramex2007_dataset${datasetId}.json`);
-      } catch {
-        pureMissing.push(`ramex2007_dataset${datasetId}.json`);
-      }
-      try {
-        forward = await loadJson<PureRamexResult>(`ramex_forward_dataset${datasetId}.json`);
-      } catch {
-        pureMissing.push(`ramex_forward_dataset${datasetId}.json`);
-      }
-      try {
-        backForward = await loadJson<PureRamexResult>(`ramex_back_forward_dataset${datasetId}.json`);
-      } catch {
-        pureMissing.push(`ramex_back_forward_dataset${datasetId}.json`);
-      }
-      try {
-        comparisonRows = await loadCsv(`validacao_ramex_puro_dataset${datasetId}.csv`, pureComparisonMapper);
-      } catch {
-        pureMissing.push(`validacao_ramex_puro_dataset${datasetId}.csv`);
-      }
-      comparisonMarkdown = await loadOptionalText(`validacao_ramex_puro_dataset${datasetId}.md`);
-      multidatasetMarkdown = await loadOptionalText("validacao_ramex_multidataset.md");
-
-      if (mounted) {
-        setPureRamexData({
-          ramex2007,
-          forward,
-          backForward,
-          comparisonRows,
-          comparisonMarkdown,
-          multidatasetMarkdown,
-          missing: pureMissing,
-        });
-      }
-
-      try {
-        const loadedForum = await loadJson<RamexForumData>(`dataset${datasetId}/forum/ramex_forum_metrics.json`);
-        if (mounted) setStaticForumData(loadedForum);
+        const forum = await loadJson<RamexForumData>(`dataset${datasetId}/forum/ramex_forum_metrics.json`);
+        if (mounted) setStaticForumData(forum);
       } catch {
         if (mounted) setStaticForumData(undefined);
       }
 
-      if (mounted) setErrors(currentErrors);
+      if (mounted) setErrors(errs);
     }
 
     loadDatasetData();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [datasetId]);
 
-  const selectedValidation = useMemo(() => {
-    return validationRows.find((row) => datasetLabelToId(row.Dataset) === datasetId);
-  }, [datasetId, validationRows]);
+  const selectedValidation = useMemo(
+    () => validationRows.find((row) => datasetLabelToId(row.Dataset) === datasetId),
+    [datasetId, validationRows],
+  );
 
-  const rootNode = useMemo(() => {
-    const levelOne = ramexEdges.find((edge) => edge.Level === 1);
-    return levelOne?.From ?? ramexEdges[0]?.From;
-  }, [ramexEdges]);
+  const rootNode = useMemo(
+    () => ramexEdges.find((e) => e.Level === 1)?.From ?? ramexEdges[0]?.From,
+    [ramexEdges],
+  );
 
   const denseGraph = selectedValidation ? selectedValidation.Arestas_Grafo > 1000 : graphEdges.length > 1000;
   const staticTopTransitions = useMemo(
@@ -4375,7 +4241,6 @@ export default function Home() {
     [graphEdges],
   );
 
-  // For static datasets, transition matrix is not available (would need to be generated)
   const staticTransitionMatrix = undefined;
 
   function handleDownloadStaticReport() {
@@ -4455,20 +4320,7 @@ export default function Home() {
     downloadMarkdown(`relatorio_tecnico_${sanitizeReportName(uploadedResult.job_id)}.md`, report);
   }
 
-  const demoValidation = uploadedResult
-    ? ({
-        Dataset: `Upload: ${uploadedResult.filename}`,
-        Nos_Grafo: uploadedResult.metrics.nodes,
-        Arestas_Grafo: uploadedResult.metrics.edges,
-        Soma_Pesos_Grafo: uploadedResult.metrics.total_weight,
-        Arestas_RAMEX: uploadedResult.metrics.ramex_edges,
-        Soma_Pesos_RAMEX: uploadedResult.metrics.ramex_weight,
-        Percentagem_Peso_Preservado: uploadedResult.metrics.preserved_percentage,
-        Densidade_Aproximada: uploadedResult.metrics.density,
-        Top_5_Transicoes: "",
-        Interpretacao: uploadedResult.interpretation,
-      } satisfies ValidationRow)
-    : selectedValidation;
+  const demoValidation = uploadedResult ? uploadResultToValidationRow(uploadedResult) : selectedValidation;
 
   const staticReportData: ReportData | undefined = selectedValidation
     ? {
@@ -4633,12 +4485,9 @@ export default function Home() {
     "Dataset 03: padrões fortes e interpretáveis, com poucos nós, transições recorrentes e estrutura RAMEX compreensível.",
   ];
 
-  const modeBadge =
-    viewId === "forum"
-      ? "RAMEX-Forum"
-      : viewId === "upload" && uploadedResult?.analysis_type === "both"
-        ? "Comparativo"
-        : "RAMEX Puro";
+  const modeBadge = viewId === "forum" ? "RAMEX-Forum"
+    : (viewId === "upload" && uploadedResult?.analysis_type === "both") ? "Comparativo"
+    : "RAMEX Puro";
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
@@ -4946,6 +4795,5 @@ export default function Home() {
     </main>
   );
 }
-
 
 

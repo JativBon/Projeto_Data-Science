@@ -22,6 +22,83 @@ const references = [
   "Cavique, L. (2021). Ciência dos Dados: Bases de Dados versus Aprendizagem Automática. Revista de Ciência Elementar, 9(02):041.",
 ];
 
+type TableColumn = { label: string; width: string };
+type Metric = { label: string; value: string };
+
+const tableColumns = (...entries: Array<[string, string]>): TableColumn[] =>
+  entries.map(([label, width]) => ({ label, width }));
+
+const pipelineSteps = [
+  ["Sequências", "Reconstrução da ordem dos eventos por entidade/caso."],
+  ["Grafo", "Rede dirigida ponderada com frequências absolutas."],
+  ["RAMEX puro", "Execução das fases 10A, 10B e 10C."],
+  ["Poly-tree formal", "Validação estrutural da saída RAMEX."],
+  ["Interpretação", "Síntese automática dos padrões observados."],
+];
+
+const columns = {
+  transitions: tableColumns(["From", "40%"], ["To", "40%"], ["Weight", "20%"]),
+  graph: tableColumns(["De", "35%"], ["Para", "35%"], ["Frequência", "30%"]),
+  ramex: tableColumns(["From", "32%"], ["To", "32%"], ["Weight", "18%"], ["Level", "18%"]),
+  polytree: tableColumns(["From", "22%"], ["To", "22%"], ["Weight", "12%"], ["Level", "10%"], ["Direção / validação", "34%"]),
+  pure: tableColumns(["Algoritmo", "28%"], ["Método", "22%"], ["Arestas", "12%"], ["Peso", "14%"], ["Raiz / aresta", "24%"]),
+  forum: tableColumns(["Origem", "24%"], ["Destino", "24%"], ["Freq.", "16%"], ["Peso relativo", "22%"], ["Rank", "14%"]),
+  structures: tableColumns(["Estrutura", "24%"], ["Objetivo", "28%"], ["Vantagem", "24%"], ["Limitação", "24%"]),
+  bothComparison: tableColumns(["Critério", "22%"], ["RAMEX Puro", "39%"], ["RAMEX-Forum", "39%"]),
+  limitations: tableColumns(["Limitação", "48%"], ["Mitigação", "52%"]),
+} satisfies Record<string, TableColumn[]>;
+
+const emptyRows = {
+  transitions: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]],
+  ramex: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]],
+  polytree: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Output Poly-tree formal não encontrado"]],
+  pure: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]],
+  forum: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]],
+  forumIncomplete: [["Output RAMEX-Forum incompleto", "-", "-", "-", "-"]],
+};
+
+const structureRows = [
+  ["Grafo completo", "Representar todas as transições", "Maior detalhe", "Pode exigir leitura filtrada"],
+  ["Grafo filtrado", "Reduzir ruído", "Melhor legibilidade", "Pode omitir relações fracas"],
+  ["RAMEX 2007", "Rooted Branching", "Base formal", "Depende da raiz"],
+  ["Forward", "Expansão enraizada", "Simplicidade", "Menor cobertura"],
+  ["Back-and-Forward", "Expansão bidirecional", "Contribui para a Poly-tree formal", "Mais complexidade"],
+  ["Poly-tree formal", "Validação estrutural", "Rigor topológico", "Condensa mantendo validação formal"],
+];
+
+const forumStructureRow = ["RAMEX-Forum", "Explorar influência", "Pesos relativos e caminhos dominantes", "Não substitui a Poly-tree formal"];
+
+const bothComparisonRows = [
+  ["Objetivo", "Condensar estrutura sequencial dominante", "Explorar relações de influência"],
+  ["Saída", "Poly-tree formal", "Grafo/árvore de influência"],
+  ["Pesos", "Frequências absolutas preservadas", "Frequências absolutas + pesos relativos"],
+  ["Interpretação", "Caminho dominante e estrutura acíclica", "Influência, centralidade e caminhos relevantes"],
+  ["Melhor uso", "Padrões sequenciais estruturados", "Relações complexas e exploração"],
+];
+
+const limitationRows = [
+  [
+    "O RAMEX puro encontra-se formalizado nesta versão da framework.",
+    "A framework implementa RAMEX 2007, Forward, Back-and-Forward e valida estruturalmente a Poly-tree formal.",
+  ],
+  [
+    "A qualidade dos padrões depende da qualidade e granularidade dos dados.",
+    "A aplicação valida dados, sequências curtas, eventos ausentes e densidade do grafo.",
+  ],
+  [
+    "Datasets densos podem beneficiar de filtros de visualização.",
+    "A framework suporta filtros por frequência e top N antes da análise estrutural.",
+  ],
+  [
+    "Algumas visualizações são simplificadas.",
+    "O PDF distingue visualização resumida de dados completos exportados em CSV.",
+  ],
+  [
+    "A Poly-tree formal exige validação topológica explícita.",
+    "A implementação regista métricas estruturais, aciclicidade, conectividade e conformidade da Poly-tree.",
+  ],
+];
+
 const styles = StyleSheet.create({
   page: {
     padding: 42,
@@ -179,11 +256,52 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   );
 }
 
+function MetricGrid({ metrics }: { metrics: Metric[] }) {
+  return (
+    <View style={styles.cardGrid}>
+      {metrics.map((metric) => (
+        <MetricCard key={metric.label} label={metric.label} value={metric.value} />
+      ))}
+    </View>
+  );
+}
+
+function CoverPage({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
+  return (
+    <Page size="A4" style={[styles.page, styles.cover]}>
+      <View style={{ marginTop: 90 }}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
+        {children}
+      </View>
+    </Page>
+  );
+}
+
+function DatasetFacts({ data, includeDatasetType = false }: { data: ReportData; includeDatasetType?: boolean }) {
+  return (
+    <View style={styles.highlight}>
+      <Text style={styles.text}>Dataset analisado: {safeValue(data.datasetName)}</Text>
+      <Text style={styles.text}>Data de geração: {safeValue(data.generatedAt)}</Text>
+      {includeDatasetType ? <Text style={styles.text}>Tipo de dataset: {safeValue(data.datasetType)}</Text> : null}
+      <Text style={styles.text}>Origem: {data.datasetOrigin === "upload" ? "Upload" : "Pré-carregado"}</Text>
+    </View>
+  );
+}
+
 function SimpleTable({
   columns,
   rows,
 }: {
-  columns: Array<{ label: string; width: string }>;
+  columns: TableColumn[];
   rows: string[][];
 }) {
   return (
@@ -214,7 +332,6 @@ function TransitionMatrixTable({ transitionMatrix }: { transitionMatrix: Record<
   
   return (
     <View style={styles.table}>
-      {/* Header row */}
       <View style={styles.row}>
         <Text style={[styles.headerCell, { width: columnWidth, fontWeight: "bold" }]}>Origem\\Destino</Text>
         {nodes.map((node) => (
@@ -223,7 +340,6 @@ function TransitionMatrixTable({ transitionMatrix }: { transitionMatrix: Record<
           </Text>
         ))}
       </View>
-      {/* Data rows */}
       {nodes.map((origin) => (
         <View key={`row-${origin}`} style={styles.row} wrap={false}>
           <Text style={[styles.headerCell, { width: columnWidth, fontWeight: "bold" }]}>{origin}</Text>
@@ -259,6 +375,18 @@ function ImageOrFallback({ src, label }: { src?: string; label: string }) {
   return <Image src={src} style={styles.imageBox} />;
 }
 
+function edgeRows(edges: Array<{ from: string; to: string; weight: number }>, limit: number) {
+  return edges.slice(0, limit).map((edge) => [edge.from, edge.to, formatNumber(edge.weight)]);
+}
+
+function bestFinitePercent(rows: NonNullable<ReportData["pureRamex"]>["rows"] = []) {
+  const percentages = rows
+    .map((row) => row.preservedWeightPercent)
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+
+  return Math.max(...percentages);
+}
+
 export function ReportPdfDocument({ data }: { data: ReportData }) {
   const executive = data.interpretations.executiveSummary || buildExecutiveSummary(data);
   const graphInterpretation = data.interpretations.graphInterpretation || buildGraphInterpretation(data);
@@ -269,11 +397,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
   const conclusion = data.interpretations.conclusion || buildFinalConclusion(data);
   const datasetBenchmarks = getDatasetBenchmarks(data);
 
-  const topTransitions = data.topTransitions.slice(0, 10).map((edge) => [
-    edge.from,
-    edge.to,
-    formatNumber(edge.weight),
-  ]);
+  const topTransitions = edgeRows(data.topTransitions, 10);
   const ramexRows = (data.ramexEdges ?? []).slice(0, 10).map((edge) => [
     edge.from,
     edge.to,
@@ -308,18 +432,14 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         : row.preservedWeightPercent;
 
     return [
-    displayAlgorithm,
-    safeValue(row.method),
-    safeValue(row.selectedEdges),
-    formatPercent(displayPreserved),
-    safeValue(row.anchor),
-  ];
+      displayAlgorithm,
+      safeValue(row.method),
+      safeValue(row.selectedEdges),
+      formatPercent(displayPreserved),
+      safeValue(row.anchor),
+    ];
   });
-  const bestPurePreserved = Math.max(
-    ...(data.pureRamex?.rows ?? [])
-      .map((row) => row.preservedWeightPercent)
-      .filter((value): value is number => typeof value === "number" && Number.isFinite(value)),
-  );
+  const bestPurePreserved = bestFinitePercent(data.pureRamex?.rows);
   const bestPurePreservedLabel = Number.isFinite(bestPurePreserved)
     ? formatPercent(bestPurePreserved)
     : "Sem dados gerados";
@@ -350,35 +470,44 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       : data.analysisType === "both"
         ? "Relatório Comparativo RAMEX Puro vs RAMEX-Forum"
         : "Relatório RAMEX Puro";
+  const forumMetrics = [
+    { label: "Nós", value: formatNumber(data.ramexForum?.metrics?.nodes) },
+    { label: "Arestas", value: formatNumber(data.ramexForum?.metrics?.edges) },
+    { label: "Relações normalizadas", value: formatNumber(data.ramexForum?.metrics?.normalizedRelations) },
+    { label: "Nó mais influente", value: safeValue(data.ramexForum?.metrics?.mostInfluentialNode) },
+    { label: "Nó mais recebido", value: safeValue(data.ramexForum?.metrics?.mostReceivedNode) },
+    { label: "Peso relativo médio", value: formatPercent(data.ramexForum?.metrics?.averageRelativeWeight) },
+  ];
+  const summaryMetrics = [
+    { label: "Nós", value: formatNumber(data.metrics.nodes) },
+    { label: "Arestas", value: formatNumber(data.metrics.edges) },
+    { label: "Densidade", value: formatNumber(data.metrics.density) },
+    { label: "PESO POLY-TREE FORMAL", value: polyTreeFormalLabel },
+    { label: "Melhor RAMEX puro", value: bestAlgorithmLabel },
+    { label: "Soma dos pesos", value: formatNumber(data.metrics.totalWeight) },
+  ];
+  const dataQualityMetrics = [
+    { label: "Sequências", value: formatNumber(data.metrics.sequences) },
+    { label: "Eventos/Nós", value: formatNumber(data.metrics.nodes) },
+    { label: "Transições/Arestas", value: formatNumber(data.metrics.edges) },
+    { label: "Soma dos pesos", value: formatNumber(data.metrics.totalWeight) },
+    { label: "Densidade", value: formatNumber(data.metrics.density) },
+    { label: "Granularidade", value: "Inferida pelas transições" },
+  ];
 
   if (data.analysisType === "forum") {
     return (
       <Document title={`${reportSubtitle} - ${data.datasetName}`}>
-        <Page size="A4" style={[styles.page, styles.cover]}>
-          <View style={{ marginTop: 90 }}>
-            <Text style={styles.title}>RAMEX-Forum</Text>
-            <Text style={styles.subtitle}>{reportSubtitle}</Text>
-            <View style={styles.highlight}>
-              <Text style={styles.text}>Dataset analisado: {safeValue(data.datasetName)}</Text>
-              <Text style={styles.text}>Data de geração: {safeValue(data.generatedAt)}</Text>
-              <Text style={styles.text}>Origem: {data.datasetOrigin === "upload" ? "Upload" : "Pré-carregado"}</Text>
-            </View>
-            <Text style={styles.text}>
-              O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para exploração de relações
-              complexas, pesos normalizados, influência e caminhos dominantes.
-            </Text>
-          </View>
-        </Page>
+        <CoverPage title="RAMEX-Forum" subtitle={reportSubtitle}>
+          <DatasetFacts data={data} />
+          <Text style={styles.text}>
+            O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para exploração de relações
+            complexas, pesos normalizados, influência e caminhos dominantes.
+          </Text>
+        </CoverPage>
         <PageFrame>
           <Text style={styles.sectionTitle}>Sumário RAMEX-Forum</Text>
-          <View style={styles.cardGrid}>
-            <MetricCard label="Nós" value={formatNumber(data.ramexForum?.metrics?.nodes)} />
-            <MetricCard label="Arestas" value={formatNumber(data.ramexForum?.metrics?.edges)} />
-            <MetricCard label="Relações normalizadas" value={formatNumber(data.ramexForum?.metrics?.normalizedRelations)} />
-            <MetricCard label="Nó mais influente" value={safeValue(data.ramexForum?.metrics?.mostInfluentialNode)} />
-            <MetricCard label="Nó mais recebido" value={safeValue(data.ramexForum?.metrics?.mostReceivedNode)} />
-            <MetricCard label="Peso relativo médio" value={formatPercent(data.ramexForum?.metrics?.averageRelativeWeight)} />
-          </View>
+          <MetricGrid metrics={forumMetrics} />
           <View style={styles.highlight}>
             <Text style={styles.text}>{safeValue(data.ramexForum?.interpretation)}</Text>
             <Text style={styles.text}>Caminho dominante: {safeValue(data.ramexForum?.dominantPath?.join(" -> "))}</Text>
@@ -392,14 +521,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <PageFrame>
           <Text style={styles.sectionTitle}>Relações Normalizadas</Text>
           <SimpleTable
-            columns={[
-              { label: "Origem", width: "24%" },
-              { label: "Destino", width: "24%" },
-              { label: "Freq.", width: "16%" },
-              { label: "Peso relativo", width: "22%" },
-              { label: "Rank", width: "14%" },
-            ]}
-            rows={forumRows.length ? forumRows : [["Output RAMEX-Forum incompleto", "-", "-", "-", "-"]]}
+            columns={columns.forum}
+            rows={forumRows.length ? forumRows : emptyRows.forumIncomplete}
           />
         </PageFrame>
         <PageFrame>
@@ -415,24 +538,13 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
 
   return (
     <Document title={`${reportSubtitle} - ${data.datasetName}`}>
-      <Page size="A4" style={[styles.page, styles.cover]}>
-        <View style={{ marginTop: 90 }}>
-          <Text style={styles.title}>RAMEX Sequential Analysis</Text>
-          <Text style={styles.subtitle}>{reportSubtitle}</Text>
-          <View style={styles.highlight}>
-            <Text style={styles.text}>Dataset analisado: {safeValue(data.datasetName)}</Text>
-            <Text style={styles.text}>Data de geração: {safeValue(data.generatedAt)}</Text>
-            <Text style={styles.text}>Tipo de dataset: {safeValue(data.datasetType)}</Text>
-            <Text style={styles.text}>
-              Origem: {data.datasetOrigin === "upload" ? "Upload" : "Pré-carregado"}
-            </Text>
-          </View>
-          <Text style={styles.text}>
-            Artefacto digital de Data Science para extração de conhecimento a partir de sequências, inspirado nos
-            trabalhos do Professor Luís Cavique sobre RAMEX e sequence mining.
-          </Text>
-        </View>
-      </Page>
+      <CoverPage title="RAMEX Sequential Analysis" subtitle={reportSubtitle}>
+        <DatasetFacts data={data} includeDatasetType />
+        <Text style={styles.text}>
+          Artefacto digital de Data Science para extração de conhecimento a partir de sequências, inspirado nos
+          trabalhos do Professor Luís Cavique sobre RAMEX e sequence mining.
+        </Text>
+      </CoverPage>
 
       <PageFrame>
         <Text style={styles.sectionTitle}>Sumário Executivo</Text>
@@ -441,25 +553,12 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           análise sequencial alinhada com Cavique (2007, 2015).
         </Text>
         <Text style={styles.text}>{executive}</Text>
-        <View style={styles.cardGrid}>
-          <MetricCard label="Nós" value={formatNumber(data.metrics.nodes)} />
-          <MetricCard label="Arestas" value={formatNumber(data.metrics.edges)} />
-          <MetricCard label="Densidade" value={formatNumber(data.metrics.density)} />
-          <MetricCard label="PESO POLY-TREE FORMAL" value={polyTreeFormalLabel} />
-          <MetricCard label="Melhor RAMEX puro" value={bestAlgorithmLabel} />
-          <MetricCard label="Soma dos pesos" value={formatNumber(data.metrics.totalWeight)} />
-        </View>
+        <MetricGrid metrics={summaryMetrics} />
       </PageFrame>
 
       <PageFrame>
         <Text style={styles.sectionTitle}>Pipeline Executada</Text>
-        {[
-          ["Sequências", "Reconstrução da ordem dos eventos por entidade/caso."],
-          ["Grafo", "Rede dirigida ponderada com frequências absolutas."],
-          ["RAMEX puro", "Execução das fases 10A, 10B e 10C."],
-          ["Poly-tree formal", "Validação estrutural da saída RAMEX."],
-          ["Interpretação", "Síntese automática dos padrões observados."],
-        ].map(([title, description]) => (
+        {pipelineSteps.map(([title, description]) => (
           <View key={title} style={styles.pipelineStep}>
             <Text style={styles.h3}>{title}</Text>
             <Text style={styles.text}>{description}</Text>
@@ -469,14 +568,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
 
       <PageFrame>
         <Text style={styles.sectionTitle}>Qualidade e Caracterização dos Dados</Text>
-        <View style={styles.cardGrid}>
-          <MetricCard label="Sequências" value={formatNumber(data.metrics.sequences)} />
-          <MetricCard label="Eventos/Nós" value={formatNumber(data.metrics.nodes)} />
-          <MetricCard label="Transições/Arestas" value={formatNumber(data.metrics.edges)} />
-          <MetricCard label="Soma dos pesos" value={formatNumber(data.metrics.totalWeight)} />
-          <MetricCard label="Densidade" value={formatNumber(data.metrics.density)} />
-          <MetricCard label="Granularidade" value="Inferida pelas transições" />
-        </View>
+        <MetricGrid metrics={dataQualityMetrics} />
         <View style={styles.highlight}>
           <Text style={styles.text}>{graphInterpretation}</Text>
         </View>
@@ -488,12 +580,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           As transições mais fortes representam os pares de eventos com maior recorrência no dataset.
         </Text>
         <SimpleTable
-          columns={[
-            { label: "From", width: "40%" },
-            { label: "To", width: "40%" },
-            { label: "Weight", width: "20%" },
-          ]}
-          rows={topTransitions.length ? topTransitions : [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]]}
+          columns={columns.transitions}
+          rows={topTransitions.length ? topTransitions : emptyRows.transitions}
         />
       </PageFrame>
 
@@ -517,11 +605,13 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.text}>
           O grafo completo representa todas as transições distintas observadas nos dados, antes de qualquer condensação ou filtragem RAMEX.
         </Text>
-        <View style={styles.cardGrid}>
-          <MetricCard label="Nós" value={formatNumber(data.metrics.nodes)} />
-          <MetricCard label="Arestas" value={formatNumber(data.metrics.edges)} />
-          <MetricCard label="Densidade" value={formatNumber(data.metrics.density)} />
-        </View>
+        <MetricGrid
+          metrics={[
+            { label: "Nós", value: formatNumber(data.metrics.nodes) },
+            { label: "Arestas", value: formatNumber(data.metrics.edges) },
+            { label: "Densidade", value: formatNumber(data.metrics.density) },
+          ]}
+        />
         <ImageOrFallback src={data.images?.graph} label="Grafo dirigido ponderado" />
         <View style={styles.highlight}>
           <Text style={styles.h3}>Legenda</Text>
@@ -531,11 +621,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           <Text style={styles.text}>• Direção: ordem observada nas sequências (de origem para destino).</Text>
         </View>
         <SimpleTable
-          columns={[
-            { label: "De", width: "35%" },
-            { label: "Para", width: "35%" },
-            { label: "Frequência", width: "30%" },
-          ]}
+          columns={columns.graph}
           rows={
             (data.allTransitions && data.allTransitions.length > 0
               ? data.allTransitions.slice(0, data.allTransitions.length <= 20 ? data.allTransitions.length : 20)
@@ -555,21 +641,18 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.text}>
           A estrutura RAMEX formaliza a leitura da rede dirigida ponderada e prepara a comparação com as fases RAMEX puras.
         </Text>
-        <View style={styles.cardGrid}>
-          <MetricCard label="Arestas" value={formatNumber(data.metrics.ramexEdges)} />
-          <MetricCard label="Peso preservado" value={formatPercent(data.metrics.ramexPreservedPercent)} />
-          <MetricCard label="Soma pesos" value={formatNumber(data.metrics.ramexWeight)} />
-        </View>
+        <MetricGrid
+          metrics={[
+            { label: "Arestas", value: formatNumber(data.metrics.ramexEdges) },
+            { label: "Peso preservado", value: formatPercent(data.metrics.ramexPreservedPercent) },
+            { label: "Soma pesos", value: formatNumber(data.metrics.ramexWeight) },
+          ]}
+        />
         <Text style={styles.text}>{ramexInterpretation}</Text>
         <ImageOrFallback src={data.images?.ramex} label="Estrutura RAMEX base" />
         <SimpleTable
-          columns={[
-            { label: "From", width: "32%" },
-            { label: "To", width: "32%" },
-            { label: "Weight", width: "18%" },
-            { label: "Level", width: "18%" },
-          ]}
-          rows={ramexRows.length ? ramexRows : [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]]}
+          columns={columns.ramex}
+          rows={ramexRows.length ? ramexRows : emptyRows.ramex}
         />
       </PageFrame>
 
@@ -578,12 +661,14 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.text}>
           A Poly-tree formal valida estruturalmente a saída RAMEX, garantindo aciclicidade dirigida, conectividade e uma estrutura interpretável alinhada com a leitura topológica do RAMEX puro.
         </Text>
-        <View style={styles.cardGrid}>
-          <MetricCard label="Nós" value={formatNumber(data.metrics.polytreeNodes)} />
-          <MetricCard label="Arestas" value={formatNumber(data.metrics.polytreeEdges)} />
-          <MetricCard label="Peso preservado" value={polyTreeFormalLabel} />
-          <MetricCard label="Formal" value="RAMEX puro" />
-        </View>
+        <MetricGrid
+          metrics={[
+            { label: "Nós", value: formatNumber(data.metrics.polytreeNodes) },
+            { label: "Arestas", value: formatNumber(data.metrics.polytreeEdges) },
+            { label: "Peso preservado", value: polyTreeFormalLabel },
+            { label: "Formal", value: "RAMEX puro" },
+          ]}
+        />
         <View style={styles.highlight}>
           <Text style={styles.text}>
             A validação formal confirma que a estrutura resultante respeita as propriedades necessárias para leitura
@@ -593,18 +678,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.text}>{polytreeInterpretation}</Text>
         <ImageOrFallback src={data.images?.polytree} label="Poly-tree formal" />
         <SimpleTable
-          columns={[
-            { label: "From", width: "22%" },
-            { label: "To", width: "22%" },
-            { label: "Weight", width: "12%" },
-            { label: "Level", width: "10%" },
-            { label: "Direção / validação", width: "34%" },
-          ]}
-          rows={
-            polytreeRows.length
-              ? polytreeRows
-              : [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Output Poly-tree formal não encontrado"]]
-          }
+          columns={columns.polytree}
+          rows={polytreeRows.length ? polytreeRows : emptyRows.polytree}
         />
       </PageFrame>
 
@@ -613,14 +688,16 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.text}>
           Esta secção apresenta o estado final do RAMEX puro: 10A RAMEX 2007 Rooted Branching, 10B Forward Heuristic e 10C Back-and-Forward Heuristic, com validação formal da Poly-tree.
         </Text>
-        <View style={styles.cardGrid}>
-          <MetricCard label="RAMEX 2007" value={ramex2007Label} />
-          <MetricCard label="Forward" value={formatPercent(data.metrics.forwardPreservedPercent)} />
-          <MetricCard label="Back-and-Forward" value={backForwardLabel} />
-          <MetricCard label="Maior peso preservado" value={bestPreservedLabel} />
-          <MetricCard label="Melhor algoritmo" value={bestAlgorithmLabel} />
-          <MetricCard label="Tipo estrutural" value={safeValue(data.pureRamex?.structuralType)} />
-        </View>
+        <MetricGrid
+          metrics={[
+            { label: "RAMEX 2007", value: ramex2007Label },
+            { label: "Forward", value: formatPercent(data.metrics.forwardPreservedPercent) },
+            { label: "Back-and-Forward", value: backForwardLabel },
+            { label: "Maior peso preservado", value: bestPreservedLabel },
+            { label: "Melhor algoritmo", value: bestAlgorithmLabel },
+            { label: "Tipo estrutural", value: safeValue(data.pureRamex?.structuralType) },
+          ]}
+        />
         <View style={styles.highlight}>
           <Text style={styles.text}>
             O desempenho do RAMEX é diretamente condicionado pela estrutura do grafo, nomeadamente pela densidade,
@@ -635,18 +712,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           </Text>
         </View>
         <SimpleTable
-          columns={[
-            { label: "Algoritmo", width: "28%" },
-            { label: "Método", width: "22%" },
-            { label: "Arestas", width: "12%" },
-            { label: "Peso", width: "14%" },
-            { label: "Raiz / aresta", width: "24%" },
-          ]}
-          rows={
-            pureRows.length
-              ? pureRows
-              : [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]]
-          }
+          columns={columns.pure}
+          rows={pureRows.length ? pureRows : emptyRows.pure}
         />
         <View style={styles.highlight}>
           <Text style={styles.h3}>Validação Experimental</Text>
@@ -691,12 +758,14 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           </Text>
         </View>
         <ImageOrFallback src={data.images?.polytree} label="Poly-tree formal (estrutura condensada)" />
-        <View style={styles.cardGrid}>
-          <MetricCard label="Arestas no grafo" value={formatNumber(data.metrics.edges)} />
-          <MetricCard label="Arestas na Poly-tree" value={formatNumber(data.metrics.polytreeEdges)} />
-          <MetricCard label="Redução" value={`${(100 - ((data.metrics.polytreeEdges ?? 0) / (data.metrics.edges ?? 1)) * 100).toFixed(1)}%`} />
-          <MetricCard label="Peso preservado" value={polyTreeFormalLabel} />
-        </View>
+        <MetricGrid
+          metrics={[
+            { label: "Arestas no grafo", value: formatNumber(data.metrics.edges) },
+            { label: "Arestas na Poly-tree", value: formatNumber(data.metrics.polytreeEdges) },
+            { label: "Redução", value: `${(100 - ((data.metrics.polytreeEdges ?? 0) / (data.metrics.edges ?? 1)) * 100).toFixed(1)}%` },
+            { label: "Peso preservado", value: polyTreeFormalLabel },
+          ]}
+        />
       </PageFrame>
 
       <PageFrame>
@@ -719,14 +788,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
               O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para exploração de relações
               complexas, análise de influência, pesos normalizados e caminhos dominantes.
             </Text>
-            <View style={styles.cardGrid}>
-              <MetricCard label="Nós" value={formatNumber(data.ramexForum?.metrics?.nodes)} />
-              <MetricCard label="Arestas" value={formatNumber(data.ramexForum?.metrics?.edges)} />
-              <MetricCard label="Relações normalizadas" value={formatNumber(data.ramexForum?.metrics?.normalizedRelations)} />
-              <MetricCard label="Nó mais influente" value={safeValue(data.ramexForum?.metrics?.mostInfluentialNode)} />
-              <MetricCard label="Nó mais recebido" value={safeValue(data.ramexForum?.metrics?.mostReceivedNode)} />
-              <MetricCard label="Peso relativo médio" value={formatPercent(data.ramexForum?.metrics?.averageRelativeWeight)} />
-            </View>
+            <MetricGrid metrics={forumMetrics} />
             <View style={styles.highlight}>
               <Text style={styles.text}>{safeValue(data.ramexForum?.interpretation)}</Text>
               <Text style={styles.text}>Caminho dominante: {safeValue(data.ramexForum?.dominantPath?.join(" -> "))}</Text>
@@ -734,14 +796,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum - grafo de influência" />
             <ImageOrFallback src={data.images?.forumSimplified} label="RAMEX-Forum - estrutura simplificada" />
             <SimpleTable
-              columns={[
-                { label: "Origem", width: "24%" },
-                { label: "Destino", width: "24%" },
-                { label: "Freq.", width: "16%" },
-                { label: "Peso relativo", width: "22%" },
-                { label: "Rank", width: "14%" },
-              ]}
-              rows={forumRows.length ? forumRows : [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]]}
+              columns={columns.forum}
+              rows={forumRows.length ? forumRows : emptyRows.forum}
             />
           </>
         </PageFrame>
@@ -750,38 +806,13 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <PageFrame>
         <Text style={styles.sectionTitle}>Comparação entre Estruturas</Text>
         <SimpleTable
-          columns={[
-            { label: "Estrutura", width: "24%" },
-            { label: "Objetivo", width: "28%" },
-            { label: "Vantagem", width: "24%" },
-            { label: "Limitação", width: "24%" },
-          ]}
-          rows={[
-            ["Grafo completo", "Representar todas as transições", "Maior detalhe", "Pode exigir leitura filtrada"],
-            ["Grafo filtrado", "Reduzir ruído", "Melhor legibilidade", "Pode omitir relações fracas"],
-            ["RAMEX 2007", "Rooted Branching", "Base formal", "Depende da raiz"],
-            ["Forward", "Expansão enraizada", "Simplicidade", "Menor cobertura"],
-            ["Back-and-Forward", "Expansão bidirecional", "Contribui para a Poly-tree formal", "Mais complexidade"],
-            ["Poly-tree formal", "Validação estrutural", "Rigor topológico", "Condensa mantendo validação formal"],
-            ...(showForum
-              ? [["RAMEX-Forum", "Explorar influência", "Pesos relativos e caminhos dominantes", "Não substitui a Poly-tree formal"]]
-              : []),
-          ]}
+          columns={columns.structures}
+          rows={showForum ? [...structureRows, forumStructureRow] : structureRows}
         />
         {data.analysisType === "both" ? (
           <SimpleTable
-            columns={[
-              { label: "Critério", width: "22%" },
-              { label: "RAMEX Puro", width: "39%" },
-              { label: "RAMEX-Forum", width: "39%" },
-            ]}
-            rows={[
-              ["Objetivo", "Condensar estrutura sequencial dominante", "Explorar relações de influência"],
-              ["Saída", "Poly-tree formal", "Grafo/árvore de influência"],
-              ["Pesos", "Frequências absolutas preservadas", "Frequências absolutas + pesos relativos"],
-              ["Interpretação", "Caminho dominante e estrutura acíclica", "Influência, centralidade e caminhos relevantes"],
-              ["Melhor uso", "Padrões sequenciais estruturados", "Relações complexas e exploração"],
-            ]}
+            columns={columns.bothComparison}
+            rows={bothComparisonRows}
           />
         ) : null}
         <View style={styles.highlight}>
@@ -800,32 +831,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <PageFrame>
         <Text style={styles.sectionTitle}>Limitações e Mitigações</Text>
         <SimpleTable
-          columns={[
-            { label: "Limitação", width: "48%" },
-            { label: "Mitigação", width: "52%" },
-          ]}
-          rows={[
-            [
-              "O RAMEX puro encontra-se formalizado nesta versão da framework.",
-              "A framework implementa RAMEX 2007, Forward, Back-and-Forward e valida estruturalmente a Poly-tree formal.",
-            ],
-            [
-              "A qualidade dos padrões depende da qualidade e granularidade dos dados.",
-              "A aplicação valida dados, sequências curtas, eventos ausentes e densidade do grafo.",
-            ],
-            [
-              "Datasets densos podem beneficiar de filtros de visualização.",
-              "A framework suporta filtros por frequência e top N antes da análise estrutural.",
-            ],
-            [
-              "Algumas visualizações são simplificadas.",
-              "O PDF distingue visualização resumida de dados completos exportados em CSV.",
-            ],
-            [
-              "A Poly-tree formal exige validação topológica explícita.",
-              "A implementação regista métricas estruturais, aciclicidade, conectividade e conformidade da Poly-tree.",
-            ],
-          ]}
+          columns={columns.limitations}
+          rows={limitationRows}
         />
       </PageFrame>
 
