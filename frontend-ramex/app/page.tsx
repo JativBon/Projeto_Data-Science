@@ -641,18 +641,18 @@ function graphInterpretation(nodes?: number, edges?: number, density?: number, r
 
   let structural: string;
   if (d >= 0.2 && e > 1000) {
-    structural = "O grafo apresenta elevada densidade/dispersão e pode exigir filtragem para leitura visual.";
+    structural = `O grafo tem ${n} nós, ${e} arestas e densidade ${d.toFixed(4)}; a leitura visual pode exigir filtragem.`;
   } else if (n >= 50 && e <= n * 2) {
-    structural = "O dataset apresenta baixa recorrência, com poucas ligações face ao número de nós.";
+    structural = `O grafo tem ${n} nós e ${e} arestas; há poucas ligações face ao número de nós.`;
   } else if (n <= 10 && e > 0) {
-    structural = "O dataset apresenta poucos nós e transições concentradas, favorecendo padrões fortes e interpretáveis.";
+    structural = `O grafo tem ${n} nós e ${e} arestas; a estrutura é pequena e fácil de verificar.`;
   } else {
-    structural = "O grafo apresenta uma estrutura intermédia, devendo ser interpretado em conjunto com pesos e densidade.";
+    structural = `O grafo tem ${n} nós, ${e} arestas e densidade ${d.toFixed(4)}.`;
   }
 
   const preservation = preserved < 20
-    ? "A estrutura RAMEX pura formal preserva apenas parte do comportamento observado."
-    : "A estrutura RAMEX representa uma parte significativa do dataset.";
+    ? `A estrutura RAMEX preserva ${preserved.toFixed(2)}% do peso.`
+    : `A estrutura RAMEX preserva ${preserved.toFixed(2)}% do peso, uma parcela relevante do dataset.`;
 
   return `${structural} ${preservation}`;
 }
@@ -704,7 +704,7 @@ function buildTechnicalReport(input: {
 
 ## 2. Objetivo da análise
 
-O objetivo desta análise é transformar dados sequenciais em estruturas interpretáveis através do RAMEX puro, com extração de rede dirigida ponderada, aplicação das fases RAMEX 2007, Forward e Back-and-Forward, e validação estrutural da Poly-tree formal.
+Esta análise transforma sequências em grafo dirigido ponderado, aplica RAMEX 2007, Forward e Back-and-Forward, e valida a Poly-tree formal.
 
 ## 3. Pipeline executada
 
@@ -738,7 +738,7 @@ ${dynamicInterpretation}
 
 ${
   input.pureRamex?.rows?.length
-    ? `A secção RAMEX Puro reúne as fases 10A, 10B e 10C, permitindo comparar a extração por Rooted Branching, expansão Forward e expansão Back-and-Forward. A validação formal confirma a estrutura Poly-tree resultante quando esta é acíclica, conectada e compatível com a leitura topológica esperada.
+    ? `A secção RAMEX Puro compara 10A Rooted Branching, 10B Forward e 10C Back-and-Forward. A validação formal confirma a Poly-tree quando a saída é acíclica e conectada.
 
 Na comparação entre abordagens RAMEX puras, o melhor algoritmo foi ${metricValue(
         input.pureRamex.bestAlgorithm,
@@ -755,7 +755,7 @@ ${input.pureRamex.rows
       )} | ${metricValue(row.anchor)} |`,
   )
   .join("\n")}`
-    : "Resultados RAMEX puro ainda não foram gerados para este dataset. A estrutura do relatório permanece preparada para integrar as fases 10A, 10B, 10C e a validação formal assim que os artefactos forem produzidos."
+    : "Resultados RAMEX puro ainda não foram gerados para este dataset."
 }
 
 ## 8. Conclusão
@@ -771,7 +771,7 @@ O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para
 
 ` : ""}
 
-O dataset apresenta ${dynamicInterpretation.toLowerCase()} A implementação atual integra o RAMEX puro com RAMEX 2007 Rooted Branching, Forward Heuristic, Back-and-Forward Heuristic e validação formal da Poly-tree. Esta versão está alinhada com os princípios descritos por Cavique (2007, 2015), ao transformar sequências em rede dirigida ponderada e extrair uma estrutura interpretável formalmente validada.
+${dynamicInterpretation} A análise usa RAMEX 2007 Rooted Branching, Forward, Back-and-Forward e validação Poly-tree.
 
 ## 9. Referências
 
@@ -987,15 +987,15 @@ function pureRamexStructuralType(validation?: ValidationRow, data?: PureRamexDat
 
 function pureRamexStructuralInterpretation(structuralType: string): string {
   if (structuralType === "grafo denso / altamente conectado") {
-    return "Em grafos densos, todos os métodos são obrigados a condensar uma grande quantidade de transições numa estrutura acíclica reduzida. Por isso, a percentagem de peso preservado tende a ser baixa e as diferenças entre métodos podem ser marginais.";
+    return "Em grafos densos, os métodos reduzem muitas transições para uma estrutura acíclica curta. O peso preservado tende a ser baixo.";
   }
   if (structuralType === "grafo quase linear / sequencial") {
-    return "Em grafos quase lineares, o RAMEX 2007 Rooted Branching pode preservar uma percentagem muito elevada do peso, porque a estrutura sequencial já está fortemente definida.";
+    return "Em grafos quase lineares, o RAMEX 2007 Rooted Branching tende a preservar mais peso porque a ordem já está definida.";
   }
   if (structuralType === "grafo pequeno e completo") {
-    return "Em grafos pequenos e totalmente conectados, a diferença entre métodos tende a ser reduzida, uma vez que quase todas as transições são estruturalmente relevantes.";
+    return "Em grafos pequenos e completos, as diferenças entre métodos tendem a ser reduzidas.";
   }
-  return "Em grafos de estrutura intermédia, a interpretação deve equilibrar cobertura de peso, simplicidade e preservação estrutural.";
+  return "Em grafos intermédios, compare peso preservado, simplicidade e arestas selecionadas.";
 }
 
 function pureRamexSimplestLabels(data?: PureRamexData): string {
@@ -1011,7 +1011,7 @@ function pureRamexSimplestLabels(data?: PureRamexData): string {
 
 function pureRamexScientificSummary(validation?: ValidationRow, data?: PureRamexData): string {
   const structuralType = pureRamexStructuralType(validation, data);
-  return `Os resultados demonstram que não existe um algoritmo universalmente superior. O desempenho das abordagens RAMEX depende da estrutura do grafo. Tipo estrutural do dataset: ${structuralType}. ${pureRamexStructuralInterpretation(structuralType)}`;
+  return `Tipo estrutural do dataset: ${structuralType}. ${pureRamexStructuralInterpretation(structuralType)}`;
 }
 
 function datasetLabelToId(label: string): DatasetId | undefined {
@@ -3518,13 +3518,13 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
         },
         ramexForum: forumToReport(result.ramex_forum ?? result.forum, result.job_id),
         interpretations: {
-          executiveSummary: `${result.interpretation} A análise é enquadrada no RAMEX puro com validação formal da Poly-tree.`,
+          executiveSummary: `${result.interpretation} Inclui RAMEX puro e validação Poly-tree.`,
           graphInterpretation: result.interpretation,
           ramexInterpretation: "",
           polytreeInterpretation:
-            "A Poly-tree formal valida estruturalmente a saída RAMEX pura.",
+            "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
           conclusion:
-            "A implementação atual integra RAMEX puro, validação formal da Poly-tree e alinhamento conceptual com Cavique (2007, 2015).",
+            "A análise usa RAMEX puro e validação Poly-tree.",
         },
         images: {
           graph: result.files.graph_png ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.graph_png}` : undefined,
@@ -4374,13 +4374,13 @@ export default function Home() {
           rows: pureRamexRowsForReport(pureRamexData),
         },
         interpretations: {
-          executiveSummary: `${selectedValidation.Interpretacao} A análise é enquadrada no RAMEX puro com validação formal da Poly-tree.`,
+          executiveSummary: `${selectedValidation.Interpretacao} Inclui RAMEX puro e validação Poly-tree.`,
           graphInterpretation: selectedValidation.Interpretacao,
           ramexInterpretation: "",
           polytreeInterpretation:
-            "A Poly-tree formal valida estruturalmente a saída RAMEX pura.",
+            "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
           conclusion:
-            "A implementação atual integra RAMEX puro, validação formal da Poly-tree e alinhamento conceptual com Cavique (2007, 2015).",
+            "A análise usa RAMEX puro e validação Poly-tree.",
         },
         images: {
           graph: dataPath(`grafo_dataset${datasetId}.png`),
@@ -4443,13 +4443,13 @@ export default function Home() {
         },
         ramexForum: forumToReport(uploadedResult.ramex_forum ?? uploadedResult.forum, uploadedResult.job_id),
         interpretations: {
-          executiveSummary: `${uploadedResult.interpretation} A análise é enquadrada no RAMEX puro com validação formal da Poly-tree.`,
+          executiveSummary: `${uploadedResult.interpretation} Inclui RAMEX puro e validação Poly-tree.`,
           graphInterpretation: uploadedResult.interpretation,
           ramexInterpretation: "",
           polytreeInterpretation:
-            "A Poly-tree formal valida estruturalmente a saída RAMEX pura.",
+            "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
           conclusion:
-            "A implementação atual integra RAMEX puro, validação formal da Poly-tree e alinhamento conceptual com Cavique (2007, 2015).",
+            "A análise usa RAMEX puro e validação Poly-tree.",
         },
         images: {
           graph: uploadedResult.files.graph_png

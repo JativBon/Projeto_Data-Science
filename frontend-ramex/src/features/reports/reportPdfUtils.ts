@@ -79,17 +79,18 @@ export function buildGraphInterpretation(data: ReportData): string {
   const nodes = data.metrics.nodes ?? 0;
   const edges = data.metrics.edges ?? 0;
   const averageWeight = edges > 0 ? (data.metrics.totalWeight ?? 0) / edges : 0;
+  const totalWeight = formatNumber(data.metrics.totalWeight);
 
   if (density > 0.7) {
-    return `O grafo completo possui ${nodes} nós e ${edges} arestas distintas, formando uma estrutura muito densa (densidade: ${density.toFixed(4)}). Isto pode exigir filtragem por frequência ou Top-N para melhorar a legibilidade visual.`;
+    return `O grafo completo tem ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}. A leitura visual pode beneficiar de frequência mínima ou Top-N.`;
   }
   if (density < 0.05 && nodes > 50) {
-    return `O grafo apresenta ${nodes} nós e ${edges} arestas distintas com baixa recorrência de transições (densidade: ${density.toFixed(4)}), sugerindo muitas entidades/eventos e poucas ligações repetidas.`;
+    return `O grafo tem ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}. A recorrência é baixa face ao número de nós.`;
   }
   if (nodes <= 10 && averageWeight >= 5) {
-    return `O dataset apresenta ${nodes} categorias e ${edges} transições distintas, formando um grafo com poucos nós e transições fortes (densidade: ${density.toFixed(4)}), sugerindo padrões sequenciais interpretáveis.`;
+    return `O grafo tem ${nodes} nós, ${edges} arestas e peso médio de ${averageWeight.toFixed(2)} por transição. A densidade é ${density.toFixed(4)}.`;
   }
-  return `O grafo contém ${nodes} nós e ${edges} arestas distintas, com densidade de ${density.toFixed(4)} e peso total de ${formatNumber(data.metrics.totalWeight)}.`;
+  return `O grafo contém ${nodes} nós, ${edges} arestas, densidade ${density.toFixed(4)} e peso total de ${totalWeight}.`;
 }
 
 export function buildRamexInterpretation(data: ReportData): string {
@@ -97,8 +98,8 @@ export function buildRamexInterpretation(data: ReportData): string {
   const benchmark = getDatasetBenchmarks(data);
   const polytreePreserved = benchmark?.polytreeFormalPercent ?? data.metrics.polytreePreservedPercent ?? 0;
   return [
-    "O desempenho do RAMEX é diretamente condicionado pela estrutura do grafo, nomeadamente pela densidade, repetição de transições e presença de caminhos dominantes.",
-    `A percentagem de peso preservado reflete diretamente a capacidade do RAMEX em identificar padrões dominantes no conjunto de dados (RAMEX base: ${ramexPreserved.toFixed(2)}%; Poly-tree formal: ${polytreePreserved.toFixed(2)}%).`,
+    `RAMEX base preserva ${ramexPreserved.toFixed(2)}% do peso; a Poly-tree formal preserva ${polytreePreserved.toFixed(2)}%.`,
+    "A diferença entre estes valores deve ser lida em conjunto com densidade, repetição de transições e número de arestas selecionadas.",
   ].join(" ");
 }
 
@@ -106,37 +107,39 @@ export function buildPolytreeInterpretation(data: ReportData): string {
   const benchmark = getDatasetBenchmarks(data);
   const ramex = data.metrics.ramexPreservedPercent ?? 0;
   const polytree = benchmark?.polytreeFormalPercent ?? data.metrics.polytreePreservedPercent ?? 0;
-  return `A Poly-tree formal valida a estrutura acíclica e conectada com foco em padrões dominantes; no cenário atual, o peso preservado é ${polytree.toFixed(2)}%, face a ${ramex.toFixed(2)}% na estrutura RAMEX base.`;
+  return `A Poly-tree formal preserva ${polytree.toFixed(2)}% do peso, face a ${ramex.toFixed(2)}% na estrutura RAMEX base. A validação confirma se a saída é acíclica e conectada.`;
 }
 
 export function buildDatasetSpecificInterpretation(data: ReportData): string {
   const benchmark = getDatasetBenchmarks(data);
+  const nodes = data.metrics.nodes ?? 0;
+  const edges = data.metrics.edges ?? 0;
+  const density = data.metrics.density ?? 0;
   if (benchmark?.key === "dataset01") {
     return [
-      "O dataset apresenta um grafo quase completo, com forte ruído estrutural devido à elevada conectividade entre nós.",
-      "A retenção de peso é baixa (1,42%), porque a ausência de caminhos dominantes obriga a uma compressão extrema da rede.",
-      "A Poly-tree formal é válida do ponto de vista estrutural, mas permanece pouco representativa da diversidade total de transições.",
+      `O dataset01 gera um grafo denso: ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
+      "O melhor método preserva 1,42% do peso, valor baixo para uma rede com muitas ligações alternativas.",
+      "A Poly-tree formal é válida, mas resume apenas uma fração pequena das transições observadas.",
     ].join("\n");
   }
 
   if (benchmark?.key === "dataset02") {
     return [
-      "O dataset apresenta um grafo esparso com baixa repetição de transições.",
-      "O RAMEX 2007 preserva mais peso (59,89%), mas a estrutura global continua dependente de transições pouco recorrentes.",
-      "A Poly-tree formal (49,87%) mantém coerência estrutural, embora com cobertura limitada pela fraca recorrência sequencial.",
+      `O dataset02 tem ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
+      "O RAMEX 2007 é o melhor método, com 59,89% de peso preservado.",
+      "A Poly-tree formal preserva 49,87%, mantendo uma estrutura válida mas menos abrangente.",
     ].join("\n");
   }
 
   if (benchmark?.key === "dataset03") {
     return [
-      "O dataset apresenta um grafo pequeno com padrões sequenciais fortes e repetitivos.",
-      "A identificação de caminhos dominantes é direta, com retenção de 36,93% no melhor método.",
-      "Este é o cenário ideal para o RAMEX, combinando condensação estrutural e elevada interpretabilidade.",
+      `O dataset03 é compacto: ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
+      "O melhor método preserva 36,93% do peso.",
+      "É favorável ao RAMEX porque combina poucos nós, repetição e uma estrutura fácil de verificar.",
     ].join("\n");
   }
 
   const scenario = classifyDatasetScenario(data);
-  const edges = data.metrics.edges ?? 0;
   const ramexEdges = data.metrics.ramexEdges ?? 0;
   const edgeReduction = edges > 0 ? ((edges - ramexEdges) / edges) * 100 : 0;
   const bestPure = Math.max(
@@ -149,62 +152,52 @@ export function buildDatasetSpecificInterpretation(data: ReportData): string {
   if (scenario === "dense") {
     const edgeReductionText = edgeReduction >= 99 ? "superior a 99%" : `${edgeReduction.toFixed(2)}%`;
     return [
-      "O dataset apresenta um grafo extremamente denso, com elevada conectividade entre praticamente todos os nós.",
-      "Neste contexto, não existe uma estrutura sequencial dominante, sendo o grafo caracterizado por elevado ruído e relações generalizadas.",
-      "O RAMEX é obrigado a selecionar apenas (nós - 1) arestas, descartando a esmagadora maioria das ligações existentes.",
-      "Como consequência:",
+      `O grafo é denso: ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
+      "A seleção RAMEX reduz a rede a uma estrutura acíclica com poucas arestas.",
       `• ocorre uma redução ${edgeReductionText} das arestas`,
-      `• a percentagem de peso preservado é ${bestPureText}%`,
-      "• a estrutura resultante, embora válida, tem capacidade interpretativa limitada",
-      "Este comportamento evidencia uma limitação importante: em grafos quase completos, a elevada conectividade reduz drasticamente a capacidade do RAMEX em identificar padrões dominantes.",
+      `• o melhor método preserva ${bestPureText}% do peso`,
+      "• a leitura deve focar nas arestas selecionadas, não na cobertura total",
     ].join("\n");
   }
 
   if (scenario === "sparse") {
     return [
-      "O dataset apresenta um grafo esparso com baixa repetição de transições.",
-      "Neste caso, o principal desafio não é a densidade, mas sim a ausência de padrões recorrentes.",
-      "A maioria das transições ocorre poucas vezes, dificultando a identificação de relações dominantes.",
-      "Como resultado:",
-      "• o RAMEX consegue estruturar parcialmente o grafo",
-      `• a percentagem de peso preservado no melhor método é ${bestPureText}%`,
-      "• não emerge uma organização global forte",
-      "Este comportamento demonstra que o RAMEX depende não apenas da conectividade, mas também da frequência das transições.",
+      `O grafo é esparso: ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
+      "A baixa repetição limita a formação de caminhos dominantes.",
+      `• o melhor método preserva ${bestPureText}% do peso`,
+      "• a interpretação deve privilegiar transições recorrentes e não a cobertura global",
     ].join("\n");
   }
 
   if (scenario === "small") {
     return [
-      "O dataset apresenta um grafo pequeno com padrões sequenciais fortemente repetidos.",
-      "A existência de relações bidirecionais e frequências elevadas permite identificar claramente transições dominantes.",
-      "Neste cenário:",
-      "• o grafo possui elevada estrutura interna",
-      `• o RAMEX consegue condensar eficazmente a informação, preservando ${bestPureText}% do peso no melhor método`,
-      "• a Poly-tree resultante mantém forte interpretabilidade",
-      "Este tipo de dataset evidencia o cenário ideal de aplicação do RAMEX.",
+      `O grafo é pequeno: ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
+      "As transições repetidas tornam a seleção RAMEX mais estável.",
+      `• o melhor método preserva ${bestPureText}% do peso`,
+      "• a Poly-tree resultante é mais fácil de verificar visualmente",
     ].join("\n");
   }
 
   return [
-    "O desempenho observado resulta da combinação entre densidade do grafo, repetição de transições e presença de caminhos dominantes.",
-    `A percentagem de peso preservado no melhor método foi ${bestPureText}%, o que indica preservação parcial da estrutura sequencial dominante.`,
+    `O grafo tem ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
+    `O melhor método preserva ${bestPureText}% do peso, indicando preservação parcial da estrutura dominante.`,
   ].join(" ");
 }
 
 export function buildDatasetComparisonSection(): string {
   return [
-    "A aplicação do RAMEX aos diferentes datasets evidencia que o seu desempenho não é uniforme, sendo fortemente dependente da estrutura dos dados.",
+    "O desempenho RAMEX varia por dataset.",
     "No dataset01, o melhor método é Back-and-Forward Poly-tree Formal, com 1,42% de peso preservado.",
     "No dataset02, o melhor método é RAMEX 2007 Rooted Branching, com 59,89% de peso preservado.",
     "No dataset03, o melhor método é Back-and-Forward Poly-tree Formal, com 36,93% de peso preservado.",
     "A Poly-tree formal apresenta 1,42% no dataset01, 49,87% no dataset02 e 36,93% no dataset03.",
-    "Estes resultados demonstram que o RAMEX é mais eficaz em contextos onde existem padrões sequenciais consistentes e repetitivos.",
+    "Os melhores resultados surgem quando há recorrência suficiente para formar caminhos dominantes.",
   ].join("\n\n");
 }
 
 export function buildExecutiveSummary(data: ReportData): string {
   return [
-    "O objetivo desta análise é transformar dados sequenciais em estruturas interpretáveis através do RAMEX puro, com validação formal da Poly-tree.",
+    "A análise transforma sequências em grafo, aplica RAMEX puro e valida a Poly-tree formal.",
     buildGraphInterpretation(data),
     buildRamexInterpretation(data),
     buildPolytreeInterpretation(data),
@@ -219,14 +212,13 @@ export function buildFinalConclusion(data: ReportData): string {
   const bestAlgorithm = benchmark?.bestAlgorithm ?? safeValue(data.pureRamex?.bestAlgorithm);
   const bestPreserved = benchmark?.bestPreservedPercent;
   return [
-    `A análise agregada (pivot tables, somas) mostra quais os produtos/categorias mais frequentes. A análise RAMEX complementa essa abordagem ao estudar como essas categorias se encadeiam ao longo das sequências. O dataset apresenta ${edges} transições distintas no grafo completo, que é reduzido pela Poly-tree formal para ${polytreeEdges} arestas, preservando ${polytreePreserved.toFixed(2)}% do peso total.`,
+    `A análise agregada mostra frequências totais; o RAMEX analisa a ordem das transições. O grafo completo tem ${edges} arestas e a Poly-tree formal fica com ${polytreeEdges}, preservando ${polytreePreserved.toFixed(2)}% do peso total.`,
     bestPreserved !== undefined
-      ? `No dataset analisado, o melhor método foi ${bestAlgorithm}, com ${bestPreserved.toFixed(2)}% de peso preservado.`
+      ? `O melhor método foi ${bestAlgorithm}, com ${bestPreserved.toFixed(2)}% de peso preservado.`
       : "",
-    "O RAMEX não deve ser interpretado como um algoritmo universal, mas sim como um método especializado para análise de padrões sequenciais estruturados.",
-    "A sua eficácia é máxima quando: • existem padrões repetitivos • existe estrutura sequencial clara • o grafo não é excessivamente denso.",
-    "A sua eficácia reduz-se quando: • o grafo é quase completo • as transições são pouco repetidas • não existe estrutura dominante.",
-    "A framework implementa RAMEX puro com as fases 10A (Rooted Branching), 10B (Forward) e 10C (Back-and-Forward), com validação formal da estrutura Poly-tree alinhada com Cavique (2007, 2015).",
+    "O RAMEX funciona melhor quando há repetição, estrutura sequencial clara e densidade controlada.",
+    "Em grafos quase completos ou com transições pouco repetidas, a percentagem de peso preservado tende a baixar.",
+    "A implementação inclui 10A Rooted Branching, 10B Forward, 10C Back-and-Forward e validação Poly-tree.",
   ]
     .filter(Boolean)
     .join(" ");
@@ -277,6 +269,4 @@ export async function prepareReportImages(data: ReportData): Promise<ReportData>
     },
   };
 }
-
-
 

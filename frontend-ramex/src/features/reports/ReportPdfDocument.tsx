@@ -528,8 +528,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <PageFrame>
           <Text style={styles.sectionTitle}>Conclusão</Text>
           <Text style={styles.text}>
-            O RAMEX-Forum evidencia relações de influência e pesos relativos entre eventos. A sua leitura complementa,
-            mas não substitui, a análise RAMEX Puro baseada em condensação estrutural e Poly-tree formal.
+            O RAMEX-Forum mostra influência, pesos relativos e caminhos dominantes. Use estes resultados como leitura
+            complementar ao RAMEX Puro.
           </Text>
         </PageFrame>
       </Document>
@@ -541,16 +541,14 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <CoverPage title="RAMEX Sequential Analysis" subtitle={reportSubtitle}>
         <DatasetFacts data={data} includeDatasetType />
         <Text style={styles.text}>
-          Artefacto digital de Data Science para extração de conhecimento a partir de sequências, inspirado nos
-          trabalhos do Professor Luís Cavique sobre RAMEX e sequence mining.
+          Análise sequencial com grafo dirigido, RAMEX Puro e validação Poly-tree.
         </Text>
       </CoverPage>
 
       <PageFrame>
         <Text style={styles.sectionTitle}>Sumário Executivo</Text>
         <Text style={styles.text}>
-          Este relatório reflete o estado final da framework: RAMEX puro, validação formal e Poly-tree formal para
-          análise sequencial alinhada com Cavique (2007, 2015).
+          O relatório resume métricas, estruturas selecionadas e peso preservado.
         </Text>
         <Text style={styles.text}>{executive}</Text>
         <MetricGrid metrics={summaryMetrics} />
@@ -603,7 +601,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.sectionTitle}>Grafo Dirigido Ponderado</Text>
         <Text style={styles.text}>{graphInterpretation}</Text>
         <Text style={styles.text}>
-          O grafo completo representa todas as transições distintas observadas nos dados, antes de qualquer condensação ou filtragem RAMEX.
+          O grafo completo inclui todas as transições antes da seleção RAMEX.
         </Text>
         <MetricGrid
           metrics={[
@@ -639,7 +637,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <PageFrame>
         <Text style={styles.sectionTitle}>Estrutura RAMEX base</Text>
         <Text style={styles.text}>
-          A estrutura RAMEX formaliza a leitura da rede dirigida ponderada e prepara a comparação com as fases RAMEX puras.
+          A estrutura RAMEX base contém as arestas selecionadas a partir do grafo completo.
         </Text>
         <MetricGrid
           metrics={[
@@ -659,7 +657,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <PageFrame>
         <Text style={styles.sectionTitle}>Poly-tree formal</Text>
         <Text style={styles.text}>
-          A Poly-tree formal valida estruturalmente a saída RAMEX, garantindo aciclicidade dirigida, conectividade e uma estrutura interpretável alinhada com a leitura topológica do RAMEX puro.
+          A Poly-tree formal verifica aciclicidade, conectividade e peso preservado.
         </Text>
         <MetricGrid
           metrics={[
@@ -671,8 +669,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         />
         <View style={styles.highlight}>
           <Text style={styles.text}>
-            A validação formal confirma que a estrutura resultante respeita as propriedades necessárias para leitura
-            como Poly-tree no contexto RAMEX puro.
+            A validação confirma se a saída pode ser lida como Poly-tree RAMEX.
           </Text>
         </View>
         <Text style={styles.text}>{polytreeInterpretation}</Text>
@@ -686,7 +683,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <PageFrame>
         <Text style={styles.sectionTitle}>RAMEX Puro</Text>
         <Text style={styles.text}>
-          Esta secção apresenta o estado final do RAMEX puro: 10A RAMEX 2007 Rooted Branching, 10B Forward Heuristic e 10C Back-and-Forward Heuristic, com validação formal da Poly-tree.
+          Comparação entre 10A RAMEX 2007 Rooted Branching, 10B Forward e 10C Back-and-Forward.
         </Text>
         <MetricGrid
           metrics={[
@@ -700,12 +697,10 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         />
         <View style={styles.highlight}>
           <Text style={styles.text}>
-            O desempenho do RAMEX é diretamente condicionado pela estrutura do grafo, nomeadamente pela densidade,
-            repetição de transições e presença de caminhos dominantes.
+            Compare os métodos pelo peso preservado, número de arestas e tipo estrutural do dataset.
           </Text>
           <Text style={styles.text}>
-            A percentagem de peso preservado reflete diretamente a capacidade do RAMEX em identificar padrões
-            dominantes no conjunto de dados ({ramexPurePercentagesText}).
+            Percentagens disponíveis: {ramexPurePercentagesText}.
           </Text>
           <Text style={styles.text}>
             {ramexPureSummary}
@@ -729,12 +724,12 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <PageFrame>
         <Text style={styles.sectionTitle}>Do Grafo Completo à Poly-tree</Text>
         <Text style={styles.text}>
-          O grafo completo preserva todas as relações observadas nos dados. A estrutura RAMEX/Poly-tree formal condensa esse grafo numa estrutura acíclica e interpretável, mantendo as transições mais representativas segundo a lógica RAMEX.
+          O grafo completo mostra todas as relações. A Poly-tree mostra a seleção RAMEX validada.
         </Text>
         <View style={styles.highlight}>
           <Text style={styles.h3}>Grafo Completo</Text>
           <Text style={styles.text}>
-            O grafo completo é intencionalmente mais denso: representa todas as relações observadas. A sua função é permitir avaliar visualmente a diferença entre a rede original e a estrutura RAMEX condensada.
+            Use o grafo completo para comparar a rede original com a estrutura selecionada.
           </Text>
         </View>
         <ImageOrFallback src={data.images?.graph} label="Grafo dirigido ponderado (completo)" />
@@ -744,7 +739,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             <View style={styles.highlight}>
               <Text style={styles.h3}>Matriz de Transições Ponderada</Text>
               <Text style={styles.text}>
-                A matriz abaixo complementa visualmente o grafo, mostrando todas as transições origem-destino com seus pesos. Linhas representam origem, colunas representam destino.
+                A matriz mostra pesos por par origem-destino. Linhas são origens; colunas são destinos.
               </Text>
             </View>
             <TransitionMatrixTable transitionMatrix={data.transitionMatrix} />
@@ -754,7 +749,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <View style={styles.highlight}>
           <Text style={styles.h3}>Poly-tree Formal</Text>
           <Text style={styles.text}>
-            A Poly-tree formal não pretende mostrar todas as transições, mas sim condensar a rede numa estrutura acíclica, conectada e interpretável. Valida estruturalmente a conformidade com os princípios RAMEX.
+            A Poly-tree não mostra todas as transições. Mostra a seleção acíclica e conectada.
           </Text>
         </View>
         <ImageOrFallback src={data.images?.polytree} label="Poly-tree formal (estrutura condensada)" />
@@ -772,10 +767,10 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.sectionTitle}>Complementaridade: Análise Agregada vs. Sequencial</Text>
         <View style={styles.highlight}>
           <Text style={styles.text}>
-            As tabelas dinâmicas tradicionais permitem analisar volumes agregados, como categorias mais frequentes ou soma de pesos por período. O RAMEX complementa essa análise ao estudar a ordem sequencial entre categorias, identificando padrões de transição que revelam como essas categorias se encadeiam ao longo do tempo ou de entidades.
+            A análise agregada mostra frequências totais. O RAMEX acrescenta a ordem das transições entre categorias.
           </Text>
           <Text style={styles.text}>
-            Enquanto a análise agregada responde &quot;Quais são as categorias mais frequentes?&quot;, a análise RAMEX responde &quot;Como as categorias se relacionam de forma sequencial?&quot;.
+            Assim, o relatório separa volume agregado de sequência observada.
           </Text>
         </View>
       </PageFrame>
@@ -785,8 +780,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           <Text style={styles.sectionTitle}>RAMEX-Forum</Text>
           <>
             <Text style={styles.text}>
-              O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para exploração de relações
-              complexas, análise de influência, pesos normalizados e caminhos dominantes.
+              O RAMEX-Forum complementa o RAMEX Puro com influência, pesos normalizados e caminhos dominantes.
             </Text>
             <MetricGrid metrics={forumMetrics} />
             <View style={styles.highlight}>
@@ -817,8 +811,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         ) : null}
         <View style={styles.highlight}>
           <Text style={styles.text}>
-            A combinação do grafo dirigido ponderado, RAMEX puro e Poly-tree formal permite equilibrar detalhe, legibilidade e capacidade
-            interpretativa.
+            O grafo mostra detalhe; o RAMEX seleciona arestas; a Poly-tree valida a estrutura.
           </Text>
         </View>
       </PageFrame>

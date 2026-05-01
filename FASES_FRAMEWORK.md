@@ -10,7 +10,7 @@ Portanto, vamos validar ambos os datasets em todas as fases e no final iremos mo
 
 O que foi alterado e porquê
 
-Removemos a assunção fixa de que a primeira linha era cabeçalho e substituimos por uma decisão inferida a partir do conteúdo real.
+Removemos a assunção fixa de que a primeira linha era cabeçalho e substituímos por uma decisão inferida a partir do conteúdo real.
 Mantivemos a intenção original do script: ler o dataset 01, construir sequências, gerar IDs e exportar CSV/TXT.
 Adicionámos validação explícita para ficheiro inexistente, ficheiro vazio e linhas não numéricas.
 Passámos a registar e reportar linhas inválidas, em vez de as ignorar silenciosamente.
@@ -142,7 +142,7 @@ o que influencia diretamente a densidade dos padrões extraídos.
 ## NOTA
 
 O pipeline NÃO é simétrico
-Dataset 03 foi limpo semânticamente
+Dataset 03 foi limpo semanticamente
 Dataset 02 ficou mais bruto
 
 ## 05/04/2026 Criação de pares completa "04_pairs.py"
@@ -364,7 +364,7 @@ no dataset 01, grande volume total e grande cobertura, coerente com 10 000 sequ�
 
 DEIXO AINDA 2 OBSERVAÇÕES BASTANTE UTEIS
 
-1 - No relatório, temos que destacar que a matriz de adjacência permite passar de uma visão sequêncial para uma visão relacional/estrutural dos dados.
+1 - No relatório, temos que destacar que a matriz de adjacência permite passar de uma visão sequencial para uma visão relacional/estrutural dos dados.
 2 - No dataset 01, como a matriz é quase cheia, o grafo pode ficar visualmente caótico.
 Convém no 06_grafo.py prever:
 
@@ -398,7 +398,7 @@ python 06_grafo.py matriz_adjacencia_dataset01.csv grafo_dataset01.png
 python 06_grafo.py matriz_adjacencia_dataset02.csv grafo_dataset02.png
 python 06_grafo.py matriz_adjacencia_dataset03.csv grafo_dataset03.png
 
-Para o Dataset 01, recomendoamos testar também com filtros, porque o grafo completo é muito denso:
+Para o Dataset 01, recomendamos testar também com filtros, porque o grafo completo é muito denso:
 
 python 06_grafo.py matriz_adjacencia_dataset01.csv grafo_dataset01_filtrado.png --min-frequency 5
 python 06_grafo.py matriz_adjacencia_dataset01.csv grafo_dataset01_top50.png --top-n 50
@@ -424,7 +424,7 @@ Para executar:
 
 python 08_validacao_comparativa.py
 
-A conclusão final também fica escrita no .txt, destacando o Dataset 03 como o mais interpretável para padrões sequênciais, o Dataset 01 como denso/disperso e o Dataset 02 como pouco recorrente.
+A conclusão final também fica escrita no .txt, destacando o Dataset 03 como o mais interpretável para padrões sequenciais, o Dataset 01 como denso/disperso e o Dataset 02 como pouco recorrente.
 
 ## Menu interativo
 
@@ -437,7 +437,7 @@ python 09_framework.py
 3. Gerar matrizes de adjacencia
 4. Gerar grafos
 5. Gerar RAMEX simplificado
-6. Executar validacao comparativa
+6. Executar validação comparativa
 7. Executar pipeline completa
 8. Sair
 
@@ -484,7 +484,7 @@ Também testei o Dataset 01 com profundidade controlada:
 
 python 10_ramex_polytree.py grafo_edges_dataset01.csv ramex_polytree_dataset01_test.csv ramex_polytree_dataset01_test.png --top-k-per-node 2 --max-depth 3
 
-## 25/04/2026 ## Melhoria d Heuristica na Poly-tree
+## 25/04/2026 ## Melhoria da Heurística na Poly-tree
 
 Implementar a Poly-tree com uma heurística multiobjetivo, em vez de escolher só “top K por nó”.
 
@@ -553,7 +553,7 @@ Corrigi mais uma falha no frontend: na aba Upload, o PDF ainda usava result.poly
 
 ## Vamos criar um Dataset 04 sintético para demonstrar claramente a diferença entre Top-K e Multiobjetivo
 
-Este dataset é para podermos comparar melhor as duas heuristicas e passo a explicar:
+Este dataset é para podermos comparar melhor as duas heurísticas e passo a explicar:
 
 A heurística Top-K seleciona as transições com maior frequência por nó, privilegiando a cobertura máxima do comportamento observado. No dataset analisado, esta abordagem preserva 67,61% do peso total do grafo, resultando numa estrutura relativamente completa, mas potencialmente redundante.
 
