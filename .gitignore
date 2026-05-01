@@ -37,3 +37,11 @@ backend-ramex/tmp_test/
 tmp_pairs_*.csv
 matriz_teste.csv
 *.log
+
+# Runtime outputs and uploads
+backend-ramex/outputs/
+backend-ramex/uploads/
+frontend-ramex/generated-reports/
+
+# Local Office temporary files
+~$*

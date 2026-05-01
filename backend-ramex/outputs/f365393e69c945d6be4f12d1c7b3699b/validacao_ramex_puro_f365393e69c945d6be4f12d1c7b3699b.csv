@@ -1,4 +1,0 @@
-Algoritmo,Metodo,Nos selecionados,Arestas selecionadas,Soma pesos selecionados,Peso preservado (%),Aciclico,Conectado,Raiz ou aresta inicial
-RAMEX 2007 Rooted Branching,networkx_arborescence,8,7,79.0,17.752808988764045,True,,Smartphone
-RAMEX Forward Heuristic,RAMEX Forward Heuristic,8,7,77.0,17.303370786516854,True,,Smartphone
-RAMEX Back-and-Forward Poly-tree Formal,ramex_back_forward_polytree_formal,8,7,83.0,18.651685393258425,True,True,Arroz 1kg -> Smartphone

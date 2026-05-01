@@ -1,4 +1,0 @@
-Algoritmo,Metodo,Nos selecionados,Arestas selecionadas,Soma pesos selecionados,Peso preservado (%),Aciclico,Conectado,Raiz ou aresta inicial
-RAMEX 2007 Rooted Branching,networkx_arborescence,297,296,857.0,59.88819007686932,True,,SOURCE
-RAMEX Forward Heuristic,RAMEX Forward Heuristic,293,292,565.0,49.51796669588081,True,,e
-RAMEX Back-and-Forward Poly-tree Formal,ramex_back_forward_polytree_formal,293,292,569.0,49.86853637160385,True,True,e -> 1

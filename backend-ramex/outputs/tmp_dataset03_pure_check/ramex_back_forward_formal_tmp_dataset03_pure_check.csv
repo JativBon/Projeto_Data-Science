@@ -1,4 +1,0 @@
-From,To,Weight,Level,Direction,Method
-Tecnologia,Mercearia,75,0,INITIAL,ramex_back_forward_polytree_formal
-Limpeza,Mercearia,29,2,BACKWARD,ramex_back_forward_polytree_formal
-Tecnologia,Higiene,26,1,FORWARD,ramex_back_forward_polytree_formal

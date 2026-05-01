@@ -1,8 +1,0 @@
-From,To,Weight,Level
-Fluxo_Aumenta,Pressao_Sobe,7,1
-Fluxo_Aumenta,Nivel_Sobe,5,1
-Nivel_Sobe,Valvula_Abre,4,2
-Nivel_Sobe,Alarme_Nivel_Alto,3,2
-Fluxo_Aumenta,Falha_Bomba,1,1
-Falha_Bomba,Alarme_Falha,3,2
-Alarme_Falha,Intervencao_Manual,1,3
