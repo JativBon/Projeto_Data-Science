@@ -34,6 +34,10 @@ frontend-ramex/node_modules/
 backend-ramex/tmp_test/
 
 # Temporary outputs and local test files
+tmp/
+tmp_*
+backend-ramex/tmp_*/
+frontend-ramex/output.txt
 tmp_pairs_*.csv
 matriz_teste.csv
 *.log

@@ -1,10 +1,9 @@
 # FASES_FRAMEWORK
 
-NOTAS: Este ficheiro serve para acompanhar os testes de implementação fase a fase.
-Isto faz sentido porque o artigo de professor Luís Cavique e os textos sobre Ramex apontam para uma lógica de condensação de sequências
-em estruturas de rede/grafo e depois extração de padrões mais globais, não logo para uma implementação monolítica.
+Este ficheiro regista os testes, decisões e resultados técnicos por fase.
+A abordagem segue a lógica RAMEX descrita por Luís Cavique: condensar sequências em estruturas de rede/grafo e extrair padrões globais de forma incremental.
 
-Portanto, vamos validar ambos os datasets em todas as fases e no final iremos montar tudo numa única Framework.
+A validação é feita por fases, com comparação entre datasets antes da integração final.
 
 ## 2/04/2026 Validação fase a fase começando por 01_dataset.py
 
@@ -71,8 +70,7 @@ gerou 10 000 sequências válidas;
 0 linhas inválidas;
 comprimentos das sequências parecem coerentes.
 
-Isto é um excelente sinal.
-O mais importante aqui era validar o pressuposto da primeira linha e pelos logs, a decisão tomada faz sentido.
+Resultado: a decisão sobre a primeira linha é coerente com os logs.
 
 Como ficou "python 02_dataset.py":
 
@@ -82,7 +80,7 @@ leu 289 eventos;
 0 linhas inválidas;
 reconstruiu 17 sequências válidas com comprimento 17.
 
-Aqui há um ponto importante: o script foi estruturado para não assumir cegamente que 40 era o número de casos. Trata esse valor como metadado auxiliar, o que mostra robustez.
+Decisão técnica: o valor 40 é tratado como metadado auxiliar, não como número de casos.
 
 Como ficou "python 03_dataset.py":
 
@@ -94,12 +92,12 @@ construiu sequências;
 removeu repetidos consecutivos;
 gerou 50 sequências válidas.
 
-Os avisos que apareceram aqui são bons sinais:
+Observação: os avisos reportam limitações reais do dataset:
 
 “mais de um evento na mesma combinação cliente-data”
 “categorias diferentes na mesma data”
 
-Isto mostra que o script está a diagnosticar limitações do dataset, em vez de as esconder.
+O script reporta limitações do dataset em vez de as omitir.
 
 ## ANÁLISE COMPARATIVA - Natureza dos Dados
 
@@ -123,7 +121,7 @@ Dataset 03 → alto nível semântico
 | Repetição            | Baixa          | Alta                 |
 | Densidade de padrões | Baixa          | Alta                 |
 
-## NOTA IMPORTANTE
+## Observações
 
 Os datasets apresentam naturezas distintas:
 o dataset 02 representa eventos identificados (baixa semântica),
@@ -139,7 +137,7 @@ o que influencia diretamente a densidade dos padrões extraídos.
 | Conversão de valores           | IDs mantidos    | IDs → categorias |
 | Remoção repetidos consecutivos | ❌              | ✔                |
 
-## NOTA
+## Observação
 
 O pipeline NÃO é simétrico
 Dataset 03 foi limpo semanticamente
@@ -153,16 +151,6 @@ python -m py_compile 04_pairs.py
 python 04_pairs.py sequencias_dataset01_limpo.txt pares_frequencias_dataset01.csv
 python 04_pairs.py sequencias_dataset02_limpo.txt pares_frequencias_dataset02.csv
 python 04_pairs.py sequencias_dataset03.txt pares_frequencias_dataset03.csv
-
-## Visão Global
-
-| Dataset | Seq   | Pares  | Pares únicos | Repetição     |
-| ------- | ----- | ------ | ------------ | ------------- |
-| 01      | 10000 | 139834 | 38815        |  Média        |
-| 02      | 17    | 272    | 272          |  Nenhuma      |
-| 03      | 50    | 352    | 12           |  Muito alta   |
-
-## Análise por dataset
 
 ## Visão global dos resultados
 
@@ -181,13 +169,13 @@ Interpretação
 Muitos pares únicos → alta variabilidade
 Frequência baixa por par (máx ~15)
 
-Isto indica:
+Observação:
 comportamento pouco repetitivo
 grafo muito disperso
 
 Leitura + técnica
 
-Este dataset é: tem muito ruído estruturado com padrões fracos
+Resultado: dataset com ruído estruturado e padrões fracos.
 
 ## Dataset 02 (IDs únicos / comportamento linear)
 
@@ -197,13 +185,13 @@ Total pares: 272
 Interpretação
 Todos os pares aparecem 1 vez
 
-Isto é extremamente importante: Não há qualquer padrão repetido
+Resultado: não há pares repetidos.
 
 Leitura + técnica
 
 Este dataset: tem sequências determinísticas sem repetição
 
-Isto limita fortemente:
+Observação:
 análise de padrões
 aprendizagem
 
@@ -216,13 +204,13 @@ Interpretação
 Poucos pares únicos
 Frequências muito altas (75, 74, …)
 
-Isto é perfeito
+Resultado: adequado para análise RAMEX.
 
 Leitura técnica
 
 Este dataset é: altamente estruturado com padrões fortes
 
-## Mais Importante ainda (vários níveis de complexidade)
+## Níveis de complexidade observados
 
 | Dataset | Tipo           | Padrões   |
 | ------- | -------------- | --------- |
@@ -230,7 +218,7 @@ Este dataset é: altamente estruturado com padrões fortes
 | 01      | Semi-aleatório |  Fracos   |
 | 03      | Semântico      |  Fortes   |
 
-## Os resultados demonstram que a qualidade e a natureza dos dados influenciam diretamente a capacidade de extração de padrões
+## Síntese técnica
 
 Enquanto datasets baseados em identificadores únicos apresentam baixa repetição e consequentemente, reduzida capacidade de generalização, datasets com abstração semântica permitem identificar padrões frequentes e relações significativas entre eventos.
 
@@ -297,7 +285,7 @@ Este dataset tem:
 - padrões fracos individualmente;
 - comportamento quase aleatório, mas com repetição suficiente para gerar frequências.
 
-É bom para mostrar um caso de rede muito conectada, onde os padrões locais existem mas não dominam claramente o sistema.
+Observação: este caso representa uma rede muito conectada, onde os padrões locais existem mas não dominam claramente o sistema.
 
 Dataset 02
 281 nós
@@ -314,7 +302,7 @@ Este dataset produz um grafo:
 - próximo de cadeias de eventos;
 - com fraca capacidade para mineração de padrões frequentes.
 
-É ótimo para sustentar uma conclusão metodológica: quando os eventos são muito específicos e pouco repetidos, a matriz e o grafo existem, mas a extração de conhecimento frequente torna-se limitada.
+Observação: este caso sustenta a limitação metodológica em eventos muito específicos e pouco repetidos.
 
 Dataset 03
 4 nós
@@ -329,9 +317,9 @@ Este dataset gera:
 
 - uma estrutura muito compacta;
 - forte recorrência de padrões;
-- excelente legibilidade para grafo e análise tipo Ramex.
+- boa legibilidade para grafo e análise RAMEX.
 
-É claramente o dataset mais forte para demonstrar valor interpretativo.
+Resultado: dataset mais adequado para demonstrar valor interpretativo.
 
 ## COMPARAÇÃO GLOBAL
 
@@ -341,16 +329,16 @@ Este dataset gera:
 | 02      | 281 |     272 |        272 | muito esparso    |
 | 03      |   4 |      12 |        352 | compacto e forte |
 
-O que isto prova: Temos agora três comportamentos distintos, o que é ótimo para o relatório:
+Resultado observado: os três datasets apresentam comportamentos distintos úteis para comparação.
 
 - Dataset 01: espaço de estados reduzido mas muito explorado;
 - Dataset 02: espaço de estados alargado e pouca repetição;
 - Dataset 03: espaço de estados pequeno e padrões muito recorrentes.
 
-NOTA: Isto dá-nos uma narrativa muito forte sobre como a natureza da representação dos dados, influência diretamente a estrutura da matriz e a qualidade
+Observação: a natureza da representação dos dados influencia diretamente a estrutura da matriz e a qualidade
 dos padrões extraídos.
 
-## NOTA FINAL
+## Observações finais
 
 A pipeline neste momento está consistente:
 
@@ -362,9 +350,9 @@ no dataset 02, soma das frequências = nº de arestas, confirmando frequência 1
 no dataset 03, poucas arestas e frequência alta, coerente com categorias agregadas;
 no dataset 01, grande volume total e grande cobertura, coerente com 10 000 sequências.
 
-DEIXO AINDA 2 OBSERVAÇÕES BASTANTE UTEIS
+Observações para relatório:
 
-1 - No relatório, temos que destacar que a matriz de adjacência permite passar de uma visão sequencial para uma visão relacional/estrutural dos dados.
+1 - No relatório, destacar que a matriz de adjacência permite passar de uma visão sequencial para uma visão relacional/estrutural dos dados.
 2 - No dataset 01, como a matriz é quase cheia, o grafo pode ficar visualmente caótico.
 Convém no 06_grafo.py prever:
 
@@ -373,9 +361,9 @@ Convém no 06_grafo.py prever:
 
 ## 24/04/2026 ## Grafo dirigido ponderado
 
-Esta fase vamos criar o "06_grafo.py", porque, depois da matriz, convém prever grafo com filtro por frequência mínima e/ou top N arestas, sobretudo porque o Dataset 01 fica visualmente caótico.
+Esta fase cria o "06_grafo.py". Depois da matriz, é necessário prever grafo com filtro por frequência mínima e/ou top N arestas, sobretudo porque o Dataset 01 fica visualmente caótico.
 
-Como a matriz confirma o contrato esperado, primeira coluna sem nome como índice e restantes colunas como destinos. Vou criar o script com "argparse", conversão numérica robusta, export de arestas finais e desenho adaptativo para grafos pequenos versus grandes. Vamos testar primeiro o dataset 03 que é o caso compacto ideal para confirmar logs, etc...
+Decisão técnica: a matriz confirma o contrato esperado, com primeira coluna sem nome como índice e restantes colunas como destinos. O script deve incluir "argparse", conversão numérica robusta, export de arestas finais e desenho adaptativo para grafos pequenos versus grandes. O primeiro teste usa o dataset 03 por ser o caso compacto.
 
 O script faz:
 
@@ -520,13 +508,13 @@ Métricas adicionais: cobertura por nível, branching médio, profundidade máxi
 Comentários finais no script a explicar top-k vs multiobjective.
 README atualizado com explicação da nova heurística.
 
-## PROBLEMA DE DIFERENCIAÇÃO ENTRE TOP-K e MULTIOBJETIVO
+## Problema de diferenciação entre Top-K e Multiobjetivo
 
-Encontrei a causa principal: a multiobjetivo ainda expandia nó a nó e depois cortava candidatos por nó, o que em grafos pequenos a aproxima muito do Top-K. Vou mudar para seleção por fronteira/nível, onde todos os candidatos competem pelo score composto, assim deve resolver o problema.
+Causa identificada: a estratégia multiobjetivo ainda expandia nó a nó e depois cortava candidatos por nó, o que em grafos pequenos a aproxima muito do Top-K. A correção proposta é selecionar por fronteira/nível, onde todos os candidatos competem pelo score composto.
 
 Os testes de linha de comandos já mostram diferença real: Top-K gerou 10 arestas e 59,38% de peso preservado; Multiobjetivo gerou 11 arestas e 65,62%, com scores compostos e reasons dinâmicos.
 
-Corrigido. A Poly-tree agora diferencia de forma real as estratégias.
+Correção aplicada: a Poly-tree diferencia as estratégias.
 
 O que mudou:
 
@@ -545,15 +533,15 @@ Top-K: 10 arestas, 59.38% peso preservado, score médio 0.3173.
 Multiobjetivo: 11 arestas, 65.62% peso preservado, score médio 0.3531.
 A Multiobjetivo inclui arestas diferentes, por exemplo Tecnologia -> Limpeza, e reasons como boa cobertura global e destino central no grafo
 
-### O QUE CONTINUA MAL
+### Ponto pendente
 
 O frontend já está a passar/mostrar a estratégia Multiobjetivo, mas o backend ainda não está a calcular ou devolver os scores reais. A tabela continua com Score e Reason como “Não disponível”, o que confirma isso mesmo.
 
-Corrigi mais uma falha no frontend: na aba Upload, o PDF ainda usava result.polytree_edges cru. Agora ele funde esses dados com result.polytree.edges, onde vêm score e reason.
+Correção aplicada: na aba Upload, o PDF deixou de usar apenas result.polytree_edges cru e passou a fundir esses dados com result.polytree.edges, onde vêm score e reason.
 
-## Vamos criar um Dataset 04 sintético para demonstrar claramente a diferença entre Top-K e Multiobjetivo
+## Dataset 04 sintético para comparar Top-K e Multiobjetivo
 
-Este dataset é para podermos comparar melhor as duas heurísticas e passo a explicar:
+Objetivo: comparar as duas heurísticas em cenário controlado.
 
 A heurística Top-K seleciona as transições com maior frequência por nó, privilegiando a cobertura máxima do comportamento observado. No dataset analisado, esta abordagem preserva 67,61% do peso total do grafo, resultando numa estrutura relativamente completa, mas potencialmente redundante.
 
@@ -563,7 +551,7 @@ A análise demonstra que, para datasets pequenos e densos, como o dataset 03 (4 
 
 Conclui-se que a escolha da heurística deve ser orientada pelo objetivo da análise: exploração e cobertura (Top-K) versus interpretação e síntese estrutural (multiobjetivo).
 
-## NOTAS
+## Estado das fases
 
 Fase 10A — RAMEX 2007 Rooted Branching - Done
 Fase 10B — RAMEX Forward Heuristic - Done
@@ -578,17 +566,17 @@ Fase 15 — Investigação futura: Hyper-RAMEX
 
 ## Fase 10A
 
-A experiência com top-K e multiobjetivos deu para perceber os vários caminhos que podemos tomar, mas por agora temos de focar no RAMEX puro.
+A experiência com Top-K e multiobjetivo abriu várias opções, mas a prioridade passa a ser o RAMEX puro.
 
-Vamos implementar uma fase 10A com uma tentativa NetworkX primeiro e fallback greedy marcado, porque isto dá fidelidade ao rooted branching sem tornar o script frágil. Para CSVs sem SOURCE, o script vai avisar e escolher uma raiz real quando necessário.
+Decisão técnica: implementar a fase 10A com tentativa NetworkX e fallback greedy marcado. Isto mantém fidelidade ao rooted branching sem tornar o script frágil. Para CSVs sem SOURCE, o script deve avisar e escolher uma raiz real quando necessário.
 
 ## Fase 10B — RAMEX Forward Heuristic
 
 Objetivo: implementar a heurística Forward descrita para quando existe uma raiz conhecida, mantendo a 10A como base RAMEX 2007.
 
-Vou criar a fase 10B isolada, sigo o mesmo estilo da 10A: CLI simples, validações claras, CSV/JSON/PNG e sem tocar no frontend. Depois corro o teste com o Dataset 03 e atualizo o README.
+Decisão técnica: criar a fase 10B isolada, no mesmo estilo da 10A: CLI simples, validações claras, CSV/JSON/PNG e sem tocar no frontend. O primeiro teste usa o Dataset 03.
 
-NOTA: Não posso esquecer dos restantes datasets.
+Observação: validar também nos restantes datasets.
 
 Criei 10B_ramex_forward_heuristic.py com a heurística Forward independente, utilisei CSV From,To,Weight, raiz obrigatória, expansão por maior peso para novos nós, prevenção de ciclos, exportação CSV/JSON/PNG e logs.
 
@@ -604,12 +592,12 @@ RAMEX 2007 Rooted Branching
 RAMEX Forward Heuristic
 RAMEX Back-and-Forward Heuristic
 
-## FASE 10D1: TESTE RAMEX PURO NOS DATASETS 01, 02 E 03
+## FASE 10D1: teste RAMEX puro nos datasets 01, 02 e 03
 
 VALIDAÇÃO MULTI-DATASET RAMEX PURO
 
 Dataset 01 (muito denso)
-→ Back-and-Forward ganha claramente
+→ Back-and-Forward apresenta melhor resultado
 Dataset 02 (esparso)
 → diferenças menores, Forward pode ser competitivo
 Dataset 03 (pequeno e completo)
@@ -645,7 +633,7 @@ python 10D1_validacao_ramex_multidataset.py
 ## Fase 11 — Frontend RAMEX Puro
 
 Objetivo:
-Integrar no frontend uma nova área dedicada ao RAMEX puro, distinguindo claramente as abordagens científicas das heurísticas experimentais anteriores.
+Integrar no frontend uma área dedicada ao RAMEX puro, distinguindo abordagens RAMEX puras das heurísticas experimentais anteriores.
 
 Análise técnica consolidada
 
@@ -659,7 +647,7 @@ Mesma base de dados (grafo completo de 4 nós) ✔️
 
 Todos os métodos implementados respeitam as propriedades fundamentais do RAMEX, nomeadamente a geração de estruturas acíclicas e dirigidas, garantindo consistência estrutural entre abordagens.
 
-1. Diferença funcional real (o ponto mais importante)
+1. Diferença funcional real
 RAMEX 2007 (Rooted Branching)
 Estrutura em estrela
 Root explícito (Tecnologia)
@@ -686,9 +674,9 @@ comportamento:
 
 captura relações estruturais que não passam pela raiz
 
-1. Insight CRÍTICO (isto é o que impressiona o professor)
+1. Diferença conceptual relevante
 
-Temos aqui uma diferença conceptual muito forte:
+Observação: existe uma diferença conceptual relevante:
 
 Rooted vs Poly-tree
 2007 + Forward
@@ -711,13 +699,13 @@ diferença:
 
 +2% de peso com estrutura mais rica
 
-1. O que isto significa (interpretação forte)
+1. Interpretação técnica
 
 A heurística Back-and-Forward consegue preservar mais informação global ao permitir a integração de relações não diretamente ligadas à raiz, evidenciando a limitação das abordagens estritamente enraizadas na representação de padrões sequenciais complexos.
 
-1. Porque a diferença ainda é “pequena”
+1. Porque a diferença ainda é reduzida
 
-Muito importante contextualizar:
+Observação:
 
 Dataset tem:
 4 nós
@@ -729,11 +717,11 @@ praticamente todas as transições são relevantes
 
 A reduzida dimensão e elevada densidade do dataset limitam a diferenciação entre métodos, uma vez que a maioria das transições apresenta relevância estrutural.
 
-1. Insight avançado (nível top 1%)
+1. Hipótese para datasets mais complexos
 
 A diferença entre abordagens tende a aumentar com a complexidade estrutural do grafo, sendo expectável que a heurística Back-and-Forward apresente vantagens mais significativas em datasets com maior número de nós, menor densidade e maior heterogeneidade de padrões.
 
-1. Conclusão pronta para o relatório
+1. Conclusão para relatório
 
 Comparação entre abordagens RAMEX puras
 
@@ -747,7 +735,7 @@ Apesar da diferença quantitativa ser reduzida neste dataset específico, devido
 
 Conclusão prática
 
-O trabalho neste momento já prova:
+Estado atual da validação:
 
 implementação fiel ✔️
 diferenciação entre métodos ✔️

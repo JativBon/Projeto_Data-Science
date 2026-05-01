@@ -1,6 +1,0 @@
-From,To,Weight,Level,Direction,Method
-Higiene,END,1,0,INITIAL,ramex_back_forward_polytree_formal
-Limpeza,END,1,2,BACKWARD,ramex_back_forward_polytree_formal
-Mercearia,END,1,2,BACKWARD,ramex_back_forward_polytree_formal
-START,Higiene,1,1,BACKWARD,ramex_back_forward_polytree_formal
-Tecnologia,END,1,2,BACKWARD,ramex_back_forward_polytree_formal
