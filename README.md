@@ -206,7 +206,7 @@ Os scripts e a aplicação podem gerar:
 
 - `backend-ramex/outputs/`, `backend-ramex/uploads/` e `frontend-ramex/generated-reports/` são artefactos de execução e não devem ser versionados.
 - Os datasets originais e os ficheiros em `frontend-ramex/public/data/` servem como base para demonstração e comparação.
-- Os scripts `extract_text.py`, `extract_text_utf8.py` e `extract_weights.py` são auxiliares. Devem ser revistos antes de serem tratados como parte da pipeline principal.
+- Os scripts `frontend-ramex/scripts/extract_text_utf8.py` e `frontend-ramex/scripts/extract_weights.py` são utilitários opcionais para inspeção dos PDFs gerados.
 - A estratégia `multiobjective` da Poly-tree usa score composto. Os parâmetros devem ser registados quando forem usados em relatórios.
 - Em datasets pequenos ou muito densos, `top-k` e `multiobjective` podem produzir estruturas semelhantes.
 
