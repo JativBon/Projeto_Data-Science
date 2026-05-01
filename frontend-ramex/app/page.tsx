@@ -1689,7 +1689,7 @@ function PureComparisonPanel({
           {best?.Algoritmo ?? "Sem dados gerados"} {best?.["Peso preservado (%)"] !== undefined ? `(${best["Peso preservado (%)"].toFixed(2)}%)` : ""}
         </p>
         <p className="mt-3 text-sm leading-6 text-slate-700">
-          Os resultados demonstram que não existe um algoritmo universalmente superior. O desempenho depende da densidade,
+          A comparação não aponta para um método único. O desempenho depende da densidade,
           linearidade e diversidade de transições do grafo.
         </p>
         <p className="mt-2 text-sm font-semibold text-thesis">Tipo estrutural do dataset: {structuralType}</p>
@@ -2867,7 +2867,7 @@ function AboutRamexPanel() {
   return (
     <section className="space-y-6">
       <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-panel">
-        <p className="text-sm font-semibold text-thesis">Fundamentação científica da framework de análise sequencial.</p>
+        <p className="text-sm font-semibold text-thesis">Base técnica da análise sequencial.</p>
         <h3 className="mt-2 text-3xl font-semibold text-ink">Sobre o RAMEX</h3>
       </div>
 
@@ -2980,7 +2980,7 @@ function AboutRamexPanel() {
 
       <div className="rounded-lg border border-thesis/20 bg-thesis/5 p-5 shadow-panel">
         <p className="text-sm leading-7 text-slate-700">
-          Esta aplicação implementa uma framework académica inspirada no RAMEX. A versão atual privilegia a
+          Esta aplicação implementa uma análise sequencial inspirada no RAMEX. A versão atual privilegia a
           rastreabilidade das fases, a visualização dos padrões e a validação comparativa dos datasets.
         </p>
       </div>
