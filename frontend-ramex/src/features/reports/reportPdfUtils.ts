@@ -9,6 +9,15 @@ type DatasetBenchmarks = {
   polytreeFormalPercent: number;
 };
 
+const SMALL_GRAPH_MAX_NODES = 10;
+const LARGE_GRAPH_MIN_NODES = 50;
+const DENSE_GRAPH_MIN_DENSITY = 0.7;
+const SPARSE_GRAPH_MAX_DENSITY = 0.05;
+const SPARSE_GRAPH_MAX_AVG_WEIGHT = 1.5;
+const STRONG_TRANSITION_AVG_WEIGHT = 5;
+const NEAR_TOTAL_EDGE_REDUCTION_PERCENT = 99;
+
+// Benchmarks fixos obtidos nas validacoes RAMEX dos datasets do projeto.
 const DATASET_BENCHMARKS: Record<DatasetKey, DatasetBenchmarks> = {
   dataset01: {
     key: "dataset01",
@@ -49,9 +58,9 @@ function classifyDatasetScenario(data: ReportData): "dense" | "sparse" | "small"
   const edges = data.metrics.edges ?? 0;
   const averageWeight = edges > 0 ? (data.metrics.totalWeight ?? 0) / edges : 0;
 
-  if (nodes <= 10 && density >= 0.7) return "small";
-  if (density >= 0.7 && nodes > 10) return "dense";
-  if (density <= 0.05 && averageWeight <= 1.5) return "sparse";
+  if (nodes <= SMALL_GRAPH_MAX_NODES && density >= DENSE_GRAPH_MIN_DENSITY) return "small";
+  if (density >= DENSE_GRAPH_MIN_DENSITY && nodes > SMALL_GRAPH_MAX_NODES) return "dense";
+  if (density <= SPARSE_GRAPH_MAX_DENSITY && averageWeight <= SPARSE_GRAPH_MAX_AVG_WEIGHT) return "sparse";
   return "intermediate";
 }
 
@@ -81,13 +90,13 @@ export function buildGraphInterpretation(data: ReportData): string {
   const averageWeight = edges > 0 ? (data.metrics.totalWeight ?? 0) / edges : 0;
   const totalWeight = formatNumber(data.metrics.totalWeight);
 
-  if (density > 0.7) {
+  if (density > DENSE_GRAPH_MIN_DENSITY) {
     return `O grafo completo tem ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}. A leitura visual pode beneficiar de frequência mínima ou Top-N.`;
   }
-  if (density < 0.05 && nodes > 50) {
+  if (density < SPARSE_GRAPH_MAX_DENSITY && nodes > LARGE_GRAPH_MIN_NODES) {
     return `O grafo tem ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}. A recorrência é baixa face ao número de nós.`;
   }
-  if (nodes <= 10 && averageWeight >= 5) {
+  if (nodes <= SMALL_GRAPH_MAX_NODES && averageWeight >= STRONG_TRANSITION_AVG_WEIGHT) {
     return `O grafo tem ${nodes} nós, ${edges} arestas e peso médio de ${averageWeight.toFixed(2)} por transição. A densidade é ${density.toFixed(4)}.`;
   }
   return `O grafo contém ${nodes} nós, ${edges} arestas, densidade ${density.toFixed(4)} e peso total de ${totalWeight}.`;
@@ -150,7 +159,8 @@ export function buildDatasetSpecificInterpretation(data: ReportData): string {
   const bestPureText = Number.isFinite(bestPure) ? bestPure.toFixed(2) : "0.00";
 
   if (scenario === "dense") {
-    const edgeReductionText = edgeReduction >= 99 ? "superior a 99%" : `${edgeReduction.toFixed(2)}%`;
+    const edgeReductionText =
+      edgeReduction >= NEAR_TOTAL_EDGE_REDUCTION_PERCENT ? "superior a 99%" : `${edgeReduction.toFixed(2)}%`;
     return [
       `O grafo é denso: ${nodes} nós, ${edges} arestas e densidade ${density.toFixed(4)}.`,
       "A seleção RAMEX reduz a rede a uma estrutura acíclica com poucas arestas.",
@@ -269,4 +279,3 @@ export async function prepareReportImages(data: ReportData): Promise<ReportData>
     },
   };
 }
-

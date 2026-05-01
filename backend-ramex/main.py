@@ -18,8 +18,33 @@ BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 OUTPUT_DIR = BASE_DIR / "outputs"
 
+INITIAL_JOB_PROGRESS = 5
+RUNNING_STEP_PROGRESS = 15
+NEW_STEP_PROGRESS = 20
+REPEATED_STEP_PROGRESS = 40
+FAILED_STEP_MIN_PROGRESS = 1
+JOB_LOG_LIMIT = 100
+
+POLYTREE_DEFAULT_TOP_K_PER_NODE = 2
+POLYTREE_DEFAULT_MAX_DEPTH = 5
+POLYTREE_DEFAULT_ALPHA = 0.35
+POLYTREE_DEFAULT_BETA = 0.25
+POLYTREE_DEFAULT_GAMMA = 0.15
+POLYTREE_DEFAULT_DELTA = 0.15
+POLYTREE_DEFAULT_EPSILON = 0.05
+POLYTREE_DEFAULT_ZETA = 0.05
+POLYTREE_DEFAULT_PRESERVE_WEIGHT_TARGET = 0.7
+POLYTREE_DEFAULT_MAX_BRANCHING = 3
+POLYTREE_DEFAULT_MIN_SCORE = 0.0
+
+DEV_CORS_ORIGINS = [
+    "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
+    "http://127.0.0.1:3000", "http://127.0.0.1:3001", "http://127.0.0.1:3002",
+]
+
 app = FastAPI(title="RAMEX Sequential Analysis API")
 
+# Pesos usados apenas para progresso visual do pipeline na UI.
 PIPELINE_STEPS: list[dict[str, Any]] = [
     {"id": "upload",           "label": "Ficheiro recebido",                          "weight": 5},
     {"id": "parsing",          "label": "Leitura e parsing do dataset",               "weight": 15},
@@ -40,10 +65,7 @@ STEP_LABELS = {step["id"]: step["label"] for step in PIPELINE_STEPS}
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
-        "http://127.0.0.1:3000", "http://127.0.0.1:3001", "http://127.0.0.1:3002",
-    ],
+    allow_origins=DEV_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -61,18 +83,18 @@ class AnalyzeRequest(BaseModel):
     top_n: int | None = None
     strategy: str | None = None
     polytree_strategy: str = "top-k"
-    top_k_per_node: int = 2
-    max_depth: int = 5
+    top_k_per_node: int = POLYTREE_DEFAULT_TOP_K_PER_NODE
+    max_depth: int = POLYTREE_DEFAULT_MAX_DEPTH
     min_weight: float | None = None
-    alpha: float = 0.35
-    beta: float = 0.25
-    gamma: float = 0.15
-    delta: float = 0.15
-    epsilon: float = 0.05
-    zeta: float = 0.05
-    preserve_weight_target: float = 0.7
-    max_branching: int = 3
-    min_score: float = 0.0
+    alpha: float = POLYTREE_DEFAULT_ALPHA
+    beta: float = POLYTREE_DEFAULT_BETA
+    gamma: float = POLYTREE_DEFAULT_GAMMA
+    delta: float = POLYTREE_DEFAULT_DELTA
+    epsilon: float = POLYTREE_DEFAULT_EPSILON
+    zeta: float = POLYTREE_DEFAULT_ZETA
+    preserve_weight_target: float = POLYTREE_DEFAULT_PRESERVE_WEIGHT_TARGET
+    max_branching: int = POLYTREE_DEFAULT_MAX_BRANCHING
+    min_score: float = POLYTREE_DEFAULT_MIN_SCORE
 
 
 def now_iso() -> str:
@@ -104,7 +126,7 @@ def build_initial_job_state(job_id: str) -> dict[str, Any]:
     return {
         "job_id": job_id,
         "status": "pending",
-        "progress": 5,
+        "progress": INITIAL_JOB_PROGRESS,
         "current_step": "Ficheiro recebido",
         "steps": steps,
         "logs": [{"timestamp": ts, "message": "Ficheiro recebido"}],
@@ -144,9 +166,9 @@ def update_step_status(
     elif status == "completed":
         step["progress"] = 100
     elif status == "failed":
-        step["progress"] = max(1, int(step.get("progress", 0)))
+        step["progress"] = max(FAILED_STEP_MIN_PROGRESS, int(step.get("progress", 0)))
     elif status == "running" and int(step.get("progress", 0)) == 0:
-        step["progress"] = 15
+        step["progress"] = RUNNING_STEP_PROGRESS
 
     if message:
         step["message"] = message
@@ -157,7 +179,7 @@ def update_step_status(
 
 def append_job_log(state: dict[str, Any], message: str) -> None:
     state.setdefault("logs", []).append({"timestamp": now_iso(), "message": message})
-    state["logs"] = state["logs"][-100:]
+    state["logs"] = state["logs"][-JOB_LOG_LIMIT:]
 
 
 def load_job_state(job_id: str) -> dict[str, Any]:
@@ -196,11 +218,11 @@ def run_job_pipeline(job_id: str, metadata: dict[str, Any], payload: AnalyzeRequ
         local_state = load_job_state(job_id)
         if current_step != step_id:
             update_step_status(local_state, current_step, "completed", "Concluído")
-            update_step_status(local_state, step_id, "running", message, progress=20)
+            update_step_status(local_state, step_id, "running", message, progress=NEW_STEP_PROGRESS)
             append_job_log(local_state, message)
             current_step = step_id
         else:
-            update_step_status(local_state, step_id, "running", message, progress=40)
+            update_step_status(local_state, step_id, "running", message, progress=REPEATED_STEP_PROGRESS)
         save_job_state(job_id, local_state)
 
     def log_cb(message: str) -> None:

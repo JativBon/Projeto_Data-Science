@@ -23,6 +23,28 @@ import pandas as pd
 
 COLUNAS_OBRIGATORIAS = ["From", "To", "Weight"]
 DEFAULT_MAX_DEPTH = 5
+DEFAULT_TOP_K_PER_NODE = 2
+DEFAULT_MAX_BRANCHING = 3
+DEFAULT_MIN_SCORE = 0.0
+DEFAULT_PRESERVE_WEIGHT_TARGET = 0.7
+
+# Pesos experimentais usados no score multiobjetivo do Poly-tree.
+DEFAULT_ALPHA = 0.35
+DEFAULT_BETA = 0.25
+DEFAULT_GAMMA = 0.15
+DEFAULT_DELTA = 0.15
+DEFAULT_EPSILON = 0.05
+DEFAULT_ZETA = 0.05
+
+HIGH_NORMALIZED_WEIGHT = 0.7
+HIGH_TRANSITION_PROBABILITY = 0.5
+MIN_COVERAGE_GAIN_REASON = 0.05
+CENTRAL_TARGET_THRESHOLD = 0.65
+REDUNDANCY_WEIGHT_KEEP_THRESHOLD = 0.35
+SCORE_DECIMALS = 4
+INTERPRETABILITY_WEIGHT_PRESERVED = 0.4
+INTERPRETABILITY_BRANCHING = 0.3
+INTERPRETABILITY_NODE_COVERAGE = 0.3
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -32,17 +54,17 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("output_png", help="PNG da poly-tree.")
     parser.add_argument("--strategy", choices=["top-k", "multiobjective"], default="top-k")
     parser.add_argument("--min-weight", type=float, default=None)
-    parser.add_argument("--top-k-per-node", type=int, default=2)
+    parser.add_argument("--top-k-per-node", type=int, default=DEFAULT_TOP_K_PER_NODE)
     parser.add_argument("--max-depth", type=int, default=DEFAULT_MAX_DEPTH)
-    parser.add_argument("--alpha", type=float, default=0.35)
-    parser.add_argument("--beta", type=float, default=0.25)
-    parser.add_argument("--gamma", type=float, default=0.15)
-    parser.add_argument("--delta", type=float, default=0.15)
-    parser.add_argument("--epsilon", type=float, default=0.05)
-    parser.add_argument("--zeta", type=float, default=0.05)
-    parser.add_argument("--preserve-weight-target", type=float, default=0.7)
-    parser.add_argument("--max-branching", type=int, default=3)
-    parser.add_argument("--min-score", type=float, default=0.0)
+    parser.add_argument("--alpha", type=float, default=DEFAULT_ALPHA)
+    parser.add_argument("--beta", type=float, default=DEFAULT_BETA)
+    parser.add_argument("--gamma", type=float, default=DEFAULT_GAMMA)
+    parser.add_argument("--delta", type=float, default=DEFAULT_DELTA)
+    parser.add_argument("--epsilon", type=float, default=DEFAULT_EPSILON)
+    parser.add_argument("--zeta", type=float, default=DEFAULT_ZETA)
+    parser.add_argument("--preserve-weight-target", type=float, default=DEFAULT_PRESERVE_WEIGHT_TARGET)
+    parser.add_argument("--max-branching", type=int, default=DEFAULT_MAX_BRANCHING)
+    parser.add_argument("--min-score", type=float, default=DEFAULT_MIN_SCORE)
     
     args = parser.parse_args()
     if args.top_k_per_node <= 0 or (args.max_depth and args.max_depth <= 0) or args.max_branching <= 0:
@@ -124,10 +146,10 @@ def build_polytree_topk(graph: nx.DiGraph, root: str, top_k: int, max_depth: int
 
 
 def explain_mo_reason(nw: float, tp: float, cg: float, tc: float, rp: float) -> str:
-    if nw >= 0.7 and tp >= 0.5: return "alto peso e elevada probabilidade local"
-    if cg >= 0.05: return "boa cobertura global"
-    if tc >= 0.65: return "destino central no grafo"
-    if rp > 0 and nw >= 0.35: return "penalizada por redundância, mantida por peso"
+    if nw >= HIGH_NORMALIZED_WEIGHT and tp >= HIGH_TRANSITION_PROBABILITY: return "alto peso e elevada probabilidade local"
+    if cg >= MIN_COVERAGE_GAIN_REASON: return "boa cobertura global"
+    if tc >= CENTRAL_TARGET_THRESHOLD: return "destino central no grafo"
+    if rp > 0 and nw >= REDUNDANCY_WEIGHT_KEEP_THRESHOLD: return "penalizada por redundância, mantida por peso"
     return "equilíbrio entre peso, cobertura e centralidade"
 
 
@@ -189,7 +211,7 @@ def build_polytree_multiobjective(graph: nx.DiGraph, root: str, args: argparse.N
 
     if not rows: raise ValueError("Falha ao construir a poly-tree multiobjetivo.")
     df = pd.DataFrame(rows)
-    df["Score"] = pd.to_numeric(df["Score"], errors="coerce").round(4)
+    df["Score"] = pd.to_numeric(df["Score"], errors="coerce").round(SCORE_DECIMALS)
     return df
 
 
@@ -242,7 +264,11 @@ def export_outputs(graph: nx.DiGraph, pt_graph: nx.DiGraph, df: pd.DataFrame, ro
         "density_before": nx.density(graph) if graph.number_of_nodes() > 1 else 0,
         "density_after": nx.density(pt_graph) if pt_graph.number_of_nodes() > 1 else 0,
         "edge_reduction_percent": (1 - pt_graph.number_of_edges() / graph.number_of_edges()) * 100 if graph.number_of_edges() else 0,
-        "interpretability_score": (0.4 * min(1.0, pt_w / orig_w if orig_w else 0) + 0.3 * (1 / (1 + avg_branch)) + 0.3 * min(1.0, len(set(df["To"])) / max(1, pt_graph.number_of_nodes()))) * 100
+        "interpretability_score": (
+            INTERPRETABILITY_WEIGHT_PRESERVED * min(1.0, pt_w / orig_w if orig_w else 0)
+            + INTERPRETABILITY_BRANCHING * (1 / (1 + avg_branch))
+            + INTERPRETABILITY_NODE_COVERAGE * min(1.0, len(set(df["To"])) / max(1, pt_graph.number_of_nodes()))
+        ) * 100
     }
 
     node_levels = {root: 0}
