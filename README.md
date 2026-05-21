@@ -1,18 +1,15 @@
 # RAMEX Sequential Analysis Framework
 
-## 1. O que é este projeto
+Framework de analise sequencial com duas linhas claramente separadas:
 
-Este projeto analisa sequências de eventos com RAMEX.
-Recebe datasets simples ou tabelas de eventos, transforma-os em transições e gera matrizes, grafos, estruturas RAMEX e relatórios técnicos.
-O objetivo é comparar padrões sequenciais de forma visual e rastreável, mantendo suporte para RAMEX 2007, Forward, Back-and-Forward e Poly-tree.
+- **RAMEX 2007 formal:** transformacao da base de dados numa rede de transicao de estados e aplicacao de Maximum Weight Rooted Branching.
+- **RAMEX-Forum:** pipeline temporal de influencia com Fase 1, transformacao temporal, e Fase 2, extracao estrutural por Forward Tree ou Back-and-Forward Poly-tree.
 
-O projeto inclui backend Python/FastAPI, frontend Next.js e datasets pré-carregados para demonstração.
+As heuristicas antigas, como RAMEX simplificado, Forward e Back-and-Forward historicos, continuam disponiveis apenas como comparacao experimental. Nao substituem o RAMEX 2007 formal nem o RAMEX-Forum temporal.
 
-## 2. Como executar
+## Instalacao
 
-### Backend
-
-A partir da raiz do projeto:
+Backend:
 
 ```powershell
 cd backend-ramex
@@ -20,17 +17,7 @@ cd backend-ramex
 ..\venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
-Se for necessário criar um ambiente virtual novo:
-
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r backend-ramex\requirements.txt
-```
-
-### Frontend
-
-Noutro terminal:
+Frontend:
 
 ```powershell
 cd frontend-ramex
@@ -46,182 +33,156 @@ API:      http://127.0.0.1:8000
 Health:   http://127.0.0.1:8000/api/health
 ```
 
-### Datasets
+## Execucao
 
-No frontend, é possível:
+No frontend e possivel:
 
-- escolher `D01`, `D02` ou `D03`;
-- carregar um ficheiro `.txt`, `.csv` ou `.xlsx`;
-- mapear colunas de entidade, ordem/data e evento;
-- executar a análise RAMEX;
-- exportar relatório técnico em Markdown ou PDF.
+- escolher Dataset 01, 02 ou 03;
+- carregar ficheiro `.txt`, `.csv` ou `.xlsx`;
+- mapear entidade/caso, tempo/ordem e evento/sinal;
+- executar `RAMEX 2007`, `RAMEX-Forum` ou `Both`;
+- exportar relatorio final em Markdown ou PDF.
 
-## 3. Estrutura do projeto
+## Pipeline RAMEX 2007
 
-```text
-backend-ramex/
-```
+O RAMEX 2007 implementado nesta framework segue a formulacao formal:
 
-API FastAPI. Recebe uploads, executa a pipeline RAMEX e guarda resultados de execução.
+1. ordenar dados por cliente/entidade, tempo e item;
+2. criar `next_item`;
+3. adicionar `SOURCE` e `SINK`;
+4. construir rede de estados `G` com ciclos permitidos;
+5. gerar matriz de adjacencia com frequencias absolutas;
+6. aplicar Maximum Weight Rooted Branching com raiz `SOURCE`;
+7. validar DAG, arborescencia, in-degree e peso preservado;
+8. apresentar grafo tecnico completo, grafo analitico e Sankey complementar.
 
-```text
-frontend-ramex/
-```
+Outputs principais:
 
-Aplicação Next.js. Mostra datasets, matrizes, grafos, resultados RAMEX, validações e relatórios.
+- `ramex2007_ordered.csv`
+- `ramex2007_sequences.csv`
+- `ramex2007_graph_edges.csv`
+- `ramex2007_adjacency_matrix.csv`
+- `ramex2007_adjacency_matrix.png`
+- `ramex2007_<job_id>.csv`
+- `ramex2007_<job_id>.json`
+- `ramex2007_<job_id>.png`
+- `ramex2007_tree_complete.png`
+- `ramex2007_expanded_paths_<job_id>.csv`
 
-```text
-frontend-ramex/public/data/
-```
+## Pipeline RAMEX-Forum
 
-Dados e resultados estáticos dos datasets pré-carregados.
+O RAMEX-Forum nao usa frequencias simples como peso principal. Trabalha sobre influencia temporal, sinais, latencia maxima, smoothing e filtros.
 
-```text
-backend-ramex/outputs/<job_id>/
-```
+### Fase 1 - Transformacao temporal
 
-Resultados gerados por uploads. Estes outputs são locais e não devem ser versionados.
+Entrada: `entity,timestamp,signal`.
 
-```text
-backend-ramex/uploads/
-```
+Etapas:
 
-Ficheiros carregados durante a utilização da aplicação. Também são artefactos locais.
+1. ordenar por entidade, timestamp e sinal;
+2. calcular `signal_counter(P,t)`;
+3. calcular influencia temporal `X -> Y` quando `X` ocorre antes de `Y` e `delta_t <= latency_max`;
+4. usar peso inicial `frequency * temporal_decay`, com `temporal_decay = 1 / (1 + delta_t)`;
+5. aplicar epsilon smoothing;
+6. aplicar filtros de ruido;
+7. gerar matriz e grafo temporal de influencia.
 
-## 4. Pipeline RAMEX
+Outputs:
 
-O fluxo principal é:
+- `forum_ordered_dataset.csv`
+- `forum_signal_counter.csv`
+- `forum_temporal_influence.csv`
+- `forum_filtered_influence.csv`
+- `forum_influence_matrix.csv`
+- `forum_influence_matrix.png`
+- `forum_graph_edges.csv`
+- `forum_graph.graphml`
+- `forum_graph.png`
+- `forum_temporal_phase1_metrics.json`
 
-1. Ler o dataset de entrada.
-2. Reconstruir ou normalizar as sequências.
-3. Gerar pares de transição `A -> B`.
-4. Contar frequências.
-5. Construir matriz de adjacência.
-6. Criar grafo dirigido ponderado.
-7. Gerar estruturas RAMEX e relatórios.
+### Fase 2 - Extracao estrutural
 
-Representação resumida:
+Input principal: `forum_filtered_influence.csv`.
 
-```text
-Dataset
-  -> Sequências
-  -> Pares A -> B
-  -> Frequências
-  -> Matriz de Adjacência
-  -> Grafo Dirigido Ponderado
-  -> RAMEX / Validação / Relatório
-```
+Peso principal: `smoothed_weight`.
 
-### Variantes RAMEX incluídas
+Regras:
 
-- **RAMEX 2007 Rooted Branching:** aproxima o RAMEX puro com uma arborescência dirigida de peso máximo.
-- **Forward:** expande a partir de uma raiz conhecida.
-- **Back-and-Forward:** expande para a frente e para trás a partir das relações mais fortes.
-- **Poly-tree:** preserva vários ramos relevantes e suporta estratégias `top-k` e `multiobjective`.
+- se existir `initial_node` fornecido ou inferido, aplica Forward Heuristic e gera uma arvore de influencia;
+- se nao existir no inicial claro, aplica Back-and-Forward Heuristic e gera uma Poly-tree de influencia;
+- a rede de entrada pode conter ciclos, mas a estrutura final e validada como DAG/tree/poly-tree quando aplicavel.
 
-Scripts principais:
+Outputs:
+
+- `forum_forward_tree.csv`
+- `forum_forward_tree.json`
+- `forum_forward_tree.png`
+- `forum_back_forward_polytree.csv`
+- `forum_back_forward_polytree.json`
+- `forum_back_forward_polytree.png`
+- `forum_phase2_structure.png`
+- `forum_phase2_structure.svg`
+- `forum_phase2_sankey.json`
+- `forum_dominant_path.csv`
+- `forum_temporal_phase2_metrics.json`
+
+## Frontend
+
+Abas principais:
+
+- **Upload / Nova Analise:** executa novas analises.
+- **RAMEX 2007:** mostra transformacao formal, matriz, grafo tecnico completo, grafo analitico, Sankey e tabela completa.
+- **RAMEX-Forum:** mostra Fase 1 temporal e Fase 2 estrutural, separadas do RAMEX 2007.
+- **Demonstracao:** percurso Dataset -> transformacao -> grafo -> RAMEX 2007 -> Forum -> conclusao.
+- **Relatorios:** exportacao final Markdown/PDF.
+
+## Relatorio PDF
+
+O PDF inclui:
+
+- secao RAMEX 2007;
+- arvore tecnica completa sem cortes;
+- Sankey RAMEX 2007;
+- secao RAMEX-Forum Fase 1;
+- secao RAMEX-Forum Fase 2;
+- comparacao RAMEX 2007 vs RAMEX-Forum;
+- limitacoes e trabalho futuro;
+- referencias academicas.
+
+## Exemplos de comandos
+
+Validar Python:
 
 ```powershell
-python 10A_ramex_2007_rooted_branching.py grafo_edges_dataset03.csv ramex2007_dataset03.csv ramex2007_dataset03.png --input-type edges --root Tecnologia
-python 10B_ramex_forward_heuristic.py grafo_edges_dataset03.csv ramex_forward_dataset03.csv ramex_forward_dataset03.png --root Tecnologia
-python 10C_ramex_back_forward_heuristic.py grafo_edges_dataset03.csv ramex_back_forward_dataset03.csv ramex_back_forward_dataset03.png
-python 10_ramex_polytree.py grafo_edges_dataset03.csv ramex_polytree_dataset03.csv ramex_polytree_dataset03.png --strategy multiobjective
+python -m py_compile backend-ramex\forum_temporal_pipeline.py backend-ramex\main.py backend-ramex\ramex_pipeline.py
+python -m py_compile backend\scripts\forum\01_forum_prepare_dataset.py backend\scripts\forum\02_forum_signal_counter.py backend\scripts\forum\03_forum_temporal_influence.py backend\scripts\forum\04_forum_noise_filter.py backend\scripts\forum\05_forum_influence_matrix.py backend\scripts\forum\06_forum_graph_builder.py backend\scripts\forum\07_forum_phase2_structural_extraction.py
 ```
 
-Validação:
+Validar frontend:
 
 ```powershell
-python 10D_validacao_ramex_puro.py dataset03
-python 10D1_validacao_ramex_multidataset.py
+cd frontend-ramex
+npm.cmd run lint
+npm.cmd run build
 ```
 
-## 5. Inputs e Outputs
+Executar RAMEX-Forum por scripts:
 
-### Inputs aceites
-
-Sequências simples:
-
-```text
-A B C D
-A C D
-B D A
+```powershell
+python backend\scripts\forum\01_forum_prepare_dataset.py data\raw\testes_SCADA.csv --entity-column ativo --time-column timestamp --signal-column estado
+python backend\scripts\forum\07_forum_phase2_structural_extraction.py backend\results\forum\forum_filtered_influence.csv --initial-node Bomba_ON --force-heuristic forward
 ```
 
-Tabela de eventos:
+## Checklist de defesa
 
-```text
-case_id,order,event
-1,1,A
-1,2,B
-1,3,C
-2,1,A
-2,2,D
-```
+Ver [VALIDATION_CHECKLIST.md](VALIDATION_CHECKLIST.md).
 
-Dataset estilo Customer/Product:
-
-```text
-Customer ID,Order Date,Category
-```
-
-Nestes casos:
-
-- `case_id` identifica a entidade, caso ou cliente;
-- `order` ou uma data define a ordem dos eventos;
-- `event` identifica a categoria analisada.
-
-### Outputs principais
-
-Os scripts e a aplicação podem gerar:
-
-- `matriz_adjacencia_datasetXX.csv`
-- `grafo_edges_datasetXX.csv`
-- `grafo_datasetXX.png`
-- `ramex_datasetXX.csv`
-- `ramex_datasetXX.png`
-- `ramex2007_datasetXX.csv`
-- `ramex2007_datasetXX.png`
-- `ramex2007_datasetXX.json`
-- `ramex_forward_datasetXX.csv`
-- `ramex_forward_datasetXX.png`
-- `ramex_forward_datasetXX.json`
-- `ramex_back_forward_datasetXX.csv`
-- `ramex_back_forward_datasetXX.png`
-- `ramex_back_forward_datasetXX.json`
-- `validacao_ramex_puro_datasetXX.csv`
-- `validacao_ramex_puro_datasetXX.md`
-- `validacao_ramex_puro_datasetXX.json`
-- `validacao_ramex_multidataset.csv`
-- `validacao_ramex_multidataset.md`
-- `validacao_ramex_multidataset.json`
-- `ramex_polytree_datasetXX.csv`
-- `ramex_polytree_datasetXX.png`
-- `ramex_polytree_datasetXX.json`
-- `validacao_comparativa.csv`
-- `validacao_comparativa.txt`
-- `relatorio_tecnico_datasetXX.md`
-- `relatorio_tecnico_<job_id>.md`
-
-## 6. Notas importantes
-
-- `backend-ramex/outputs/`, `backend-ramex/uploads/` e `frontend-ramex/generated-reports/` são artefactos de execução e não devem ser versionados.
-- Os datasets originais e os ficheiros em `frontend-ramex/public/data/` servem como base para demonstração e comparação.
-- Os scripts `frontend-ramex/scripts/extract_text_utf8.py` e `frontend-ramex/scripts/extract_weights.py` são utilitários opcionais para inspeção dos PDFs gerados.
-- A estratégia `multiobjective` da Poly-tree usa score composto. Os parâmetros devem ser registados quando forem usados em relatórios.
-- Em datasets pequenos ou muito densos, `top-k` e `multiobjective` podem produzir estruturas semelhantes.
-
-## 7. Enquadramento académico
-
-RAMEX é uma abordagem de *sequence mining* baseada em redes e grafos.
-Neste projeto, os eventos são tratados como nós e as transições como arestas ponderadas.
-O resultado pode ser lido como grafo completo, RAMEX simplificado, rooted branching, Forward, Back-and-Forward ou Poly-tree.
-
-Referências usadas no enquadramento:
+## Referencias
 
 - Cavique, L. (2007). *A Network Algorithm to Discover Sequential Patterns*. EPIA 2007, LNAI 4874, pp. 406-414.
 - Cavique, L. (2015). *Ramex: A Sequence Mining Algorithm Using Poly-trees*. Advances in Intelligent Systems and Computing, 354, pp. 143-153.
 - Tiple, P., Cavique, L., & Marques, N. C. (2017). *Ramex-Forum: a tool for displaying and analysing complex sequential patterns of financial products*. Expert Systems, 34:e12174.
-- Cavique, L. (2021). *Ciência dos Dados: Bases de Dados versus Aprendizagem Automática*. Revista de Ciência Elementar, 9(02):041.
+- Cavique, L. (2021). *Ciencia dos Dados: Bases de Dados versus Aprendizagem Automatica*. Revista de Ciencia Elementar, 9(02):041.
 
 ## Autoria
 

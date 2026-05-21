@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from fastapi.responses import FileResponse, JSONResponse  # type: ignore
 from pydantic import BaseModel  # type: ignore
 
+from artifact_validation import validate_job_artifacts
 from ramex_pipeline import ALLOWED_EXTENSIONS, detect_columns, run_pipeline, safe_filename
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -48,17 +49,17 @@ app = FastAPI(title="RAMEX Sequential Analysis API")
 PIPELINE_STEPS: list[dict[str, Any]] = [
     {"id": "upload",           "label": "Ficheiro recebido",                          "weight": 5},
     {"id": "parsing",          "label": "Leitura e parsing do dataset",               "weight": 15},
-    {"id": "sequencias",       "label": "Reconstrução de sequências",                 "weight": 15},
-    {"id": "pares",            "label": "Geração de pares A -> B",                    "weight": 10},
-    {"id": "frequencias",      "label": "Cálculo de frequências absolutas",           "weight": 10},
-    {"id": "matriz",           "label": "Construção da matriz de adjacência",         "weight": 10},
-    {"id": "grafo",            "label": "Construção do grafo dirigido ponderado",     "weight": 10},
-    {"id": "ramex2007",        "label": "Execução RAMEX 2007 Rooted Branching",       "weight": 8},
-    {"id": "forward",          "label": "Execução RAMEX Forward",                     "weight": 6},
-    {"id": "polytree_formal",  "label": "Execução Back-and-Forward Poly-tree Formal", "weight": 8},
-    {"id": "forum",            "label": "Execução RAMEX-Forum",                       "weight": 6},
-    {"id": "validacao",        "label": "Validação comparativa RAMEX puro",           "weight": 2},
-    {"id": "relatorio",        "label": "Geração de relatório técnico",               "weight": 1},
+    {"id": "sequencias",       "label": "Reconstrução de sequências e item-seguinte",    "weight": 15},
+    {"id": "pares",            "label": "Transformação RAMEX 2007 em rede G",            "weight": 10},
+    {"id": "frequencias",      "label": "Cálculo de frequências absolutas",              "weight": 10},
+    {"id": "matriz",           "label": "Construção da matriz de adjacência",            "weight": 10},
+    {"id": "grafo",            "label": "Construção do grafo dirigido ponderado",        "weight": 10},
+    {"id": "ramex2007",        "label": "Condensação RAMEX 2007 - Rooted Branching",     "weight": 8},
+    {"id": "forward",          "label": "Execução heurística histórica Forward",         "weight": 6},
+    {"id": "polytree_formal",  "label": "Execução heurística histórica Back-and-Forward","weight": 8},
+    {"id": "forum",            "label": "Execução RAMEX-Forum temporal",                 "weight": 6},
+    {"id": "validacao",        "label": "Anexo experimental de heurísticas históricas",   "weight": 2},
+    {"id": "relatorio",        "label": "Geração de relatório técnico",                  "weight": 1},
 ]
 
 STEP_LABELS = {step["id"]: step["label"] for step in PIPELINE_STEPS}
@@ -77,8 +78,13 @@ class AnalyzeRequest(BaseModel):
     dataset_type: str
     analysis_type: str = "pure"
     case_column: str | None = None
+    entity_column: str | None = None
     time_column: str | None = None
     event_column: str | None = None
+    event_mode: str = "simple"
+    event_columns: list[str] | None = None
+    numeric_discretization: dict[str, str] | None = None
+    case_window: str = "none"
     min_frequency: float = 0.0
     top_n: int | None = None
     strategy: str | None = None
@@ -95,6 +101,11 @@ class AnalyzeRequest(BaseModel):
     preserve_weight_target: float = POLYTREE_DEFAULT_PRESERVE_WEIGHT_TARGET
     max_branching: int = POLYTREE_DEFAULT_MAX_BRANCHING
     min_score: float = POLYTREE_DEFAULT_MIN_SCORE
+    forum_initial_node: str | None = None
+    forum_forward_top_k: int = 1
+    forum_max_depth: int = 10
+    forum_min_smoothed_weight: float | None = None
+    forum_force_heuristic: str = "auto"
 
 
 def now_iso() -> str:
@@ -195,6 +206,21 @@ def save_job_state(job_id: str, state: dict[str, Any]) -> None:
 
 def run_job_pipeline(job_id: str, metadata: dict[str, Any], payload: AnalyzeRequest) -> dict[str, Any]:
     state = load_job_state(job_id)
+    entity_column = payload.case_column or payload.entity_column
+    print("RUN_JOB_PIPELINE CONFIG", {
+        "job_id": job_id,
+        "dataset_type": payload.dataset_type,
+        "analysis_type": payload.analysis_type,
+        "event_mode": payload.event_mode,
+        "case_column": payload.case_column,
+        "entity_column": payload.entity_column,
+        "effective_case_column": entity_column,
+        "time_column": payload.time_column,
+        "event_column": payload.event_column,
+        "event_columns": payload.event_columns,
+        "numeric_discretization": payload.numeric_discretization,
+        "case_window": payload.case_window,
+    }, flush=True)
 
     skip_ids = (
         {"ramex2007", "forward", "polytree_formal", "validacao"} if payload.analysis_type == "forum"
@@ -236,9 +262,14 @@ def run_job_pipeline(job_id: str, metadata: dict[str, Any], payload: AnalyzeRequ
             output_dir=OUTPUT_DIR / job_id,
             dataset_type=payload.dataset_type,
             analysis_type=payload.analysis_type,
-            case_column=payload.case_column,
+            case_column=entity_column,
+            entity_column=payload.entity_column,
             time_column=payload.time_column,
             event_column=payload.event_column,
+            event_mode=payload.event_mode,
+            event_columns=payload.event_columns,
+            numeric_discretization=payload.numeric_discretization,
+            case_window=payload.case_window,
             min_frequency=payload.min_frequency,
             top_n=payload.top_n,
             polytree_strategy=payload.strategy or payload.polytree_strategy,
@@ -254,15 +285,31 @@ def run_job_pipeline(job_id: str, metadata: dict[str, Any], payload: AnalyzeRequ
             preserve_weight_target=payload.preserve_weight_target,
             max_branching=payload.max_branching,
             min_score=payload.min_score,
+            forum_initial_node=payload.forum_initial_node,
+            forum_forward_top_k=payload.forum_forward_top_k,
+            forum_max_depth=payload.forum_max_depth,
+            forum_min_smoothed_weight=payload.forum_min_smoothed_weight,
+            forum_force_heuristic=payload.forum_force_heuristic,
             progress_cb=progress_cb,
             log_cb=log_cb,
         )
     except Exception as exc:
         local_state = load_job_state(job_id)
         step_label = STEP_LABELS.get(current_step, current_step)
-        update_step_status(local_state, current_step, "failed", str(exc))
+        user_message = str(exc)
+        if current_step == "ramex2007":
+            user_message = (
+                "Erro na execução RAMEX 2007. Verifique se o grafo possui arestas válidas "
+                "e se existe subgrafo alcançável a partir da raiz."
+            )
+        update_step_status(local_state, current_step, "failed", user_message)
         local_state["status"] = "failed"
-        local_state["error"] = {"step": step_label, "message": str(exc), "technical": repr(exc)}
+        local_state["error"] = {
+            "title": "Erro na execução RAMEX 2007" if current_step == "ramex2007" else f"Erro na etapa {step_label}",
+            "step": step_label,
+            "message": user_message,
+            "technical": str(exc),
+        }
         append_job_log(local_state, f"Erro na etapa {step_label}: {exc}")
         save_job_state(job_id, local_state)
         raise
@@ -279,6 +326,9 @@ def run_job_pipeline(job_id: str, metadata: dict[str, Any], payload: AnalyzeRequ
         "status": "completed",
         "files": {**results.get("files", {}), "graph_edges": results.get("files", {}).get("graph_edges_csv", "grafo_edges.csv")},
     })
+    write_json(job_result_path(job_id), results)
+    validation = validate_job_artifacts(OUTPUT_DIR / job_id, payload.analysis_type)
+    results["artifact_validation"] = validation
     write_json(job_result_path(job_id), results)
     return results
 
@@ -506,20 +556,32 @@ def _raise_pipeline_error(exc: Exception) -> NoReturn:
     raise HTTPException(status_code=400 if is_value_err else 500, detail=str(exc) if is_value_err else f"Erro inesperado: {exc}")
 
 
+def _preview_rows(path: Path, limit: int = 20) -> list[dict[str, Any]]:
+    try:
+        import pandas as pd  # type: ignore
+
+        df = pd.read_csv(path, nrows=limit) if path.suffix.lower() == ".csv" else pd.read_excel(path, nrows=limit)
+        df = df.where(pd.notna(df), None)
+        return json.loads(df.to_json(orient="records", force_ascii=False, date_format="iso"))
+    except Exception:
+        return []
+
+
 @app.post("/api/upload")
 async def upload_dataset(file: UploadFile = File(...)) -> dict[str, Any]:
     job_id, saved_path, orig_name = await _save_upload(file)
     try:
         columns = detect_columns(saved_path)
+        preview_rows = _preview_rows(saved_path) if saved_path.suffix.lower() in {".csv", ".xlsx"} else []
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"Não foi possível detetar colunas: {exc}")
 
     filename = saved_path.name
     write_json(UPLOAD_DIR / job_id / "metadata.json", {
         "job_id": job_id, "original_filename": orig_name,
-        "filename": filename, "path": str(saved_path), "columns": columns,
+        "filename": filename, "path": str(saved_path), "columns": columns, "preview_rows": preview_rows,
     })
-    return {"job_id": job_id, "filename": filename, "columns": columns, "message": "Ficheiro recebido com sucesso."}
+    return {"job_id": job_id, "filename": filename, "columns": columns, "preview_rows": preview_rows, "message": "Ficheiro recebido com sucesso."}
 
 
 @app.post("/api/analyze")
@@ -528,6 +590,8 @@ def analyze_dataset(
     background_tasks: BackgroundTasks,
     async_mode: bool = Query(False),
 ) -> dict[str, Any]:
+    payload_dump = payload.model_dump() if hasattr(payload, "model_dump") else payload.dict()
+    print("RUN-FULL RAW REQUEST", payload_dump, flush=True)
     meta_path = UPLOAD_DIR / payload.job_id / "metadata.json"
     if not meta_path.exists():
         raise HTTPException(status_code=404, detail="Ficheiro do job não encontrado.")
@@ -551,19 +615,41 @@ async def run_full_ramex(
     file: UploadFile = File(...),
     dataset_type: str = Form("simple_sequences"),
     case_column: str | None = Form(None),
+    entity_column: str | None = Form(None),
     time_column: str | None = Form(None),
     event_column: str | None = Form(None),
+    event_mode: str = Form("simple"),
+    event_columns: str | None = Form(None),
+    numeric_discretization: str | None = Form(None),
+    case_window: str = Form("none"),
     remove_consecutive_duplicates: bool = Form(True),
     min_frequency: float = Form(0.0),
     top_n: int | None = Form(None),
     analysis_type: str = Form("pure"),
     async_mode: bool = Form(False),
+    forum_initial_node: str | None = Form(None),
+    forum_forward_top_k: int = Form(1),
+    forum_max_depth: int = Form(10),
+    forum_min_smoothed_weight: float | None = Form(None),
+    forum_force_heuristic: str = Form("auto"),
 ) -> dict[str, Any]:
     """Executa a análise RAMEX num único pedido.
 
     Mantém os endpoints /api/upload e /api/analyze para compatibilidade, mas
     oferece uma entrada mais simples para a versão final da aplicação.
     """
+    print("RUN-FULL RAW REQUEST", {
+        "dataset_type": dataset_type,
+        "analysis_type": analysis_type,
+        "event_mode": event_mode,
+        "case_column": case_column,
+        "entity_column": entity_column,
+        "time_column": time_column,
+        "event_column": event_column,
+        "event_columns": event_columns,
+        "numeric_discretization": numeric_discretization,
+        "case_window": case_window,
+    }, flush=True)
     job_id, saved_path, orig_name = await _save_upload(file)
     write_json(UPLOAD_DIR / job_id / "metadata.json", {
         "job_id": job_id, "original_filename": orig_name,
@@ -574,8 +660,18 @@ async def run_full_ramex(
 
     payload = AnalyzeRequest(
         job_id=job_id, dataset_type=dataset_type, analysis_type=analysis_type,
-        case_column=case_column, time_column=time_column, event_column=event_column,
+        case_column=case_column, entity_column=entity_column,
+        time_column=time_column, event_column=event_column,
+        event_mode=event_mode,
+        event_columns=json.loads(event_columns) if event_columns else None,
+        numeric_discretization=json.loads(numeric_discretization) if numeric_discretization else None,
+        case_window=case_window,
         min_frequency=min_frequency, top_n=top_n, polytree_strategy="top-k",
+        forum_initial_node=forum_initial_node or None,
+        forum_forward_top_k=forum_forward_top_k,
+        forum_max_depth=forum_max_depth,
+        forum_min_smoothed_weight=forum_min_smoothed_weight,
+        forum_force_heuristic=forum_force_heuristic,
     )
     metadata = read_json(UPLOAD_DIR / job_id / "metadata.json")
     save_job_state(job_id, build_initial_job_state(job_id))
@@ -634,20 +730,40 @@ async def run_ramex_forum_endpoint(
     file: UploadFile = File(...),
     dataset_type: str = Form("simple_sequences"),
     case_column: str | None = Form(None),
+    entity_column: str | None = Form(None),
     time_column: str | None = Form(None),
     event_column: str | None = Form(None),
+    event_mode: str = Form("simple"),
+    event_columns: str | None = Form(None),
+    numeric_discretization: str | None = Form(None),
+    case_window: str = Form("none"),
     min_frequency: float = Form(0.0),
     top_n: int | None = Form(None),
+    forum_initial_node: str | None = Form(None),
+    forum_forward_top_k: int = Form(1),
+    forum_max_depth: int = Form(10),
+    forum_min_smoothed_weight: float | None = Form(None),
+    forum_force_heuristic: str = Form("auto"),
 ) -> dict[str, Any]:
     return await run_full_ramex(
         background_tasks=BackgroundTasks(),
         file=file,
         dataset_type=dataset_type,
         case_column=case_column,
+        entity_column=entity_column,
         time_column=time_column,
         event_column=event_column,
+        event_mode=event_mode,
+        event_columns=event_columns,
+        numeric_discretization=numeric_discretization,
+        case_window=case_window,
         min_frequency=min_frequency,
         top_n=top_n,
+        forum_initial_node=forum_initial_node,
+        forum_forward_top_k=forum_forward_top_k,
+        forum_max_depth=forum_max_depth,
+        forum_min_smoothed_weight=forum_min_smoothed_weight,
+        forum_force_heuristic=forum_force_heuristic,
         analysis_type="forum",
         async_mode=False,
     )
@@ -675,6 +791,12 @@ def get_ramex_forum_file(job_id: str, filename: str) -> FileResponse:
 @app.get("/api/results/{job_id}")
 def get_results(job_id: str) -> dict[str, Any]:
     return read_json(OUTPUT_DIR / job_id / "status.json")
+
+
+@app.get("/api/results/{job_id}/validate-artifacts")
+def validate_artifacts(job_id: str) -> dict[str, Any]:
+    result = read_json(job_result_path(job_id))
+    return validate_job_artifacts(OUTPUT_DIR / job_id, result.get("analysis_type"))
 
 
 @app.get("/api/file/{job_id}/{filename}")

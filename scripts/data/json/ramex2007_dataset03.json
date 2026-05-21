@@ -1,0 +1,155 @@
+{
+  "algorithm": "RAMEX 2007 Rooted Branching",
+  "method": "maximum_weight_rooted_branching",
+  "paper_alignment": {
+    "main_phases": [
+      "transformacao_da_base_de_dados_em_rede_de_transicao_de_estados",
+      "pesquisa_de_sequencia_de_ramificacao_altamente_provavel"
+    ],
+    "condensation": "Maximum Weight Rooted Branching (Fulkerson/Edmonds)",
+    "expansion": "percurso da arborescencia B para reconstruir caminhos dominantes",
+    "complexity": "O(N^2)"
+  },
+  "root": "Tecnologia",
+  "root_selection": "dominant_real_root",
+  "nodes_original": 4,
+  "edges_original": 12,
+  "nodes_selected": 4,
+  "edges_selected": 3,
+  "total_weight_original": 352.0,
+  "selected_weight": 123.0,
+  "preserved_weight_percent": 34.94318181818182,
+  "reachable_total_weight": 352.0,
+  "preserved_reachable_weight_percent": 34.94318181818182,
+  "is_dag": true,
+  "is_arborescence": true,
+  "root_in_degree": 0,
+  "max_non_root_in_degree": 1,
+  "reachable_from_root": true,
+  "original_graph_has_cycles": true,
+  "original_graph_can_contain_cycles": true,
+  "expanded_paths_csv": "..\\data\\csv\\ramex2007_dataset03_expanded_paths.csv",
+  "tree_complete_png": "..\\assets\\png\\ramex2007_dataset03_tree_complete.png",
+  "warnings": [
+    "No SOURCE/START nao existe e o grafo nao tem nos sem entradas; foi escolhida uma raiz real dominante."
+  ],
+  "nodes": [
+    {
+      "id": "Tecnologia",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "Higiene",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Limpeza",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Mercearia",
+      "level": 1,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "Tecnologia",
+      "to": "Higiene",
+      "weight": 26,
+      "level": 1
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Limpeza",
+      "weight": 22,
+      "level": 1
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Mercearia",
+      "weight": 75,
+      "level": 1
+    }
+  ],
+  "condensation": {
+    "input_nodes": 4,
+    "input_edges": 12,
+    "output_nodes": 4,
+    "output_edges": 3,
+    "compression_ratio": 0.25,
+    "removed_edges": 9,
+    "preserved_weight": 123.0,
+    "preserved_weight_percent": 34.94318181818182,
+    "rooted_branching_algorithm": "Fulkerson/Edmonds maximum weight rooted branching"
+  },
+  "expansion": {
+    "dominant_paths": [
+      {
+        "path": "Tecnologia -> Mercearia",
+        "start": "Tecnologia",
+        "end": "Mercearia",
+        "branch_depth": 1,
+        "path_weight": 75,
+        "bottleneck_weight": 75,
+        "edges": 1
+      },
+      {
+        "path": "Tecnologia -> Higiene",
+        "start": "Tecnologia",
+        "end": "Higiene",
+        "branch_depth": 1,
+        "path_weight": 26,
+        "bottleneck_weight": 26,
+        "edges": 1
+      },
+      {
+        "path": "Tecnologia -> Limpeza",
+        "start": "Tecnologia",
+        "end": "Limpeza",
+        "branch_depth": 1,
+        "path_weight": 22,
+        "bottleneck_weight": 22,
+        "edges": 1
+      }
+    ],
+    "metrics": {
+      "dominant_paths_count": 3,
+      "max_branch_depth": 1,
+      "average_branching_factor": 3.0,
+      "max_branching_factor": 3
+    },
+    "expanded_paths_csv": "..\\data\\csv\\ramex2007_dataset03_expanded_paths.csv"
+  },
+  "compare_simplified": [],
+  "metrics": {
+    "original_nodes": 4,
+    "original_edges": 12,
+    "reachable_nodes": 4,
+    "reachable_edges": 12,
+    "selected_nodes": 4,
+    "selected_edges": 3,
+    "original_weight_sum": 352.0,
+    "reachable_weight_sum": 352.0,
+    "selected_weight_sum": 123.0,
+    "preserved_weight_percent": 34.94318181818182,
+    "preserved_reachable_weight_percent": 34.94318181818182,
+    "is_acyclic": true,
+    "is_dag": true,
+    "is_arborescence": true,
+    "is_connected": true,
+    "root_in_degree": 0,
+    "max_indegree_except_root": 1,
+    "max_non_root_in_degree": 1,
+    "reachable_from_root": true,
+    "original_graph_has_cycles": true,
+    "compression_ratio": 0.25,
+    "removed_edges": 9,
+    "preserved_weight": 123.0,
+    "branch_depth": 1,
+    "branching_factor": 3.0
+  }
+}

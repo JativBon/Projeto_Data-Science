@@ -220,7 +220,7 @@ def build_report(metrics: dict[str, Any], paths: list[dict[str, Any]]) -> str:
     dominant = " -> ".join(paths[0]["path"]) if paths else "Não disponível"
     return f"""# Relatório RAMEX-Forum
 
-O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para exploração de relações complexas e análise de influência.
+O RAMEX-Forum não substitui o RAMEX 2007 formal. Atua como abordagem complementar para exploração temporal de sinais, latência e influência.
 
 ## Métricas principais
 
@@ -303,8 +303,8 @@ def run_ramex_forum(edges_df: pd.DataFrame, output_dir: Path, max_path_length: i
             "most_received_node": metrics["most_received_node"],
         },
         "interpretation": (
-            "O RAMEX-Forum complementa o RAMEX Puro ao destacar relações normalizadas, nós influentes "
-            "e caminhos dominantes, sem substituir a validação formal da Poly-tree."
+            "O RAMEX-Forum complementa o RAMEX 2007 formal ao destacar influência temporal, nós influentes "
+            "e caminhos dominantes, sem substituir a arborescência formal do RAMEX 2007."
         ),
         "files": files,
     }

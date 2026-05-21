@@ -1,0 +1,355 @@
+{
+  "algorithm": "RAMEX 2007 Rooted Branching",
+  "method": "maximum_weight_rooted_branching",
+  "paper_alignment": {
+    "main_phases": [
+      "transformacao_da_base_de_dados_em_rede_de_transicao_de_estados",
+      "pesquisa_de_sequencia_de_ramificacao_altamente_provavel"
+    ],
+    "condensation": "Maximum Weight Rooted Branching (Fulkerson/Edmonds)",
+    "expansion": "percurso da arborescencia B para reconstruir caminhos dominantes",
+    "complexity": "O(N^2)"
+  },
+  "root": "10065",
+  "root_selection": "zero_indegree_highest_out_weight",
+  "nodes_original": 281,
+  "edges_original": 272,
+  "nodes_selected": 23,
+  "edges_selected": 22,
+  "total_weight_original": 272.0,
+  "selected_weight": 22.0,
+  "preserved_weight_percent": 8.088235294117647,
+  "reachable_total_weight": 22.0,
+  "preserved_reachable_weight_percent": 100.0,
+  "is_dag": true,
+  "is_arborescence": true,
+  "root_in_degree": 0,
+  "max_non_root_in_degree": 1,
+  "reachable_from_root": true,
+  "original_graph_has_cycles": true,
+  "original_graph_can_contain_cycles": true,
+  "expanded_paths_csv": "..\\data\\csv\\ramex2007_dataset02_expanded_paths.csv",
+  "tree_complete_png": "..\\assets\\png\\ramex2007_dataset02_tree_complete.png",
+  "warnings": [
+    "Nem todos os nos sao alcancaveis a partir da raiz; a arborescencia cobre apenas o subgrafo alcancavel."
+  ],
+  "nodes": [
+    {
+      "id": "10065",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "4204",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "5304",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "9981",
+      "level": 3,
+      "is_root": false
+    },
+    {
+      "id": "2807",
+      "level": 4,
+      "is_root": false
+    },
+    {
+      "id": "3786",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "4059",
+      "level": 5,
+      "is_root": false
+    },
+    {
+      "id": "2813",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "9541",
+      "level": 6,
+      "is_root": false
+    },
+    {
+      "id": "3429",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "4718",
+      "level": 7,
+      "is_root": false
+    },
+    {
+      "id": "11516",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "80554",
+      "level": 8,
+      "is_root": false
+    },
+    {
+      "id": "1090",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "366",
+      "level": 9,
+      "is_root": false
+    },
+    {
+      "id": "202",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "2046",
+      "level": 10,
+      "is_root": false
+    },
+    {
+      "id": "4049",
+      "level": 11,
+      "is_root": false
+    },
+    {
+      "id": "5070",
+      "level": 12,
+      "is_root": false
+    },
+    {
+      "id": "672",
+      "level": 13,
+      "is_root": false
+    },
+    {
+      "id": "44",
+      "level": 14,
+      "is_root": false
+    },
+    {
+      "id": "8",
+      "level": 15,
+      "is_root": false
+    },
+    {
+      "id": "14",
+      "level": 16,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "10065",
+      "to": "4204",
+      "weight": 1,
+      "level": 1
+    },
+    {
+      "from": "4204",
+      "to": "5304",
+      "weight": 1,
+      "level": 2
+    },
+    {
+      "from": "5304",
+      "to": "9981",
+      "weight": 1,
+      "level": 3
+    },
+    {
+      "from": "9981",
+      "to": "2807",
+      "weight": 1,
+      "level": 4
+    },
+    {
+      "from": "2807",
+      "to": "3786",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "2807",
+      "to": "4059",
+      "weight": 1,
+      "level": 5
+    },
+    {
+      "from": "3786",
+      "to": "9541",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "4059",
+      "to": "2813",
+      "weight": 1,
+      "level": 6
+    },
+    {
+      "from": "2813",
+      "to": "3429",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "9541",
+      "to": "4718",
+      "weight": 1,
+      "level": 7
+    },
+    {
+      "from": "3429",
+      "to": "11516",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "4718",
+      "to": "80554",
+      "weight": 1,
+      "level": 8
+    },
+    {
+      "from": "11516",
+      "to": "366",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "80554",
+      "to": "1090",
+      "weight": 1,
+      "level": 9
+    },
+    {
+      "from": "1090",
+      "to": "2046",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "366",
+      "to": "202",
+      "weight": 1,
+      "level": 10
+    },
+    {
+      "from": "2046",
+      "to": "4049",
+      "weight": 1,
+      "level": 11
+    },
+    {
+      "from": "4049",
+      "to": "5070",
+      "weight": 1,
+      "level": 12
+    },
+    {
+      "from": "5070",
+      "to": "672",
+      "weight": 1,
+      "level": 13
+    },
+    {
+      "from": "672",
+      "to": "44",
+      "weight": 1,
+      "level": 14
+    },
+    {
+      "from": "44",
+      "to": "8",
+      "weight": 1,
+      "level": 15
+    },
+    {
+      "from": "8",
+      "to": "14",
+      "weight": 1,
+      "level": 16
+    }
+  ],
+  "condensation": {
+    "input_nodes": 281,
+    "input_edges": 272,
+    "output_nodes": 23,
+    "output_edges": 22,
+    "compression_ratio": 0.08088235294117647,
+    "removed_edges": 250,
+    "preserved_weight": 22.0,
+    "preserved_weight_percent": 8.088235294117647,
+    "rooted_branching_algorithm": "Fulkerson/Edmonds maximum weight rooted branching"
+  },
+  "expansion": {
+    "dominant_paths": [
+      {
+        "path": "10065 -> 4204 -> 5304 -> 9981 -> 2807 -> 3786 -> 9541 -> 4718 -> 80554 -> 1090 -> 2046 -> 4049 -> 5070 -> 672 -> 44 -> 8 -> 14",
+        "start": "10065",
+        "end": "14",
+        "branch_depth": 16,
+        "path_weight": 16,
+        "bottleneck_weight": 1,
+        "edges": 16
+      },
+      {
+        "path": "10065 -> 4204 -> 5304 -> 9981 -> 2807 -> 4059 -> 2813 -> 3429 -> 11516 -> 366 -> 202",
+        "start": "10065",
+        "end": "202",
+        "branch_depth": 10,
+        "path_weight": 10,
+        "bottleneck_weight": 1,
+        "edges": 10
+      }
+    ],
+    "metrics": {
+      "dominant_paths_count": 2,
+      "max_branch_depth": 16,
+      "average_branching_factor": 1.0476190476190477,
+      "max_branching_factor": 2
+    },
+    "expanded_paths_csv": "..\\data\\csv\\ramex2007_dataset02_expanded_paths.csv"
+  },
+  "compare_simplified": [],
+  "metrics": {
+    "original_nodes": 281,
+    "original_edges": 272,
+    "reachable_nodes": 23,
+    "reachable_edges": 22,
+    "selected_nodes": 23,
+    "selected_edges": 22,
+    "original_weight_sum": 272.0,
+    "reachable_weight_sum": 22.0,
+    "selected_weight_sum": 22.0,
+    "preserved_weight_percent": 8.088235294117647,
+    "preserved_reachable_weight_percent": 100.0,
+    "is_acyclic": true,
+    "is_dag": true,
+    "is_arborescence": true,
+    "is_connected": true,
+    "root_in_degree": 0,
+    "max_indegree_except_root": 1,
+    "max_non_root_in_degree": 1,
+    "reachable_from_root": true,
+    "original_graph_has_cycles": true,
+    "compression_ratio": 0.08088235294117647,
+    "removed_edges": 250,
+    "preserved_weight": 22.0,
+    "branch_depth": 16,
+    "branching_factor": 1.0476190476190477
+  }
+}

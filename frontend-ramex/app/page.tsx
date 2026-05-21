@@ -45,6 +45,7 @@ import {
 } from "recharts";
 import { ReportExportButton } from "../src/features/reports/ReportExportButton";
 import type { ReportData } from "../src/features/reports/reportPdfTypes";
+import { RamexSankey } from "../src/components/RamexSankey";
 
 type DatasetId = "01" | "02" | "03";
 type ViewId =
@@ -61,6 +62,7 @@ type ViewId =
   | "matrix"
   | "graph"
   | "ramex"
+  | "sankey"
   | "polytree"
   | "summary";
 
@@ -98,6 +100,10 @@ type MatrixData = {
 type UploadDatasetType = "simple_sequences" | "event_table" | "customer_excel";
 type PolyTreeStrategy = "top-k" | "multiobjective";
 type AnalysisType = "pure" | "forum" | "both";
+type EventMode = "simple" | "advanced";
+type NumericDiscretizationMode = "ignore" | "quantile" | "variation_pct";
+type CaseWindowMode = "none" | "daily" | "weekly" | "monthly" | "quarterly";
+type PreviewRow = Record<string, string | number | boolean | null>;
 
 type ForumEdge = {
   From?: string;
@@ -105,6 +111,14 @@ type ForumEdge = {
   Weight?: number;
   RelativeWeight?: number;
   Rank?: number;
+  InfluenceWeight?: number;
+  SmoothedWeight?: number;
+  Frequency?: number;
+  DeltaT?: number;
+  TemporalDecay?: number;
+  Level?: number;
+  Direction?: string;
+  Reason?: string;
 };
 
 type RamexForumData = {
@@ -120,6 +134,74 @@ type RamexForumData = {
     dominant_path?: string[];
     average_relative_weight?: number;
   };
+  temporal_phase1?: {
+    mode?: string;
+    phase?: string;
+    parameters?: Record<string, string | number | boolean | null | undefined>;
+    metrics?: {
+      events?: number;
+      entities?: number;
+      signals?: number;
+      temporal_relations?: number;
+      raw_influence_relations?: number;
+      filtered_influence_relations?: number;
+      latency_max?: number;
+      epsilon?: number;
+      filters_active?: {
+        min_frequency?: number;
+        min_influence?: number;
+        max_latency?: number | null;
+      };
+      cycles_allowed?: boolean;
+      has_cycles?: boolean;
+      multiple_inputs_allowed?: boolean;
+      total_influence_weight?: number;
+    };
+    signal_counter?: {
+      rows?: Array<{ entity?: string; timestamp?: string | number; signal?: string; signal_counter?: number }>;
+      total_rows?: number;
+    };
+    temporal_influence?: { edges?: ForumEdge[]; total_edges?: number };
+    influence_graph?: { edges?: ForumEdge[]; cycles_allowed?: boolean };
+    influence_matrix?: MatrixData;
+    interpretation?: string;
+    notes?: string[];
+    files?: Record<string, string>;
+  };
+  temporal_phase2?: {
+    mode?: string;
+    phase?: string;
+    metrics?: {
+      heuristic_used?: "forward" | "back_and_forward" | string;
+      initial_node_mode?: string;
+      selected_initial_node?: string | null;
+      initial_edge?: string | null;
+      nodes_before?: number;
+      edges_before?: number;
+      nodes_after?: number;
+      edges_after?: number;
+      total_influence_weight?: number;
+      selected_influence_weight?: number;
+      preserved_influence_percent?: number;
+      max_depth?: number;
+      top_k?: number;
+      is_dag?: boolean;
+      is_tree?: boolean;
+      is_polytree?: boolean;
+      dominant_path?: string[];
+      warnings?: string[];
+    };
+    structure?: {
+      algorithm?: string;
+      structure?: string;
+      edges?: ForumEdge[];
+      validation?: Record<string, boolean>;
+    };
+    selected_edges?: ForumEdge[];
+    dominant_path?: Array<{ Step?: number; From?: string; To?: string; Weight?: number; InfluenceWeight?: number; Direction?: string }>;
+    interpretation?: string;
+    files?: Record<string, string>;
+  };
   influence_graph?: { edges?: ForumEdge[] };
   simplified_influence?: { edges?: ForumEdge[]; selection_rule?: string };
   path_analysis?: {
@@ -134,6 +216,26 @@ type RamexForumData = {
   };
   interpretation?: string;
   files?: Record<string, string>;
+};
+
+type CoverageMetrics = {
+  original_nodes: number;
+  original_edges: number;
+  filtered_nodes: number;
+  filtered_edges: number;
+  ramex_nodes: number;
+  ramex_edges: number;
+  uncovered_nodes: string[];
+  uncovered_nodes_count: number;
+  node_coverage_percent: number;
+  original_weight: number;
+  filtered_weight: number;
+  ramex_weight: number;
+  preserved_weight_percent: number;
+  removed_by_filter_edges: number;
+  removed_by_filter_weight: number;
+  disconnected_components_count: number;
+  warning_messages: string[];
 };
 
 type UploadResult = {
@@ -154,10 +256,37 @@ type UploadResult = {
     pairs: number;
     dense: boolean;
   };
+  coverage_metrics?: CoverageMetrics;
   top_transitions: Edge[];
   matrix: MatrixData;
   graph_edges: Edge[];
   ramex_edges: Edge[];
+  event_construction?: {
+    mode?: EventMode;
+    case_column?: string | null;
+    time_column?: string;
+    case_window?: CaseWindowMode;
+    event_column?: string;
+    event_columns?: string[];
+    ignored_columns?: string[];
+    numeric_discretization?: Record<string, string>;
+    rules?: Record<string, string>;
+    generated_event_column?: string;
+    generated_case_column?: string;
+    unique_events?: number;
+    event_examples?: string[];
+    warnings?: string[];
+    explanation?: string;
+  };
+  ramex2007_transformation?: {
+    graph_edges?: Edge[];
+    adjacency_matrix?: MatrixData;
+    matrix?: MatrixData;
+    source_exists?: boolean;
+    sink_exists?: boolean;
+    has_cycles?: boolean;
+    files?: Record<string, string>;
+  };
   transition_matrix?: Record<string, Record<string, number>>;
   polytree?: PolyTreeData;
   polytree_edges?: PolyTreeTableRow[];
@@ -184,6 +313,61 @@ type UploadResult = {
   files: Record<string, string>;
   interpretation: string;
   pipeline_steps: string[];
+};
+
+type NormalizedUploadResult = {
+  observed: {
+    sequences: number;
+    nodes: number;
+    edges: number;
+    density: number;
+    totalWeight: number;
+    topTransitions: Edge[];
+    graphEdges: Edge[];
+    adjacencyMatrix?: MatrixData;
+    graphImage?: string;
+    sankeyData: Edge[];
+  };
+  ramex2007: {
+    available: boolean;
+    phase1: {
+      orderedDataset?: string;
+      sequencesWithNextItem?: string;
+      source: string;
+      sink: string;
+      graphGEdges: Edge[];
+      adjacencyMatrix?: MatrixData;
+      adjacencyMatrixImage?: string;
+      hasCycles?: boolean;
+    };
+    phase2: {
+      root?: string;
+      method?: string;
+      treeCompleteImage?: string;
+      treeAnalyticalImage?: string;
+      sankeyData: unknown[];
+      selectedEdges: unknown[];
+      dominantPaths: NonNullable<PureRamexResult["expansion"]>["dominant_paths"];
+      metrics?: PureRamexResult["metrics"];
+    };
+  };
+  forum: {
+    available: boolean;
+    phase1?: NonNullable<RamexForumData["temporal_phase1"]>;
+    phase2?: NonNullable<RamexForumData["temporal_phase2"]>;
+  };
+  experimental: {
+    available: boolean;
+    simplified?: Edge[];
+    forward?: PureRamexResult;
+    backForward?: PureRamexResult;
+    comparisons?: PureRamexComparisonRow[];
+  };
+  files: {
+    artifacts: Record<string, string>;
+  };
+  errors: string[];
+  warnings: string[];
 };
 
 type JobStepStatus = "pending" | "running" | "completed" | "failed";
@@ -292,6 +476,22 @@ type PureRamexResult = {
   algorithm: string;
   method?: string;
   root?: string;
+  root_selection?: string;
+  nodes_original?: number;
+  edges_original?: number;
+  nodes_selected?: number;
+  edges_selected?: number;
+  total_weight_original?: number;
+  selected_weight?: number;
+  preserved_weight_percent?: number;
+  is_dag?: boolean;
+  is_arborescence?: boolean;
+  root_in_degree?: number;
+  max_non_root_in_degree?: number;
+  reachable_from_root?: boolean;
+  imageUrl?: string;
+  csvUrl?: string;
+  jsonUrl?: string;
   initial_edge?: { from?: string; to?: string; weight?: number };
   metrics?: {
     original_nodes?: number;
@@ -309,9 +509,67 @@ type PureRamexResult = {
     rejected_edges_count?: number;
     max_depth?: number;
     max_depth_reached?: number;
+    root_in_degree?: number;
+    max_non_root_in_degree?: number;
+    max_indegree_except_root?: number;
+    is_arborescence?: boolean;
+    reachable_from_root?: boolean;
   };
   edges?: PureRamexEdge[];
   warnings?: string[];
+  transformation?: {
+    ordered_csv?: string;
+    sequences_csv?: string;
+    graph_edges_csv?: string;
+    adjacency_matrix_csv?: string;
+    adjacency_matrix_png?: string;
+    source_node?: string;
+    sink_node?: string;
+    original_graph_can_contain_cycles?: boolean;
+    global_view_note?: string;
+  };
+  condensation?: {
+    compression_ratio?: number;
+    removed_edges?: number;
+    preserved_weight?: number;
+    preserved_weight_percent?: number;
+    rooted_branching_algorithm?: string;
+  };
+  expansion?: {
+    dominant_paths?: Array<{
+      path?: string;
+      branch_depth?: number;
+      path_weight?: number;
+      bottleneck_weight?: number;
+    }>;
+    metrics?: {
+      dominant_paths_count?: number;
+      max_branch_depth?: number;
+      average_branching_factor?: number;
+      max_branching_factor?: number;
+    };
+  };
+};
+
+type NormalizedRamex2007Result = {
+  algorithm: string;
+  method?: string;
+  root?: string;
+  rootSelection?: string;
+  nodes: number;
+  edges: number;
+  selectedWeight: number;
+  totalWeight: number;
+  preservedWeightPercent: number;
+  isDag?: boolean;
+  isArborescence?: boolean;
+  reachableFromRoot?: boolean;
+  rootInDegree?: number;
+  maxNonRootInDegree?: number;
+  warnings: string[];
+  imageUrl?: string;
+  csvUrl?: string;
+  jsonUrl?: string;
 };
 
 type PureRamexComparisonRow = {
@@ -337,6 +595,17 @@ type PureRamexData = {
   missing: string[];
 };
 
+type Ramex2007DatasetComparisonRow = {
+  Dataset: string;
+  Nos: number;
+  Arestas: number;
+  Raiz: string;
+  PesoPreservado: number;
+  DAG?: boolean;
+  Arborescencia?: boolean;
+  Observacao: string;
+};
+
 const datasets: Record<DatasetId, { label: string; short: string }> = {
   "01": { label: "Dataset 01", short: "D01" },
   "02": { label: "Dataset 02", short: "D02" },
@@ -347,20 +616,22 @@ const showExperimental = process.env.NEXT_PUBLIC_SHOW_EXPERIMENTAL === "true";
 
 const views: Array<{ id: ViewId; label: string; icon: ElementType; description: string }> = [
   { id: "upload", label: "Upload / Nova Análise", icon: FileUp, description: "Centro de Comando e execução assíncrona" },
+  { id: "pure", label: "RAMEX 2007", icon: Network, description: "Maximum Weight Rooted Branching formal" },
+  { id: "polytree", label: "Poly-tree / Validação", icon: GitBranch, description: "Poly-tree formal e validações estruturais" },
+  { id: "validation", label: "Comparação de Datasets", icon: BarChart3, description: "Comparação RAMEX 2007 formal" },
   { id: "history", label: "Histórico", icon: HistoryIcon, description: "Análises locais e artefactos gerados" },
+  { id: "reports", label: "Relatórios", icon: Download, description: "Exportação técnica em Markdown/PDF" },
+  { id: "about", label: "Sobre o RAMEX", icon: BookOpen, description: "Contexto académico e referências" },
+  { id: "forum", label: "RAMEX-Forum", icon: Sigma, description: "Influência temporal: Fase 1 + Fase 2" },
   { id: "datasets", label: "Datasets de Validação", icon: Grid3X3, description: "Casos estáticos para benchmark" },
   { id: "pipeline", label: "Pipeline RAMEX", icon: GitBranch, description: "Etapas formais do framework" },
-  { id: "pure", label: "RAMEX Puro", icon: Network, description: "RAMEX 2007, Forward e Back-and-Forward" },
-  { id: "forum", label: "RAMEX-Forum", icon: Sigma, description: "Influência, relações normalizadas e caminhos" },
-  { id: "validation", label: "Validação Comparativa", icon: BarChart3, description: "Comparação entre datasets" },
-  { id: "reports", label: "Relatórios", icon: Download, description: "Exportação técnica em Markdown/PDF" },
-  { id: "demo", label: "Demonstração", icon: Presentation, description: "Navegação guiada da análise" },
-  { id: "about", label: "Sobre o RAMEX", icon: BookOpen, description: "Contexto académico e referências" },
+  { id: "demo", label: "Demonstração", icon: Presentation, description: "Dataset → transformação → RAMEX 2007 → Forum" },
   ...(showExperimental
     ? ([
         { id: "matrix", label: "Matriz de Adjacência", icon: Grid3X3, description: "Leitura tabular da transição" },
         { id: "graph", label: "Grafo", icon: Network, description: "Rede completa com amostragem" },
         { id: "ramex", label: "Estrutura RAMEX base", icon: GitBranch, description: "Núcleo selecionado do grafo" },
+        { id: "sankey", label: "Sankey", icon: Activity, description: "Fluxos principais entre eventos" },
         { id: "polytree", label: "RAMEX Poly-tree Experimental", icon: GitBranch, description: "Estratégias Top-K e Multiobjetivo" },
         { id: "summary", label: "Resumo Executivo Antigo", icon: Sigma, description: "Consolidação textual da validação" },
       ] as Array<{ id: ViewId; label: string; icon: ElementType; description: string }> )
@@ -369,6 +640,49 @@ const views: Array<{ id: ViewId; label: string; icon: ElementType; description: 
 
 const dataPath = (fileName: string) => `/data/${fileName}`;
 const API_BASE_URL = process.env.NEXT_PUBLIC_RAMEX_API_URL ?? "http://localhost:8000";
+
+function normalizeRamex2007Result(
+  raw?: PureRamexResult,
+  urls: { imageUrl?: string; csvUrl?: string; jsonUrl?: string } = {},
+): NormalizedRamex2007Result | undefined {
+  if (!raw) return undefined;
+  const metrics = raw.metrics ?? {};
+  return {
+    algorithm: raw.algorithm ?? "RAMEX 2007 Rooted Branching",
+    method: raw.method,
+    root: raw.root,
+    rootSelection: raw.root_selection,
+    nodes: raw.nodes_selected ?? metrics.selected_nodes ?? 0,
+    edges: raw.edges_selected ?? metrics.selected_edges ?? 0,
+    selectedWeight: raw.selected_weight ?? metrics.selected_weight_sum ?? 0,
+    totalWeight: raw.total_weight_original ?? metrics.original_weight_sum ?? 0,
+    preservedWeightPercent: raw.preserved_weight_percent ?? metrics.preserved_weight_percent ?? 0,
+    isDag: raw.is_dag ?? metrics.is_dag ?? metrics.is_acyclic,
+    isArborescence: raw.is_arborescence ?? metrics.is_arborescence,
+    reachableFromRoot: raw.reachable_from_root ?? metrics.reachable_from_root ?? metrics.is_connected,
+    rootInDegree: raw.root_in_degree ?? metrics.root_in_degree,
+    maxNonRootInDegree: raw.max_non_root_in_degree ?? metrics.max_non_root_in_degree ?? metrics.max_indegree_except_root,
+    warnings: raw.warnings ?? [],
+    imageUrl: raw.imageUrl ?? urls.imageUrl,
+    csvUrl: raw.csvUrl ?? urls.csvUrl,
+    jsonUrl: raw.jsonUrl ?? urls.jsonUrl,
+  };
+}
+
+function ramex2007DatasetComparisonRow(datasetId: DatasetId, raw?: PureRamexResult): Ramex2007DatasetComparisonRow | undefined {
+  const normalized = normalizeRamex2007Result(raw);
+  if (!normalized) return undefined;
+  return {
+    Dataset: datasets[datasetId].label,
+    Nos: raw?.nodes_original ?? raw?.metrics?.original_nodes ?? 0,
+    Arestas: raw?.edges_original ?? raw?.metrics?.original_edges ?? 0,
+    Raiz: normalized.root ?? "Sem dados gerados",
+    PesoPreservado: normalized.preservedWeightPercent,
+    DAG: normalized.isDag,
+    Arborescencia: normalized.isArborescence,
+    Observacao: normalized.warnings.join(" ") || "RAMEX 2007 formal validado.",
+  };
+}
 
 function friendlyApiError(error: unknown): string {
   if (error instanceof TypeError) return `Não foi possível contactar o backend RAMEX em ${API_BASE_URL}. Confirme se o FastAPI está ativo na porta 8000.`;
@@ -448,7 +762,7 @@ async function loadJson<T>(fileName: string): Promise<T> {
   return response.json();
 }
 
-async function uploadDataset(file: File): Promise<{ job_id: string; filename: string; columns: string[]; message: string }> {
+async function uploadDataset(file: File): Promise<{ job_id: string; filename: string; columns: string[]; preview_rows?: PreviewRow[]; message: string }> {
   const formData = new FormData();
   formData.append("file", file);
   const response = await fetch(`${API_BASE_URL}/api/upload`, { method: "POST", body: formData });
@@ -462,8 +776,13 @@ async function startAnalyzeUploadedDataset(payload: {
   dataset_type: UploadDatasetType;
   analysis_type?: AnalysisType;
   case_column?: string;
+  entity_column?: string;
   time_column?: string;
   event_column?: string;
+  event_mode?: EventMode;
+  event_columns?: string[];
+  numeric_discretization?: Record<string, NumericDiscretizationMode>;
+  case_window?: CaseWindowMode;
   min_frequency?: number;
   top_n?: number | null;
   strategy?: PolyTreeStrategy;
@@ -480,7 +799,13 @@ async function startAnalyzeUploadedDataset(payload: {
   preserve_weight_target?: number;
   max_branching?: number;
   min_score?: number;
+  forum_initial_node?: string | null;
+  forum_forward_top_k?: number;
+  forum_max_depth?: number;
+  forum_min_smoothed_weight?: number | null;
+  forum_force_heuristic?: "auto" | "forward" | "back_and_forward";
 }): Promise<{ job_id: string; status: string }> {
+  console.log("RUN FULL PAYLOAD SENT", payload);
   const response = await fetch(`${API_BASE_URL}/api/analyze?async_mode=true`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -503,7 +828,7 @@ async function getJobResult(jobId: string): Promise<UploadResult | null> {
   if (response.status === 202) return null;
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail ?? "Erro ao obter resultado final do job.");
-  return data as UploadResult;
+  return withCoverageMetrics(data as UploadResult);
 }
 
 async function getHistoryJobs(): Promise<HistoryJob[]> {
@@ -586,6 +911,280 @@ function formatNumber(value: number, fractionDigits = 0): string {
   }).format(value);
 }
 
+function nodesFromEdges(edges: Edge[]): Set<string> {
+  const nodes = new Set<string>();
+  for (const edge of edges) {
+    nodes.add(edge.From);
+    nodes.add(edge.To);
+  }
+  return nodes;
+}
+
+function edgeWeightSum(edges: Edge[]): number {
+  return edges.reduce((sum, edge) => sum + (Number.isFinite(edge.Weight) ? edge.Weight : 0), 0);
+}
+
+function withCoverageMetrics(result: UploadResult): UploadResult {
+  if (result.coverage_metrics) return result;
+
+  const filteredNodes = nodesFromEdges(result.graph_edges ?? []);
+  const ramexNodes = nodesFromEdges(result.ramex_edges ?? []);
+  const uncoveredNodes = Array.from(filteredNodes).filter((node) => !ramexNodes.has(node)).sort();
+  const originalNodes = result.metrics.nodes ?? filteredNodes.size;
+  const originalEdges = result.metrics.edges ?? result.graph_edges.length;
+  const originalWeight = result.metrics.total_weight ?? edgeWeightSum(result.graph_edges ?? []);
+  const filteredWeight = edgeWeightSum(result.graph_edges ?? []);
+  const ramexWeight = result.metrics.ramex_weight ?? edgeWeightSum(result.ramex_edges ?? []);
+  const nodeCoveragePercent = originalNodes > 0 ? (ramexNodes.size / originalNodes) * 100 : 0;
+  const preservedWeightPercent = originalWeight > 0 ? (ramexWeight / originalWeight) * 100 : 0;
+  const warningMessages = [
+    "coverage_metrics não veio no payload do backend; este diagnóstico foi reconstruído no frontend com os dados disponíveis.",
+  ];
+
+  if (uncoveredNodes.length > 0) {
+    warningMessages.push(`${uncoveredNodes.length} nó(s) do grafo filtrado não aparecem na estrutura RAMEX atual.`);
+  }
+  if (preservedWeightPercent < 20) {
+    warningMessages.push(`Peso preservado RAMEX muito baixo face ao grafo original reportado (${preservedWeightPercent.toFixed(2)}%).`);
+  }
+
+  return {
+    ...result,
+    coverage_metrics: {
+      original_nodes: originalNodes,
+      original_edges: originalEdges,
+      filtered_nodes: filteredNodes.size,
+      filtered_edges: result.graph_edges.length,
+      ramex_nodes: ramexNodes.size,
+      ramex_edges: result.ramex_edges.length,
+      uncovered_nodes: uncoveredNodes,
+      uncovered_nodes_count: uncoveredNodes.length,
+      node_coverage_percent: nodeCoveragePercent,
+      original_weight: originalWeight,
+      filtered_weight: filteredWeight,
+      ramex_weight: ramexWeight,
+      preserved_weight_percent: preservedWeightPercent,
+      removed_by_filter_edges: Math.max(originalEdges - result.graph_edges.length, 0),
+      removed_by_filter_weight: Math.max(originalWeight - filteredWeight, 0),
+      disconnected_components_count: 0,
+      warning_messages: warningMessages,
+    },
+  };
+}
+
+function structuralColumnSet(...columns: Array<string | undefined | null>) {
+  return new Set(columns.filter(Boolean).map((column) => String(column).trim().toLowerCase()));
+}
+
+function isStructuralEventColumn(column: string, caseColumn?: string, timeColumn?: string) {
+  const structural = structuralColumnSet(caseColumn, timeColumn);
+  return structural.has(column.trim().toLowerCase());
+}
+
+function inferAdvancedEventColumns(columns: string[], caseColumn?: string, timeColumn?: string, simpleEventColumn?: string) {
+  const structural = structuralColumnSet(caseColumn, timeColumn);
+  const usableColumns = columns.filter((column) => !structural.has(column.trim().toLowerCase()));
+  const asset = findColumn(columns, ["asset", "ativo", "symbol", "ticker", "produto"]);
+  const signal = findColumn(columns, ["signal", "sinal", "event", "evento", "estado"]);
+  const variation = findColumn(columns, ["variation_pct", "variation", "var_pct", "change_pct", "return_pct"]);
+  const hasAssetSignal = Boolean(asset && signal && usableColumns.includes(asset) && usableColumns.includes(signal));
+  const fallbackEvent = simpleEventColumn && !structural.has(simpleEventColumn.trim().toLowerCase()) ? simpleEventColumn : "";
+  const selected = hasAssetSignal ? [asset, signal] : [fallbackEvent].filter(Boolean);
+  return {
+    selected,
+    numericRules: variation ? { [variation]: "variation_pct" as NumericDiscretizationMode } : {},
+    recommendation: hasAssetSignal
+      ? `Sugestão automática: evento = ${asset} + "_" + ${signal}${variation ? `, com ${variation} discretizada se quiser enriquecer o evento.` : "."}`
+      : "",
+  };
+}
+
+function isNumericPreviewColumn(rows: PreviewRow[], column: string) {
+  const values = rows.map((row) => row[column]).filter((value) => value !== null && value !== undefined && value !== "");
+  if (!values.length) return false;
+  return values.filter((value) => Number.isFinite(Number(String(value).replace(",", ".")))).length / values.length >= 0.8;
+}
+
+function discretizePreviewValue(value: unknown, mode: NumericDiscretizationMode) {
+  const parsed = Number(String(value ?? "").replace(",", "."));
+  if (!Number.isFinite(parsed) || mode === "ignore") return "";
+  if (mode === "variation_pct") {
+    if (parsed < -2) return "STRONG_DOWN";
+    if (parsed < -0.5) return "DOWN";
+    if (parsed <= 0.5) return "STABLE";
+    if (parsed <= 2) return "UP";
+    return "STRONG_UP";
+  }
+  if (parsed < 0) return "LOW";
+  if (parsed === 0) return "MEDIUM";
+  return "HIGH";
+}
+
+function sanitizePreviewEventPart(value: unknown) {
+  const text = String(value ?? "").trim();
+  if (!text || text.toLowerCase() === "nan") return "";
+  return text.replace(/\s+/g, "_").replace(/[^0-9A-Za-zÀ-ÿ._-]+/g, "_").replace(/^_+|_+$/g, "").toUpperCase();
+}
+
+function buildAdvancedPreviewEvent(row: PreviewRow, rows: PreviewRow[], eventColumns: string[], rules: Record<string, NumericDiscretizationMode>) {
+  const parts = eventColumns.flatMap((column) => {
+    const isNumeric = isNumericPreviewColumn(rows, column);
+    if (isNumeric) {
+      const mode = rules[column] ?? "ignore";
+      const label = discretizePreviewValue(row[column], mode);
+      return label ? [mode === "quantile" ? `${sanitizePreviewEventPart(column)}_${label}` : label] : [];
+    }
+    const part = sanitizePreviewEventPart(row[column]);
+    return part ? [part] : [];
+  });
+  return parts.join("_");
+}
+
+function uploadFileUrl(result: UploadResult, filename?: string): string | undefined {
+  return filename ? `${API_BASE_URL}/api/file/${result.job_id}/${filename}` : undefined;
+}
+
+function forumFileUrl(result: UploadResult, filename?: string): string | undefined {
+  return filename ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${filename}` : undefined;
+}
+
+function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
+  const result = withCoverageMetrics(raw);
+  const type = result.analysis_type ?? "pure";
+  const pure = result.pure_ramex ?? {
+    ramex2007: result.pure?.ramex2007,
+    forward: result.pure?.forward,
+    backForward: result.pure?.back_forward_formal,
+    comparisonRows: [],
+    missing: [],
+  };
+  const forum = result.ramex_forum ?? result.forum ?? undefined;
+  const ramex2007 = pure.ramex2007 ?? result.pure?.ramex2007;
+  const warnings: string[] = [];
+  const errors: string[] = [];
+
+  if ((type === "pure" || type === "both") && !ramex2007) {
+    errors.push("RAMEX 2007 formal não está disponível neste resultado.");
+  }
+  if ((type === "forum" || type === "both") && !forum?.temporal_phase1) {
+    errors.push("RAMEX-Forum Fase 1 não está disponível neste resultado.");
+  }
+  if ((type === "forum" || type === "both") && !forum?.temporal_phase2) {
+    errors.push("RAMEX-Forum Fase 2 não está disponível neste resultado.");
+  }
+  if (result.coverage_metrics?.warning_messages?.length) {
+    warnings.push(...result.coverage_metrics.warning_messages);
+  }
+
+  return {
+    observed: {
+      sequences: result.metrics.sequences,
+      nodes: result.metrics.nodes,
+      edges: result.metrics.edges,
+      density: result.metrics.density,
+      totalWeight: result.metrics.total_weight,
+      topTransitions: result.top_transitions ?? [],
+      graphEdges: result.graph_edges ?? [],
+      adjacencyMatrix: result.matrix,
+      graphImage: uploadFileUrl(result, result.files.graph_png),
+      sankeyData: result.graph_edges ?? [],
+    },
+    ramex2007: {
+      available: Boolean(ramex2007),
+      phase1: {
+        orderedDataset: result.files.ramex2007_ordered_csv,
+        sequencesWithNextItem: result.files.ramex2007_sequences_csv,
+        source: "SOURCE",
+        sink: "SINK",
+        graphGEdges: result.ramex2007_transformation?.graph_edges?.map((edge) => ({
+          From: String(edge.From ?? ""),
+          To: String(edge.To ?? ""),
+          Weight: Number(edge.Weight ?? 0),
+          Level: edge.Level === undefined ? undefined : Number(edge.Level),
+        })) ?? [],
+        adjacencyMatrix: result.ramex2007_transformation?.matrix,
+        adjacencyMatrixImage: uploadFileUrl(result, result.files.ramex2007_adjacency_matrix_png),
+        hasCycles: true,
+      },
+      phase2: {
+        root: ramex2007?.root,
+        method: ramex2007?.method ?? ramex2007?.algorithm,
+        treeCompleteImage: uploadFileUrl(result, result.files.ramex2007_png),
+        sankeyData: ramex2007?.edges ?? [],
+        selectedEdges: ramex2007?.edges ?? [],
+        dominantPaths: ramex2007?.expansion?.dominant_paths,
+        metrics: ramex2007?.metrics,
+      },
+    },
+    forum: {
+      available: Boolean(forum?.temporal_phase1 || forum?.temporal_phase2),
+      phase1: forum?.temporal_phase1,
+      phase2: forum?.temporal_phase2,
+    },
+    experimental: {
+      available: Boolean(showExperimental && (result.ramex_edges?.length || pure.forward || pure.backForward)),
+      simplified: result.ramex_edges,
+      forward: pure.forward,
+      backForward: pure.backForward,
+      comparisons: pure.comparisonRows,
+    },
+    files: {
+      artifacts: result.files ?? {},
+    },
+    errors,
+    warnings,
+  };
+}
+
+type SankeyLimit = 20 | 50 | 100 | "all";
+type SankeyRecord = { source: string; target: string; value: number };
+
+function readFirstString(record: Record<string, unknown>, keys: string[]): string {
+  for (const key of keys) {
+    const value = record[key];
+    if (value !== undefined && value !== null && String(value).trim()) return String(value).trim();
+  }
+  return "";
+}
+
+function readFirstNumber(record: Record<string, unknown>, keys: string[]): number {
+  for (const key of keys) {
+    const raw = record[key];
+    if (raw === undefined || raw === null || raw === "") continue;
+    const value = typeof raw === "number" ? raw : Number(String(raw).replace(",", "."));
+    if (Number.isFinite(value)) return value;
+  }
+  return 0;
+}
+
+function edgesToSankeyRecords(edges: unknown[]): SankeyRecord[] {
+  const merged = new Map<string, SankeyRecord>();
+
+  for (const rawEdge of edges) {
+    if (!rawEdge || typeof rawEdge !== "object") continue;
+    const edge = rawEdge as Record<string, unknown>;
+    const source = readFirstString(edge, ["from", "From", "source", "Source", "origem"]);
+    const target = readFirstString(edge, ["to", "To", "target", "Target", "destino"]);
+    const value = readFirstNumber(edge, ["weight", "Weight", "SmoothedWeight", "smoothed_weight", "InfluenceWeight", "influence_weight", "frequency", "Frequency", "value"]);
+
+    if (!source || !target || !Number.isFinite(value) || value <= 0) continue;
+
+    const key = `${source}\u0000${target}`;
+    const previous = merged.get(key);
+    if (previous) {
+      previous.value += value;
+    } else {
+      merged.set(key, { source, target, value });
+    }
+  }
+
+  return Array.from(merged.values()).sort((a, b) => b.value - a.value || a.source.localeCompare(b.source) || a.target.localeCompare(b.target));
+}
+
+function applySankeyLimit(records: SankeyRecord[], limit: SankeyLimit): SankeyRecord[] {
+  return limit === "all" ? records : records.slice(0, limit);
+}
+
 function sanitizeReportName(value: string): string {
   return value
     .toLowerCase()
@@ -625,7 +1224,7 @@ function formatDateTime(value?: string): string {
 
 function analysisTypeLabel(value: HistoryAnalysisType): string {
   const labels: Record<HistoryAnalysisType, string> = {
-    pure: "RAMEX Puro",
+    pure: "RAMEX 2007",
     forum: "RAMEX-Forum",
     both: "Both",
     unknown: "Desconhecido",
@@ -682,6 +1281,7 @@ function buildTechnicalReport(input: {
   polytreeEdges?: PolyTreeTableRow[];
   pureRamex?: ReportData["pureRamex"];
   ramexForum?: ReportData["ramexForum"];
+  eventConstruction?: UploadResult["event_construction"];
   interpretation?: string;
 }) {
   const generatedAt = input.generatedAt ?? new Date();
@@ -701,82 +1301,119 @@ function buildTechnicalReport(input: {
 - Data/hora de geração: ${generatedAt.toLocaleString("pt-PT")}
 - Frequência mínima: ${metricValue(params.minFrequency)}
 - Top N: ${metricValue(params.topN)}
+- Modo de construção de eventos: ${input.eventConstruction?.mode === "advanced" ? "avançado" : "simples"}
+- Colunas de evento: ${(input.eventConstruction?.event_columns ?? [input.eventConstruction?.event_column].filter(Boolean)).join(", ") || "Não especificado"}
+- Colunas ignoradas: ${(input.eventConstruction?.ignored_columns ?? []).join(", ") || "Nenhuma"}
 
 ## 2. Objetivo da análise
 
-Esta análise transforma sequências em grafo dirigido ponderado, aplica RAMEX 2007, Forward e Back-and-Forward, e valida a Poly-tree formal.
+Esta análise separa duas leituras: RAMEX 2007 formal, baseado em transformação da base de dados e Maximum Weight Rooted Branching; e RAMEX-Forum, baseado em influência temporal, smoothing, filtros e extração estrutural.
+
+O RAMEX não analisa todas as variáveis tabulares diretamente. Em vez disso, transforma variáveis selecionadas em eventos sequenciais discretos e depois analisa as transições entre esses eventos.
+
+### Construção dos eventos
+
+- Regra usada: ${input.eventConstruction?.mode === "advanced" ? "modo avançado por composição de colunas" : "modo simples por coluna única"}
+- Janela temporal de case_id: ${input.eventConstruction?.case_window ?? "none"}
+- Regras de discretização: ${input.eventConstruction?.rules ? Object.entries(input.eventConstruction.rules).map(([col, rule]) => `${col}: ${rule}`).join("; ") : "Sem discretização"}
+- Coluna interna de evento: ${input.eventConstruction?.generated_event_column ?? "__ramex_event__"}
+- Coluna interna de caso: ${input.eventConstruction?.generated_case_column ?? "__ramex_case_id__"}
+- Exemplos de eventos gerados: ${(input.eventConstruction?.event_examples ?? []).slice(0, 10).join(", ") || "Sem exemplos disponíveis"}
+- Avisos: ${(input.eventConstruction?.warnings ?? []).join(" | ") || "Sem avisos"}
 
 ## 3. Pipeline executada
 
-1. Sequências;
-2. Grafo dirigido ponderado;
-3. RAMEX puro;
-4. Poly-tree formal;
-5. Interpretação automática.
+1. Dataset e reconstrução sequencial;
+2. Transformação RAMEX 2007 em rede de estados com SOURCE/SINK;
+3. Condensação RAMEX 2007 por rooted branching;
+4. RAMEX-Forum Fase 1: rede temporal de influência;
+5. RAMEX-Forum Fase 2: Forward Tree ou Back-and-Forward Poly-tree;
+6. Interpretação, gráficos, Sankey e relatório.
 
-## 4. Métricas principais
+## 4. Camada observacional
 
 - Número de sequências: ${metricValue(input.metrics.sequences)}
 - Número de nós: ${metricValue(input.metrics.nodes)}
 - Número de arestas: ${metricValue(input.metrics.edges)}
 - Soma total dos pesos: ${metricValue(input.metrics.totalWeight)}
 - Densidade: ${metricValue(input.metrics.density)}
-- Arestas da estrutura RAMEX: ${metricValue(input.metrics.ramexEdges)}
-- Peso preservado da estrutura RAMEX: ${metricValue(input.metrics.ramexPreserved, "%")}
 
-## 5. Top transições
+O grafo observado representa as transições reconstruídas diretamente do dataset. Não inclui SOURCE/SINK, exceto quando se abre explicitamente a rede formal RAMEX 2007.
+
+### Top transições observadas
 
 | From | To | Weight |
 | --- | --- | ---: |
 ${topRows.length ? topRows.map((edge) => `| ${edge.From} | ${edge.To} | ${formatNumber(edge.Weight)} |`).join("\n") : "| Sem dados gerados | Sem dados gerados | Sem dados gerados |"}
 
-## 6. Interpretação do grafo
+## 5. RAMEX 2007 formal
 
-${dynamicInterpretation}
+RAMEX 2007 é tratado como implementação formal de Cavique 2007: transformação em rede de estados, SOURCE/SINK, atributo next_item, matriz de adjacência e Maximum Weight Rooted Branching.
 
-## 7. RAMEX Puro
+- Raiz: ${metricValue(input.pureRamex?.ramex2007Root)}
+- Arestas selecionadas: ${metricValue(input.metrics.ramexEdges)}
+- Peso preservado RAMEX 2007: ${metricValue(input.metrics.ramexPreserved, "%")}
+- A árvore B final deve ser DAG/arborescência.
+- A rede G formal pode conter ciclos; a aciclicidade surge após a condensação.
 
-${
-  input.pureRamex?.rows?.length
-    ? `A secção RAMEX Puro compara 10A Rooted Branching, 10B Forward e 10C Back-and-Forward. A validação formal confirma a Poly-tree quando a saída é acíclica e conectada.
+## 6. RAMEX-Forum temporal
 
-Na comparação entre abordagens RAMEX puras, o melhor algoritmo foi ${metricValue(
-        input.pureRamex.bestAlgorithm,
-      )}. ${input.pureRamex.summary ?? "A Forward Heuristic tende a gerar a estrutura mais simples e a Back-and-Forward aproxima-se melhor da Poly-tree formal."}
+${input.ramexForum ? `RAMEX-Forum foi executado como pipeline temporal/influência.
 
-| Algoritmo | Método | Arestas | Peso preservado | Raiz / aresta inicial |
+### Fase 1 — influência temporal
+
+- Sinais: ${metricValue(input.ramexForum.temporalPhase1?.signals)}
+- Relações temporais: ${metricValue(input.ramexForum.temporalPhase1?.temporalRelations)}
+- latency_max: ${metricValue(input.ramexForum.temporalPhase1?.latencyMax)}
+- epsilon: ${metricValue(input.ramexForum.temporalPhase1?.epsilon)}
+
+### Fase 2 — extração estrutural
+
+- Heurística Fase 2: ${metricValue(input.ramexForum.temporalPhase2?.heuristicUsed)}
+- Influência preservada Fase 2: ${metricValue(input.ramexForum.temporalPhase2?.preservedInfluencePercent, "%")}
+- Caminho dominante Fase 2: ${metricValue(input.ramexForum.temporalPhase2?.dominantPath?.join(" -> "))}
+
+` : "RAMEX-Forum não foi executado neste resultado."}
+
+## 7. Visualizações
+
+- Grafo observado: fonte = camada observacional.
+- Árvore técnica RAMEX 2007: fonte = rooted branching formal.
+- Sankey RAMEX 2007: fonte = árvore B/rooted branching.
+- Sankey RAMEX-Forum: fonte = influência temporal/estrutura Fase 2.
+
+Filtros visuais não alteram a análise nem os artefactos CSV/JSON.
+
+${input.pureRamex?.rows?.length ? `## 8. Anexo — heurísticas experimentais/históricas
+
+Estas linhas são apresentadas apenas como comparação exploratória, não como análise principal.
+
+| Algoritmo histórico | Método | Arestas | Peso preservado | Raiz / aresta inicial |
 | --- | --- | ---: | ---: | --- |
-${input.pureRamex.rows
-  .map(
-    (row) =>
-      `| ${row.algorithm} | ${metricValue(row.method)} | ${metricValue(row.selectedEdges)} | ${metricValue(
-        row.preservedWeightPercent,
-        "%",
-      )} | ${metricValue(row.anchor)} |`,
-  )
-  .join("\n")}`
-    : "Resultados RAMEX puro ainda não foram gerados para este dataset."
-}
-
-## 8. Conclusão
-
-${input.ramexForum ? `## 8. RAMEX-Forum
-
-O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para exploração de relações complexas e análise de influência.
-
-- Nó mais influente: ${metricValue(input.ramexForum.metrics?.mostInfluentialNode)}
-- Nó mais recebido: ${metricValue(input.ramexForum.metrics?.mostReceivedNode)}
-- Relações normalizadas: ${metricValue(input.ramexForum.metrics?.normalizedRelations)}
-- Caminho dominante: ${metricValue(input.ramexForum.dominantPath?.join(" -> "))}
+${input.pureRamex.rows.map((row) => `| ${row.algorithm} | ${metricValue(row.method)} | ${metricValue(row.selectedEdges)} | ${metricValue(row.preservedWeightPercent, "%")} | ${metricValue(row.anchor)} |`).join("\n")}
 
 ` : ""}
 
-${dynamicInterpretation} A análise usa RAMEX 2007 Rooted Branching, Forward, Back-and-Forward e validação Poly-tree.
+## ${input.pureRamex?.rows?.length ? "9" : "8"}. Limitações
 
-## 9. Referências
+- As visualizações analíticas e Sankey podem ser filtradas para legibilidade, sem alterar CSV/JSON.
+- A camada histórica/experimental é anexo de comparação e não deve ser confundida com RAMEX 2007 formal.
+- A fórmula temporal inicial do RAMEX-Forum deve ser calibrada com datasets reais.
 
-- Cavique, L. (2007). A Network Algorithm to Discover Sequential Patterns. EPIA 2007, LNAI 4874, pp. 406â€“414.
-- Cavique, L. (2015). Ramex: A Sequence Mining Algorithm Using Poly-trees. Advances in Intelligent Systems and Computing, 354, pp. 143â€“153.
+## ${input.pureRamex?.rows?.length ? "10" : "9"}. Trabalho futuro
+
+- Trabalho futuro: calibrar fórmulas de influência temporal RAMEX-Forum e validar em mais datasets reais.
+- Adicionar anexos automáticos com todos os CSV/JSON exportados.
+- Expandir testes com testes_SCADA e outros sinais temporais reais.
+
+## ${input.pureRamex?.rows?.length ? "11" : "10"}. Conclusão
+
+${dynamicInterpretation} A análise distingue RAMEX 2007 formal de RAMEX-Forum temporal e preserva os artefactos completos para validação.
+
+## ${input.pureRamex?.rows?.length ? "12" : "11"}. Referências
+
+- Cavique, L. (2007). A Network Algorithm to Discover Sequential Patterns. EPIA 2007, LNAI 4874, pp. 406–414.
+- Cavique, L. (2015). Ramex: A Sequence Mining Algorithm Using Poly-trees. Advances in Intelligent Systems and Computing, 354, pp. 143–153.
 - Tiple, P., Cavique, L., & Marques, N. C. (2017). Ramex-Forum: a tool for displaying and analysing complex sequential patterns of financial products. Expert Systems, 34:e12174.
 - Cavique, L. (2021). Ciência dos Dados: Bases de Dados versus Aprendizagem Automática. Revista de Ciência Elementar, 9(02):041.
 `;
@@ -863,6 +1500,50 @@ function forumToReport(
       relativeWeight: edge.RelativeWeight,
     })),
     interpretation: data.interpretation,
+    temporalPhase1: data.temporal_phase1 ? {
+      signals: data.temporal_phase1.metrics?.signals,
+      temporalRelations: data.temporal_phase1.metrics?.temporal_relations,
+      latencyMax: data.temporal_phase1.metrics?.latency_max,
+      epsilon: data.temporal_phase1.metrics?.epsilon,
+      totalInfluenceWeight: data.temporal_phase1.metrics?.total_influence_weight,
+      graph: jobId && data.temporal_phase1.files?.graph_png
+        ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.temporal_phase1.files.graph_png}`
+        : undefined,
+      matrix: jobId && data.temporal_phase1.files?.influence_matrix_png
+        ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.temporal_phase1.files.influence_matrix_png}`
+        : undefined,
+    } : undefined,
+    temporalPhase2: data.temporal_phase2 ? {
+      heuristicUsed: data.temporal_phase2.metrics?.heuristic_used,
+      initialNodeMode: data.temporal_phase2.metrics?.initial_node_mode,
+      selectedInitialNode: data.temporal_phase2.metrics?.selected_initial_node,
+      initialEdge: data.temporal_phase2.metrics?.initial_edge,
+      nodesBefore: data.temporal_phase2.metrics?.nodes_before,
+      edgesBefore: data.temporal_phase2.metrics?.edges_before,
+      nodesAfter: data.temporal_phase2.metrics?.nodes_after,
+      edgesAfter: data.temporal_phase2.metrics?.edges_after,
+      preservedInfluencePercent: data.temporal_phase2.metrics?.preserved_influence_percent,
+      isDag: data.temporal_phase2.metrics?.is_dag,
+      isTree: data.temporal_phase2.metrics?.is_tree,
+      isPolytree: data.temporal_phase2.metrics?.is_polytree,
+      dominantPath: data.temporal_phase2.metrics?.dominant_path,
+      edges: data.temporal_phase2.selected_edges?.map((edge) => ({
+        from: edge.From,
+        to: edge.To,
+        weight: edge.Weight,
+        direction: edge.Direction,
+      })),
+      structureImage: jobId && data.temporal_phase2.files?.phase2_structure_png
+        ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.temporal_phase2.files.phase2_structure_png}`
+        : undefined,
+      heuristicImage: jobId && data.temporal_phase2.files
+        ? data.temporal_phase2.metrics?.heuristic_used === "forward" && data.temporal_phase2.files.forward_tree_png
+          ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.temporal_phase2.files.forward_tree_png}`
+          : data.temporal_phase2.files.back_forward_polytree_png
+            ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.temporal_phase2.files.back_forward_polytree_png}`
+            : undefined
+        : undefined,
+    } : undefined,
     images: imageOverrides ?? (jobId
       ? {
           graph: data.files?.graph_png
@@ -879,30 +1560,18 @@ function forumToReport(
 function pureCompletenessError(result?: UploadResult | null): string | undefined {
   if (!result) return undefined;
   if (!result.pure_ramex?.ramex2007 && !result.pure?.ramex2007) {
-    return "Output RAMEX Puro incompleto: ficheiro ramex2007 JSON não encontrado";
-  }
-  if (!result.pure_ramex?.forward && !result.pure?.forward) {
-    return "Output RAMEX Puro incompleto: ficheiro forward JSON não encontrado";
-  }
-  if (!result.pure_ramex?.backForward && !result.pure?.back_forward_formal && !result.formal_polytree) {
-    return "Output RAMEX Puro incompleto: ficheiro back_forward_formal JSON não encontrado";
-  }
-  if (!result.pure_validation && !result.pure?.validation) {
-    return "Output RAMEX Puro incompleto: ficheiro validacao_ramex_puro JSON não encontrado";
+    return "Output RAMEX 2007 incompleto: ficheiro ramex2007 JSON não encontrado";
   }
   return undefined;
 }
 
 function forumCompletenessError(result?: UploadResult | null): string | undefined {
   const forum = result?.ramex_forum ?? result?.forum;
-  if (!forum?.metrics) {
-    return "Output RAMEX-Forum incompleto: ficheiro ramex_forum_metrics.json não encontrado";
+  if (!forum?.temporal_phase1) {
+    return "Output RAMEX-Forum incompleto: Fase 1 temporal não encontrada";
   }
-  if (!forum.files?.graph_png) {
-    return "Output RAMEX-Forum incompleto: ficheiro ramex_forum_graph.png não encontrado";
-  }
-  if (!forum.files?.simplified_png) {
-    return "Output RAMEX-Forum incompleto: ficheiro ramex_forum_simplified.png não encontrado";
+  if (!forum.temporal_phase2) {
+    return "Output RAMEX-Forum incompleto: Fase 2 estrutural não encontrada";
   }
   return undefined;
 }
@@ -1086,6 +1755,131 @@ function InfoCallout({ children }: { children: ReactNode }) {
   );
 }
 
+function CoverageDiagnosticsPanel({ metrics }: { metrics?: CoverageMetrics }) {
+  if (!metrics) return null;
+
+  const visibleUncovered = metrics.uncovered_nodes.slice(0, 20);
+  const remainingUncovered = Math.max(metrics.uncovered_nodes_count - visibleUncovered.length, 0);
+
+  return (
+    <section className="space-y-4 rounded-3xl border border-cyan-200/70 bg-cyan-50/60 p-5 shadow-xl shadow-cyan-100/40 ring-1 ring-white/70">
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Diagnóstico de Cobertura</p>
+          <h3 className="mt-1 text-xl font-semibold tracking-tight text-slate-950">Grafo original vs filtrado vs RAMEX</h3>
+        </div>
+        <div className="rounded-full border border-cyan-200 bg-white/80 px-3 py-1.5 text-xs font-semibold text-cyan-700">
+          Diagnóstico
+        </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="rounded-2xl border border-slate-200/70 bg-white/90 p-4 shadow-panel">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Grafo original</p>
+          <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="text-slate-500">Nós</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.original_nodes)}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Arestas</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.original_edges)}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Peso</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.original_weight, 2)}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200/70 bg-white/90 p-4 shadow-panel">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Grafo filtrado</p>
+          <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="text-slate-500">Nós</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.filtered_nodes)}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Arestas</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.filtered_edges)}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Peso</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.filtered_weight, 2)}</p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs leading-5 text-slate-500">
+            Removido por filtro: {formatNumber(metrics.removed_by_filter_edges)} arestas,
+            {" "}{formatNumber(metrics.removed_by_filter_weight, 2)} de peso.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200/70 bg-white/90 p-4 shadow-panel">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">RAMEX</p>
+          <div className="mt-4 grid grid-cols-4 gap-3 text-sm">
+            <div>
+              <p className="text-slate-500">Nós</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.ramex_nodes)}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Arestas</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.ramex_edges)}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Peso</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{formatNumber(metrics.ramex_weight, 2)}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Cobertura</p>
+              <p className="mt-1 font-mono text-2xl font-semibold text-slate-950">{metrics.node_coverage_percent.toFixed(1)}%</p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs leading-5 text-slate-500">
+            Peso preservado face ao original: {metrics.preserved_weight_percent.toFixed(2)}%.
+          </p>
+        </div>
+      </div>
+
+      {metrics.warning_messages.length > 0 ? (
+        <WarningPanel>
+          <ul className="space-y-1">
+            {metrics.warning_messages.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        </WarningPanel>
+      ) : null}
+
+      {metrics.uncovered_nodes_count > 0 ? (
+        <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 text-sm shadow-panel">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+              {formatNumber(metrics.uncovered_nodes_count)} nós não cobertos
+            </span>
+            <span className="text-slate-500">Primeiros nós fora da estrutura RAMEX:</span>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {visibleUncovered.map((node) => (
+              <span key={node} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-mono text-xs text-slate-700">
+                {node}
+              </span>
+            ))}
+            {remainingUncovered > 0 ? (
+              <span className="rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                + {formatNumber(remainingUncovered)} restantes
+              </span>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      <InfoCallout>
+        Nesta fase, estas métricas são de diagnóstico. A lógica atual da pipeline mantém os filtros antes do RAMEX; a próxima fase será separar filtros de análise e filtros de visualização.
+      </InfoCallout>
+    </section>
+  );
+}
+
 function ReportButton({
   disabled,
   onClick,
@@ -1128,7 +1922,7 @@ function MatrixTable({ matrix, datasetId }: { matrix?: MatrixData; datasetId: Da
       ) : null}
       {isLarge ? (
         <WarningPanel>
-          Matriz grande: a visualização foi limitada a {visibleRows.length} linhas e {visibleColumns.length} colunas.
+          Matriz grande: a visualização foi limitada apenas no ecrã a {visibleRows.length} linhas e {visibleColumns.length} colunas. Os dados e a análise não foram alterados.
         </WarningPanel>
       ) : null}
       <div className="overflow-auto rounded-2xl border border-white/50 bg-white/80 shadow-xl shadow-slate-200/50 backdrop-blur-md scrollbar-thin">
@@ -1211,7 +2005,19 @@ function GraphCanvas({
     const pointMap = new Map(points.map((point) => [point.id, point]));
     const maxWeight = Math.max(...visibleEdges.map((edge) => edge.Weight), 1);
 
-    return { points, pointMap, visibleEdges, maxWeight, width, height, hidden: edges.length - visibleEdges.length, degree };
+    return {
+      points,
+      pointMap,
+      visibleEdges,
+      maxWeight,
+      width,
+      height,
+      hidden: edges.length - visibleEdges.length,
+      hiddenNodes: Math.max(nodeSet.size - nodes.length, 0),
+      totalNodes: nodeSet.size,
+      totalEdges: edges.length,
+      degree,
+    };
   }, [denseHint, edges]);
 
   if (edges.length === 0) {
@@ -1222,9 +2028,19 @@ function GraphCanvas({
     <div className="space-y-3">
       {denseHint ? (
         <WarningPanel>
-          Grafo muito denso: a visualização interativa mostra uma amostra das arestas. Para análise fina, use versões filtradas ou top N.
+          Grafo denso: a visualização em rede pode ocultar ou sobrepor relações. Use Sankey ou filtros visuais para interpretar os fluxos principais.
         </WarningPanel>
       ) : null}
+      <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white/85 p-3 text-xs text-slate-600 shadow-panel sm:grid-cols-2">
+        <p>
+          Nós mostrados: <span className="font-mono font-semibold text-slate-900">{formatNumber(graph.points.length)}</span> de{" "}
+          <span className="font-mono font-semibold text-slate-900">{formatNumber(graph.totalNodes)}</span>
+        </p>
+        <p>
+          Arestas mostradas: <span className="font-mono font-semibold text-slate-900">{formatNumber(graph.visibleEdges.length)}</span> de{" "}
+          <span className="font-mono font-semibold text-slate-900">{formatNumber(graph.totalEdges)}</span>
+        </p>
+      </div>
       <div className="overflow-hidden rounded-2xl border border-white/50 bg-white/80 p-3 shadow-xl shadow-slate-200/50 backdrop-blur-md">
         <svg viewBox={`0 0 ${graph.width} ${graph.height}`} className={`${heightClass} w-full`}>
           <defs>
@@ -1334,13 +2150,201 @@ function GraphCanvas({
             );
           })}
         </svg>
-        {graph.hidden > 0 ? (
+        {graph.hidden > 0 || graph.hiddenNodes > 0 ? (
           <p className="border-t border-slate-100 pt-3 text-xs text-slate-500">
-            {graph.hidden} arestas foram omitidas nesta visualização para preservar legibilidade.
+            Visualização parcial: {formatNumber(graph.hiddenNodes)} nós e {formatNumber(graph.hidden)} arestas foram ocultados apenas na visualização para preservar legibilidade.
           </p>
         ) : null}
       </div>
     </div>
+  );
+}
+
+function SankeyPanel({
+  edges,
+  title = "Sankey de transições",
+  description = "Fluxos principais entre eventos do grafo observado.",
+}: {
+  edges: unknown[];
+  title?: string;
+  description?: string;
+}) {
+  const allRecords = useMemo(() => edgesToSankeyRecords(edges), [edges]);
+  const [limit, setLimit] = useState<SankeyLimit>(() => (allRecords.length > 100 ? 50 : "all"));
+  const shownRecords = useMemo(() => applySankeyLimit(allRecords, limit), [allRecords, limit]);
+  const totalWeight = allRecords.reduce((sum, edge) => sum + edge.value, 0);
+  const shownWeight = shownRecords.reduce((sum, edge) => sum + edge.value, 0);
+  const omittedEdges = Math.max(allRecords.length - shownRecords.length, 0);
+  const percentShown = totalWeight > 0 ? shownWeight / totalWeight * 100 : 0;
+
+  const sankey = useMemo(() => {
+    const sourceTotals = new Map<string, number>();
+    const targetTotals = new Map<string, number>();
+    for (const edge of shownRecords) {
+      sourceTotals.set(edge.source, (sourceTotals.get(edge.source) ?? 0) + edge.value);
+      targetTotals.set(edge.target, (targetTotals.get(edge.target) ?? 0) + edge.value);
+    }
+
+    const sources = Array.from(sourceTotals.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const targets = Array.from(targetTotals.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const width = 1180;
+    const height = Math.max(420, Math.max(sources.length, targets.length, 1) * 34 + 80);
+    const top = 42;
+    const bottom = height - 42;
+    const nodeHeight = 18;
+    const sourceStep = sources.length > 1 ? (bottom - top) / (sources.length - 1) : 0;
+    const targetStep = targets.length > 1 ? (bottom - top) / (targets.length - 1) : 0;
+    const sourceY = new Map(sources.map(([node], index) => [node, top + sourceStep * index]));
+    const targetY = new Map(targets.map(([node], index) => [node, top + targetStep * index]));
+    const maxValue = Math.max(...shownRecords.map((edge) => edge.value), 1);
+
+    const sourceLabelX = 36;
+    const sourceNodeX = 286;
+    const targetNodeX = width - 304;
+    const targetLabelX = width - 36;
+    const sourceValueX = sourceNodeX + 150;
+    const targetValueX = targetNodeX - 10;
+    const flowStartX = sourceNodeX + 154;
+    const flowEndX = targetNodeX - 14;
+
+    return {
+      width,
+      height,
+      nodeHeight,
+      sources,
+      targets,
+      sourceY,
+      targetY,
+      maxValue,
+      sourceLabelX,
+      sourceNodeX,
+      targetNodeX,
+      targetLabelX,
+      sourceValueX,
+      targetValueX,
+      flowStartX,
+      flowEndX,
+    };
+  }, [shownRecords]);
+
+  if (allRecords.length === 0) {
+    return <EmptyState message="Não existem transições válidas para construir Sankey." />;
+  }
+
+  return (
+    <section className="space-y-4">
+      <div className="rounded-3xl border border-cyan-200/70 bg-white/90 p-5 shadow-xl shadow-cyan-100/40">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Sankey</p>
+            <h3 className="mt-1 text-xl font-semibold text-slate-950">{title}</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{description}</p>
+          </div>
+          <label className="min-w-[12rem] text-sm">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Limite visual</span>
+            <select
+              value={String(limit)}
+              onChange={(event) => setLimit(event.target.value === "all" ? "all" : Number(event.target.value) as SankeyLimit)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
+            >
+              <option value="20">Top 20</option>
+              <option value="50">Top 50</option>
+              <option value="100">Top 100</option>
+              <option value="all">Todas</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          <MetricCard label="Nós" value={formatNumber(new Set(allRecords.flatMap((edge) => [edge.source, edge.target])).size)} />
+          <MetricCard label="Arestas totais" value={formatNumber(allRecords.length)} />
+          <MetricCard label="Arestas mostradas" value={formatNumber(shownRecords.length)} />
+          <MetricCard label="Peso mostrado" value={formatNumber(shownWeight, 2)} />
+          <MetricCard label="Peso visualizado" value={`${percentShown.toFixed(1)}%`} />
+        </div>
+
+        <p className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
+          Este limite afeta apenas a visualização Sankey, não os dados nem o RAMEX.
+        </p>
+      </div>
+
+      {shownRecords.length > 100 ? (
+        <WarningPanel>
+          Sankey com muitas relações: a leitura pode ficar densa. Use Top 20, Top 50 ou Top 100 para focar os fluxos principais.
+        </WarningPanel>
+      ) : null}
+
+      {omittedEdges > 0 ? (
+        <WarningPanel>
+          Visualização parcial: {formatNumber(omittedEdges)} arestas foram omitidas apenas no Sankey, preservando {percentShown.toFixed(1)}% do peso total mostrado.
+        </WarningPanel>
+      ) : null}
+
+      <div className="overflow-auto rounded-3xl border border-white/60 bg-white/90 p-4 shadow-xl shadow-slate-200/50">
+        <svg viewBox={`0 0 ${sankey.width} ${sankey.height}`} className="min-h-[34rem] w-full min-w-[980px]">
+          <defs>
+            <linearGradient id="sankeyFlow" x1="0%" x2="100%" y1="0%" y2="0%">
+              <stop offset="0%" stopColor="#0e7490" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#d8903f" stopOpacity="0.55" />
+            </linearGradient>
+          </defs>
+
+          {shownRecords.map((edge, index) => {
+            const y1 = sankey.sourceY.get(edge.source) ?? 0;
+            const y2 = sankey.targetY.get(edge.target) ?? 0;
+            const strokeWidth = Math.max(1.2, Math.min(22, 1 + edge.value / sankey.maxValue * 20));
+            const x1 = sankey.flowStartX;
+            const x2 = sankey.flowEndX;
+            const key = `${edge.source}-${edge.target}-${index}`;
+            return (
+              <g key={key}>
+                <path
+                  d={`M ${x1} ${y1} C ${x1 + 220} ${y1}, ${x2 - 220} ${y2}, ${x2} ${y2}`}
+                  fill="none"
+                  stroke="url(#sankeyFlow)"
+                  strokeWidth={strokeWidth}
+                  strokeLinecap="round"
+                  opacity={0.28 + Math.min(0.5, edge.value / sankey.maxValue * 0.5)}
+                />
+                <title>{`${edge.source} -> ${edge.target}: ${formatNumber(edge.value, 2)}`}</title>
+              </g>
+            );
+          })}
+
+          {sankey.sources.map(([node, value]) => {
+            const y = sankey.sourceY.get(node) ?? 0;
+            return (
+              <g key={`source-${node}`}>
+                <title>{`${node}: ${formatNumber(value, 2)}`}</title>
+                <text x={sankey.sourceLabelX} y={y + 4} className="fill-slate-700 text-[11px] font-semibold">
+                  {node}
+                </text>
+                <rect x={sankey.sourceNodeX} y={y - sankey.nodeHeight / 2} width="140" height={sankey.nodeHeight} rx="5" fill="#dce9ee" stroke="#315f72" />
+                <text x={sankey.sourceValueX} y={y + 4} className="fill-slate-500 font-mono text-[10px]">
+                  {formatNumber(value, 1)}
+                </text>
+              </g>
+            );
+          })}
+
+          {sankey.targets.map(([node, value]) => {
+            const y = sankey.targetY.get(node) ?? 0;
+            return (
+              <g key={`target-${node}`}>
+                <title>{`${node}: ${formatNumber(value, 2)}`}</title>
+                <text x={sankey.targetValueX} y={y + 4} textAnchor="end" className="fill-slate-500 font-mono text-[10px]">
+                  {formatNumber(value, 1)}
+                </text>
+                <rect x={sankey.targetNodeX} y={y - sankey.nodeHeight / 2} width="140" height={sankey.nodeHeight} rx="5" fill="#f7dfb8" stroke="#b7791f" />
+                <text x={sankey.targetLabelX} y={y + 4} textAnchor="end" className="fill-slate-700 text-[11px] font-semibold">
+                  {node}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </section>
   );
 }
 
@@ -1599,6 +2603,364 @@ function PureRamexTable({ rows }: { rows: PureRamexEdge[] }) {
   );
 }
 
+function resolvedImageSrc(imageFile?: string, imageUrl?: string) {
+  return imageUrl ?? (imageFile ? dataPath(imageFile) : undefined);
+}
+
+function RamexImageViewport({
+  src,
+  title,
+  heightClass = "h-[34rem]",
+  dark = false,
+}: {
+  src: string;
+  title: string;
+  heightClass?: string;
+  dark?: boolean;
+}) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
+  const [fitScale, setFitScale] = useState(1);
+  const [view, setView] = useState({ scale: 1, x: 0, y: 0 });
+  const dragRef = useRef<{ active: boolean; startX: number; startY: number; originX: number; originY: number }>({
+    active: false,
+    startX: 0,
+    startY: 0,
+    originX: 0,
+    originY: 0,
+  });
+
+  const clampView = (next: { scale: number; x: number; y: number }) => {
+    const container = containerRef.current;
+    if (!container || naturalSize.width <= 0 || naturalSize.height <= 0) return next;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const scaledWidth = naturalSize.width * next.scale;
+    const scaledHeight = naturalSize.height * next.scale;
+    const x = scaledWidth <= containerWidth
+      ? (containerWidth - scaledWidth) / 2
+      : Math.min(0, Math.max(containerWidth - scaledWidth, next.x));
+    const y = scaledHeight <= containerHeight
+      ? (containerHeight - scaledHeight) / 2
+      : Math.min(0, Math.max(containerHeight - scaledHeight, next.y));
+    return { ...next, x, y };
+  };
+
+  const fitToContainer = () => {
+    const container = containerRef.current;
+    if (!container || naturalSize.width <= 0 || naturalSize.height <= 0) return;
+    const scale = Math.min(
+      container.clientWidth / naturalSize.width,
+      container.clientHeight / naturalSize.height,
+    ) * 0.95;
+    const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+    setFitScale(safeScale);
+    setView(clampView({ scale: safeScale, x: 0, y: 0 }));
+  };
+
+  useEffect(() => {
+    fitToContainer();
+    const handleResize = () => fitToContainer();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [naturalSize.width, naturalSize.height]);
+
+  const zoomBy = (delta: number) => {
+    setView((current) => {
+      const nextScale = Math.max(fitScale * 0.5, Math.min(current.scale + delta, Math.max(4, fitScale * 8)));
+      return clampView({ scale: nextScale, x: current.x, y: current.y });
+    });
+  };
+
+  const setActualSize = () => setView((current) => clampView({ scale: 1, x: current.x, y: current.y }));
+  const canPan = view.scale > fitScale + 0.01;
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        <button onClick={fitToContainer} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+          Ajustar à janela
+        </button>
+        <button onClick={setActualSize} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+          100%
+        </button>
+        <button onClick={() => zoomBy(0.15)} className="rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm" aria-label="Zoom in">
+          <ZoomIn className="h-4 w-4" />
+        </button>
+        <button onClick={() => zoomBy(-0.15)} className="rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm" aria-label="Zoom out">
+          <ZoomOut className="h-4 w-4" />
+        </button>
+        <button onClick={fitToContainer} className="rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm" aria-label="Reset view">
+          <RotateCcw className="h-4 w-4" />
+        </button>
+        <a href={src} download className="rounded-lg border border-slate-200 bg-white p-2 text-slate-700 shadow-sm" aria-label="Download PNG">
+          <Download className="h-4 w-4" />
+        </a>
+      </div>
+      <div
+        ref={containerRef}
+        className={`${heightClass} relative min-h-[24rem] overflow-hidden rounded-xl border ${dark ? "border-white/10 bg-slate-100" : "border-slate-200 bg-slate-50"} select-none`}
+        onMouseDown={(event) => {
+          if (!canPan) return;
+          dragRef.current = { active: true, startX: event.clientX, startY: event.clientY, originX: view.x, originY: view.y };
+        }}
+        onMouseMove={(event) => {
+          if (!dragRef.current.active || !canPan) return;
+          const next = {
+            scale: view.scale,
+            x: dragRef.current.originX + event.clientX - dragRef.current.startX,
+            y: dragRef.current.originY + event.clientY - dragRef.current.startY,
+          };
+          setView(clampView(next));
+        }}
+        onMouseUp={() => { dragRef.current.active = false; }}
+        onMouseLeave={() => { dragRef.current.active = false; }}
+        onWheel={(event) => {
+          event.preventDefault();
+          zoomBy(event.deltaY < 0 ? 0.12 : -0.12);
+        }}
+      >
+        <img
+          src={src}
+          alt={title}
+          onLoad={(event) => setNaturalSize({
+            width: event.currentTarget.naturalWidth,
+            height: event.currentTarget.naturalHeight,
+          })}
+          draggable={false}
+          style={{
+            width: naturalSize.width || "auto",
+            height: naturalSize.height || "auto",
+            transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
+            transformOrigin: "top left",
+            cursor: canPan ? "grab" : "default",
+          }}
+          className="absolute left-0 top-0 max-w-none rounded-lg bg-white shadow-sm"
+        />
+      </div>
+    </div>
+  );
+}
+
+function RamexTechnicalTreeViewer({ src, title }: { src?: string; title: string }) {
+  const [fullscreen, setFullscreen] = useState(false);
+  if (!src) return <EmptyState message="Árvore técnica completa ainda não disponível." />;
+
+
+  return (
+    <section className="rounded-2xl border border-white/50 bg-white/85 p-5 shadow-xl shadow-slate-200/50 backdrop-blur-md">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h4 className="text-lg font-semibold tracking-tight text-slate-950">Árvore RAMEX 2007 completa, sem cortes</h4>
+          <p className="mt-2 text-sm leading-6 text-slate-700">
+            A árvore técnica completa apresenta todos os nós e todas as arestas selecionadas pelo Maximum Weight Rooted Branching, servindo como evidência formal da arborescência obtida.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setFullscreen(true)} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+            <Maximize2 className="h-4 w-4" /> Ver árvore técnica completa
+          </button>
+          <a href={src} target="_blank" className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+            <Eye className="h-4 w-4" /> Abrir imagem
+          </a>
+        </div>
+      </div>
+      <div className="mt-4">
+        <RamexImageViewport src={src} title={title} />
+      </div>
+      {fullscreen ? (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 p-4">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-white">Árvore técnica completa RAMEX 2007</p>
+            <div className="flex gap-2">
+              <a href={src} download className="rounded-lg bg-white/10 p-2 text-white"><Download className="h-4 w-4" /></a>
+              <button onClick={() => setFullscreen(false)} className="rounded-lg bg-white/10 p-2 text-white" aria-label="Fechar">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div className="mx-auto h-[85vh] w-[90vw] rounded-xl">
+            <RamexImageViewport src={src} title={title} heightClass="h-full" dark />
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function layoutRamexEdges(edges: PureRamexEdge[], root?: string) {
+  const levels = new Map<string, number>();
+  if (root) levels.set(root, 0);
+  edges.forEach((edge) => {
+    const from = String(edge.from ?? "");
+    const to = String(edge.to ?? "");
+    const targetLevel = Math.max(1, Number(edge.level ?? (levels.get(from) ?? 0) + 1));
+    levels.set(from, Math.min(levels.get(from) ?? targetLevel - 1, targetLevel - 1));
+    levels.set(to, Math.min(levels.get(to) ?? targetLevel, targetLevel));
+  });
+  const grouped = new Map<number, string[]>();
+  levels.forEach((level, node) => grouped.set(level, [...(grouped.get(level) ?? []), node]));
+  const maxLevel = Math.max(1, ...Array.from(grouped.keys()));
+  const positions = new Map<string, { x: number; y: number }>();
+  grouped.forEach((nodes, level) => {
+    const ordered = nodes.sort();
+    ordered.forEach((node, index) => {
+      positions.set(node, {
+        x: 60 + (level / maxLevel) * 840,
+        y: 50 + ((index + 1) / (ordered.length + 1)) * 420,
+      });
+    });
+  });
+  return positions;
+}
+
+function RamexAnalyticalTree({ edges, root }: { edges: PureRamexEdge[]; root?: string }) {
+  const [topN, setTopN] = useState(35);
+  const [maxDepth, setMaxDepth] = useState(6);
+  const visible = useMemo(() => {
+    return [...edges]
+      .filter((edge) => (edge.level ?? 0) <= maxDepth)
+      .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0))
+      .slice(0, topN);
+  }, [edges, maxDepth, topN]);
+  const positions = useMemo(() => layoutRamexEdges(visible, root), [visible, root]);
+  const maxWeight = Math.max(1, ...visible.map((edge) => edge.weight ?? 0));
+
+  if (!edges.length) return null;
+  return (
+    <section className="rounded-2xl border border-white/50 bg-white/85 p-5 shadow-xl shadow-slate-200/50 backdrop-blur-md">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h4 className="text-lg font-semibold tracking-tight text-slate-950">Grafo Analítico RAMEX 2007</h4>
+          <p className="mt-2 text-sm leading-6 text-slate-700">Visualização analítica filtrada para legibilidade. Não substitui a árvore técnica completa.</p>
+        </div>
+        <div className="flex flex-wrap gap-3 text-sm">
+          <label className="flex items-center gap-2">Top N
+            <select value={topN} onChange={(event) => setTopN(Number(event.target.value))} className="rounded-lg border border-slate-200 bg-white px-3 py-2">
+              {[20, 35, 50, 100].map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </label>
+          <label className="flex items-center gap-2">Profundidade
+            <input type="range" min={1} max={12} value={maxDepth} onChange={(event) => setMaxDepth(Number(event.target.value))} />
+            <span className="font-mono">{maxDepth}</span>
+          </label>
+        </div>
+      </div>
+      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <svg viewBox="0 0 980 540" className="h-[32rem] min-w-[760px] w-full" role="img" aria-label="Grafo analítico RAMEX 2007">
+          <rect width="980" height="540" rx="18" fill="#f8fafc" />
+          {visible.map((edge, index) => {
+            const source = positions.get(String(edge.from ?? ""));
+            const target = positions.get(String(edge.to ?? ""));
+            if (!source || !target) return null;
+            const width = 1.5 + Math.sqrt((edge.weight ?? 0) / maxWeight) * 9;
+            return (
+              <line key={`${edge.from}-${edge.to}-${index}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y} stroke="#315f72" strokeWidth={width} strokeOpacity={0.58}>
+                <title>{`${edge.from} -> ${edge.to} | Weight ${edge.weight ?? 0} | Level ${edge.level ?? "-"}`}</title>
+              </line>
+            );
+          })}
+          {Array.from(positions.entries()).map(([node, pos]) => (
+            <g key={node}>
+              <circle cx={pos.x} cy={pos.y} r={node === root ? 11 : node.toUpperCase() === "SINK" ? 9 : 7} fill={node === root ? "#c8914b" : node.toUpperCase() === "SINK" ? "#334155" : "#e8f4f8"} stroke="#18212f" />
+              <text x={pos.x} y={pos.y - 14} textAnchor="middle" fontSize="11" fontWeight="700" fill="#18212f">{node}</text>
+            </g>
+          ))}
+        </svg>
+      </div>
+    </section>
+  );
+}
+
+function RamexFlowReading({ edges, expansion }: { edges: PureRamexEdge[]; expansion?: PureRamexResult["expansion"] }) {
+  const topLinks = [...edges].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)).slice(0, 5);
+  const levelWeights = edges.reduce<Record<string, number>>((acc, edge) => {
+    const key = String(edge.level ?? "-");
+    acc[key] = (acc[key] ?? 0) + (edge.weight ?? 0);
+    return acc;
+  }, {});
+  const strongestLevel = Object.entries(levelWeights).sort((a, b) => b[1] - a[1])[0];
+  const branchCounts = edges.reduce<Record<string, number>>((acc, edge) => {
+    const key = String(edge.from ?? "");
+    acc[key] = (acc[key] ?? 0) + 1;
+    return acc;
+  }, {});
+  const branchNode = Object.entries(branchCounts).sort((a, b) => b[1] - a[1])[0];
+  const totalWeight = edges.reduce((sum, edge) => sum + (edge.weight ?? 0), 0);
+  const dominantPath = expansion?.dominant_paths?.[0]?.path ?? "Sem caminho dominante calculado";
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white/85 p-5 shadow-panel">
+      <h4 className="text-lg font-semibold text-ink">Leitura do fluxo</h4>
+      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <MetricCard label="Caminho dominante" value={dominantPath} />
+        <MetricCard label="Nível com maior peso" value={strongestLevel ? `${strongestLevel[0]} (${formatNumber(strongestLevel[1])})` : "-"} />
+        <MetricCard label="Nó com maior ramificação" value={branchNode ? `${branchNode[0]} (${branchNode[1]})` : "-"} />
+        <MetricCard label="Peso total selecionado" value={formatNumber(totalWeight)} />
+        <MetricCard label="Top ligações" value={formatNumber(topLinks.length)} />
+      </div>
+      <div className="mt-4 grid gap-2 md:grid-cols-5">
+        {topLinks.map((edge, index) => (
+          <p key={`${edge.from}-${edge.to}-${index}`} className="rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
+            {edge.from} → {edge.to} ({formatNumber(edge.weight ?? 0)})
+          </p>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RamexExpansionPlayer({ edges, root }: { edges: PureRamexEdge[]; root?: string }) {
+  const maxStep = Math.max(1, ...edges.map((edge) => Number(edge.level ?? 1)));
+  const [step, setStep] = useState(1);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    if (!playing) return;
+    const id = window.setInterval(() => setStep((value) => value >= maxStep ? 1 : value + 1), 900);
+    return () => window.clearInterval(id);
+  }, [playing, maxStep]);
+  const visible = edges.filter((edge) => Number(edge.level ?? 1) <= step);
+  const positions = useMemo(() => layoutRamexEdges(edges, root), [edges, root]);
+  const maxWeight = Math.max(1, ...edges.map((edge) => edge.weight ?? 0));
+  if (!edges.length) return null;
+  return (
+    <section className="rounded-2xl border border-white/50 bg-white/85 p-5 shadow-xl shadow-slate-200/50 backdrop-blur-md">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h4 className="text-lg font-semibold tracking-tight text-slate-950">Reprodução da expansão RAMEX</h4>
+          <p className="mt-2 text-sm leading-6 text-slate-700">A expansão percorre a estrutura condensada, evidenciando a propagação dos ramos a partir da raiz.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={() => setPlaying((value) => !value)} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+            <Play className="h-4 w-4" /> {playing ? "Pause" : "Play"}
+          </button>
+          <span className="text-sm font-semibold text-slate-600">Etapa {step} / {maxStep}</span>
+        </div>
+      </div>
+      <input className="mt-4 w-full" type="range" min={1} max={maxStep} value={step} onChange={(event) => setStep(Number(event.target.value))} />
+      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <svg viewBox="0 0 980 540" className="h-[30rem] min-w-[760px] w-full">
+          <rect width="980" height="540" rx="18" fill="#f8fafc" />
+          {visible.map((edge, index) => {
+            const source = positions.get(String(edge.from ?? ""));
+            const target = positions.get(String(edge.to ?? ""));
+            if (!source || !target) return null;
+            const width = 1.5 + Math.sqrt((edge.weight ?? 0) / maxWeight) * 10;
+            return <line key={`${edge.from}-${edge.to}-${index}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y} stroke="#0f766e" strokeWidth={width} strokeOpacity={0.78} />;
+          })}
+          {Array.from(positions.entries()).map(([node, pos]) => (
+            <g key={node} opacity={node === root || visible.some((edge) => edge.from === node || edge.to === node) ? 1 : 0.22}>
+              <circle cx={pos.x} cy={pos.y} r={node === root ? 11 : 7} fill={node === root ? "#c8914b" : "#e8f4f8"} stroke="#18212f" />
+              <text x={pos.x} y={pos.y - 14} textAnchor="middle" fontSize="11" fontWeight="700" fill="#18212f">{node}</text>
+            </g>
+          ))}
+        </svg>
+      </div>
+    </section>
+  );
+}
+
 function PureRamexMethodPanel({
   title,
   description,
@@ -1617,6 +2979,9 @@ function PureRamexMethodPanel({
   }
 
   const metrics = data.metrics ?? {};
+  const normalized2007 = title.includes("RAMEX 2007")
+    ? normalizeRamex2007Result(data, { imageUrl, csvUrl: data.csvUrl, jsonUrl: data.jsonUrl })
+    : undefined;
   const anchor = data.root
     ?? (data.initial_edge ? `${data.initial_edge.from} → ${data.initial_edge.to} (${formatNumber(data.initial_edge.weight ?? 0)})` : "Sem dados gerados");
   const forwardCount = data.edges?.filter((e) => e.direction === "FORWARD").length ?? 0;
@@ -1629,32 +2994,137 @@ function PureRamexMethodPanel({
         <p className="mt-3 text-sm leading-7 text-slate-700">{description}</p>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <MetricCard label={data.root ? "Raiz" : "Aresta inicial"} value={anchor} />
-        <MetricCard label="Nós originais" value={formatNumber(metrics.original_nodes ?? 0)} />
-        <MetricCard label="Arestas originais" value={formatNumber(metrics.original_edges ?? 0)} />
-        <MetricCard label="Arestas selecionadas" value={formatNumber(metrics.selected_edges ?? 0)} />
-        <MetricCard label="Peso preservado" value={`${(metrics.preserved_weight_percent ?? 0).toFixed(2)}%`} />
+        <MetricCard label={data.root ? "Raiz" : "Aresta inicial"} value={normalized2007?.root ?? anchor} />
+        {normalized2007 ? <MetricCard label="Critério da raiz" value={normalized2007.rootSelection ?? "Sem dados gerados"} /> : null}
+        <MetricCard label="Nós originais" value={formatNumber(metrics.original_nodes ?? data.nodes_original ?? 0)} />
+        <MetricCard label="Arestas originais" value={formatNumber(metrics.original_edges ?? data.edges_original ?? 0)} />
+        <MetricCard label="Nós selecionados" value={formatNumber(normalized2007?.nodes ?? metrics.selected_nodes ?? 0)} />
+        <MetricCard label="Arestas selecionadas" value={formatNumber(normalized2007?.edges ?? metrics.selected_edges ?? 0)} />
+        <MetricCard label="Peso selecionado" value={formatNumber(normalized2007?.selectedWeight ?? metrics.selected_weight_sum ?? 0)} />
+        <MetricCard label="Peso preservado" value={`${(normalized2007?.preservedWeightPercent ?? metrics.preserved_weight_percent ?? 0).toFixed(2)}%`} />
         <MetricCard label="Método" value={data.method ?? data.algorithm} />
-        <MetricCard label="Acíclico" value={metrics.is_acyclic === undefined ? "Sem dados gerados" : String(metrics.is_acyclic)} />
-        <MetricCard label="Conectado" value={metrics.is_connected === undefined ? "Sem dados gerados" : String(metrics.is_connected)} />
-        <MetricCard label="Forward" value={formatNumber(forwardCount)} />
-        <MetricCard label="Backward" value={formatNumber(backwardCount)} />
+        {normalized2007 ? (
+          <>
+            <MetricCard label="DAG" value={normalized2007.isDag === undefined ? "Sem dados gerados" : String(normalized2007.isDag)} />
+            <MetricCard label="Arborescência válida" value={normalized2007.isArborescence === undefined ? "Sem dados gerados" : String(normalized2007.isArborescence)} />
+            <MetricCard label="Alcançável da raiz" value={normalized2007.reachableFromRoot === undefined ? "Sem dados gerados" : String(normalized2007.reachableFromRoot)} />
+            <MetricCard label="Root in-degree" value={formatNumber(normalized2007.rootInDegree ?? 0)} />
+            <MetricCard label="Max in-degree não-raiz" value={formatNumber(normalized2007.maxNonRootInDegree ?? 0)} />
+          </>
+        ) : (
+          <>
+            <MetricCard label="Acíclico" value={metrics.is_acyclic === undefined ? "Sem dados gerados" : String(metrics.is_acyclic)} />
+            <MetricCard label="Conectado" value={metrics.is_connected === undefined ? "Sem dados gerados" : String(metrics.is_connected)} />
+            <MetricCard label="Forward" value={formatNumber(forwardCount)} />
+            <MetricCard label="Backward" value={formatNumber(backwardCount)} />
+          </>
+        )}
       </div>
       {data.warnings?.length ? (
         <WarningPanel>{data.warnings.join(" ")}</WarningPanel>
       ) : null}
-      <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
-        {imageUrl || imageFile ? (
-          <img
-            src={imageUrl ?? dataPath(imageFile ?? "")}
-            alt={title}
-            className="max-h-[32rem] w-full rounded-2xl border border-white/50 bg-white/80 object-contain p-3 shadow-xl shadow-slate-200/50 backdrop-blur-md"
-          />
-        ) : (
-          <EmptyState message="Imagem ainda não disponível para este método." />
-        )}
-        <PureRamexTable rows={data.edges ?? []} />
-      </div>
+      {normalized2007 ? (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200 bg-white/85 p-5 shadow-panel">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-thesis">Fase 1 - Transformação do Problema</p>
+            <h4 className="mt-2 text-lg font-semibold text-ink">Rede de transição de estados G</h4>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              O RAMEX 2007 é composto por duas fases principais: transformação da base de dados numa rede de transição de estados e pesquisa de uma sequência de ramificação altamente provável.
+            </p>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              O RAMEX apresenta uma visão global da base de dados porque todas as transições entre itens são incorporadas numa única rede de estados.
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <MetricCard label="SOURCE" value={data.transformation?.source_node ?? "SOURCE"} />
+              <MetricCard label="SINK" value={data.transformation?.sink_node ?? "SINK"} />
+              <MetricCard label="Rede G com ciclos" value={data.transformation?.original_graph_can_contain_cycles === false ? "Nao" : "Sim"} />
+              <MetricCard label="Pesos RAMEX" value="Frequências absolutas" />
+            </div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white/85 p-5 shadow-panel">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-thesis">RAMEX vs Markov</p>
+            <table className="mt-4 min-w-full text-sm">
+              <thead className="bg-slate-100 text-xs uppercase text-slate-600">
+                <tr>
+                  <th className="px-3 py-2 text-left">Modelo</th>
+                  <th className="px-3 py-2 text-left">Peso</th>
+                  <th className="px-3 py-2 text-left">Leitura</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t border-slate-100">
+                  <td className="px-3 py-3 font-medium text-ink">RAMEX</td>
+                  <td className="px-3 py-3 text-slate-700">Frequências absolutas</td>
+                  <td className="px-3 py-3 text-slate-700">Visão global da rede de estados</td>
+                </tr>
+                <tr className="border-t border-slate-100">
+                  <td className="px-3 py-3 font-medium text-ink">Markov</td>
+                  <td className="px-3 py-3 text-slate-700">Frequências relativas/probabilidades</td>
+                  <td className="px-3 py-3 text-slate-700">Probabilidade local de transição</td>
+                </tr>
+              </tbody>
+            </table>
+            {data.transformation?.adjacency_matrix_png ? (
+              <a href={dataPath(data.transformation.adjacency_matrix_png)} target="_blank" className="mt-4 inline-flex text-sm font-semibold text-thesis underline">
+                Abrir matriz de adjacencia RAMEX 2007
+              </a>
+            ) : null}
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white/85 p-5 shadow-panel lg:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-thesis">Fase 2 - Pesquisa das Sequências</p>
+            <h4 className="mt-2 text-lg font-semibold text-ink">Condensação e expansão</h4>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              A rede original G pode conter ciclos, a aciclicidade surge apenas após o processo de condensação por Maximum Weight Rooted Branching.
+            </p>
+            <div className="mt-4 grid gap-3 md:grid-cols-4">
+              <MetricCard label="Condensação" value={data.condensation?.rooted_branching_algorithm ?? "Fulkerson/Edmonds"} />
+              <MetricCard label="Compression ratio" value={`${((data.condensation?.compression_ratio ?? 0) * 100).toFixed(2)}%`} />
+              <MetricCard label="Arestas removidas" value={formatNumber(data.condensation?.removed_edges ?? 0)} />
+              <MetricCard label="Profundidade" value={formatNumber(data.expansion?.metrics?.max_branch_depth ?? 0)} />
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {normalized2007 ? (
+        <>
+          <div className="rounded-2xl border border-slate-200 bg-white/85 p-5 shadow-panel">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-thesis">Fase 2 - Condensação</p>
+            <h4 className="mt-2 text-lg font-semibold text-ink">Métricas do rooted branching e evidência formal</h4>
+            <div className="mt-4 grid gap-3 md:grid-cols-5">
+              <MetricCard label="DAG" value={String(normalized2007.isDag ?? false)} />
+              <MetricCard label="Arborescência" value={String(normalized2007.isArborescence ?? false)} />
+              <MetricCard label="Root in-degree" value={formatNumber(normalized2007.rootInDegree ?? 0)} />
+              <MetricCard label="Max non-root in-degree" value={formatNumber(normalized2007.maxNonRootInDegree ?? 0)} />
+              <MetricCard label="Edges = nodes - 1" value={String((normalized2007.edges ?? 0) === Math.max((normalized2007.nodes ?? 0) - 1, 0))} />
+            </div>
+          </div>
+          <RamexTechnicalTreeViewer src={resolvedImageSrc(imageFile, imageUrl)} title="Árvore técnica completa RAMEX 2007" />
+          <PureRamexTable rows={data.edges ?? []} />
+          <div className="rounded-2xl border border-slate-200 bg-white/85 p-5 shadow-panel">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-thesis">Fase 2 - Expansão</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              A separação entre grafo técnico e grafo analítico permite conciliar rigor formal e legibilidade. O primeiro demonstra a árvore completa obtida pelo algoritmo; o segundo destaca os ramos dominantes para interpretação.
+            </p>
+          </div>
+          <RamexAnalyticalTree edges={data.edges ?? []} root={normalized2007.root} />
+          <RamexFlowReading edges={data.edges ?? []} expansion={data.expansion} />
+          <RamexSankey edges={data.edges ?? []} root={normalized2007.root} preservedWeight={normalized2007.selectedWeight} />
+          <RamexExpansionPlayer edges={data.edges ?? []} root={normalized2007.root} />
+        </>
+      ) : (
+        <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+          {imageUrl || imageFile ? (
+            <img
+              src={imageUrl ?? dataPath(imageFile ?? "")}
+              alt={title}
+              className="max-h-[32rem] w-full rounded-2xl border border-white/50 bg-white/80 object-contain p-3 shadow-xl shadow-slate-200/50 backdrop-blur-md"
+            />
+          ) : (
+            <EmptyState message="Imagem ainda não disponível para este método." />
+          )}
+          <PureRamexTable rows={data.edges ?? []} />
+        </div>
+      )}
     </section>
   );
 }
@@ -1670,7 +3140,7 @@ function PureComparisonPanel({
 }) {
   const rows = data?.comparisonRows ?? [];
   if (!data || rows.length === 0) {
-    return <EmptyState message="Validação RAMEX puro ainda não gerada para este dataset." />;
+    return <EmptyState message="Validação RAMEX 2007 ainda não gerada para este dataset." />;
   }
 
   const chartRows = rows.map((row) => ({
@@ -1776,10 +3246,29 @@ function RamexPurePanel({
 }) {
   const [tab, setTab] = useState<"overview" | "ramex2007" | "forward" | "backforward" | "comparison">("overview");
   const uploadedPure: PureRamexData | undefined = uploaded?.pure_ramex
-    ? { ...uploaded.pure_ramex, comparisonRows: uploaded.pure_ramex.comparisonRows ?? [], missing: uploaded.pure_ramex.missing ?? [] }
+    ? {
+        ...uploaded.pure_ramex,
+        ramex2007: uploaded.pure_ramex.ramex2007
+          ? {
+              ...uploaded.pure_ramex.ramex2007,
+              imageUrl: uploaded.files.ramex2007_png ? `${API_BASE_URL}/api/file/${uploaded.job_id}/${uploaded.files.ramex2007_png}` : undefined,
+              csvUrl: uploaded.files.ramex2007 ? `${API_BASE_URL}/api/file/${uploaded.job_id}/${uploaded.files.ramex2007}` : undefined,
+              jsonUrl: uploaded.files.ramex2007_png ? `${API_BASE_URL}/api/file/${uploaded.job_id}/${uploaded.files.ramex2007_png.replace(".png", ".json")}` : undefined,
+            }
+          : undefined,
+        comparisonRows: uploaded.pure_ramex.comparisonRows ?? [],
+        missing: uploaded.pure_ramex.missing ?? [],
+      }
     : uploaded?.pure
       ? {
-          ramex2007: uploaded.pure.ramex2007,
+          ramex2007: uploaded.pure.ramex2007
+            ? {
+                ...uploaded.pure.ramex2007,
+                imageUrl: uploaded.files.ramex2007_png ? `${API_BASE_URL}/api/file/${uploaded.job_id}/${uploaded.files.ramex2007_png}` : undefined,
+                csvUrl: uploaded.files.ramex2007 ? `${API_BASE_URL}/api/file/${uploaded.job_id}/${uploaded.files.ramex2007}` : undefined,
+                jsonUrl: uploaded.files.ramex2007_png ? `${API_BASE_URL}/api/file/${uploaded.job_id}/${uploaded.files.ramex2007_png.replace(".png", ".json")}` : undefined,
+              }
+            : undefined,
           forward: uploaded.pure.forward,
           backForward: uploaded.pure.back_forward_formal,
           comparisonRows: [],
@@ -1811,18 +3300,18 @@ function RamexPurePanel({
     <section className="space-y-5">
       <div className="rounded-3xl border border-slate-200/60 bg-white/90 p-6 shadow-2xl ring-1 ring-white/70 backdrop-blur-xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Linha principal</p>
-        <h3 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">RAMEX Puro</h3>
+        <h3 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">RAMEX 2007 formal</h3>
         <p className="mt-3 text-sm leading-7 text-slate-700">
-          Esta seção apresenta as implementações mais próximas do RAMEX original, separadas das heurísticas experimentais. O objetivo é comparar abordagens baseadas em rooted branching, expansão forward e expansão back-and-forward.
+          Esta seção apresenta o RAMEX 2007 como transformação formal da base de dados numa rede de estados seguida de Maximum Weight Rooted Branching. Forward e Back-and-Forward são mantidas apenas como heurísticas históricas/experimentais de comparação.
         </p>
         <button
           disabled
           className="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400"
         >
           <Play className="h-4 w-4" />
-          Executar RAMEX Puro
+          Executar RAMEX 2007
         </button>
-        <p className="mt-2 text-xs text-slate-500">Execução RAMEX puro ainda disponível apenas via scripts.</p>
+        <p className="mt-2 text-xs text-slate-500">Execução RAMEX 2007 ainda disponível apenas via scripts.</p>
       </div>
       <div className="grid gap-3 md:grid-cols-5">
         {tabs.map(([id, label]) => (
@@ -1841,7 +3330,7 @@ function RamexPurePanel({
       <AnimatePresence mode="wait">
       {tab === "overview" ? (
         <motion.section key="pure-overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-4">
-          {available === 0 ? <WarningPanel>Resultados RAMEX puro ainda não gerados para este dataset.</WarningPanel> : null}
+          {available === 0 ? <WarningPanel>Resultados RAMEX 2007 ainda não gerados para este dataset.</WarningPanel> : null}
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
             <MetricCard label="Dataset selecionado" value={datasets[datasetId].label} />
             <MetricCard label="Algoritmos disponíveis" value={formatNumber(available)} />
@@ -1853,7 +3342,7 @@ function RamexPurePanel({
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
-              <h3 className="text-lg font-semibold text-ink">RAMEX Puro</h3>
+              <h3 className="text-lg font-semibold text-ink">RAMEX 2007</h3>
               <p className="mt-3 text-sm leading-7 text-slate-700">
                 A linha principal da framework passa a distinguir as implementações RAMEX puras das extensões exploratórias.
                 A comparação permite justificar cientificamente a escolha entre rooted branching, forward e back-and-forward,
@@ -1866,7 +3355,7 @@ function RamexPurePanel({
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-5 shadow-panel">
               <h3 className="text-lg font-semibold text-ink">Extensões complementares</h3>
               <p className="mt-3 text-sm leading-7 text-slate-700">
-                O RAMEX-Forum é apresentado em aba própria como complemento de análise de influência, mantendo o RAMEX Puro como linha principal.
+                O RAMEX-Forum é apresentado em aba própria como complemento de análise de influência, mantendo o RAMEX 2007 como linha principal.
               </p>
             </div>
           </div>
@@ -1877,7 +3366,7 @@ function RamexPurePanel({
         <motion.div key="pure-2007" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
         <PureRamexMethodPanel
           title="RAMEX 2007 Rooted Branching"
-          description="O RAMEX 2007 Rooted Branching representa a versão base, baseada na transformação da sequência em rede e na extração de uma árvore enraizada de peso máximo."
+          description="O RAMEX 2007 Rooted Branching usa Maximum Weight Rooted Branching na fase 10A formal. A fase simplificada 07 é mantida apenas como heurística exploratória."
           data={effectiveData?.ramex2007}
           imageFile={uploaded ? undefined : `ramex2007_dataset${datasetId}.png`}
           imageUrl={uploaded?.files.ramex2007_png ? `${imageBase}${uploaded.files.ramex2007_png}` : undefined}
@@ -1929,7 +3418,7 @@ function RamexForumPanel({
 }) {
   if (!data) {
     return (
-      <EmptyState message="Resultados RAMEX-Forum ainda não disponíveis. Execute a análise como RAMEX-Forum ou RAMEX Puro + RAMEX-Forum." />
+      <EmptyState message="RAMEX-Forum requer resultados temporais gerados pela pipeline Forum. Execute uma análise RAMEX-Forum ou Both para obter Fase 1 e Fase 2." />
     );
   }
 
@@ -1943,15 +3432,268 @@ function RamexForumPanel({
     ?? (jobId && data.files?.graph_png ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.files.graph_png}` : undefined);
   const simplifiedImage = staticSimplifiedImage
     ?? (jobId && data.files?.simplified_png ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${data.files.simplified_png}` : undefined);
+  const temporal = data.temporal_phase1;
+  const temporalMetrics = temporal?.metrics ?? {};
+  const temporalEdges = temporal?.influence_graph?.edges ?? temporal?.temporal_influence?.edges ?? [];
+  const temporalFiles = temporal?.files ?? {};
+  const temporalGraphImage = jobId && temporalFiles.graph_png
+    ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${temporalFiles.graph_png}`
+    : undefined;
+  const temporalMatrixImage = jobId && temporalFiles.influence_matrix_png
+    ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${temporalFiles.influence_matrix_png}`
+    : undefined;
+  const totalTemporalWeight = temporalMetrics.total_influence_weight ?? temporalEdges.reduce((sum, edge) => sum + (edge.Weight ?? edge.SmoothedWeight ?? 0), 0);
+  const phase2 = data.temporal_phase2;
+  const phase2Metrics = phase2?.metrics ?? {};
+  const phase2Edges = phase2?.selected_edges ?? phase2?.structure?.edges ?? [];
+  const phase2Files = phase2?.files ?? {};
+  const phase2StructureImage = jobId && phase2Files.phase2_structure_png
+    ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${phase2Files.phase2_structure_png}`
+    : undefined;
+  const phase2SpecificImage = jobId
+    ? phase2Metrics.heuristic_used === "forward" && phase2Files.forward_tree_png
+      ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${phase2Files.forward_tree_png}`
+      : phase2Files.back_forward_polytree_png
+        ? `${API_BASE_URL}/api/ramex-forum/jobs/${jobId}/file/${phase2Files.back_forward_polytree_png}`
+        : undefined
+    : undefined;
 
   return (
     <section className="space-y-5">
+      {temporal ? (
+        <div className="space-y-5">
+          <div className="rounded-3xl border border-teal-200/80 bg-gradient-to-br from-teal-50 to-cyan-50 p-6 shadow-2xl shadow-teal-100/50 backdrop-blur-md">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">RAMEX-Forum · Fase 1 formal</p>
+            <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Transformação temporal do problema</h3>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              {temporal.interpretation ?? "O dataset original foi transformado numa rede temporal de influência, onde cada nó representa um sinal/evento e cada aresta representa uma influência temporal suavizada e filtrada."}
+            </p>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              Esta fase prepara a rede temporal, os contadores de sinal, a influência, o epsilon smoothing, a filtragem de ruído e a matriz de influência. Não executa heurísticas forward, back-and-forward, poly-tree, condensação ou expansão.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+            <MetricCard label="Sinais" value={formatNumber(temporalMetrics.signals ?? 0)} />
+            <MetricCard label="Entidades" value={formatNumber(temporalMetrics.entities ?? 0)} />
+            <MetricCard label="Relações temporais" value={formatNumber(temporalMetrics.temporal_relations ?? 0)} />
+            <MetricCard label="latency_max" value={`${formatNumber(temporalMetrics.latency_max ?? 0, 0)} s`} />
+            <MetricCard label="epsilon" value={formatNumber(temporalMetrics.epsilon ?? 0, 3)} />
+            <MetricCard label="Peso total" value={formatNumber(totalTemporalWeight, 2)} />
+            <MetricCard label="Ciclos permitidos" value={temporalMetrics.cycles_allowed ? "Sim" : "Não"} />
+            <MetricCard label="Ciclos detetados" value={temporalMetrics.has_cycles ? "Sim" : "Não"} />
+            <MetricCard label="Múltiplas entradas" value={temporalMetrics.multiple_inputs_allowed ? "Permitidas" : "Não"} />
+            <MetricCard label="min_frequency" value={formatNumber(temporalMetrics.filters_active?.min_frequency ?? 0)} />
+            <MetricCard label="min_influence" value={formatNumber(temporalMetrics.filters_active?.min_influence ?? 0, 2)} />
+            <MetricCard label="max_latency" value={`${formatNumber(temporalMetrics.filters_active?.max_latency ?? 0, 0)} s`} />
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-2">
+            <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
+              <h4 className="font-semibold text-slate-100">Grafo temporal técnico</h4>
+              <p className="mt-2 text-xs leading-5 text-slate-300">
+                Completo para debugging académico: ciclos e múltiplas entradas são preservados nesta fase.
+              </p>
+              {temporalGraphImage ? (
+                <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
+                  <img src={temporalGraphImage} alt="Grafo temporal RAMEX-Forum" className="max-h-[34rem] w-full object-contain" />
+                </div>
+              ) : (
+                <EmptyState message="Grafo temporal RAMEX-Forum ainda não disponível." />
+              )}
+            </div>
+            <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
+              <h4 className="font-semibold text-slate-100">Heatmap da matriz de influência</h4>
+              <p className="mt-2 text-xs leading-5 text-slate-300">
+                Matriz FROM x TO com pesos absolutos suavizados. Não há normalização Markoviana.
+              </p>
+              {temporalMatrixImage ? (
+                <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
+                  <img src={temporalMatrixImage} alt="Matriz de influência RAMEX-Forum" className="max-h-[34rem] w-full object-contain" />
+                </div>
+              ) : (
+                <EmptyState message="Heatmap RAMEX-Forum ainda não disponível." />
+              )}
+            </div>
+          </div>
+
+          <SankeyPanel
+            edges={temporalEdges}
+            title="Sankey temporal RAMEX-Forum"
+            description="Propagação temporal entre sinais, com espessura proporcional ao peso de influência suavizado."
+          />
+
+          <div className="overflow-auto rounded-2xl border border-white/50 bg-white/80 shadow-xl shadow-slate-200/50 backdrop-blur-md scrollbar-thin">
+            <table className="min-w-full text-sm">
+              <thead className="sticky top-0 z-10 bg-slate-900 text-xs uppercase tracking-[0.14em] text-slate-200 backdrop-blur">
+                <tr>
+                  <th className="px-3 py-2 text-left">From</th>
+                  <th className="px-3 py-2 text-left">To</th>
+                  <th className="px-3 py-2 text-right">Frequência</th>
+                  <th className="px-3 py-2 text-right">Delta t</th>
+                  <th className="px-3 py-2 text-right">Decay</th>
+                  <th className="px-3 py-2 text-right">Peso suavizado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {temporalEdges.slice(0, 80).map((edge, index) => (
+                  <tr key={`${edge.From}-${edge.To}-${index}`} className="border-t border-slate-100 odd:bg-white/70 even:bg-slate-50/80 hover:bg-teal-50/60">
+                    <td className="px-3 py-3 font-medium text-ink">{edge.From}</td>
+                    <td className="px-3 py-3 text-slate-700">{edge.To}</td>
+                    <td className="px-3 py-3 text-right font-mono tabular-nums">{formatNumber(edge.Frequency ?? 0)}</td>
+                    <td className="px-3 py-3 text-right font-mono tabular-nums">{formatNumber(edge.DeltaT ?? 0, 2)}</td>
+                    <td className="px-3 py-3 text-right font-mono tabular-nums">{formatNumber(edge.TemporalDecay ?? 0, 4)}</td>
+                    <td className="px-3 py-3 text-right font-mono tabular-nums">{formatNumber(edge.Weight ?? edge.SmoothedWeight ?? 0, 3)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
+              <h4 className="font-semibold text-ink">Timeline de sinais</h4>
+              <div className="mt-3 space-y-2 text-sm text-slate-700">
+                {(temporal.signal_counter?.rows ?? []).slice(0, 12).map((row, index) => (
+                  <p key={`${row.entity}-${row.timestamp}-${row.signal}-${index}`}>
+                    <span className="font-semibold text-ink">{row.entity}</span> · t={row.timestamp} · {row.signal} · contador {formatNumber(row.signal_counter ?? 0)}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
+              <h4 className="font-semibold text-ink">RAMEX-Forum vs Markov</h4>
+              <div className="mt-3 overflow-auto">
+                <table className="min-w-full text-sm">
+                  <tbody className="divide-y divide-slate-100">
+                    <tr><td className="py-2 font-semibold">RAMEX-Forum</td><td>Influência temporal global, rede de propagação e pesos absolutos suavizados.</td></tr>
+                    <tr><td className="py-2 font-semibold">Markov</td><td>Probabilidades locais, dependência imediata e normalização probabilística.</td></tr>
+                    <tr><td className="py-2 font-semibold">Nesta fase</td><td>Não são usadas probabilidades Markovianas nem normalização de pesos.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {phase2 ? (
+        <div className="space-y-5">
+          <div className="rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-50 to-white p-6 shadow-2xl shadow-amber-100/50 backdrop-blur-md">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">RAMEX-Forum · Fase 2</p>
+            <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Extração estrutural</h3>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              {phase2.interpretation ?? "Na Fase 2, o RAMEX-Forum transforma a rede temporal de influência numa estrutura interpretável. Quando existe nó inicial, aplica-se Forward Heuristic. Na ausência de nó inicial claro, aplica-se Back-and-Forward Heuristic para construir uma Poly-tree de influência."}
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+            <MetricCard label="Modo escolhido" value={phase2Metrics.heuristic_used === "forward" ? "Forward Tree" : "Back-and-Forward"} />
+            <MetricCard label="Nó inicial" value={phase2Metrics.selected_initial_node ?? phase2Metrics.initial_edge ?? "Sem nó inicial"} />
+            <MetricCard label="Modo inicial" value={phase2Metrics.initial_node_mode ?? "auto"} />
+            <MetricCard label="Nós antes/depois" value={`${formatNumber(phase2Metrics.nodes_before ?? 0)} → ${formatNumber(phase2Metrics.nodes_after ?? 0)}`} />
+            <MetricCard label="Arestas antes/depois" value={`${formatNumber(phase2Metrics.edges_before ?? 0)} → ${formatNumber(phase2Metrics.edges_after ?? 0)}`} />
+            <MetricCard label="Influência preservada" value={`${formatNumber(phase2Metrics.preserved_influence_percent ?? 0, 2)}%`} />
+            <MetricCard label="DAG" value={phase2Metrics.is_dag ? "true" : "false"} />
+            <MetricCard label="Árvore" value={phase2Metrics.is_tree ? "true" : "false"} />
+            <MetricCard label="Poly-tree" value={phase2Metrics.is_polytree ? "true" : "false"} />
+            <MetricCard label="max_depth" value={formatNumber(phase2Metrics.max_depth ?? 0)} />
+            <MetricCard label="top_k" value={formatNumber(phase2Metrics.top_k ?? 0)} />
+            <MetricCard label="Peso selecionado" value={formatNumber(phase2Metrics.selected_influence_weight ?? 0, 2)} />
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-2">
+            <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
+              <h4 className="font-semibold text-slate-100">Grafo técnico da Fase 2</h4>
+              {phase2StructureImage ? (
+                <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
+                  <img src={phase2StructureImage} alt="Estrutura RAMEX-Forum Fase 2" className="max-h-[34rem] w-full object-contain" />
+                </div>
+              ) : (
+                <EmptyState message="Estrutura RAMEX-Forum Fase 2 ainda não disponível." />
+              )}
+            </div>
+            <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
+              <h4 className="font-semibold text-slate-100">{phase2Metrics.heuristic_used === "forward" ? "Forward Tree" : "Back-and-Forward Poly-tree"}</h4>
+              {phase2SpecificImage ? (
+                <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
+                  <img src={phase2SpecificImage} alt="Heurística RAMEX-Forum Fase 2" className="max-h-[34rem] w-full object-contain" />
+                </div>
+              ) : (
+                <EmptyState message="Imagem específica da heurística ainda não disponível." />
+              )}
+            </div>
+          </div>
+
+          <SankeyPanel
+            edges={phase2Edges}
+            title="Sankey RAMEX-Forum Fase 2"
+            description="Fluxo da estrutura extraída sobre a rede temporal de influência."
+          />
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
+              <h4 className="font-semibold text-ink">Caminho dominante</h4>
+              <div className="mt-3 space-y-2 text-sm text-slate-700">
+                {(phase2.dominant_path ?? []).length ? phase2.dominant_path?.map((row, index) => (
+                  <p key={`${row.From}-${row.To}-${index}`}>
+                    <span className="font-mono text-xs text-slate-500">#{row.Step ?? index + 1}</span>{" "}
+                    <span className="font-semibold text-ink">{row.From}</span> → {row.To} · peso {formatNumber(row.Weight ?? 0, 3)} · {row.Direction}
+                  </p>
+                )) : <p>Sem caminho dominante gerado.</p>}
+              </div>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
+              <h4 className="font-semibold text-ink">Validação estrutural</h4>
+              <div className="mt-3 space-y-2 text-sm text-slate-700">
+                {Object.entries(phase2.structure?.validation ?? {}).map(([key, value]) => (
+                  <p key={key}><span className="font-semibold text-ink">{key}</span>: {value ? "true" : "false"}</p>
+                ))}
+                {(phase2Metrics.warnings ?? []).map((warning, index) => (
+                  <p key={index} className="text-amber-700">{warning}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-auto rounded-2xl border border-white/50 bg-white/80 shadow-xl shadow-slate-200/50 backdrop-blur-md scrollbar-thin">
+            <table className="min-w-full text-sm">
+              <thead className="sticky top-0 z-10 bg-slate-900 text-xs uppercase tracking-[0.14em] text-slate-200 backdrop-blur">
+                <tr>
+                  <th className="px-3 py-2 text-left">From</th>
+                  <th className="px-3 py-2 text-left">To</th>
+                  <th className="px-3 py-2 text-right">Weight</th>
+                  <th className="px-3 py-2 text-right">Frequency</th>
+                  <th className="px-3 py-2 text-right">Level</th>
+                  <th className="px-3 py-2 text-left">Direction</th>
+                  <th className="px-3 py-2 text-left">Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                {phase2Edges.map((edge, index) => (
+                  <tr key={`${edge.From}-${edge.To}-${index}`} className="border-t border-slate-100 odd:bg-white/70 even:bg-slate-50/80 hover:bg-amber-50/60">
+                    <td className="px-3 py-3 font-medium text-ink">{edge.From}</td>
+                    <td className="px-3 py-3 text-slate-700">{edge.To}</td>
+                    <td className="px-3 py-3 text-right font-mono tabular-nums">{formatNumber(edge.Weight ?? 0, 3)}</td>
+                    <td className="px-3 py-3 text-right font-mono tabular-nums">{formatNumber(edge.Frequency ?? 0)}</td>
+                    <td className="px-3 py-3 text-right font-mono tabular-nums">{formatNumber(edge.Level ?? 0)}</td>
+                    <td className="px-3 py-3 text-slate-700">{(edge as Record<string, unknown>).Direction as string}</td>
+                    <td className="px-3 py-3 text-slate-600">{(edge as Record<string, unknown>).Reason as string}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : temporal ? (
+        <WarningPanel>RAMEX-Forum Fase 2 requer outputs válidos da Fase 1 e relações de influência após filtragem.</WarningPanel>
+      ) : null}
+
       <div className="rounded-3xl border border-cyan-200/80 bg-gradient-to-br from-cyan-50 to-teal-50 p-6 shadow-2xl shadow-cyan-200/40 backdrop-blur-md">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Influence Mode</p>
-        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">RAMEX-Forum Influence Analysis</h3>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Camada experimental mantida</p>
+        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">RAMEX-Forum interpretativo legado</h3>
         <p className="mt-3 text-sm leading-7 text-slate-700">
-          O RAMEX-Forum é uma extensão aplicada à visualização e análise de relações complexas, com foco em influência,
-          pesos normalizados e interpretação de caminhos. Não substitui o RAMEX Puro; atua como abordagem complementar.
+          Esta camada antiga continua disponível por compatibilidade. A Fase 1 formal acima é a transformação temporal com sinais, latência, smoothing e filtros; nenhuma delas substitui o RAMEX 2007 formal.
         </p>
       </div>
 
@@ -2050,7 +3792,7 @@ function RamexForumPanel({
           <div className="mt-3 overflow-auto">
             <table className="min-w-full text-sm">
               <tbody className="divide-y divide-slate-100">
-                <tr><td className="py-2 font-semibold">RAMEX Puro</td><td>Condensa estrutura sequencial dominante em Poly-tree formal.</td></tr>
+                <tr><td className="py-2 font-semibold">RAMEX 2007</td><td>Condensa estrutura sequencial dominante em Poly-tree formal.</td></tr>
                 <tr><td className="py-2 font-semibold">RAMEX-Forum</td><td>Explora influência, centralidade, pesos relativos e caminhos dominantes.</td></tr>
                 <tr><td className="py-2 font-semibold">Melhor uso</td><td>Relações complexas e exploração interpretativa complementar.</td></tr>
               </tbody>
@@ -2511,7 +4253,7 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
             className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
           >
             <option value="all">Todos os tipos</option>
-            <option value="pure">RAMEX Puro</option>
+            <option value="pure">RAMEX 2007</option>
             <option value="forum">RAMEX-Forum</option>
             <option value="both">Both</option>
             <option value="unknown">Desconhecido</option>
@@ -2546,7 +4288,7 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
                 <th className="px-4 py-3 text-left">Estado</th>
                 <th className="px-4 py-3 text-right">Nós</th>
                 <th className="px-4 py-3 text-right">Arestas</th>
-                <th className="px-4 py-3 text-left">Melhor RAMEX puro</th>
+                <th className="px-4 py-3 text-left">Melhor RAMEX 2007</th>
                 <th className="px-4 py-3 text-right">Peso preservado</th>
                 <th className="px-4 py-3 text-left">Forum</th>
                 <th className="px-4 py-3 text-left">Ações</th>
@@ -2741,9 +4483,9 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
   );
 }
 
-function ValidationTable({ rows }: { rows: ValidationRow[] }) {
+function ValidationTable({ rows }: { rows: Ramex2007DatasetComparisonRow[] }) {
   if (rows.length === 0) {
-    return <EmptyState message="A validação comparativa ainda não está disponível." />;
+    return <EmptyState message="A comparação RAMEX 2007 ainda não está disponível." />;
   }
 
   return (
@@ -2754,20 +4496,24 @@ function ValidationTable({ rows }: { rows: ValidationRow[] }) {
             <th className="px-3 py-2 text-left">Dataset</th>
             <th className="px-3 py-2 text-right">Nós</th>
             <th className="px-3 py-2 text-right">Arestas</th>
-            <th className="px-3 py-2 text-right">Densidade</th>
-            <th className="px-3 py-2 text-right">PESO POLY-TREE FORMAL</th>
-            <th className="px-3 py-2 text-left">Interpretação</th>
+            <th className="px-3 py-2 text-left">Raiz RAMEX 2007</th>
+            <th className="px-3 py-2 text-right">Peso preservado RAMEX 2007</th>
+            <th className="px-3 py-2 text-left">DAG</th>
+            <th className="px-3 py-2 text-left">Arborescência</th>
+            <th className="px-3 py-2 text-left">Observação</th>
           </tr>
         </thead>
         <tbody className="text-slate-800">
           {rows.map((row) => (
             <tr key={row.Dataset} className="border-t border-slate-100 odd:bg-white even:bg-slate-50/65">
               <td className="px-3 py-3 font-semibold text-slate-800">{row.Dataset}</td>
-              <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{formatNumber(row.Nos_Grafo)}</td>
-              <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{formatNumber(row.Arestas_Grafo)}</td>
-              <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{row.Densidade_Aproximada.toFixed(4)}</td>
-              <td className="px-3 py-3 text-right font-semibold tabular-nums text-slate-800">{row.Percentagem_Peso_Preservado.toFixed(2)}%</td>
-              <td className="max-w-xl px-3 py-3 text-slate-700">{row.Interpretacao}</td>
+              <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{formatNumber(row.Nos)}</td>
+              <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{formatNumber(row.Arestas)}</td>
+              <td className="px-3 py-3 font-medium text-slate-700">{row.Raiz}</td>
+              <td className="px-3 py-3 text-right font-semibold tabular-nums text-slate-800">{row.PesoPreservado.toFixed(2)}%</td>
+              <td className="px-3 py-3 text-slate-700">{row.DAG === undefined ? "-" : String(row.DAG)}</td>
+              <td className="px-3 py-3 text-slate-700">{row.Arborescencia === undefined ? "-" : String(row.Arborescencia)}</td>
+              <td className="max-w-xl px-3 py-3 text-slate-700">{row.Observacao}</td>
             </tr>
           ))}
         </tbody>
@@ -2776,20 +4522,18 @@ function ValidationTable({ rows }: { rows: ValidationRow[] }) {
   );
 }
 
-function ValidationCharts({ rows }: { rows: ValidationRow[] }) {
+function ValidationCharts({ rows }: { rows: Ramex2007DatasetComparisonRow[] }) {
   if (rows.length === 0) return null;
 
   const chartRows = rows.map((row) => ({
     dataset: row.Dataset.replace("Dataset ", "D"),
-    nos: row.Nos_Grafo,
-    arestas: row.Arestas_Grafo,
-    densidade: Number((row.Densidade_Aproximada * 100).toFixed(2)),
+    peso: Number(row.PesoPreservado.toFixed(2)),
   }));
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-4">
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-panel">
-        <h3 className="text-sm font-semibold text-ink">Nós e arestas</h3>
+        <h3 className="text-sm font-semibold text-ink">Peso preservado RAMEX 2007 por dataset</h3>
         <div className="mt-4 h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartRows}>
@@ -2797,23 +4541,7 @@ function ValidationCharts({ rows }: { rows: ValidationRow[] }) {
               <XAxis dataKey="dataset" />
               <YAxis />
               <Tooltip />
-              <Legend />
-              <Bar dataKey="nos" name="Nós" fill="#315f72" />
-              <Bar dataKey="arestas" name="Arestas" fill="#8aa08a" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-panel">
-        <h3 className="text-sm font-semibold text-ink">Densidade aproximada (%)</h3>
-        <div className="mt-4 h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartRows}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="dataset" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="densidade" name="Densidade" fill="#c8914b" />
+              <Bar dataKey="peso" name="Peso preservado (%)" fill="#315f72" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -2837,11 +4565,11 @@ function AboutRamexPanel() {
     ["Frequência de transições", "Implementado"],
     ["Matriz de adjacência", "Implementado"],
     ["Grafo dirigido ponderado", "Implementado"],
-    ["Estrutura RAMEX base", "Implementado na linha RAMEX pura formal"],
-    ["RAMEX 2007 Rooted Branching", "Implementação RAMEX pura"],
-    ["Forward Heuristic", "Implementação RAMEX pura"],
-    ["Back-and-Forward Heuristic", "Implementação RAMEX pura"],
-    ["Poly-tree completo", "Implementação RAMEX pura"],
+    ["Estrutura RAMEX 2007", "Implementado na linha RAMEX 2007 formal"],
+    ["RAMEX 2007 Rooted Branching", "Implementação formal Cavique 2007"],
+    ["Forward Heuristic", "Heurística experimental/histórica"],
+    ["Back-and-Forward Heuristic", "Heurística experimental/histórica"],
+    ["Poly-tree completo", "Heurística experimental/histórica"],
   ];
 
   const pipelineSteps = [
@@ -2858,9 +4586,9 @@ function AboutRamexPanel() {
   ];
 
   const references = [
-    "Cavique, L. (2007). A Network Algorithm to Discover Sequential Patterns. EPIA 2007, LNAI 4874, pp. 406414.",
-    "Cavique, L. (2015). Ramex: A Sequence Mining Algorithm Using Poly-trees. Advances in Intelligent Systems and Computing, 354, pp. 143153.",
-    "Tiple, P., Cavique, L., & Marques, N. C. (2017). Ramex-Forum: a tool for displaying and analysing complex sequential patterns of financial products. Expert Systems, 3412174.",
+    "Cavique, L. (2007). A Network Algorithm to Discover Sequential Patterns. EPIA 2007, LNAI 4874, pp. 406–414.",
+    "Cavique, L. (2015). Ramex: A Sequence Mining Algorithm Using Poly-trees. Advances in Intelligent Systems and Computing, 354, pp. 143–153.",
+    "Tiple, P., Cavique, L., & Marques, N. C. (2017). Ramex-Forum: a tool for displaying and analysing complex sequential patterns of financial products. Expert Systems, 34:e12174.",
     "Cavique, L. (2021). Ciência dos Dados: Bases de Dados versus Aprendizagem Automática. Revista de Ciência Elementar, 9(02):041.",
   ];
 
@@ -3009,7 +4737,7 @@ function DatasetsValidationPanel({
         <h3 className="text-lg font-semibold text-ink">Casos de validação</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">
           Os datasets 01, 02 e 03 são casos demonstrativos já processados. Servem para validar o comportamento do
-          RAMEX puro em estruturas densas, quase lineares e pequenas/completas.
+          RAMEX 2007 em estruturas densas, quase lineares e pequenas/completas.
         </p>
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
@@ -3059,7 +4787,7 @@ function PipelineRamexPanel() {
     ["Rooted Branching", "Árvore enraizada de peso máximo.", "ramex2007.json"],
     ["Forward", "Expansão a partir de raiz conhecida.", "ramex_forward.json"],
     ["Back-and-Forward", "Expansão pela melhor relação inicial.", "ramex_back_forward.json"],
-    ["Poly-tree formal", "Validação estrutural: DAG conectado e árvore não dirigida.", "validação RAMEX puro"],
+    ["Poly-tree formal", "Validação estrutural: DAG conectado e árvore não dirigida.", "validação RAMEX 2007"],
   ];
 
   return (
@@ -3129,10 +4857,10 @@ function ReportsPanel({
     <section className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
       <div className="rounded-3xl border border-slate-200/60 bg-white/90 p-6 shadow-2xl ring-1 ring-white/70 backdrop-blur-xl">
         <p className="text-sm font-semibold text-thesis">{datasetName}</p>
-        <h3 className="mt-1 text-lg font-semibold text-ink">Relatórios RAMEX puro</h3>
+        <h3 className="mt-1 text-lg font-semibold text-ink">Relatório final RAMEX</h3>
         <p className="mt-3 text-sm leading-6 text-slate-600">
-          Os relatórios finais privilegiam RAMEX 2007 Rooted Branching, Forward Heuristic, Back-and-Forward Heuristic,
-          Poly-tree formal e validação comparativa. As heurísticas experimentais ficam fora da experiência principal.
+          O relatório final separa RAMEX 2007 formal, RAMEX-Forum temporal, visualizações complementares, limitações e
+          trabalho futuro. As heurísticas históricas ficam identificadas como comparação experimental.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <ReportButton onClick={onReport} disabled={!pdfData} />
@@ -3146,7 +4874,7 @@ function ReportsPanel({
           </button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <MetricCard label="Melhor método" value={pureRamexBest(pureData) ?? "Sem dados gerados"} />
+          <MetricCard label="Estrutura de referência" value={pureRamexBest(pureData) ?? "Sem dados gerados"} />
           <MetricCard label="Método(s) mais simples" value={pureRamexSimplestLabels(pureData)} />
         </div>
       </div>
@@ -3176,12 +4904,18 @@ function DemonstrationPanel({
   pdfData?: ReportData;
 }) {
   const steps = [
-    ["Dataset", "Entrada de dados sequenciais ou tabela de eventos."],
-    ["Sequências", "Reconstrução da ordem dos eventos por entidade/caso."],
-    ["Matriz", "Representação das frequências de transição entre eventos."],
-    ["Grafo", "Conversão da matriz numa rede dirigida ponderada."],
-    ["RAMEX Puro", "Rooted Branching, Forward e Back-and-Forward."],
-    ["Validação", "Comparação estrutural e síntese automática."],
+    ["Dataset", "Entrada de sequências ou tabela entidade/tempo/sinal."],
+    ["Transformação", "RAMEX 2007 cria rede de estados com SOURCE, SINK e frequências absolutas."],
+    ["Grafo", "Grafo técnico completo e matriz preservam a evidência formal."],
+    ["RAMEX 2007", "Rooted Branching condensa a rede numa arborescência de peso máximo."],
+    ["Forum", "RAMEX-Forum calcula influência temporal e extrai Forward Tree ou Poly-tree."],
+    ["Conclusão", "Relatório final junta métricas, gráficos, Sankey, caminho dominante e limitações."],
+  ];
+  const validationChecklist = [
+    ["dataset01", "RAMEX 2007 completo + RAMEX-Forum temporal quando reprocessado"],
+    ["dataset02", "Rooted Branching formal + validação comparativa"],
+    ["dataset03", "Dataset pequeno com árvore completa e leitura integral"],
+    ["testes_SCADA", "Teste externo recomendado: timestamp real e initial_node=Bomba_ON"],
   ];
   const bestPure = pureRamexBest(pureData);
   const structuralType = pureRamexStructuralType(validation, pureData);
@@ -3211,7 +4945,7 @@ function DemonstrationPanel({
         <MetricCard label="Arestas" value={formatNumber(validation?.Arestas_Grafo ?? 0)} />
         <MetricCard label="Densidade" value={(validation?.Densidade_Aproximada ?? 0).toFixed(4)} />
         <MetricCard label="PESO POLY-TREE FORMAL" value={`${(validation?.Percentagem_Peso_Preservado ?? 0).toFixed(2)}%`} />
-        <MetricCard label="Melhor RAMEX puro" value={bestPure ?? "Sem dados gerados"} />
+        <MetricCard label="Melhor RAMEX 2007" value={bestPure ?? "Sem dados gerados"} />
       </div>
       <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
         <p className="text-xs font-semibold uppercase text-slate-500">Tipo estrutural do dataset</p>
@@ -3228,11 +4962,22 @@ function DemonstrationPanel({
       <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
         <h4 className="text-lg font-semibold text-ink">Objetivo</h4>
         <p className="mt-3 text-sm leading-7 text-slate-700">
-          Nesta framework, os dados são primeiro normalizados em sequências. Depois são transformados em pares de
-          transição, que permitem construir uma matriz de adjacência e um grafo dirigido ponderado. A partir desse
-          grafo, são extraídas estruturas RAMEX, com o objetivo de condensar os padrões sequenciais mais relevantes e
-          facilitar a interpretação.
+          Nesta framework, o RAMEX 2007 e o RAMEX-Forum são apresentados como pipelines diferentes. O RAMEX 2007 usa
+          frequências absolutas e rooted branching; o RAMEX-Forum usa influência temporal, latência, smoothing e
+          heurísticas estruturais sobre a rede temporal. As heurísticas antigas ficam assinaladas como históricas.
         </p>
+      </div>
+
+      <div className="rounded-lg border border-cyan-200 bg-cyan-50 p-5 shadow-panel">
+        <h4 className="text-lg font-semibold text-ink">Checklist de validação para defesa</h4>
+        <div className="mt-3 grid gap-2 md:grid-cols-2">
+          {validationChecklist.map(([name, goal]) => (
+            <div key={name} className="rounded-lg border border-cyan-100 bg-white/80 px-3 py-2 text-sm">
+              <span className="font-semibold text-ink">{name}</span>
+              <p className="mt-1 text-slate-600">{goal}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -3240,7 +4985,10 @@ function DemonstrationPanel({
           Upload / Nova Análise
         </button>
         <button onClick={() => onGoTo("pure")} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-thesis shadow-panel">
-          Ver RAMEX Puro
+          Ver RAMEX 2007  
+        </button>
+        <button onClick={() => onGoTo("forum")} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-thesis shadow-panel">
+          Ver RAMEX-Forum
         </button>
         <button onClick={() => onGoTo("validation")} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-thesis shadow-panel">
           Ver Validação
@@ -3259,11 +5007,16 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
   const [file, setFile] = useState<File | null>(null);
   const [jobId, setJobId] = useState("");
   const [columns, setColumns] = useState<string[]>([]);
+  const [previewRows, setPreviewRows] = useState<PreviewRow[]>([]);
   const [datasetType, setDatasetType] = useState<UploadDatasetType>("simple_sequences");
   const [analysisType, setAnalysisType] = useState<AnalysisType>("pure");
+  const [eventMode, setEventMode] = useState<EventMode>("simple");
   const [caseColumn, setCaseColumn] = useState("");
   const [timeColumn, setTimeColumn] = useState("");
   const [eventColumn, setEventColumn] = useState("");
+  const [advancedEventColumns, setAdvancedEventColumns] = useState<string[]>([]);
+  const [numericDiscretization, setNumericDiscretization] = useState<Record<string, NumericDiscretizationMode>>({});
+  const [caseWindow, setCaseWindow] = useState<CaseWindowMode>("none");
   const [minFrequency, setMinFrequency] = useState("0");
   const [topN, setTopN] = useState("");
   const [polytreeStrategy, setPolytreeStrategy] = useState<PolyTreeStrategy>("top-k");
@@ -3279,6 +5032,11 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
   const [preserveWeightTarget, setPreserveWeightTarget] = useState("0.7");
   const [maxBranching, setMaxBranching] = useState("3");
   const [minScore, setMinScore] = useState("0.0");
+  const [forumInitialNode, setForumInitialNode] = useState("");
+  const [forumForwardTopK, setForumForwardTopK] = useState("1");
+  const [forumMaxDepth, setForumMaxDepth] = useState("10");
+  const [forumMinSmoothedWeight, setForumMinSmoothedWeight] = useState("");
+  const [forumForceHeuristic, setForumForceHeuristic] = useState<"auto" | "forward" | "back_and_forward">("auto");
   const [jobState, setJobState] = useState<JobState | null>(null);
   const [result, setResult] = useState<UploadResult | null>(null);
   const [error, setError] = useState("");
@@ -3287,6 +5045,35 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const canMapColumns = datasetType !== "simple_sequences";
+  const advancedNumericColumns = useMemo(
+    () => advancedEventColumns.filter((column) => isNumericPreviewColumn(previewRows, column)),
+    [advancedEventColumns, previewRows],
+  );
+  const generatedEventPreview = useMemo(() => {
+    if (!previewRows.length || eventMode !== "advanced") return [];
+    return previewRows
+      .slice(0, 10)
+      .map((row) => buildAdvancedPreviewEvent(row, previewRows, advancedEventColumns, numericDiscretization))
+      .filter(Boolean);
+  }, [advancedEventColumns, eventMode, numericDiscretization, previewRows]);
+  const generatedEventPreviewRows = useMemo(() => {
+    if (!previewRows.length || eventMode !== "advanced") return [];
+    return previewRows.slice(0, 10).map((row) => ({
+      original: row,
+      generatedEvent: buildAdvancedPreviewEvent(row, previewRows, advancedEventColumns, numericDiscretization),
+      generatedCaseId: caseWindow === "none" ? String(row[caseColumn] ?? "") : `${caseWindow}: ${String(row[timeColumn] ?? "")}`,
+      order: String(row[timeColumn] ?? ""),
+    })).filter((row) => row.generatedEvent);
+  }, [advancedEventColumns, caseColumn, caseWindow, eventMode, numericDiscretization, previewRows, timeColumn]);
+  const uniquePreviewCount = useMemo(() => new Set(generatedEventPreview).size, [generatedEventPreview]);
+  const structuralSelectedEventColumns = useMemo(
+    () => advancedEventColumns.filter((column) => isStructuralEventColumn(column, caseColumn, timeColumn)),
+    [advancedEventColumns, caseColumn, timeColumn],
+  );
+  const advancedRecommendation = useMemo(
+    () => inferAdvancedEventColumns(columns, caseColumn, timeColumn, eventColumn),
+    [caseColumn, columns, eventColumn, timeColumn],
+  );
 
   async function handleUpload() {
     if (!file) { setError("Selecione um ficheiro antes de enviar."); return; }
@@ -3299,11 +5086,15 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
       const uploaded = await uploadDataset(file);
       setJobId(uploaded.job_id);
       setColumns(uploaded.columns);
+      setPreviewRows(uploaded.preview_rows ?? []);
       if (uploaded.columns.length > 0) {
         const mapping = inferColumnMapping(uploaded.columns, datasetType);
+        const advanced = inferAdvancedEventColumns(uploaded.columns, mapping.caseColumn, mapping.timeColumn, mapping.eventColumn);
         setCaseColumn(mapping.caseColumn);
         setTimeColumn(mapping.timeColumn);
         setEventColumn(mapping.eventColumn);
+        setAdvancedEventColumns(advanced.selected);
+        setNumericDiscretization(advanced.numericRules);
       }
     } catch (err) {
       setError(friendlyApiError(err));
@@ -3315,9 +5106,24 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
   async function handleAnalyze() {
     if (!jobId) { setError("Envie primeiro um ficheiro para criar um job."); return; }
 
-    if (canMapColumns && (!caseColumn || !timeColumn || !eventColumn)) {
+    if (canMapColumns && eventMode === "simple" && (!caseColumn || !timeColumn || !eventColumn)) {
       setError("Complete o mapeamento de colunas antes de executar a análise.");
       return;
+    }
+    if (canMapColumns && eventMode === "advanced") {
+      if (!timeColumn || (caseWindow === "none" && !caseColumn)) {
+        setError("No modo avançado, escolha tempo/ordem e uma entidade/caso ou uma janela temporal.");
+        return;
+      }
+      if (advancedEventColumns.length === 0) {
+        setError("Selecione pelo menos uma coluna para construir o evento avançado.");
+        return;
+      }
+      const missingNumericRules = advancedNumericColumns.filter((column) => !numericDiscretization[column]);
+      if (missingNumericRules.length) {
+        setError(`Colunas numéricas sem regra: ${missingNumericRules.join(", ")}. Escolha quantis, variação percentual ou ignorar.`);
+        return;
+      }
     }
 
     setError("");
@@ -3326,13 +5132,18 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
     setShowTechnicalError(false);
 
     try {
-      const started = await startAnalyzeUploadedDataset({
+      const payload = {
         job_id: jobId,
-        dataset_type: datasetType,
+        dataset_type: eventMode === "advanced" ? "event_table" : datasetType,
         analysis_type: analysisType,
         case_column: canMapColumns ? caseColumn : undefined,
+        entity_column: canMapColumns ? caseColumn : undefined,
         time_column: canMapColumns ? timeColumn : undefined,
-        event_column: canMapColumns ? eventColumn : undefined,
+        event_column: canMapColumns && eventMode === "simple" ? eventColumn : undefined,
+        event_mode: canMapColumns ? eventMode : "simple",
+        event_columns: canMapColumns && eventMode === "advanced" ? advancedEventColumns : undefined,
+        numeric_discretization: canMapColumns && eventMode === "advanced" ? numericDiscretization : undefined,
+        case_window: canMapColumns && eventMode === "advanced" ? caseWindow : "none",
         min_frequency: parseDecimalInput(minFrequency, 0),
         top_n: topN.trim() ? parseDecimalInput(topN, 0) : null,
         strategy: polytreeStrategy,
@@ -3349,7 +5160,14 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
         preserve_weight_target: parseDecimalInput(preserveWeightTarget, 0.7),
         max_branching: parseDecimalInput(maxBranching, 3),
         min_score: parseDecimalInput(minScore, 0),
-      });
+        forum_initial_node: forumInitialNode.trim() || null,
+        forum_forward_top_k: parseDecimalInput(forumForwardTopK, 1),
+        forum_max_depth: parseDecimalInput(forumMaxDepth, 10),
+        forum_min_smoothed_weight: forumMinSmoothedWeight.trim() ? parseDecimalInput(forumMinSmoothedWeight, 0) : null,
+        forum_force_heuristic: forumForceHeuristic,
+      };
+      console.log("RUN FULL PAYLOAD SENT", payload);
+      const started = await startAnalyzeUploadedDataset(payload);
       setJobId(started.job_id);
       setIsAnalyzing(true);
     } catch (err) {
@@ -3432,6 +5250,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
       },
       topTransitions: result.top_transitions,
       polytreeEdges: result.formal_polytree?.edges?.map(pureEdgeToTable),
+      eventConstruction: result.event_construction,
       pureRamex: {
         bestAlgorithm: result.pure_validation?.best_algorithm ?? pureRamexBest(result.pure_ramex),
         structuralType: result.pure_validation?.structural_type,
@@ -3451,6 +5270,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
   }
 
   const rootNode = result?.metrics.root;
+  const normalizedResult = result ? normalizeUploadResult(result) : undefined;
   const formalMetrics = result?.formal_polytree?.metrics;
   const uploadPureRows = result?.pure_ramex?.comparisonRows ?? [];
   const uploadBest = result?.pure_validation?.best_algorithm ?? pureRamexBest(result?.pure_ramex);
@@ -3465,6 +5285,32 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
         analysisType: result.analysis_type ?? analysisType,
         datasetType,
         generatedAt: new Date().toLocaleString("pt-PT"),
+        eventConstruction: result.event_construction ? {
+          mode: result.event_construction.mode,
+          caseColumn: result.event_construction.case_column,
+          timeColumn: result.event_construction.time_column,
+          caseWindow: result.event_construction.case_window,
+          eventColumn: result.event_construction.event_column,
+          eventColumns: result.event_construction.event_columns,
+          ignoredColumns: result.event_construction.ignored_columns,
+          numericDiscretization: result.event_construction.numeric_discretization,
+          rules: result.event_construction.rules,
+          generatedEventColumn: result.event_construction.generated_event_column,
+          generatedCaseColumn: result.event_construction.generated_case_column,
+          uniqueEvents: result.event_construction.unique_events,
+          eventExamples: result.event_construction.event_examples,
+          warnings: result.event_construction.warnings,
+        } : {
+          mode: eventMode,
+          caseColumn,
+          timeColumn,
+          caseWindow,
+          eventColumn,
+          eventColumns: eventMode === "advanced" ? advancedEventColumns : [eventColumn].filter(Boolean),
+          ignoredColumns: eventMode === "advanced" ? advancedEventColumns.filter((column) => numericDiscretization[column] === "ignore") : [],
+          numericDiscretization,
+          eventExamples: generatedEventPreview,
+        },
         parameters: {
           minFrequency: parseDecimalInput(minFrequency, 0),
           topN: topN.trim() ? parseDecimalInput(topN, 0) : null,
@@ -3499,15 +5345,28 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
           forwardPreservedPercent: result.pure_ramex?.forward?.metrics?.preserved_weight_percent,
           backForwardPreservedPercent: result.pure_ramex?.backForward?.metrics?.preserved_weight_percent,
         },
-        topTransitions: result.top_transitions.map(edgeToReport),
-        allTransitions: result.graph_edges?.map(edgeToReport),
+        topTransitions: (normalizedResult?.observed.topTransitions ?? result.top_transitions).map(edgeToReport),
+        allTransitions: normalizedResult?.observed.graphEdges.map(edgeToReport),
         transitionMatrix: result.transition_matrix,
-        ramexEdges: result.ramex_edges.map(edgeToReport),
+        ramexEdges: (normalizedResult?.ramex2007.phase2.selectedEdges ?? result.ramex_edges).map((edge) => edgeToReport({
+          From: String((edge as Record<string, unknown>).From ?? (edge as Record<string, unknown>).from ?? ""),
+          To: String((edge as Record<string, unknown>).To ?? (edge as Record<string, unknown>).to ?? ""),
+          Weight: readFirstNumber(edge as Record<string, unknown>, ["Weight", "weight"]),
+          Level: readFirstNumber(edge as Record<string, unknown>, ["Level", "level"]),
+        })),
         polytreeEdges: result.formal_polytree?.edges?.map(pureEdgeToReport),
         pureRamex: {
           bestAlgorithm: uploadBest,
           structuralType: uploadStructuralType,
           summary: result.pure_validation?.summary ?? pureRamexScientificSummary(undefined, result.pure_ramex),
+          ramex2007Root: result.pure_ramex?.ramex2007?.root,
+          ramex2007Edges: result.pure_ramex?.ramex2007?.edges?.map(pureEdgeToReport),
+          ramex2007DominantPaths: result.pure_ramex?.ramex2007?.expansion?.dominant_paths?.map((path) => ({
+            path: path.path,
+            branchDepth: path.branch_depth,
+            pathWeight: path.path_weight,
+            bottleneckWeight: path.bottleneck_weight,
+          })),
           rows: uploadPureRows.map((row) => ({
             algorithm: row.Algoritmo ?? "Sem dados gerados",
             method: row.Metodo,
@@ -3518,17 +5377,18 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
         },
         ramexForum: forumToReport(result.ramex_forum ?? result.forum, result.job_id),
         interpretations: {
-          executiveSummary: `${result.interpretation} Inclui RAMEX puro e validação Poly-tree.`,
+          executiveSummary: `${result.interpretation} A leitura separa camada observacional, RAMEX 2007 formal e RAMEX-Forum temporal quando executado.`,
           graphInterpretation: result.interpretation,
           ramexInterpretation: "",
           polytreeInterpretation:
-            "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
+            "A camada experimental/histórica é apresentada como anexo e não substitui o RAMEX 2007 formal.",
           conclusion:
-            "A análise usa RAMEX puro e validação Poly-tree.",
+            "A análise mantém RAMEX 2007 formal e RAMEX-Forum temporal separados por semântica e artefactos.",
         },
         images: {
-          graph: result.files.graph_png ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.graph_png}` : undefined,
+          graph: normalizedResult?.observed.graphImage,
           ramex: result.files.ramex_png ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.ramex_png}` : undefined,
+          ramex2007: normalizedResult?.ramex2007.phase2.treeCompleteImage,
           polytree: result.files.back_forward_formal_png
               ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.back_forward_formal_png}`
               : undefined,
@@ -3543,29 +5403,27 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
     : undefined;
   const forumResult = result?.ramex_forum ?? result?.forum;
   const graphImageSrc = result?.files.graph_png ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.graph_png}` : undefined;
-  const pureImageFile = result?.files.back_forward_formal_png ?? result?.files.ramex_png;
-  const pureImageSrc = result && pureImageFile ? `${API_BASE_URL}/api/file/${result.job_id}/${pureImageFile}` : undefined;
+  const pureImageSrc = normalizedResult?.ramex2007.phase2.treeCompleteImage;
   const forumImageSrc = result && forumResult?.files?.graph_png
     ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${forumResult.files.graph_png}`
     : undefined;
-  const graphRelationRows: GraphRelationRow[] = (result?.graph_edges ?? result?.top_transitions ?? [])
+  const graphRelationRows: GraphRelationRow[] = (normalizedResult?.observed.graphEdges ?? result?.top_transitions ?? [])
     .slice(0, 24)
     .map((edge) => ({ from: edge.From, to: edge.To, weight: edge.Weight }));
-  const pureRelationRows: GraphRelationRow[] = (result?.formal_polytree?.edges ?? [])
+  const pureRelationRows: GraphRelationRow[] = (normalizedResult?.ramex2007.phase2.selectedEdges ?? [])
+    .map((edge) => edge as Record<string, unknown>)
     .map((edge) => ({
-      from: edge.from ?? "",
-      to: edge.to ?? "",
-      weight: edge.weight,
-      mode: edge.direction,
+      from: String(edge.from ?? edge.From ?? ""),
+      to: String(edge.to ?? edge.To ?? ""),
+      weight: readFirstNumber(edge, ["weight", "Weight"]),
+      mode: String(edge.direction ?? edge.Direction ?? ""),
     }));
-  const fallbackPureRelationRows: GraphRelationRow[] = (result?.ramex_edges ?? [])
-    .map((edge) => ({ from: edge.From, to: edge.To, weight: edge.Weight }));
-  const forumRelationRows: GraphRelationRow[] = (forumResult?.influence_graph?.edges ?? [])
+  const forumRelationRows: GraphRelationRow[] = (normalizedResult?.forum.phase2?.selected_edges ?? normalizedResult?.forum.phase1?.influence_graph?.edges ?? [])
     .map((edge) => ({
       from: edge.From ?? "",
       to: edge.To ?? "",
       weight: edge.Weight,
-      relativeWeight: edge.RelativeWeight,
+      relativeWeight: edge.SmoothedWeight,
       rank: edge.Rank,
     }));
 
@@ -3586,12 +5444,12 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
             </p>
           </div>
           <div className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
-            {analysisType === "pure" ? "RAMEX Puro" : analysisType === "forum" ? "Forum" : "Both"}
+            {analysisType === "pure" ? "RAMEX 2007" : analysisType === "forum" ? "Forum" : "Both"}
           </div>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <MetricCard label="Dataset" value={result?.filename || file?.name || "Aguardando ficheiro"} note="Artefacto em análise" />
+          <MetricCard label="Dataset" value={result?.filename || file?.name || "A Aguardar ficheiro"} note="Artefacto em análise" />
           <MetricCard label="Sequências" value={formatNumber(result?.metrics.sequences ?? 0)} note="Reconstruídas" />
           <MetricCard label="Nós" value={formatNumber(result?.metrics.nodes ?? 0)} note="Estados distintos" />
           <MetricCard label="Arestas" value={formatNumber(result?.metrics.edges ?? 0)} note="Transições ponderadas" />
@@ -3616,6 +5474,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                   setFile(event.target.files?.[0] ?? null);
                   setJobId("");
                   setColumns([]);
+                  setPreviewRows([]);
                   setResult(null);
                   setJobState(null);
                 }}
@@ -3635,6 +5494,9 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                     setCaseColumn(mapping.caseColumn);
                     setTimeColumn(mapping.timeColumn);
                     setEventColumn(mapping.eventColumn);
+                    const advanced = inferAdvancedEventColumns(columns, mapping.caseColumn, mapping.timeColumn, mapping.eventColumn);
+                    setAdvancedEventColumns(advanced.selected);
+                    setNumericDiscretization(advanced.numericRules);
                   }
                 }}
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
@@ -3652,39 +5514,263 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                 onChange={(event) => setAnalysisType(event.target.value as AnalysisType)}
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/90 px-3 py-2 text-sm transition focus:border-cyan-600 focus:outline-none focus:ring-4 focus:ring-cyan-200"
               >
-                <option value="pure">RAMEX Puro</option>
+                <option value="pure">RAMEX 2007</option>
                 <option value="forum">RAMEX-Forum</option>
-                <option value="both">RAMEX Puro + RAMEX-Forum</option>
+                <option value="both">RAMEX 2007 + RAMEX-Forum</option>
               </select>
               <p className="mt-2 text-xs leading-5 text-slate-500">
-                O RAMEX Puro condensa a estrutura sequencial em Poly-tree formal. O RAMEX-Forum complementa a análise
-                com pesos relativos, influência e caminhos dominantes.
+                O RAMEX 2007 usa frequências absolutas e rooted branching. O RAMEX-Forum usa influência temporal,
+                latência, smoothing, filtros e extração estrutural própria.
               </p>
             </label>
 
-            {canMapColumns ? (
-              <div className="grid gap-3 md:grid-cols-3">
-                {[
-                  ["Entidade/caso", caseColumn, setCaseColumn],
-                  ["Tempo/ordem", timeColumn, setTimeColumn],
-                  ["Evento/categoria", eventColumn, setEventColumn],
-                ].map(([label, value, setter]) => (
-                  <label key={String(label)} className="block">
-                    <span className="text-xs font-semibold uppercase text-slate-500">{String(label)}</span>
+            {analysisType !== "pure" ? (
+              <div className="rounded-2xl border border-teal-100 bg-teal-50/70 p-4">
+                <h4 className="font-semibold text-ink">Controlos avançados RAMEX-Forum</h4>
+                <p className="mt-2 text-xs leading-5 text-slate-600">
+                  Estes parâmetros aplicam-se apenas à Fase 2 sobre a rede temporal de influência. O modo auto escolhe Forward quando existe nó inicial conhecido ou inferível; caso contrário usa Back-and-Forward.
+                </p>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <label className="block">
+                    <span className="text-xs font-semibold uppercase text-slate-500">initial_node</span>
+                    <input
+                      value={forumInitialNode}
+                      onChange={(event) => setForumInitialNode(event.target.value)}
+                      placeholder="opcional"
+                      className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-semibold uppercase text-slate-500">force_heuristic</span>
                     <select
-                      value={String(value)}
-                      onChange={(event) => (setter as (value: string) => void)(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/90 px-3 py-2 text-sm transition focus:border-thesis focus:outline-none focus:ring-4 focus:ring-thesis/10"
+                      value={forumForceHeuristic}
+                      onChange={(event) => setForumForceHeuristic(event.target.value as "auto" | "forward" | "back_and_forward")}
+                      className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
                     >
-                      <option value="">Selecionar</option>
-                      {columns.map((column) => (
-                        <option key={column} value={column}>
-                          {column}
-                        </option>
-                      ))}
+                      <option value="auto">auto</option>
+                      <option value="forward">forward</option>
+                      <option value="back_and_forward">back_and_forward</option>
                     </select>
                   </label>
-                ))}
+                  <label className="block">
+                    <span className="text-xs font-semibold uppercase text-slate-500">forward_top_k</span>
+                    <input
+                      value={forumForwardTopK}
+                      onChange={(event) => setForumForwardTopK(event.target.value)}
+                      type="number"
+                      min="1"
+                      className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-semibold uppercase text-slate-500">max_depth</span>
+                    <input
+                      value={forumMaxDepth}
+                      onChange={(event) => setForumMaxDepth(event.target.value)}
+                      type="number"
+                      min="1"
+                      className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <label className="block md:col-span-2">
+                    <span className="text-xs font-semibold uppercase text-slate-500">min_smoothed_weight</span>
+                    <input
+                      value={forumMinSmoothedWeight}
+                      onChange={(event) => setForumMinSmoothedWeight(event.target.value)}
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="opcional"
+                      className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                    />
+                  </label>
+                </div>
+              </div>
+            ) : null}
+
+            {canMapColumns ? (
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEventMode("simple")}
+                      className={`rounded-xl px-3 py-2 text-sm font-semibold ${eventMode === "simple" ? "bg-thesis text-white" : "border border-slate-200 bg-white text-slate-700"}`}
+                    >
+                      Modo simples
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEventMode("advanced");
+                        const inferred = inferAdvancedEventColumns(columns, caseColumn, timeColumn, eventColumn);
+                        setAdvancedEventColumns(inferred.selected);
+                        setNumericDiscretization((current) => ({ ...inferred.numericRules, ...current }));
+                      }}
+                      className={`rounded-xl px-3 py-2 text-sm font-semibold ${eventMode === "advanced" ? "bg-thesis text-white" : "border border-slate-200 bg-white text-slate-700"}`}
+                    >
+                      Modo avançado de eventos
+                    </button>
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-slate-600">
+                    O RAMEX não analisa todas as variáveis tabulares diretamente. As variáveis selecionadas são
+                    transformadas em eventos sequenciais discretos e depois são analisadas as transições entre eventos.
+                  </p>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  {[
+                    ["Entidade/caso", caseColumn, setCaseColumn],
+                    ["Tempo/ordem", timeColumn, setTimeColumn],
+                    ["Evento/categoria", eventColumn, setEventColumn],
+                  ].map(([label, value, setter]) => (
+                    <label key={String(label)} className={`block ${eventMode === "advanced" && label === "Evento/categoria" ? "opacity-60" : ""}`}>
+                      <span className="text-xs font-semibold uppercase text-slate-500">{String(label)}</span>
+                      <select
+                        value={String(value)}
+                        onChange={(event) => (setter as (value: string) => void)(event.target.value)}
+                        disabled={eventMode === "advanced" && label === "Evento/categoria"}
+                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/90 px-3 py-2 text-sm transition focus:border-thesis focus:outline-none focus:ring-4 focus:ring-thesis/10"
+                      >
+                        <option value="">Selecionar</option>
+                        {columns.map((column) => (
+                          <option key={column} value={column}>
+                            {column}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ))}
+                </div>
+
+                {eventMode === "advanced" ? (
+                  <div className="rounded-2xl border border-cyan-100 bg-cyan-50/70 p-4">
+                    <h4 className="font-semibold text-ink">Construção avançada do evento</h4>
+                    {advancedRecommendation.recommendation ? (
+                      <p className="mt-2 text-xs leading-5 text-cyan-800">{advancedRecommendation.recommendation}</p>
+                    ) : null}
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <label className="block">
+                        <span className="text-xs font-semibold uppercase text-slate-500">Janela temporal para case_id</span>
+                        <select
+                          value={caseWindow}
+                          onChange={(event) => setCaseWindow(event.target.value as CaseWindowMode)}
+                          className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        >
+                          <option value="none">Usar Entidade/caso</option>
+                          <option value="daily">Diária</option>
+                          <option value="weekly">Semanal</option>
+                          <option value="monthly">Mensal</option>
+                          <option value="quarterly">Trimestral</option>
+                        </select>
+                      </label>
+                      <div className="rounded-xl border border-cyan-100 bg-white/80 p-3 text-xs leading-5 text-slate-600">
+                        Para datasets financeiros, uma janela mensal cria casos como W2024_01, permitindo analisar
+                        relações entre vários ativos dentro da mesma janela temporal.
+                      </div>
+                    </div>
+
+                    {structuralSelectedEventColumns.length ? (
+                      <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800">
+                        Esta coluna é usada para estruturar a sequência e normalmente não deve fazer parte do evento:
+                        {" "}{structuralSelectedEventColumns.join(", ")}.
+                      </div>
+                    ) : null}
+
+                    <div className="mt-4 grid gap-2 md:grid-cols-2">
+                      {columns.map((column) => {
+                        const selected = advancedEventColumns.includes(column);
+                        const numeric = isNumericPreviewColumn(previewRows, column);
+                        const structural = isStructuralEventColumn(column, caseColumn, timeColumn);
+                        return (
+                          <div key={column} className={`rounded-xl border bg-white p-3 ${structural && selected ? "border-amber-300" : "border-slate-200"}`}>
+                            <label className="flex items-center gap-2 text-sm font-semibold text-ink">
+                              <input
+                                type="checkbox"
+                                checked={selected}
+                                onChange={(event) => {
+                                  setAdvancedEventColumns((current) =>
+                                    event.target.checked ? [...current, column] : current.filter((item) => item !== column),
+                                  );
+                                }}
+                              />
+                              {column}
+                              {numeric ? <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] text-amber-800">numérica</span> : null}
+                              {structural ? <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">estrutural</span> : null}
+                            </label>
+                            {structural && selected ? (
+                              <p className="mt-2 text-xs leading-5 text-amber-700">
+                                Esta coluna é usada para estruturar a sequência e normalmente não deve fazer parte do evento.
+                              </p>
+                            ) : null}
+                            {selected && numeric ? (
+                              <select
+                                value={numericDiscretization[column] ?? ""}
+                                onChange={(event) => setNumericDiscretization((current) => ({
+                                  ...current,
+                                  [column]: event.target.value as NumericDiscretizationMode,
+                                }))}
+                                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-2 py-1 text-xs"
+                              >
+                                <option value="">Escolher discretização</option>
+                                <option value="quantile">Quantis: LOW / MEDIUM / HIGH</option>
+                                <option value="variation_pct">Variação %: STRONG_DOWN a STRONG_UP</option>
+                                <option value="ignore">Ignorar coluna numérica</option>
+                              </select>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
+                      <p className="text-xs font-semibold uppercase text-slate-500">Preview dos eventos gerados</p>
+                      <p className="mt-2 text-xs leading-5 text-slate-600">
+                        Colunas usadas no evento: {advancedEventColumns.length ? advancedEventColumns.join(", ") : "nenhuma"}.
+                        {" "}Eventos únicos no preview: {uniquePreviewCount}.
+                        {" "}Exemplo final: {generatedEventPreview[0] ?? "sem exemplo"}.
+                      </p>
+                      {eventMode === "advanced" && advancedEventColumns.length > 0 && generatedEventPreview.length === 0 ? (
+                        <p className="mt-2 text-xs leading-5 text-amber-700">
+                          As colunas selecionadas não produziram eventos no preview local. O upload pode avançar; se os valores
+                          estiverem vazios ou as regras forem incompatíveis, o backend devolve erro específico.
+                        </p>
+                      ) : null}
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {generatedEventPreview.length ? generatedEventPreview.map((eventName, index) => (
+                          <span key={`${eventName}-${index}`} className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
+                            {eventName}
+                          </span>
+                        )) : <span className="text-sm text-slate-500">Sem preview disponível.</span>}
+                      </div>
+                      {uniquePreviewCount > 8 ? (
+                        <p className="mt-2 text-xs text-amber-700">Número elevado de eventos únicos no preview. Considere discretizar ou reduzir colunas.</p>
+                      ) : null}
+                      {generatedEventPreviewRows.length ? (
+                        <div className="mt-3 overflow-auto rounded-lg border border-slate-100">
+                          <table className="min-w-full text-left text-xs">
+                            <thead className="bg-slate-50 text-slate-500">
+                              <tr>
+                                <th className="px-3 py-2">generated_event</th>
+                                <th className="px-3 py-2">generated_case_id</th>
+                                <th className="px-3 py-2">time/order</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {generatedEventPreviewRows.slice(0, 5).map((row, index) => (
+                                <tr key={`${row.generatedEvent}-${index}`} className="border-t border-slate-100">
+                                  <td className="px-3 py-2 font-semibold text-ink">{row.generatedEvent}</td>
+                                  <td className="px-3 py-2 text-slate-600">{row.generatedCaseId || "-"}</td>
+                                  <td className="px-3 py-2 text-slate-600">{row.order || "-"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             ) : null}
 
@@ -3997,8 +6083,23 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
             <MetricCard label="Nós" value={formatNumber(result.metrics.nodes)} />
             <MetricCard label="Arestas" value={formatNumber(result.metrics.edges)} />
             <MetricCard label="Densidade" value={result.metrics.density.toFixed(4)} />
-            <MetricCard label="PESO POLY-TREE FORMAL" value={`${result.metrics.preserved_percentage.toFixed(2)}%`} />
+            <MetricCard label="Camada observacional" value={formatNumber(normalizedResult?.observed.totalWeight ?? 0)} note="peso total observado" />
           </div>
+
+          <CoverageDiagnosticsPanel metrics={result.coverage_metrics} />
+          {normalizedResult?.errors.length ? (
+            <div className="space-y-2">
+              {normalizedResult.errors.map((message) => <WarningPanel key={message}>{message}</WarningPanel>)}
+            </div>
+          ) : null}
+          {normalizedResult?.warnings.length ? (
+            <div className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-900">
+              <p className="font-semibold">Avisos de consistência</p>
+              <ul className="mt-2 list-disc pl-5">
+                {normalizedResult.warnings.map((message) => <li key={message}>{message}</li>)}
+              </ul>
+            </div>
+          ) : null}
 
           <div className="flex flex-wrap gap-2">
             <ReportButton onClick={handleDownloadUploadReport} />
@@ -4006,9 +6107,9 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
           </div>
           {uploadReportProblem ? <WarningPanel>{uploadReportProblem}</WarningPanel> : null}
 
-          {result.metrics.dense ? (
+          {result.metrics.dense || result.graph_edges.length > 220 ? (
             <WarningPanel>
-              O grafo gerado é denso. Para melhorar a leitura, aumente a frequência mínima ou use Top N.
+              Grafo denso: a visualização em rede pode ocultar ou sobrepor relações. Use Sankey ou filtros visuais para interpretar os fluxos principais.
             </WarningPanel>
           ) : null}
 
@@ -4032,11 +6133,11 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 
           <div className="grid grid-cols-1 gap-8">
             <GraphViewer
-              title="Grafo completo"
-              subtitle="Rede dirigida ponderada construída a partir das transições observadas no dataset."
+              title="Camada observacional — grafo observado"
+              subtitle="Rede dirigida ponderada construída a partir das transições observadas no dataset. O grafo observado representa as transições completas disponíveis para análise."
               imageSrc={graphImageSrc}
-              nodes={result.metrics.nodes}
-              edges={result.metrics.edges}
+              nodes={normalizedResult?.observed.nodes}
+              edges={normalizedResult?.observed.edges}
               mode="complete"
               legend="Grafo observado"
             >
@@ -4045,33 +6146,39 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 
             {result.analysis_type !== "forum" ? (
               <GraphViewer
-                title="Poly-tree formal / RAMEX"
-                subtitle={`Estrutura RAMEX pura selecionada a partir do grafo completo. Raiz/âncora: ${rootNode ?? "indisponível"}.`}
+                title="RAMEX 2007 formal — árvore técnica"
+                subtitle={`Maximum Weight Rooted Branching sobre a rede formal RAMEX 2007. Não usa heurísticas históricas como fallback. Raiz: ${normalizedResult?.ramex2007.phase2.root ?? "indisponível"}.`}
                 imageSrc={pureImageSrc}
-                nodes={result.formal_polytree?.metrics?.selected_nodes ?? result.metrics.ramex_edges + 1}
-                edges={result.formal_polytree?.metrics?.selected_edges ?? result.metrics.ramex_edges}
+                nodes={normalizedResult?.ramex2007.phase2.metrics?.selected_nodes}
+                edges={normalizedResult?.ramex2007.phase2.metrics?.selected_edges}
                 mode="pure"
-                legend="RAMEX Puro"
+                legend="RAMEX 2007"
               >
                 <GraphRelationsTable
                   title="Aresta selecionada"
-                  rows={pureRelationRows.length > 0 ? pureRelationRows : fallbackPureRelationRows}
+                  rows={pureRelationRows}
                   mode="pure"
                 />
               </GraphViewer>
             ) : null}
 
+            <SankeyPanel
+              edges={normalizedResult?.observed.sankeyData ?? []}
+              title="Sankey do grafo observado"
+              description="Fluxos de transição construídos a partir das arestas disponíveis no resultado da análise."
+            />
+
             {result.analysis_type === "both" || result.analysis_type === "forum" ? (
               <GraphViewer
-                title="RAMEX-Forum"
-                subtitle="Grafo de influência RAMEX-Forum com relações normalizadas e leitura complementar de caminhos dominantes."
-                imageSrc={forumImageSrc}
-                nodes={forumResult?.metrics?.nodes}
-                edges={forumResult?.metrics?.edges}
+                title="RAMEX-Forum temporal — Fase 2"
+                subtitle="Estrutura de influência temporal extraída por Forward Tree ou Back-and-Forward Poly-tree sobre a rede da Fase 1."
+                imageSrc={normalizedResult?.forum.phase2?.files?.phase2_structure_png ? forumFileUrl(result, normalizedResult.forum.phase2.files.phase2_structure_png) : forumImageSrc}
+                nodes={normalizedResult?.forum.phase2?.metrics?.nodes_after}
+                edges={normalizedResult?.forum.phase2?.metrics?.edges_after}
                 mode="forum"
-                legend="Influence analysis"
+                legend="RAMEX-Forum temporal"
               >
-                <GraphRelationsTable title="Relação normalizada" rows={forumRelationRows} mode="forum" />
+                <GraphRelationsTable title="Influência selecionada" rows={forumRelationRows} mode="forum" />
               </GraphViewer>
             ) : null}
           </div>
@@ -4101,6 +6208,7 @@ export default function Home() {
   const [datasetId, setDatasetId] = useState<DatasetId>("03");
   const [viewId, setViewId] = useState<ViewId>("upload");
   const [validationRows, setValidationRows] = useState<ValidationRow[]>([]);
+  const [ramex2007ComparisonRows, setRamex2007ComparisonRows] = useState<Ramex2007DatasetComparisonRow[]>([]);
   const [matrix, setMatrix] = useState<MatrixData>();
   const [graphEdges, setGraphEdges] = useState<Edge[]>([]);
   const [ramexEdges, setRamexEdges] = useState<Edge[]>([]);
@@ -4124,6 +6232,18 @@ export default function Home() {
         if (mounted) setValidationRows(validation);
       } catch (err) {
         errs.push(err instanceof Error ? err.message : "Erro ao carregar validação comparativa.");
+      }
+
+      try {
+        const rows = await Promise.all(
+          (["01", "02", "03"] as DatasetId[]).map(async (id) => {
+            const raw = await loadJson<PureRamexResult>(`ramex2007_dataset${id}.json`);
+            return ramex2007DatasetComparisonRow(id, raw);
+          }),
+        );
+        if (mounted) setRamex2007ComparisonRows(rows.filter(Boolean) as Ramex2007DatasetComparisonRow[]);
+      } catch (err) {
+        errs.push(err instanceof Error ? err.message : "Erro ao carregar comparação RAMEX 2007.");
       }
 
       try {
@@ -4194,7 +6314,20 @@ export default function Home() {
       let backForward: PureRamexResult | undefined;
       let comparisonRows: PureRamexComparisonRow[] = [];
 
-      try { ramex2007 = await loadJson<PureRamexResult>(`ramex2007_dataset${datasetId}.json`); }
+      try {
+        const rawRamex2007 = await loadJson<PureRamexResult>(`ramex2007_dataset${datasetId}.json`);
+        const normalized = normalizeRamex2007Result(rawRamex2007, {
+          imageUrl: dataPath(`ramex2007_dataset${datasetId}.png`),
+          csvUrl: dataPath(`ramex2007_dataset${datasetId}.csv`),
+          jsonUrl: dataPath(`ramex2007_dataset${datasetId}.json`),
+        });
+        ramex2007 = {
+          ...rawRamex2007,
+          imageUrl: normalized?.imageUrl,
+          csvUrl: normalized?.csvUrl,
+          jsonUrl: normalized?.jsonUrl,
+        };
+      }
       catch { pureMissing.push(`ramex2007_dataset${datasetId}.json`); }
 
       try { forward = await loadJson<PureRamexResult>(`ramex_forward_dataset${datasetId}.json`); }
@@ -4235,7 +6368,9 @@ export default function Home() {
     [ramexEdges],
   );
 
-  const denseGraph = selectedValidation ? selectedValidation.Arestas_Grafo > 1000 : graphEdges.length > 1000;
+  const denseGraph = selectedValidation
+    ? selectedValidation.Arestas_Grafo > 220 || selectedValidation.Densidade_Aproximada > 0.15
+    : graphEdges.length > 220;
   const staticTopTransitions = useMemo(
     () => [...graphEdges].sort((a, b) => b.Weight - a.Weight).slice(0, 10),
     [graphEdges],
@@ -4246,8 +6381,8 @@ export default function Home() {
   function handleDownloadStaticReport() {
     const report = buildTechnicalReport({
       datasetName: datasets[datasetId].label,
-      origin: "prÃ©-carregado",
-      datasetType: "dataset prÃ©-carregado",
+      origin: "pré-carregado",
+      datasetType: "dataset pré-carregado",
       params: {
         minFrequency: 0,
         topN: null,
@@ -4327,7 +6462,7 @@ export default function Home() {
         datasetName: datasets[datasetId].label,
         datasetOrigin: "preloaded",
         analysisType: "pure",
-        datasetType: "dataset prÃ©-carregado",
+        datasetType: "dataset pré-carregado",
         generatedAt: new Date().toLocaleString("pt-PT"),
         parameters: {
           minFrequency: 0,
@@ -4371,20 +6506,29 @@ export default function Home() {
           bestAlgorithm: pureRamexBest(pureRamexData),
           structuralType: pureRamexStructuralType(selectedValidation, pureRamexData),
           summary: pureRamexScientificSummary(selectedValidation, pureRamexData),
+          ramex2007Root: pureRamexData?.ramex2007?.root,
+          ramex2007Edges: pureRamexData?.ramex2007?.edges?.map(pureEdgeToReport),
+          ramex2007DominantPaths: pureRamexData?.ramex2007?.expansion?.dominant_paths?.map((path) => ({
+            path: path.path,
+            branchDepth: path.branch_depth,
+            pathWeight: path.path_weight,
+            bottleneckWeight: path.bottleneck_weight,
+          })),
           rows: pureRamexRowsForReport(pureRamexData),
         },
         interpretations: {
-          executiveSummary: `${selectedValidation.Interpretacao} Inclui RAMEX puro e validação Poly-tree.`,
+          executiveSummary: `${selectedValidation.Interpretacao} Inclui RAMEX 2007 e validação Poly-tree.`,
           graphInterpretation: selectedValidation.Interpretacao,
           ramexInterpretation: "",
           polytreeInterpretation:
             "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
           conclusion:
-            "A análise usa RAMEX puro e validação Poly-tree.",
+            "A análise usa RAMEX 2007 e validação Poly-tree.",
         },
         images: {
           graph: dataPath(`grafo_dataset${datasetId}.png`),
           ramex: dataPath(`ramex_dataset${datasetId}.png`),
+          ramex2007: dataPath(`ramex2007_dataset${datasetId}.png`),
           polytree: dataPath(`ramex_back_forward_formal_dataset${datasetId}.png`),
         },
       }
@@ -4439,17 +6583,25 @@ export default function Home() {
           bestAlgorithm: uploadedResult.pure_validation?.best_algorithm ?? pureRamexBest(uploadedResult.pure_ramex),
           summary: uploadedResult.pure_validation?.summary ?? pureRamexScientificSummary(demoValidation, uploadedResult.pure_ramex),
           structuralType: uploadedResult.pure_validation?.structural_type ?? pureRamexStructuralType(demoValidation, uploadedResult.pure_ramex),
+          ramex2007Root: uploadedResult.pure_ramex?.ramex2007?.root,
+          ramex2007Edges: uploadedResult.pure_ramex?.ramex2007?.edges?.map(pureEdgeToReport),
+          ramex2007DominantPaths: uploadedResult.pure_ramex?.ramex2007?.expansion?.dominant_paths?.map((path) => ({
+            path: path.path,
+            branchDepth: path.branch_depth,
+            pathWeight: path.path_weight,
+            bottleneckWeight: path.bottleneck_weight,
+          })),
           rows: pureRamexRowsForReport(uploadedResult.pure_ramex),
         },
         ramexForum: forumToReport(uploadedResult.ramex_forum ?? uploadedResult.forum, uploadedResult.job_id),
         interpretations: {
-          executiveSummary: `${uploadedResult.interpretation} Inclui RAMEX puro e validação Poly-tree.`,
+          executiveSummary: `${uploadedResult.interpretation} Inclui RAMEX 2007 e validação Poly-tree.`,
           graphInterpretation: uploadedResult.interpretation,
           ramexInterpretation: "",
           polytreeInterpretation:
             "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
           conclusion:
-            "A análise usa RAMEX puro e validação Poly-tree.",
+            "A análise usa RAMEX 2007 e validação Poly-tree.",
         },
         images: {
           graph: uploadedResult.files.graph_png
@@ -4457,6 +6609,9 @@ export default function Home() {
             : undefined,
           ramex: uploadedResult.files.ramex_png
             ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.ramex_png}`
+            : undefined,
+          ramex2007: uploadedResult.files.ramex2007_png
+            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.ramex2007_png}`
             : undefined,
           polytree: uploadedResult.files.back_forward_formal_png
             ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.back_forward_formal_png}`
@@ -4487,7 +6642,7 @@ export default function Home() {
 
   const modeBadge = viewId === "forum" ? "RAMEX-Forum"
     : (viewId === "upload" && uploadedResult?.analysis_type === "both") ? "Comparativo"
-    : "RAMEX Puro";
+    : "RAMEX 2007";
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
@@ -4682,6 +6837,9 @@ export default function Home() {
 
             {viewId === "graph" ? (
               <section className="space-y-4">
+                <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm leading-6 text-slate-600 shadow-panel">
+                  O grafo observado representa as transições completas disponíveis para análise. Limitações indicadas neste ecrã são apenas visuais.
+                </div>
                 <GraphCanvas edges={graphEdges} denseHint={denseGraph} />
                 <div className="grid gap-4 lg:grid-cols-2">
                   <img
@@ -4706,15 +6864,21 @@ export default function Home() {
                 <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
                   <img
                     src={dataPath(`ramex_dataset${datasetId}.png`)}
-                    alt={`Estrutura RAMEX base do dataset ${datasetId}`}
+                    alt={`RAMEX simplificado - heurística experimental do dataset ${datasetId}`}
                     className="max-h-[32rem] w-full rounded-lg border border-slate-200 bg-white object-contain p-3 shadow-panel"
                   />
                   <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
-                    <h3 className="text-lg font-semibold text-ink">Estrutura principal</h3>
+                    <h3 className="text-lg font-semibold text-ink">RAMEX simplificado - heurística experimental</h3>
                     <p className="mt-3 text-sm leading-6 text-slate-600">
                       Nó raiz destacado: <span className="font-semibold text-amberline">{rootNode ?? "indisponível"}</span>.
-                      A estrutura mantém as transições selecionadas pela fase 07 e preserva os pesos originais.
+                      Esta fase histórica seleciona ligações dominantes por expansão greedy e não corresponde ao RAMEX 2007 formal. A cobertura é apresentada no Diagnóstico de Cobertura.
                     </p>
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <MetricCard label="Nós no grafo" value={formatNumber(selectedValidation?.Nos_Grafo ?? 0)} />
+                      <MetricCard label="Nós RAMEX" value={formatNumber(new Set(ramexEdges.flatMap((edge) => [edge.From, edge.To])).size)} />
+                      <MetricCard label="Arestas no grafo" value={formatNumber(selectedValidation?.Arestas_Grafo ?? graphEdges.length)} />
+                      <MetricCard label="Arestas RAMEX" value={formatNumber(ramexEdges.length)} />
+                    </div>
                     <p className="mt-4 text-3xl font-semibold text-thesis">
                       {(selectedValidation?.Percentagem_Peso_Preservado ?? 0).toFixed(2)}%
                     </p>
@@ -4724,8 +6888,32 @@ export default function Home() {
               </section>
             ) : null}
 
+            {viewId === "sankey" ? (
+              <SankeyPanel
+                edges={uploadedResult?.graph_edges ?? graphEdges}
+                title={uploadedResult ? "Sankey do grafo observado enviado" : `Sankey do ${datasets[datasetId].label}`}
+                description="Visualização dos fluxos principais entre eventos. O limite escolhido é apenas visual e não altera os dados, os filtros nem o RAMEX."
+              />
+            ) : null}
+
             {viewId === "polytree" ? (
               <section className="space-y-4">
+                <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-panel">
+                  <h3 className="text-lg font-semibold text-ink">Leitura da Poly-tree</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    A estrutura RAMEX seleciona ligações dominantes e pode não cobrir todos os nós do grafo original. A cobertura é apresentada no Diagnóstico de Cobertura.
+                  </p>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                    <MetricCard label="Nós no grafo" value={formatNumber(uploadedResult?.metrics.nodes ?? selectedValidation?.Nos_Grafo ?? 0)} />
+                    <MetricCard label="Nós na poly-tree" value={formatNumber(uploadedResult?.polytree?.metrics.polytree_nodes ?? polytreeData?.metrics.polytree_nodes ?? 0)} />
+                    <MetricCard label="Arestas no grafo" value={formatNumber(uploadedResult?.metrics.edges ?? selectedValidation?.Arestas_Grafo ?? graphEdges.length)} />
+                    <MetricCard label="Arestas na poly-tree" value={formatNumber(uploadedResult?.polytree?.metrics.polytree_edges ?? polytreeData?.metrics.polytree_edges ?? 0)} />
+                    <MetricCard
+                      label="Peso preservado"
+                      value={`${(uploadedResult?.polytree?.metrics.preserved_weight_percent ?? polytreeData?.metrics.preserved_weight_percent ?? selectedValidation?.Percentagem_Peso_Preservado ?? 0).toFixed(2)}%`}
+                    />
+                  </div>
+                </div>
                 <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-panel">
                   <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
                     <label className="block">
@@ -4752,7 +6940,11 @@ export default function Home() {
                     estratégia pelo backend, use Upload Dataset ou o script `10_ramex_polytree.py`.
                   </p>
                 </div>
-                <PolyTreePanel data={polytreeData} rows={polytreeRows} error={polytreeError} />
+                <PolyTreePanel
+                  data={uploadedResult?.polytree ?? polytreeData}
+                  rows={uploadedResult?.polytree_edges ?? polytreeRows}
+                  error={polytreeError}
+                />
               </section>
             ) : null}
 
@@ -4762,8 +6954,8 @@ export default function Home() {
                   <ReportButton onClick={handleDownloadStaticReport} disabled={!selectedValidation} />
                   <ReportExportButton data={staticReportData} disabled={!staticReportData} />
                 </div>
-                <ValidationCharts rows={validationRows} />
-                <ValidationTable rows={validationRows} />
+                <ValidationCharts rows={ramex2007ComparisonRows} />
+                <ValidationTable rows={ramex2007ComparisonRows} />
               </section>
             ) : null}
 

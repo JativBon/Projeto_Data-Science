@@ -1,4 +1,6 @@
-From,To,Weight,Level,Method,IsRootedBranching
-Tecnologia,Higiene,26,1,networkx_arborescence,True
-Tecnologia,Limpeza,22,1,networkx_arborescence,True
-Tecnologia,Mercearia,75,1,networkx_arborescence,True
+From,To,Weight,Level
+SOURCE,Tecnologia,17,1
+Tecnologia,Higiene,26,2
+Tecnologia,Limpeza,22,2
+Tecnologia,Mercearia,75,2
+Mercearia,SINK,25,3

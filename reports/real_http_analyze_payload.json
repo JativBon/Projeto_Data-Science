@@ -1,0 +1,25 @@
+﻿{
+    "job_id":  "99f066399a3844babe8344b18a95c17e",
+    "dataset_type":  "event_table",
+    "analysis_type":  "both",
+    "case_column":  "case_id",
+    "entity_column":  "case_id",
+    "time_column":  "date",
+    "event_mode":  "advanced",
+    "event_columns":  [
+                          "asset",
+                          "signal"
+                      ],
+    "case_window":  "use_entity",
+    "min_frequency":  0,
+    "top_n":  null,
+    "strategy":  "top-k",
+    "polytree_strategy":  "top-k",
+    "top_k_per_node":  2,
+    "max_depth":  5,
+    "preserve_weight_target":  0.7,
+    "max_branching":  3,
+    "forum_forward_top_k":  1,
+    "forum_max_depth":  10,
+    "forum_force_heuristic":  "auto"
+}

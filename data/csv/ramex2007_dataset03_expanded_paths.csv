@@ -1,0 +1,4 @@
+path,start,end,branch_depth,path_weight,bottleneck_weight,edges
+Tecnologia -> Mercearia,Tecnologia,Mercearia,1,75,75,1
+Tecnologia -> Higiene,Tecnologia,Higiene,1,26,26,1
+Tecnologia -> Limpeza,Tecnologia,Limpeza,1,22,22,1

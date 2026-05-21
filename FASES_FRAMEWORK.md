@@ -749,5 +749,6 @@ Caminho backend: (.venv) PS C:\Users\joaqu\Documents\Projeto - Data Sciense\back
 ..\venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000
 
 Caminho frontend: (.venv) PS C:\Users\joaqu\Documents\Projeto - Data Sciense\frontend-ramex>
-
 npm.cmd run dev -- -p 3000
+
+a ava

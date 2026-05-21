@@ -36,8 +36,10 @@ export function ReportExportButton({
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-    } catch {
-      setError("Não foi possível gerar o PDF. Tente novamente.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro desconhecido";
+      console.error("Erro ao gerar PDF RAMEX:", err);
+      setError(`Não foi possível gerar o PDF: ${message}`);
     } finally {
       setIsLoading(false);
     }
@@ -68,4 +70,3 @@ export function ReportExportButton({
     </span>
   );
 }
-

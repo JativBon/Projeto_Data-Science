@@ -30,9 +30,9 @@ const tableColumns = (...entries: Array<[string, string]>): TableColumn[] =>
 
 const pipelineSteps = [
   ["Sequências", "Reconstrução da ordem dos eventos por entidade/caso."],
-  ["Grafo", "Rede dirigida ponderada com frequências absolutas."],
-  ["RAMEX puro", "Execução das fases 10A, 10B e 10C."],
-  ["Poly-tree formal", "Validação estrutural da saída RAMEX."],
+  ["Observado", "Rede dirigida ponderada com frequências absolutas observadas."],
+  ["RAMEX 2007", "Transformação formal e Maximum Weight Rooted Branching."],
+  ["RAMEX-Forum", "Influência temporal, smoothing, filtros e estrutura extraída."],
   ["Interpretação", "Síntese automática dos padrões observados."],
 ];
 
@@ -42,10 +42,12 @@ const columns = {
   ramex: tableColumns(["From", "32%"], ["To", "32%"], ["Weight", "18%"], ["Level", "18%"]),
   polytree: tableColumns(["From", "22%"], ["To", "22%"], ["Weight", "12%"], ["Level", "10%"], ["Direção / validação", "34%"]),
   pure: tableColumns(["Algoritmo", "28%"], ["Método", "22%"], ["Arestas", "12%"], ["Peso", "14%"], ["Raiz / aresta", "24%"]),
-  forum: tableColumns(["Origem", "24%"], ["Destino", "24%"], ["Freq.", "16%"], ["Peso relativo", "22%"], ["Rank", "14%"]),
+  forum: tableColumns(["Origem", "24%"], ["Destino", "24%"], ["Freq.", "16%"], ["Influência", "22%"], ["Rank", "14%"]),
+  dominantPaths: tableColumns(["Caminho", "52%"], ["Prof.", "12%"], ["Peso", "18%"], ["Min.", "18%"]),
   structures: tableColumns(["Estrutura", "24%"], ["Objetivo", "28%"], ["Vantagem", "24%"], ["Limitação", "24%"]),
-  bothComparison: tableColumns(["Critério", "22%"], ["RAMEX Puro", "39%"], ["RAMEX-Forum", "39%"]),
+  bothComparison: tableColumns(["Critério", "22%"], ["RAMEX 2007 formal", "39%"], ["RAMEX-Forum temporal", "39%"]),
   limitations: tableColumns(["Limitação", "48%"], ["Mitigação", "52%"]),
+  futureWork: tableColumns(["Área", "28%"], ["Próximo passo", "72%"]),
 } satisfies Record<string, TableColumn[]>;
 
 const emptyRows = {
@@ -66,20 +68,20 @@ const structureRows = [
   ["Poly-tree formal", "Validação estrutural", "Rigor topológico", "Condensa mantendo validação formal"],
 ];
 
-const forumStructureRow = ["RAMEX-Forum", "Explorar influência", "Pesos relativos e caminhos dominantes", "Não substitui a Poly-tree formal"];
+const forumStructureRow = ["RAMEX-Forum", "Explorar influência temporal", "Sinais, latência e estrutura de influência", "Não substitui o RAMEX 2007 formal"];
 
 const bothComparisonRows = [
-  ["Objetivo", "Condensar estrutura sequencial dominante", "Explorar relações de influência"],
-  ["Saída", "Poly-tree formal", "Grafo/árvore de influência"],
-  ["Pesos", "Frequências absolutas preservadas", "Frequências absolutas + pesos relativos"],
-  ["Interpretação", "Caminho dominante e estrutura acíclica", "Influência, centralidade e caminhos relevantes"],
-  ["Melhor uso", "Padrões sequenciais estruturados", "Relações complexas e exploração"],
+  ["Objetivo", "Transformar a base em rede de estados e obter arborescência provável", "Modelar influência temporal e extrair estrutura interpretável"],
+  ["Saída", "Rooted branching técnico completo", "Forward Tree ou Back-and-Forward Poly-tree temporal"],
+  ["Pesos", "Frequências absolutas de transição", "Influence weight suavizado por epsilon"],
+  ["Interpretação", "Ramos principais da sequência", "Propagação temporal, latência e caminho dominante"],
+  ["Melhor uso", "Validação formal de padrões sequenciais", "Exploração de influência temporal e sinais"],
 ];
 
 const limitationRows = [
   [
-    "O RAMEX puro encontra-se formalizado nesta versão da framework.",
-    "A framework implementa RAMEX 2007, Forward, Back-and-Forward e valida estruturalmente a Poly-tree formal.",
+    "RAMEX 2007 e RAMEX-Forum têm pesos e objetivos diferentes.",
+    "O relatório separa frequências absolutas RAMEX 2007 de influência temporal RAMEX-Forum.",
   ],
   [
     "A qualidade dos padrões depende da qualidade e granularidade dos dados.",
@@ -94,9 +96,24 @@ const limitationRows = [
     "O PDF distingue visualização resumida de dados completos exportados em CSV.",
   ],
   [
+    "RAMEX-Forum Fase 1 usa uma fórmula inicial de influência temporal.",
+    "A arquitetura deixa a fórmula aberta para calibração futura com datasets reais.",
+  ],
+  [
+    "Sankey e grafos analíticos podem ocultar arestas por legibilidade.",
+    "A árvore técnica, CSV e JSON completos são preservados como evidência formal.",
+  ],
+  [
     "A Poly-tree formal exige validação topológica explícita.",
     "A implementação regista métricas estruturais, aciclicidade, conectividade e conformidade da Poly-tree.",
   ],
+];
+
+const futureWorkRows = [
+  ["RAMEX-Forum", "Calibrar fórmulas de influência e decay com dados reais."],
+  ["SCADA", "Validar testes_SCADA com timestamps reais e initial_node conhecido."],
+  ["Relatórios", "Adicionar anexos automáticos com todos os CSV/JSON relevantes."],
+  ["Visualização", "Melhorar navegação SVG em grafos muito grandes."],
 ];
 
 const styles = StyleSheet.create({
@@ -287,12 +304,19 @@ function CoverPage({
 }
 
 function DatasetFacts({ data, includeDatasetType = false }: { data: ReportData; includeDatasetType?: boolean }) {
+  const eventColumns = data.eventConstruction?.eventColumns?.join(", ") || data.eventConstruction?.eventColumn || "Sem dados gerados";
   return (
     <View style={styles.highlight}>
       <Text style={styles.text}>Dataset analisado: {safeValue(data.datasetName)}</Text>
       <Text style={styles.text}>Data de geração: {safeValue(data.generatedAt)}</Text>
       {includeDatasetType ? <Text style={styles.text}>Tipo de dataset: {safeValue(data.datasetType)}</Text> : null}
       <Text style={styles.text}>Origem: {data.datasetOrigin === "upload" ? "Upload" : "Pré-carregado"}</Text>
+      {data.datasetOrigin === "upload" ? (
+        <>
+          <Text style={styles.text}>Modo de eventos: {data.eventConstruction?.mode === "advanced" ? "avançado" : "simples"}</Text>
+          <Text style={styles.text}>Colunas de evento: {eventColumns}</Text>
+        </>
+      ) : null}
     </View>
   );
 }
@@ -364,10 +388,11 @@ function TransitionMatrixTable({ transitionMatrix }: { transitionMatrix: Record<
 }
 
 function ImageOrFallback({ src, label }: { src?: string; label: string }) {
-  if (!src) {
+  const supported = Boolean(src && !src.startsWith("data:image/svg+xml"));
+  if (!supported) {
     return (
       <View style={styles.highlight}>
-        <Text style={styles.text}>{label}: Imagem ainda não gerada para este relatório.</Text>
+        <Text style={styles.text}>{label}: artefacto não disponível para este relatório.</Text>
       </View>
     );
   }
@@ -423,10 +448,10 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
     const isRamex2007 = rawAlgorithm.includes("RAMEX 2007");
     const isBackForward = rawAlgorithm.includes("Back-and-Forward");
     const displayAlgorithm = datasetBenchmarks && isBackForward
-      ? "Back-and-Forward Poly-tree Formal"
+      ? "Anexo experimental: Back-and-Forward Poly-tree Formal"
       : rawAlgorithm;
     const displayPreserved = datasetBenchmarks?.key === "dataset02" && isRamex2007
-      ? datasetBenchmarks.bestPreservedPercent
+      ? datasetBenchmarks.referencePreservedPercent
       : datasetBenchmarks && isBackForward
         ? datasetBenchmarks.polytreeFormalPercent
         : row.preservedWeightPercent;
@@ -439,6 +464,12 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       safeValue(row.anchor),
     ];
   });
+  const dominantPathRows = (data.pureRamex?.ramex2007DominantPaths ?? []).slice(0, 8).map((row) => [
+    safeValue(row.path),
+    safeValue(row.branchDepth),
+    formatNumber(row.pathWeight),
+    formatNumber(row.bottleneckWeight),
+  ]);
   const bestPurePreserved = bestFinitePercent(data.pureRamex?.rows);
   const bestPurePreservedLabel = Number.isFinite(bestPurePreserved)
     ? formatPercent(bestPurePreserved)
@@ -447,11 +478,11 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
     ? formatPercent(datasetBenchmarks.polytreeFormalPercent)
     : formatPercent(data.metrics.polytreePreservedPercent);
   const bestPreservedLabel = datasetBenchmarks
-    ? formatPercent(datasetBenchmarks.bestPreservedPercent)
+    ? formatPercent(datasetBenchmarks.referencePreservedPercent)
     : bestPurePreservedLabel;
-  const bestAlgorithmLabel = datasetBenchmarks?.bestAlgorithm ?? safeValue(data.pureRamex?.bestAlgorithm);
+  const referenceStructureLabel = datasetBenchmarks?.referenceStructure ?? safeValue(data.pureRamex?.bestAlgorithm);
   const ramex2007Label = datasetBenchmarks?.key === "dataset02"
-    ? formatPercent(datasetBenchmarks.bestPreservedPercent)
+    ? formatPercent(datasetBenchmarks.referencePreservedPercent)
     : formatPercent(data.metrics.ramex2007PreservedPercent);
   const backForwardLabel = datasetBenchmarks
     ? formatPercent(datasetBenchmarks.polytreeFormalPercent)
@@ -460,16 +491,16 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
     ? `RAMEX 2007: ${ramex2007Label}, Forward: ${formatPercent(data.metrics.forwardPreservedPercent)}, Back-and-Forward: ${backForwardLabel}`
     : `RAMEX 2007: ${formatPercent(data.metrics.ramex2007PreservedPercent)}, Forward: ${formatPercent(data.metrics.forwardPreservedPercent)}, Back-and-Forward: ${formatPercent(data.metrics.backForwardPreservedPercent)}`;
   const ramexPureSummary = datasetBenchmarks
-    ? `Melhor método no dataset analisado: ${bestAlgorithmLabel} (${bestPreservedLabel}). Poly-tree formal: ${polyTreeFormalLabel}.`
+    ? `Estrutura de referência no dataset analisado: ${referenceStructureLabel} (${bestPreservedLabel}). Poly-tree formal: ${polyTreeFormalLabel}.`
     : data.pureRamex?.summary ||
-      "Resultados RAMEX puro ainda não foram gerados para este dataset; o relatório está preparado para integrar as fases 10A, 10B, 10C e a validação formal.";
+      "Resultados RAMEX 2007 formal ainda não foram gerados para este dataset; o relatório está preparado para integrar a fase 10A e o anexo experimental.";
   const showForum = data.analysisType !== "pure" && Boolean(data.ramexForum);
   const reportSubtitle =
     data.analysisType === "forum"
       ? "Relatório RAMEX-Forum"
       : data.analysisType === "both"
-        ? "Relatório Comparativo RAMEX Puro vs RAMEX-Forum"
-        : "Relatório RAMEX Puro";
+        ? "Relatório Comparativo RAMEX 2007 vs RAMEX-Forum"
+        : "Relatório RAMEX 2007 formal";
   const forumMetrics = [
     { label: "Nós", value: formatNumber(data.ramexForum?.metrics?.nodes) },
     { label: "Arestas", value: formatNumber(data.ramexForum?.metrics?.edges) },
@@ -478,12 +509,27 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
     { label: "Nó mais recebido", value: safeValue(data.ramexForum?.metrics?.mostReceivedNode) },
     { label: "Peso relativo médio", value: formatPercent(data.ramexForum?.metrics?.averageRelativeWeight) },
   ];
+  const forumPhase1Metrics = [
+    { label: "Sinais", value: formatNumber(data.ramexForum?.temporalPhase1?.signals) },
+    { label: "Relações temporais", value: formatNumber(data.ramexForum?.temporalPhase1?.temporalRelations) },
+    { label: "latency_max", value: formatNumber(data.ramexForum?.temporalPhase1?.latencyMax) },
+    { label: "epsilon", value: formatNumber(data.ramexForum?.temporalPhase1?.epsilon) },
+    { label: "Peso influência", value: formatNumber(data.ramexForum?.temporalPhase1?.totalInfluenceWeight) },
+  ];
+  const forumPhase2Metrics = [
+    { label: "Heurística", value: safeValue(data.ramexForum?.temporalPhase2?.heuristicUsed) },
+    { label: "Nó/aresta inicial", value: safeValue(data.ramexForum?.temporalPhase2?.selectedInitialNode ?? data.ramexForum?.temporalPhase2?.initialEdge) },
+    { label: "Nós", value: `${formatNumber(data.ramexForum?.temporalPhase2?.nodesBefore)} -> ${formatNumber(data.ramexForum?.temporalPhase2?.nodesAfter)}` },
+    { label: "Arestas", value: `${formatNumber(data.ramexForum?.temporalPhase2?.edgesBefore)} -> ${formatNumber(data.ramexForum?.temporalPhase2?.edgesAfter)}` },
+    { label: "Influência preservada", value: formatPercent(data.ramexForum?.temporalPhase2?.preservedInfluencePercent) },
+    { label: "DAG/Tree/Poly", value: `${data.ramexForum?.temporalPhase2?.isDag ? "DAG" : "-"} / ${data.ramexForum?.temporalPhase2?.isTree ? "Tree" : "-"} / ${data.ramexForum?.temporalPhase2?.isPolytree ? "Poly" : "-"}` },
+  ];
   const summaryMetrics = [
     { label: "Nós", value: formatNumber(data.metrics.nodes) },
     { label: "Arestas", value: formatNumber(data.metrics.edges) },
     { label: "Densidade", value: formatNumber(data.metrics.density) },
     { label: "PESO POLY-TREE FORMAL", value: polyTreeFormalLabel },
-    { label: "Melhor RAMEX puro", value: bestAlgorithmLabel },
+    { label: "Estrutura de referência", value: referenceStructureLabel },
     { label: "Soma dos pesos", value: formatNumber(data.metrics.totalWeight) },
   ];
   const dataQualityMetrics = [
@@ -501,8 +547,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <CoverPage title="RAMEX-Forum" subtitle={reportSubtitle}>
           <DatasetFacts data={data} />
           <Text style={styles.text}>
-            O RAMEX-Forum não substitui o RAMEX Puro. Atua como abordagem complementar para exploração de relações
-            complexas, pesos normalizados, influência e caminhos dominantes.
+            O RAMEX-Forum não substitui o RAMEX 2007 formal. Atua como abordagem complementar para exploração de
+            influência temporal, pesos suavizados, latência e caminhos dominantes.
           </Text>
         </CoverPage>
         <PageFrame>
@@ -512,6 +558,19 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             <Text style={styles.text}>{safeValue(data.ramexForum?.interpretation)}</Text>
             <Text style={styles.text}>Caminho dominante: {safeValue(data.ramexForum?.dominantPath?.join(" -> "))}</Text>
           </View>
+        </PageFrame>
+        <PageFrame>
+          <Text style={styles.sectionTitle}>Fase 1 e Fase 2 RAMEX-Forum</Text>
+          <Text style={styles.text}>
+            A Fase 2 do RAMEX-Forum aplica heurísticas estruturais sobre a rede temporal de influência produzida na Fase 1. A escolha entre Forward e Back-and-Forward depende da existência de um nó inicial conhecido ou inferível.
+          </Text>
+          <Text style={styles.h3}>Fase 1 — rede temporal de influência</Text>
+          <MetricGrid metrics={forumPhase1Metrics} />
+          <ImageOrFallback src={data.ramexForum?.temporalPhase1?.graph} label="RAMEX-Forum Fase 1 - rede temporal de influência" />
+          <Text style={styles.h3}>Fase 2 — estrutura extraída</Text>
+          <MetricGrid metrics={forumPhase2Metrics} />
+          <Text style={styles.text}>Caminho dominante Fase 2: {safeValue(data.ramexForum?.temporalPhase2?.dominantPath?.join(" -> "))}</Text>
+          <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum Fase 2 - árvore ou poly-tree" />
         </PageFrame>
         <PageFrame>
           <Text style={styles.sectionTitle}>Grafo de Influência</Text>
@@ -528,8 +587,8 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <PageFrame>
           <Text style={styles.sectionTitle}>Conclusão</Text>
           <Text style={styles.text}>
-            O RAMEX-Forum mostra influência, pesos relativos e caminhos dominantes. Use estes resultados como leitura
-            complementar ao RAMEX Puro.
+            O RAMEX-Forum mostra influência temporal, pesos suavizados e caminhos dominantes. Use estes resultados como
+            leitura complementar ao RAMEX 2007 formal.
           </Text>
         </PageFrame>
       </Document>
@@ -541,7 +600,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       <CoverPage title="RAMEX Sequential Analysis" subtitle={reportSubtitle}>
         <DatasetFacts data={data} includeDatasetType />
         <Text style={styles.text}>
-          Análise sequencial com grafo dirigido, RAMEX Puro e validação Poly-tree.
+          Análise sequencial com camada observacional, RAMEX 2007 formal e RAMEX-Forum temporal quando executado.
         </Text>
       </CoverPage>
 
@@ -571,6 +630,35 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           <Text style={styles.text}>{graphInterpretation}</Text>
         </View>
       </PageFrame>
+
+      {data.datasetOrigin === "upload" ? (
+        <PageFrame>
+          <Text style={styles.sectionTitle}>Construção dos Eventos</Text>
+          <Text style={styles.text}>
+            O RAMEX não analisa todas as variáveis tabulares diretamente. As variáveis selecionadas são transformadas em
+            eventos sequenciais discretos e depois são analisadas as transições entre esses eventos.
+          </Text>
+          <MetricGrid
+            metrics={[
+              { label: "Modo", value: data.eventConstruction?.mode === "advanced" ? "Avançado" : "Simples" },
+              { label: "Janela", value: safeValue(data.eventConstruction?.caseWindow ?? "none") },
+              { label: "Eventos únicos", value: formatNumber(data.eventConstruction?.uniqueEvents) },
+            ]}
+          />
+          <SimpleTable
+            columns={tableColumns(["Campo", "32%"], ["Valor", "68%"])}
+            rows={[
+              ["Colunas usadas", data.eventConstruction?.eventColumns?.join(", ") || safeValue(data.eventConstruction?.eventColumn)],
+              ["Colunas ignoradas", data.eventConstruction?.ignoredColumns?.join(", ") || "Nenhuma"],
+              ["Coluna interna evento", data.eventConstruction?.generatedEventColumn || "__ramex_event__"],
+              ["Coluna interna case_id", data.eventConstruction?.generatedCaseColumn || "__ramex_case_id__"],
+              ["Discretização", data.eventConstruction?.rules ? Object.entries(data.eventConstruction.rules).map(([key, value]) => `${key}: ${value}`).join("; ") : "Sem discretização"],
+              ["Exemplos", data.eventConstruction?.eventExamples?.slice(0, 10).join(", ") || "Sem exemplos gerados"],
+              ["Avisos", data.eventConstruction?.warnings?.join(" | ") || "Sem avisos"],
+            ]}
+          />
+        </PageFrame>
+      ) : null}
 
       <PageFrame>
         <Text style={styles.sectionTitle}>Top Transições</Text>
@@ -664,7 +752,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             { label: "Nós", value: formatNumber(data.metrics.polytreeNodes) },
             { label: "Arestas", value: formatNumber(data.metrics.polytreeEdges) },
             { label: "Peso preservado", value: polyTreeFormalLabel },
-            { label: "Formal", value: "RAMEX puro" },
+            { label: "Formal", value: "RAMEX 2007" },
           ]}
         />
         <View style={styles.highlight}>
@@ -681,23 +769,41 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
       </PageFrame>
 
       <PageFrame>
-        <Text style={styles.sectionTitle}>RAMEX Puro</Text>
+        <Text style={styles.sectionTitle}>RAMEX 2007 formal</Text>
+        <Text style={styles.text}>
+          O RAMEX 2007 é composto por duas fases principais: transformação da base de dados numa rede de transição de estados e pesquisa de uma sequência de ramificação altamente provável.
+        </Text>
+        <Text style={styles.h3}>1. Transformação do problema</Text>
+        <Text style={styles.text}>
+          A base de dados é ordenada por cliente, data e item; em seguida é criado o atributo item-seguinte, incluindo SOURCE e SINK, para construir a rede G com frequências absolutas.
+        </Text>
+        <Text style={styles.h3}>2. Rede G e matriz de adjacência</Text>
+        <Text style={styles.text}>
+          O RAMEX apresenta uma visão global da base de dados porque todas as transições entre itens são incorporadas numa única rede de estados. A rede original G pode conter ciclos; a aciclicidade surge apenas após o processo de condensação.
+        </Text>
+        <Text style={styles.h3}>3. Condensação, expansão e rooted branching</Text>
+        <Text style={styles.text}>
+          A condensação aplica Maximum Weight Rooted Branching (Fulkerson/Edmonds, complexidade O(N²)) a partir de SOURCE. A expansão percorre a arborescência B para interpretar caminhos dominantes, profundidade e ramos.
+        </Text>
         <Text style={styles.text}>
           Comparação entre 10A RAMEX 2007 Rooted Branching, 10B Forward e 10C Back-and-Forward.
+        </Text>
+        <Text style={styles.text}>
+          O RAMEX 2007 foi implementado através de Maximum Weight Rooted Branching. A versão simplificada anterior é mantida apenas como heurística exploratória do desenvolvimento.
         </Text>
         <MetricGrid
           metrics={[
             { label: "RAMEX 2007", value: ramex2007Label },
             { label: "Forward", value: formatPercent(data.metrics.forwardPreservedPercent) },
             { label: "Back-and-Forward", value: backForwardLabel },
-            { label: "Maior peso preservado", value: bestPreservedLabel },
-            { label: "Melhor algoritmo", value: bestAlgorithmLabel },
+            { label: "Peso referência", value: bestPreservedLabel },
+            { label: "Estrutura referência", value: referenceStructureLabel },
             { label: "Tipo estrutural", value: safeValue(data.pureRamex?.structuralType) },
           ]}
         />
         <View style={styles.highlight}>
           <Text style={styles.text}>
-            Compare os métodos pelo peso preservado, número de arestas e tipo estrutural do dataset.
+            O RAMEX 2007 formal é apresentado separadamente; Forward e Back-and-Forward pertencem ao anexo experimental/histórico.
           </Text>
           <Text style={styles.text}>
             Percentagens disponíveis: {ramexPurePercentagesText}.
@@ -706,6 +812,36 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             {ramexPureSummary}
           </Text>
         </View>
+        <Text style={styles.h3}>Figura - Árvore RAMEX 2007 completa, sem cortes</Text>
+        <Text style={styles.text}>
+          A árvore técnica completa apresenta todos os nós e todas as arestas selecionadas pelo Maximum Weight Rooted Branching, servindo como evidência formal da arborescência obtida.
+        </Text>
+        <ImageOrFallback src={data.images?.ramex2007} label="Árvore RAMEX 2007 completa, sem cortes" />
+        <Text style={styles.text}>
+          O grafo técnico completo é mantido sem filtros para validação académica. As visualizações analíticas e Sankey são complementares e servem apenas para facilitar a interpretação humana da estrutura.
+        </Text>
+        {data.images?.ramex2007Analytical ? (
+          <>
+            <Text style={styles.h3}>Visualização analítica dos ramos dominantes</Text>
+            <Text style={styles.text}>
+              A separação entre grafo técnico e grafo analítico permite conciliar rigor formal e legibilidade. O primeiro demonstra a árvore completa obtida pelo algoritmo; o segundo destaca os ramos dominantes para interpretação.
+            </Text>
+            <ImageOrFallback src={data.images.ramex2007Analytical} label="Visualização analítica dos ramos dominantes" />
+          </>
+        ) : null}
+        {data.images?.ramex2007Sankey ? (
+          <>
+            <Text style={styles.h3}>Sankey RAMEX 2007 - Fluxo da arborescência</Text>
+            <Text style={styles.text}>
+              Esta visualização complementa o grafo técnico, permitindo observar a propagação dos ramos a partir da raiz.
+            </Text>
+            <ImageOrFallback src={data.images.ramex2007Sankey} label="Sankey RAMEX 2007" />
+          </>
+        ) : null}
+        <SimpleTable
+          columns={columns.dominantPaths}
+          rows={dominantPathRows.length ? dominantPathRows : [["Sem dados gerados", "-", "-", "-"]]}
+        />
         <SimpleTable
           columns={columns.pure}
           rows={pureRows.length ? pureRows : emptyRows.pure}
@@ -780,7 +916,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           <Text style={styles.sectionTitle}>RAMEX-Forum</Text>
           <>
             <Text style={styles.text}>
-              O RAMEX-Forum complementa o RAMEX Puro com influência, pesos normalizados e caminhos dominantes.
+              O RAMEX-Forum complementa o RAMEX 2007 formal com influência temporal, pesos suavizados e caminhos dominantes.
             </Text>
             <MetricGrid metrics={forumMetrics} />
             <View style={styles.highlight}>
@@ -789,6 +925,15 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             </View>
             <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum - grafo de influência" />
             <ImageOrFallback src={data.images?.forumSimplified} label="RAMEX-Forum - estrutura simplificada" />
+            <Text style={styles.h3}>Fase 1 — rede temporal de influência</Text>
+            <MetricGrid metrics={forumPhase1Metrics} />
+            <Text style={styles.h3}>Fase 2 — estrutura extraída</Text>
+            <Text style={styles.text}>
+              A Fase 2 do RAMEX-Forum aplica heurísticas estruturais sobre a rede temporal de influência produzida na Fase 1. A escolha entre Forward e Back-and-Forward depende da existência de um nó inicial conhecido ou inferível.
+            </Text>
+            <MetricGrid metrics={forumPhase2Metrics} />
+            <Text style={styles.text}>Caminho dominante Fase 2: {safeValue(data.ramexForum?.temporalPhase2?.dominantPath?.join(" -> "))}</Text>
+            <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum Fase 2 - árvore ou poly-tree" />
             <SimpleTable
               columns={columns.forum}
               rows={forumRows.length ? forumRows : emptyRows.forum}
@@ -826,6 +971,11 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <SimpleTable
           columns={columns.limitations}
           rows={limitationRows}
+        />
+        <Text style={styles.h3}>Trabalho futuro</Text>
+        <SimpleTable
+          columns={columns.futureWork}
+          rows={futureWorkRows}
         />
       </PageFrame>
 

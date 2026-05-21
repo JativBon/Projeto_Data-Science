@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt  # type: ignore
 import networkx as nx  # type: ignore
 import pandas as pd  # type: ignore
 
+from forum_temporal_pipeline import run_forum_temporal_phase1, run_forum_temporal_phase2
 from ramex_forum_pipeline import run_ramex_forum
 
 ALLOWED_EXTENSIONS = {".txt", ".csv", ".xlsx"}
@@ -86,6 +87,15 @@ def load_simple_sequences(file_path: Path) -> list[list[str]]:
     return valid
 
 
+def sanitize_event_part(value: Any) -> str | None:
+    text = normalize_text_value(value)
+    if text is None:
+        return None
+    text = re.sub(r"\s+", "_", text.strip())
+    text = re.sub(r"[^0-9A-Za-zÀ-ÿ._-]+", "_", text)
+    return text.strip("_").upper() or None
+
+
 def load_event_table_sequences(file_path: Path, case_col: str, time_col: str, event_col: str) -> list[list[str]]:
     df = read_table(file_path)
     if missing := [c for c in [case_col, time_col, event_col] if c not in df.columns]:
@@ -111,7 +121,7 @@ def load_event_table_sequences(file_path: Path, case_col: str, time_col: str, ev
     if df["_order"].notna().mean() < 0.8:
         raise ValueError(f"A coluna '{time_col}' contém demasiados valores inválidos para o formato esperado.")
 
-    df = df.dropna(subset=["_order"]).sort_values(by=[case_col, "_order"], kind="stable")
+    df = df.dropna(subset=["_order"]).sort_values(by=[case_col, "_order", event_col], kind="stable")
 
     sequences = [
         [str(e) for e in seq if normalize_text_value(e)]
@@ -123,22 +133,263 @@ def load_event_table_sequences(file_path: Path, case_col: str, time_col: str, ev
     return valid
 
 
+def discretize_quantile(series: pd.Series) -> pd.Series:
+    numeric = pd.to_numeric(series, errors="coerce")
+    try:
+        buckets = pd.qcut(numeric, q=3, labels=["LOW", "MEDIUM", "HIGH"], duplicates="drop")
+        return buckets.astype("object").where(numeric.notna(), None)
+    except ValueError:
+        return numeric.apply(lambda value: "MEDIUM" if pd.notna(value) else None)
+
+
+def discretize_variation_pct(series: pd.Series) -> pd.Series:
+    numeric = pd.to_numeric(series, errors="coerce")
+
+    def label(value: float) -> str | None:
+        if pd.isna(value):
+            return None
+        if value < -2:
+            return "STRONG_DOWN"
+        if value < -0.5:
+            return "DOWN"
+        if value <= 0.5:
+            return "STABLE"
+        if value <= 2:
+            return "UP"
+        return "STRONG_UP"
+
+    return numeric.apply(label)
+
+
+def temporal_window_id(value: Any, window: str) -> str | None:
+    timestamp = pd.to_datetime(value, errors="coerce")
+    if pd.isna(timestamp):
+        return None
+    if window == "daily":
+        return f"W{timestamp.year}_{timestamp.month:02d}_{timestamp.day:02d}"
+    if window == "weekly":
+        iso = timestamp.isocalendar()
+        return f"W{iso.year}_{iso.week:02d}"
+    if window == "monthly":
+        return f"W{timestamp.year}_{timestamp.month:02d}"
+    if window == "quarterly":
+        quarter = ((timestamp.month - 1) // 3) + 1
+        return f"W{timestamp.year}_Q{quarter}"
+    return None
+
+
+def load_advanced_event_sequences(
+    file_path: Path,
+    case_col: str | None,
+    time_col: str,
+    event_columns: list[str],
+    numeric_discretization: dict[str, str] | None = None,
+    case_window: str | None = None,
+) -> tuple[list[list[str]], dict[str, Any]]:
+    df = read_table(file_path)
+    numeric_discretization = numeric_discretization or {}
+    case_window = (case_window or "none").lower()
+    if case_window == "use_entity":
+        case_window = "none"
+    if case_window not in {"none", "daily", "weekly", "monthly", "quarterly"}:
+        raise ValueError("Janela temporal inválida. Use none, daily, weekly, monthly ou quarterly.")
+
+    if not event_columns:
+        raise ValueError("Modo avançado requer pelo menos uma coluna para construir o evento.")
+    if not time_col or time_col not in df.columns:
+        raise ValueError(f"Modo avançado requer uma coluna de tempo existente. Recebido: {time_col or 'não definido'}.")
+    if case_window == "none" and (not case_col or case_col not in df.columns):
+        raise ValueError(f"Modo avançado requer uma coluna de entidade/caso existente quando case_window=none/use_entity. Recebido: {case_col or 'não definido'}.")
+    missing_event_columns = [column for column in event_columns if column not in df.columns]
+    if missing_event_columns:
+        raise ValueError(f"Colunas selecionadas para evento inexistentes: {missing_event_columns}")
+
+    working = df.copy()
+    warnings: list[str] = []
+    ignored_columns: list[str] = []
+    rules: dict[str, str] = {}
+    generated_parts: dict[str, pd.Series] = {}
+    structural_columns = {str(time_col).strip().lower()}
+    if case_window == "none" and case_col:
+        structural_columns.add(str(case_col).strip().lower())
+    selected_structural = [column for column in event_columns if str(column).strip().lower() in structural_columns]
+    non_structural = [column for column in event_columns if str(column).strip().lower() not in structural_columns]
+    if selected_structural:
+        warnings.append(
+            "Esta coluna é usada para estruturar a sequência e normalmente não deve fazer parte do evento: "
+            + ", ".join(selected_structural)
+        )
+    if selected_structural and not non_structural:
+        warnings.append("As colunas selecionadas para o evento são apenas estruturais; recomenda-se usar colunas como asset e signal.")
+
+    for column in event_columns:
+        is_numeric = pd.api.types.is_numeric_dtype(working[column]) or pd.to_numeric(working[column], errors="coerce").notna().mean() >= 0.8
+        mode = (numeric_discretization.get(column) or "").lower()
+        if is_numeric:
+            if mode in {"ignore", "ignored"}:
+                ignored_columns.append(column)
+                rules[column] = "ignored_numeric"
+                continue
+            if mode in {"variation_pct", "threshold", "thresholds"}:
+                generated_parts[column] = discretize_variation_pct(working[column]).map(lambda value: value if value else "UNKNOWN")
+                rules[column] = "variation_pct_thresholds"
+            elif mode in {"quantile", "quantiles"}:
+                generated_parts[column] = discretize_quantile(working[column]).map(lambda value: f"{column}_{value}" if value else "UNKNOWN")
+                rules[column] = "quantiles_low_medium_high"
+            else:
+                warnings.append(f"A coluna numérica '{column}' foi selecionada sem discretização; foi ignorada.")
+                ignored_columns.append(column)
+                rules[column] = "ignored_numeric_without_discretization"
+        else:
+            generated_parts[column] = working[column].map(lambda value: sanitize_event_part(value) or "UNKNOWN")
+            rules[column] = "categorical_value"
+
+    if not generated_parts:
+        raise ValueError("A construção avançada não gerou componentes de evento. Selecione colunas categóricas ou discretize colunas numéricas.")
+
+    def build_event(index: int) -> str | None:
+        parts = [series.iloc[index] for series in generated_parts.values()]
+        valid_parts = [str(part) for part in parts if normalize_text_value(part)]
+        return "_".join(valid_parts) if valid_parts else None
+
+    working["__ramex_event__"] = [build_event(index) for index in range(len(working))]
+    working = working.dropna(subset=["__ramex_event__"])  # type: ignore[call-overload]
+    working["__ramex_event__"] = working["__ramex_event__"].map(sanitize_event_part)
+    working = working.dropna(subset=["__ramex_event__"])  # type: ignore[call-overload]
+    if working.empty:
+        raise ValueError("As colunas selecionadas existem, mas não produziram eventos válidos. Verifique valores nulos ou regras de discretização.")
+
+    if case_window == "none":
+        working["__ramex_case_id__"] = working[case_col or ""].map(normalize_text_value)
+    else:
+        working["__ramex_case_id__"] = working[time_col].map(lambda value: temporal_window_id(value, case_window))
+    working = working.dropna(subset=["__ramex_case_id__"])  # type: ignore[call-overload]
+
+    is_date = pd.api.types.is_datetime64_any_dtype(working[time_col]) or any(
+        token in time_col.lower() for token in ["date", "data", "time", "tempo", "timestamp"]
+    )
+    working["_order"] = pd.to_datetime(working[time_col], errors="coerce") if is_date else pd.to_numeric(working[time_col], errors="coerce")
+    if working["_order"].notna().mean() < 0.8:
+        raise ValueError(f"A coluna '{time_col}' contém demasiados valores inválidos para ordenação.")
+
+    print("ADVANCED EVENT CONSTRUCTION RESULT", {
+        "generated_event_column": "__ramex_event__",
+        "generated_case_column": "__ramex_case_id__",
+        "sample_events": working["__ramex_event__"].head(10).tolist(),
+        "sample_cases": working["__ramex_case_id__"].head(10).tolist(),
+        "unique_events": int(working["__ramex_event__"].nunique()),
+    }, flush=True)
+
+    working = working.dropna(subset=["_order"]).sort_values(by=["__ramex_case_id__", "_order", "__ramex_event__"], kind="stable")
+    sequences = [
+        [str(event) for event in seq if normalize_text_value(event)]
+        for seq in working.groupby("__ramex_case_id__", sort=False)["__ramex_event__"].apply(list)
+    ]
+    valid = [seq for seq in sequences if len(seq) >= 2]
+    if not valid:
+        raise ValueError("O modo avançado não gerou sequências com tamanho mínimo 2.")
+
+    unique_events = int(working["__ramex_event__"].nunique())
+    if unique_events > 500 or unique_events > max(50, int(len(working) * 0.5)):
+        warnings.append("Número elevado de eventos únicos. Considere discretizar ou reduzir colunas.")
+
+    metadata = {
+        "mode": "advanced",
+        "case_column": case_col if case_window == "none" else None,
+        "time_column": time_col,
+        "case_window": case_window,
+        "event_columns": event_columns,
+        "generated_event_column": "__ramex_event__",
+        "generated_case_column": "__ramex_case_id__",
+        "structural_event_columns": selected_structural,
+        "ignored_columns": ignored_columns,
+        "numeric_discretization": numeric_discretization,
+        "rules": rules,
+        "unique_events": unique_events,
+        "event_examples": working["__ramex_event__"].dropna().astype(str).head(10).tolist(),
+        "preview_rows": working[[*event_columns, "__ramex_case_id__", "_order", "__ramex_event__"]]
+            .head(20)
+            .rename(columns={"__ramex_case_id__": "generated_case_id", "_order": "time_order", "__ramex_event__": "generated_event"})
+            .astype(str)
+            .to_dict(orient="records"),
+        "warnings": warnings,
+        "explanation": (
+            "O RAMEX não analisa todas as variáveis tabulares diretamente; transforma variáveis selecionadas "
+            "em eventos sequenciais discretos e analisa as transições entre esses eventos."
+        ),
+    }
+    return valid, metadata
+
+
 def normalize_dataset(
     file_path: Path,
     ds_type: str,
     case_col: str | None,
     time_col: str | None,
     event_col: str | None,
-) -> list[list[str]]:
+    event_mode: str = "simple",
+    event_columns: list[str] | None = None,
+    numeric_discretization: dict[str, str] | None = None,
+    case_window: str | None = None,
+) -> tuple[list[list[str]], dict[str, Any]]:
     if file_path.suffix.lower() not in ALLOWED_EXTENSIONS:
         raise ValueError("Extensão inválida. Use .txt, .csv ou .xlsx.")
     if file_path.stat().st_size == 0:
         raise ValueError("O ficheiro está vazio.")
 
-    if ds_type == "simple_sequences":
+    metadata: dict[str, Any] = {"mode": "simple", "event_column": event_col, "event_columns": [event_col] if event_col else []}
+    raw_event_mode = str(event_mode or "simple").strip().lower().replace("-", "_")
+    is_advanced_event_mode = raw_event_mode in {"advanced", "advanced_events", "advanced_events_mode"}
+    event_mode = "advanced" if is_advanced_event_mode else raw_event_mode
+    if event_mode not in {"simple", "advanced"}:
+        raise ValueError("Modo de eventos inválido. Use simple ou advanced.")
+
+    if is_advanced_event_mode:
+        df_columns = []
+        try:
+            df_columns = list(read_table(file_path, nrows=0).columns)
+        except Exception:
+            pass
+        print("UPLOAD CONFIG BEFORE PARSE", {
+            "dataset_type": ds_type,
+            "event_mode": event_mode,
+            "case_column": case_col,
+            "entity_column": case_col,
+            "time_column": time_col,
+            "event_column": event_col,
+            "event_columns": event_columns,
+            "case_window": case_window,
+            "df_columns": df_columns,
+        }, flush=True)
+
+    if is_advanced_event_mode:
+        if time_col is None:
+            raise ValueError("Mapeamento de tempo incompleto para modo avançado.")
+        sequences, metadata = load_advanced_event_sequences(
+            file_path, case_col, time_col, event_columns or [], numeric_discretization, case_window
+        )
+    elif ds_type == "simple_sequences":
         sequences = load_simple_sequences(file_path)
     elif ds_type == "event_table":
         if case_col is None or time_col is None or event_col is None:
+            df_columns = []
+            try:
+                df_columns = list(read_table(file_path, nrows=0).columns)
+            except Exception:
+                pass
+            print("EVENT_TABLE_MAPPING_ERROR_CONTEXT", {
+                "dataset_type": ds_type,
+                "event_mode": event_mode,
+                "is_advanced_event_mode": is_advanced_event_mode,
+                "case_column": case_col,
+                "entity_column": case_col,
+                "time_column": time_col,
+                "order_column": time_col,
+                "event_column": event_col,
+                "event_columns": event_columns,
+                "case_window": case_window,
+                "df_columns": df_columns,
+            }, flush=True)
             raise ValueError("Mapeamento de colunas incompleto para tabela de eventos.")
         sequences = load_event_table_sequences(file_path, case_col, time_col, event_col)
     elif ds_type == "customer_excel":
@@ -148,6 +399,7 @@ def normalize_dataset(
             time_col or "Order Date",
             event_col or "Category",
         )
+        metadata = {"mode": "simple", "event_column": event_col or "Category", "event_columns": [event_col or "Category"]}
     else:
         raise ValueError("Tipo de dataset desconhecido.")
 
@@ -155,13 +407,106 @@ def normalize_dataset(
     valid = [seq for seq in sequences if len(seq) >= 2]
     if not valid:
         raise ValueError("Todas as sequências foram descartadas por terem tamanho inferior a 2.")
-    return valid
+    metadata["sequence_count"] = len(valid)
+    metadata["sample_sequences"] = valid[:3]
+    return valid, metadata
 
 
 def build_pair_frequencies(sequences: list[list[str]]) -> pd.DataFrame:
     pairs = [(a, b) for seq in sequences for a, b in zip(seq, seq[1:])]
     df = pd.DataFrame([{"From": u, "To": v, "Weight": w} for (u, v), w in Counter(pairs).items()])
     return df.sort_values(by="Weight", ascending=False, kind="stable").reset_index(drop=True)
+
+
+SOURCE_NODE = "SOURCE"
+SINK_NODE = "SINK"
+
+
+def build_ramex2007_ordered_events(sequences: list[list[str]]) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    for sequence_index, sequence in enumerate(sequences, start=1):
+        customer = f"C{sequence_index:05d}"
+        for position, item in enumerate(sequence, start=1):
+            rows.append({
+                "customer": customer,
+                "timestamp": position,
+                "item": str(item),
+                "sequence_position": position,
+            })
+    return pd.DataFrame(rows, columns=["customer", "timestamp", "item", "sequence_position"])
+
+
+def build_forum_temporal_events(sequences: list[list[str]]) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    for sequence_index, sequence in enumerate(sequences, start=1):
+        entity = f"E{sequence_index:05d}"
+        for position, signal in enumerate(sequence, start=1):
+            rows.append({
+                "entity": entity,
+                "timestamp": position,
+                "signal": str(signal),
+            })
+    return pd.DataFrame(rows, columns=["entity", "timestamp", "signal"])
+
+
+def build_ramex2007_sequences(ordered_df: pd.DataFrame) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    for customer, group in ordered_df.groupby("customer", sort=False):
+        items = [str(item) for item in group["item"].tolist()]
+        timestamps = group["timestamp"].tolist()
+        for index, item in enumerate(items):
+            rows.append({
+                "customer": str(customer),
+                "timestamp": timestamps[index],
+                "item": item,
+                "next_item": items[index + 1] if index + 1 < len(items) else SINK_NODE,
+                "sequence_position": index + 1,
+            })
+    return pd.DataFrame(rows, columns=["customer", "timestamp", "item", "next_item", "sequence_position"])
+
+
+def build_ramex2007_graph_edges(sequences: list[list[str]]) -> pd.DataFrame:
+    transitions: list[tuple[str, str, str]] = []
+    for sequence in sequences:
+        if not sequence:
+            continue
+        items = [str(item) for item in sequence]
+        transitions.append((SOURCE_NODE, items[0], "source_transition"))
+        transitions.extend((source, target, "normal_transition") for source, target in zip(items, items[1:]))
+        transitions.append((items[-1], SINK_NODE, "sink_transition"))
+
+    counter = Counter(transitions)
+    rows = [
+        {"From": source, "To": target, "Weight": weight, "TransitionType": transition_type}
+        for (source, target, transition_type), weight in counter.items()
+    ]
+    return pd.DataFrame(rows, columns=["From", "To", "Weight", "TransitionType"]).sort_values(
+        by=["TransitionType", "Weight", "From", "To"],
+        ascending=[True, False, True, True],
+        kind="stable",
+    ).reset_index(drop=True)
+
+
+def draw_adjacency_heatmap(matrix_df: pd.DataFrame, output_png: Path) -> None:
+    if matrix_df.empty:
+        return
+    limit = min(60, matrix_df.shape[0], matrix_df.shape[1])
+    view = matrix_df.iloc[:limit, :limit]
+    fig_size = max(8, min(18, limit * 0.34))
+    fig, ax = plt.subplots(figsize=(fig_size, fig_size), dpi=140)
+    image = ax.imshow(view.values, cmap="YlGnBu", aspect="auto")
+    ax.set_title("RAMEX 2007 - Matriz de Adjacencia", fontsize=12, fontweight="bold")
+    ax.set_xlabel("Destino")
+    ax.set_ylabel("Origem")
+    ax.set_xticks(range(limit))
+    ax.set_yticks(range(limit))
+    ax.set_xticklabels([str(col) for col in view.columns], rotation=90, fontsize=6)
+    ax.set_yticklabels([str(idx) for idx in view.index], fontsize=6)
+    fig.colorbar(image, ax=ax, fraction=0.046, pad=0.04, label="Frequencia absoluta")
+    plt.tight_layout()
+    output_png.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_png, dpi=180, bbox_inches="tight", facecolor="white")
+    plt.close()
 
 
 def build_adjacency_matrix(edges_df: pd.DataFrame) -> pd.DataFrame:
@@ -491,6 +836,84 @@ def edges_to_records(df: pd.DataFrame) -> list[dict[str, Any]]:
     return [{str(k): v for k, v in rec.items()} for rec in records]
 
 
+def graph_weight_sum(graph: nx.DiGraph) -> float:
+    return float(sum(float(d.get("weight", 0.0) or 0.0) for _, _, d in graph.edges(data=True)))
+
+
+def calculate_coverage_metrics(
+    original_graph: nx.DiGraph,
+    filtered_graph: nx.DiGraph,
+    ramex_graph: nx.DiGraph,
+) -> dict[str, Any]:
+    original_nodes_set = {str(n) for n in original_graph.nodes}
+    filtered_nodes_set = {str(n) for n in filtered_graph.nodes}
+    ramex_nodes_set = {str(n) for n in ramex_graph.nodes}
+    uncovered_nodes = sorted(original_nodes_set - ramex_nodes_set)
+
+    original_nodes = len(original_nodes_set)
+    filtered_nodes = len(filtered_nodes_set)
+    ramex_nodes = len(ramex_nodes_set)
+    original_edges = original_graph.number_of_edges()
+    filtered_edges = filtered_graph.number_of_edges()
+    ramex_edges = ramex_graph.number_of_edges()
+    original_weight = graph_weight_sum(original_graph)
+    filtered_weight = graph_weight_sum(filtered_graph)
+    ramex_weight = graph_weight_sum(ramex_graph)
+    node_coverage_percent = (ramex_nodes / original_nodes * 100) if original_nodes else 0.0
+    preserved_weight_percent = (ramex_weight / original_weight * 100) if original_weight else 0.0
+    disconnected_components_count = (
+        nx.number_weakly_connected_components(original_graph) if original_graph.number_of_nodes() else 0
+    )
+
+    warning_messages: list[str] = []
+    removed_nodes_count = original_nodes - filtered_nodes
+    removed_edges_count = original_edges - filtered_edges
+    removed_weight = original_weight - filtered_weight
+
+    if removed_nodes_count > 0:
+        warning_messages.append(
+            f"{removed_nodes_count} nó(s) existem no grafo completo mas não aparecem no grafo filtrado atual."
+        )
+    if removed_edges_count > 0:
+        warning_messages.append(
+            f"{removed_edges_count} aresta(s) foram removidas por filtros antes da construção do grafo atual."
+        )
+    if uncovered_nodes:
+        warning_messages.append(
+            f"{len(uncovered_nodes)} nó(s) do grafo completo não aparecem na estrutura RAMEX atual."
+        )
+    if filtered_nodes < original_nodes:
+        warning_messages.append("O grafo filtrado tem menos nós do que o grafo completo.")
+    if disconnected_components_count > 1:
+        warning_messages.append(
+            f"O grafo completo tem {disconnected_components_count} componentes fracamente conexas."
+        )
+    if preserved_weight_percent < 20.0:
+        warning_messages.append(
+            f"Peso preservado RAMEX muito baixo face ao grafo completo ({preserved_weight_percent:.2f}%)."
+        )
+
+    return {
+        "original_nodes": original_nodes,
+        "original_edges": original_edges,
+        "filtered_nodes": filtered_nodes,
+        "filtered_edges": filtered_edges,
+        "ramex_nodes": ramex_nodes,
+        "ramex_edges": ramex_edges,
+        "uncovered_nodes": uncovered_nodes,
+        "uncovered_nodes_count": len(uncovered_nodes),
+        "node_coverage_percent": node_coverage_percent,
+        "original_weight": original_weight,
+        "filtered_weight": filtered_weight,
+        "ramex_weight": ramex_weight,
+        "preserved_weight_percent": preserved_weight_percent,
+        "removed_by_filter_edges": removed_edges_count,
+        "removed_by_filter_weight": removed_weight,
+        "disconnected_components_count": disconnected_components_count,
+        "warning_messages": warning_messages,
+    }
+
+
 def calculate_metrics(g_orig: nx.DiGraph, g_poly: nx.DiGraph, df_poly: pd.DataFrame) -> dict[str, Any]:
     w_orig = sum(d["weight"] for _, _, d in g_orig.edges(data=True))
     w_poly = sum(d["weight"] for _, _, d in g_poly.edges(data=True))
@@ -556,14 +979,21 @@ def interpret(metrics: dict) -> str:
 
 
 def script_path(name: str) -> Path:
-    return Path(__file__).resolve().parents[1] / name
+    return Path(__file__).resolve().parents[1] / "scripts" / name
 
 
-def run_python_script(args: list[str]) -> None:
-    result = subprocess.run([sys.executable, *args], capture_output=True, text=True)
+def run_python_script(args: list[str], log_cb: LogCallback | None = None, step_name: str | None = None) -> None:
+    command = [sys.executable, *args]
+    repo_root = Path(__file__).resolve().parents[1]
+    if log_cb:
+        log_cb(f"Comando executado ({step_name or Path(args[0]).name}): {' '.join(command)}")
+    result = subprocess.run(command, cwd=repo_root, capture_output=True, text=True)
     if result.returncode != 0:
         detail = result.stderr.strip() or result.stdout.strip() or "erro sem detalhe"
-        raise ValueError(f"Falha ao executar {Path(args[0]).name}: {detail}")
+        raise ValueError(
+            f"Falha ao executar {step_name or Path(args[0]).name}. "
+            f"Comando: {' '.join(command)}. Detalhe: {detail}"
+        )
 
 
 def choose_max_out_weight_root(edges_df: pd.DataFrame) -> str:
@@ -623,10 +1053,13 @@ def run_pure_ramex_outputs(
     progress_cb: ProgressCallback | None = None,
     log_cb: LogCallback | None = None,
 ) -> dict[str, Any]:
+    output_dir = output_dir.resolve()
+    graph_edges_csv = graph_edges_csv.resolve()
     files = {
         "ramex2007_csv": f"ramex2007_{job_id}.csv",
         "ramex2007_json": f"ramex2007_{job_id}.json",
         "ramex2007_png": f"ramex2007_{job_id}.png",
+        "ramex2007_expanded_paths_csv": f"ramex2007_expanded_paths_{job_id}.csv",
         "forward_csv": f"ramex_forward_{job_id}.csv",
         "forward_json": f"ramex_forward_{job_id}.json",
         "forward_png": f"ramex_forward_{job_id}.png",
@@ -639,13 +1072,20 @@ def run_pure_ramex_outputs(
     }
 
     if progress_cb:
-        progress_cb("ramex2007", "Execução RAMEX 2007 Rooted Branching")
+        progress_cb("ramex2007", "Execução RAMEX 2007 - Maximum Weight Rooted Branching")
+    if log_cb:
+        log_cb(f"RAMEX 2007 input_edges_csv: {graph_edges_csv}")
+        log_cb(f"RAMEX 2007 output_csv: {output_dir / files['ramex2007_csv']}")
+        log_cb(f"RAMEX 2007 output_png: {output_dir / files['ramex2007_png']}")
+        log_cb(f"RAMEX 2007 output_json: {output_dir / files['ramex2007_json']}")
     run_python_script([
         str(script_path("10A_ramex_2007_rooted_branching.py")),
         str(graph_edges_csv), str(output_dir / files["ramex2007_csv"]),
         str(output_dir / files["ramex2007_png"]),
-        "--input-type", "edges", "--output-json", str(output_dir / files["ramex2007_json"]),
-    ])
+        "--root", SOURCE_NODE, "--input-type", "edges",
+        "--output-json", str(output_dir / files["ramex2007_json"]),
+        "--output-expanded-paths", str(output_dir / files["ramex2007_expanded_paths_csv"]),
+    ], log_cb=log_cb, step_name="RAMEX 2007 Rooted Branching")
     ramex2007 = json.loads((output_dir / files["ramex2007_json"]).read_text(encoding="utf-8"))
     if log_cb and (selected_edges := ramex2007.get("metrics", {}).get("selected_edges")) is not None:
         log_cb(f"RAMEX 2007 concluído: {selected_edges} arestas selecionadas")
@@ -664,7 +1104,7 @@ def run_pure_ramex_outputs(
         str(graph_edges_csv), str(output_dir / files["forward_csv"]),
         str(output_dir / files["forward_png"]),
         "--root", forward_root, "--output-json", str(output_dir / files["forward_json"]),
-    ])
+    ], log_cb=log_cb, step_name="RAMEX Forward")
     forward = json.loads((output_dir / files["forward_json"]).read_text(encoding="utf-8"))
     forward["root_selection_method"] = root_method
     (output_dir / files["forward_json"]).write_text(json.dumps(forward, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -676,32 +1116,36 @@ def run_pure_ramex_outputs(
         str(graph_edges_csv), str(output_dir / files["back_forward_formal_csv"]),
         str(output_dir / files["back_forward_formal_png"]),
         "--output-json", str(output_dir / files["back_forward_formal_json"]),
-    ])
+    ], log_cb=log_cb, step_name="Back-and-Forward Poly-tree Formal")
     back_forward = json.loads((output_dir / files["back_forward_formal_json"]).read_text(encoding="utf-8"))
 
     if progress_cb:
-        progress_cb("validacao", "Validação comparativa RAMEX puro")
+        progress_cb("validacao", "Anexo experimental de heurísticas históricas")
     rows = pure_validation_rows(ramex2007, forward, back_forward)
     best = max(rows, key=lambda row: row.get("Peso preservado (%)") or 0)
     stype = structural_type(metrics["nodes"], metrics["density"], ramex2007.get("metrics", {}).get("preserved_weight_percent", 0))
-    summary = f"Os resultados RAMEX puro foram gerados para este job. O melhor método por peso preservado foi {best['Algoritmo']} ({best.get('Peso preservado (%)', 0):.2f}%). Tipo estrutural: {stype}."
+    summary = (
+        "O RAMEX 2007 formal foi gerado para este job. "
+        f"No anexo experimental/histórico, a estrutura de referência por peso preservado foi {best['Algoritmo']} "
+        f"({best.get('Peso preservado (%)', 0):.2f}%). Tipo estrutural: {stype}."
+    )
     validation = {"dataset": job_id, "best_algorithm": best["Algoritmo"], "structural_type": stype, "rows": rows, "summary": summary}
 
     pd.DataFrame(rows).to_csv(output_dir / files["validation_pure_csv"], index=False, encoding="utf-8")
     (output_dir / files["validation_pure_json"]).write_text(json.dumps(validation, ensure_ascii=False, indent=2), encoding="utf-8")
-    (output_dir / files["validation_pure_md"]).write_text("# Validação RAMEX Puro\n\n" + summary + "\n", encoding="utf-8")
+    (output_dir / files["validation_pure_md"]).write_text("# Anexo experimental — heurísticas históricas\n\n" + summary + "\n", encoding="utf-8")
 
     return {
         "files": files, "ramex2007": ramex2007, "forward": forward,
         "backForward": back_forward, "comparisonRows": rows,
-        "comparisonMarkdown": "# Validação RAMEX Puro\n\n" + summary,
+        "comparisonMarkdown": "# Anexo experimental — heurísticas históricas\n\n" + summary,
         "multidatasetMarkdown": "", "missing": [], "validation": validation,
     }
 
 
 def validate_pure_outputs(pure: dict[str, Any] | None) -> None:
     if not pure:
-        raise ValueError("Output RAMEX Puro incompleto: resultados puros não foram gerados.")
+        raise ValueError("Output RAMEX 2007 formal incompleto: resultados formais não foram gerados.")
     required = {
         "ramex2007": "ficheiro ramex2007 JSON não encontrado",
         "forward": "ficheiro forward JSON não encontrado",
@@ -710,7 +1154,7 @@ def validate_pure_outputs(pure: dict[str, Any] | None) -> None:
     }
     for key, message in required.items():
         if not pure.get(key):
-            raise ValueError(f"Output RAMEX Puro incompleto: {message}")
+            raise ValueError(f"Output RAMEX 2007 formal incompleto: {message}")
 
 
 def validate_forum_outputs(forum: dict[str, Any] | None) -> None:
@@ -775,12 +1219,50 @@ def run_pipeline(
 
     if progress_cb:
         progress_cb("parsing", "Leitura e parsing do dataset")
-    seqs = normalize_dataset(input_file, dataset_type, kw.get("case_column"), kw.get("time_column"), kw.get("event_column"))
+    print("RUN_PIPELINE CONFIG", {
+        "dataset_type": dataset_type,
+        "event_mode": kw.get("event_mode", "simple"),
+        "case_column": kw.get("case_column"),
+        "entity_column": kw.get("entity_column"),
+        "time_column": kw.get("time_column"),
+        "event_column": kw.get("event_column"),
+        "event_columns": kw.get("event_columns"),
+        "numeric_discretization": kw.get("numeric_discretization"),
+        "case_window": kw.get("case_window"),
+    }, flush=True)
+    raw_event_columns = kw.get("event_columns")
+    if isinstance(raw_event_columns, str):
+        try:
+            event_columns = json.loads(raw_event_columns)
+        except json.JSONDecodeError:
+            event_columns = [part.strip() for part in raw_event_columns.split(",") if part.strip()]
+    else:
+        event_columns = raw_event_columns
+    raw_numeric_rules = kw.get("numeric_discretization")
+    if isinstance(raw_numeric_rules, str):
+        try:
+            numeric_rules = json.loads(raw_numeric_rules)
+        except json.JSONDecodeError:
+            numeric_rules = {}
+    else:
+        numeric_rules = raw_numeric_rules
+    effective_case_column = kw.get("case_column") or kw.get("entity_column")
+    seqs, event_construction = normalize_dataset(
+        input_file,
+        dataset_type,
+        effective_case_column,
+        kw.get("time_column"),
+        kw.get("event_column"),
+        event_mode=kw.get("event_mode", "simple"),
+        event_columns=event_columns,
+        numeric_discretization=numeric_rules,
+        case_window=kw.get("case_window"),
+    )
     if log_cb:
         log_cb(f"Dataset lido com {len(seqs)} sequências válidas")
 
     if progress_cb:
-        progress_cb("sequencias", "Reconstrução de sequências")
+        progress_cb("sequencias", "Reconstrução de sequências e atributo item-seguinte")
     pairs = [(a, b) for s in seqs for a, b in zip(s, s[1:])]
     if not pairs:
         raise ValueError("Nenhuma transição encontrada nas sequências.")
@@ -788,23 +1270,30 @@ def run_pipeline(
         log_cb(f"{len(seqs)} sequências válidas reconstruídas")
 
     if progress_cb:
-        progress_cb("pares", "Geração de pares A -> B")
+        progress_cb("pares", "Transformação formal RAMEX 2007 em rede de estados")
     if log_cb:
         log_cb(f"{len(pairs)} pares gerados")
 
     if progress_cb:
         progress_cb("frequencias", "Cálculo de frequências absolutas")
     edges_df = build_pair_frequencies(seqs)
+    ramex2007_ordered_df = build_ramex2007_ordered_events(seqs)
+    ramex2007_sequences_df = build_ramex2007_sequences(ramex2007_ordered_df)
+    ramex2007_graph_edges_df = build_ramex2007_graph_edges(seqs)
+    forum_temporal_events_df = build_forum_temporal_events(seqs)
 
     if progress_cb:
-        progress_cb("matriz", "Construção da matriz de adjacência")
+        progress_cb("matriz", "Construção da matriz de adjacência RAMEX 2007")
     matrix_df = build_adjacency_matrix(edges_df)
+    ramex2007_matrix_df = build_adjacency_matrix(ramex2007_graph_edges_df[["From", "To", "Weight"]])
     graph_edges_df = filter_edges(edges_df, kw.get("min_frequency"), kw.get("top_n"))
 
     if progress_cb:
         progress_cb("grafo", "Construção do grafo dirigido ponderado")
+    original_graph = build_graph(edges_df)
     graph = build_graph(graph_edges_df)
     ramex_graph, ramex_df, root = build_ramex_simplified(graph)
+    coverage_metrics = calculate_coverage_metrics(original_graph, graph, ramex_graph)
     if log_cb:
         log_cb(f"{len(edges_df)} transições distintas identificadas")
         log_cb(f"Grafo completo criado com {graph.number_of_nodes()} nós e {graph.number_of_edges()} arestas")
@@ -823,11 +1312,20 @@ def run_pipeline(
         "graph_edges_csv": "grafo_edges.csv", "ramex_csv": "ramex_simplificado.csv",
         "polytree_csv": "ramex_polytree.csv", "polytree_json": "ramex_polytree.json",
         "graph_png": "grafo.png", "ramex_png": "ramex_simplificado.png", "polytree_png": "ramex_polytree.png",
+        "ramex2007_ordered_csv": "ramex2007_ordered.csv",
+        "ramex2007_sequences_csv": "ramex2007_sequences.csv",
+        "ramex2007_graph_edges_csv": "ramex2007_graph_edges.csv",
+        "ramex2007_adjacency_matrix_csv": "ramex2007_adjacency_matrix.csv",
+        "ramex2007_adjacency_matrix_png": "ramex2007_adjacency_matrix.png",
     }
 
     edges_df.rename(columns={"From": "Source", "To": "Target", "Weight": "Frequency"}).to_csv(output_dir / files["pairs_csv"], index=False)
     matrix_df.to_csv(output_dir / files["matrix_csv"])
     graph_edges_df.to_csv(output_dir / files["graph_edges_csv"], index=False)
+    ramex2007_ordered_df.to_csv(output_dir / files["ramex2007_ordered_csv"], index=False)
+    ramex2007_sequences_df.to_csv(output_dir / files["ramex2007_sequences_csv"], index=False)
+    ramex2007_graph_edges_df.to_csv(output_dir / files["ramex2007_graph_edges_csv"], index=False)
+    ramex2007_matrix_df.to_csv(output_dir / files["ramex2007_adjacency_matrix_csv"])
     ramex_df.to_csv(output_dir / files["ramex_csv"], index=False)
     df_poly[[c for c in ["From", "To", "Weight", "Level", "Strategy", "Score", "Reason", "ParentPath"] if c in df_poly]].to_csv(output_dir / files["polytree_csv"], index=False)
     (output_dir / files["polytree_json"]).write_text(
@@ -837,6 +1335,7 @@ def run_pipeline(
     draw_graph(graph, output_dir / files["graph_png"])
     draw_graph(ramex_graph, output_dir / files["ramex_png"], root)
     draw_graph(g_poly, output_dir / files["polytree_png"], root)
+    draw_adjacency_heatmap(ramex2007_matrix_df, output_dir / files["ramex2007_adjacency_matrix_png"])
 
     all_nodes = set(edges_df["From"]) | set(edges_df["To"])
     transition_matrix_data = {}
@@ -860,26 +1359,106 @@ def run_pipeline(
     pure: dict[str, Any] | None = None
     if analysis_type in {"pure", "both"}:
         pure = run_pure_ramex_outputs(
-            output_dir, output_dir.name, output_dir / files["graph_edges_csv"],
-            graph_edges_df, metrics, progress_cb=progress_cb, log_cb=log_cb,
+            output_dir, output_dir.name, output_dir / files["ramex2007_graph_edges_csv"],
+            ramex2007_graph_edges_df[["From", "To", "Weight"]], metrics, progress_cb=progress_cb, log_cb=log_cb,
         )
         files.update(pure["files"])
+        if pure.get("ramex2007"):
+            pure["ramex2007"]["transformation"] = {
+                "ordered_csv": files["ramex2007_ordered_csv"],
+                "sequences_csv": files["ramex2007_sequences_csv"],
+                "graph_edges_csv": files["ramex2007_graph_edges_csv"],
+                "adjacency_matrix_csv": files["ramex2007_adjacency_matrix_csv"],
+                "adjacency_matrix_png": files["ramex2007_adjacency_matrix_png"],
+                "source_node": SOURCE_NODE,
+                "sink_node": SINK_NODE,
+                "original_graph_can_contain_cycles": True,
+                "global_view_note": "O RAMEX apresenta uma visão global da base de dados porque todas as transições entre itens são incorporadas numa única rede de estados.",
+                "markov_difference": {
+                    "RAMEX": "frequências absolutas",
+                    "Markov": "frequências relativas/probabilidades",
+                },
+            }
+            (output_dir / files["ramex2007_json"]).write_text(
+                json.dumps(pure["ramex2007"], ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
 
     forum: dict[str, Any] | None = None
     if analysis_type in {"forum", "both"}:
         if progress_cb:
-            progress_cb("forum", "Execução RAMEX-Forum")
-        forum = run_ramex_forum(graph_edges_df, output_dir / "ramex_forum")
+            progress_cb("forum", "Execução RAMEX-Forum: transformação temporal e análise de influência")
+        forum_output_dir = output_dir / "ramex_forum"
+        temporal_phase1 = run_forum_temporal_phase1(
+            forum_temporal_events_df,
+            forum_output_dir,
+            entity_column="entity",
+            timestamp_column="timestamp",
+            signal_column="signal",
+            latency_max=kw.get("forum_latency_max", kw.get("latency_max", "1h")),
+            epsilon=kw.get("forum_epsilon", 0.01),
+            min_frequency=kw.get("forum_min_frequency", 1.0),
+            min_influence=kw.get("forum_min_influence", 0.0),
+            max_latency=kw.get("forum_max_latency", kw.get("latency_max", "1h")),
+        )
+        temporal_phase2 = run_forum_temporal_phase2(
+            forum_output_dir / temporal_phase1["files"]["filtered_influence_csv"],
+            forum_output_dir,
+            initial_node=kw.get("forum_initial_node"),
+            forward_top_k=as_int(kw.get("forum_forward_top_k"), 1),
+            max_depth=as_int(kw.get("forum_max_depth"), as_int(kw.get("max_depth"), 10)),
+            min_smoothed_weight=kw.get("forum_min_smoothed_weight"),
+            force_heuristic=kw.get("forum_force_heuristic", "auto"),
+        )
+        forum = run_ramex_forum(graph_edges_df, forum_output_dir)
+        forum["temporal_phase1"] = temporal_phase1
+        forum["temporal_phase2"] = temporal_phase2
+        forum["mode"] = "ramex_forum_with_temporal_phase1"
+        forum["interpretation"] = temporal_phase1["interpretation"]
         forum_files = forum.get("files", {})
+        temporal_files = temporal_phase1.get("files", {})
+        temporal_phase2_files = temporal_phase2.get("files", {})
+        forum_files.update({
+            f"temporal_{key}": value
+            for key, value in temporal_files.items()
+        })
+        forum_files.update({
+            f"phase2_{key}": value
+            for key, value in temporal_phase2_files.items()
+        })
+        forum["files"] = forum_files
+        (forum_output_dir / forum_files.get("metrics_json", "ramex_forum_metrics.json")).write_text(
+            json.dumps(forum, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
         files.update({
             "ramex_forum_edges_csv": forum_files.get("edges_csv", "ramex_forum_edges.csv"),
             "ramex_forum_metrics_json": forum_files.get("metrics_json", "ramex_forum_metrics.json"),
             "ramex_forum_graph_png": forum_files.get("graph_png", "ramex_forum_graph.png"),
             "ramex_forum_simplified_png": forum_files.get("simplified_png", "ramex_forum_simplified.png"),
             "ramex_forum_report_md": forum_files.get("report_md", "ramex_forum_report.md"),
+            "ramex_forum_temporal_ordered_csv": temporal_files.get("ordered_dataset_csv", "forum_ordered_dataset.csv"),
+            "ramex_forum_temporal_signal_counter_csv": temporal_files.get("signal_counter_csv", "forum_signal_counter.csv"),
+            "ramex_forum_temporal_influence_csv": temporal_files.get("temporal_influence_csv", "forum_temporal_influence.csv"),
+            "ramex_forum_temporal_filtered_csv": temporal_files.get("filtered_influence_csv", "forum_filtered_influence.csv"),
+            "ramex_forum_temporal_matrix_csv": temporal_files.get("influence_matrix_csv", "forum_influence_matrix.csv"),
+            "ramex_forum_temporal_matrix_png": temporal_files.get("influence_matrix_png", "forum_influence_matrix.png"),
+            "ramex_forum_temporal_graph_edges_csv": temporal_files.get("graph_edges_csv", "forum_graph_edges.csv"),
+            "ramex_forum_temporal_graphml": temporal_files.get("graph_graphml", "forum_graph.graphml"),
+            "ramex_forum_temporal_graph_png": temporal_files.get("graph_png", "forum_graph.png"),
+            "ramex_forum_phase2_metrics_json": temporal_phase2_files.get("metrics_json", "forum_temporal_phase2_metrics.json"),
+            "ramex_forum_phase2_structure_png": temporal_phase2_files.get("phase2_structure_png", "forum_phase2_structure.png"),
+            "ramex_forum_phase2_forward_csv": temporal_phase2_files.get("forward_tree_csv", "forum_forward_tree.csv"),
+            "ramex_forum_phase2_forward_json": temporal_phase2_files.get("forward_tree_json", "forum_forward_tree.json"),
+            "ramex_forum_phase2_forward_png": temporal_phase2_files.get("forward_tree_png", "forum_forward_tree.png"),
+            "ramex_forum_phase2_back_forward_csv": temporal_phase2_files.get("back_forward_polytree_csv", "forum_back_forward_polytree.csv"),
+            "ramex_forum_phase2_back_forward_json": temporal_phase2_files.get("back_forward_polytree_json", "forum_back_forward_polytree.json"),
+            "ramex_forum_phase2_back_forward_png": temporal_phase2_files.get("back_forward_polytree_png", "forum_back_forward_polytree.png"),
+            "ramex_forum_phase2_dominant_path_csv": temporal_phase2_files.get("dominant_path_csv", "forum_dominant_path.csv"),
+            "ramex_forum_phase2_sankey_json": temporal_phase2_files.get("phase2_sankey_json", "forum_phase2_sankey.json"),
         })
         if log_cb:
-            log_cb("RAMEX-Forum concluído com pesos relativos e análise de influência")
+            log_cb("RAMEX-Forum Fase 1 concluído: rede temporal de influência, smoothing, filtros, matriz e grafo")
 
     if analysis_type == "both":
         validate_pure_outputs(pure)
@@ -894,13 +1473,15 @@ def run_pipeline(
 
     pipeline_steps_map = {
         "forum": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX-Forum"],
-        "both": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX 2007", "Forward", "Back-and-Forward formal", "Validação RAMEX puro", "RAMEX-Forum"],
-        "pure": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX 2007", "Forward", "Back-and-Forward formal", "Validação RAMEX puro"],
+        "both": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX 2007", "Forward histórico", "Back-and-Forward histórico", "Anexo experimental", "RAMEX-Forum"],
+        "pure": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX 2007", "Forward histórico", "Back-and-Forward histórico", "Anexo experimental"],
     }
     pure_legacy = {k: pure[k] for k in ["ramex2007", "forward", "backForward", "comparisonRows", "comparisonMarkdown", "multidatasetMarkdown", "missing"]} if pure else None
 
     return {
         "status": "completed", "analysis_type": analysis_type, "metrics": metrics,
+        "event_construction": event_construction,
+        "coverage_metrics": coverage_metrics,
         "interpretation": interpret(metrics),
         "top_transitions": edges_to_records(edges_df.head(5)),
         "matrix": matrix_to_json(matrix_df),
@@ -916,5 +1497,20 @@ def run_pipeline(
         "formal_polytree": pure["backForward"] if pure else None,
         "pure_validation": pure["validation"] if pure else None,
         "ramex_forum": forum,
+        "ramex2007_transformation": {
+            "ordered_rows": len(ramex2007_ordered_df),
+            "sequence_rows": len(ramex2007_sequences_df),
+            "graph_edges": edges_to_records(ramex2007_graph_edges_df),
+            "source_exists": SOURCE_NODE in set(ramex2007_graph_edges_df["From"].astype(str)),
+            "sink_exists": SINK_NODE in set(ramex2007_graph_edges_df["To"].astype(str)),
+            "matrix": matrix_to_json(ramex2007_matrix_df),
+            "files": {
+                "ordered_csv": files["ramex2007_ordered_csv"],
+                "sequences_csv": files["ramex2007_sequences_csv"],
+                "graph_edges_csv": files["ramex2007_graph_edges_csv"],
+                "adjacency_matrix_csv": files["ramex2007_adjacency_matrix_csv"],
+                "adjacency_matrix_png": files["ramex2007_adjacency_matrix_png"],
+            },
+        },
         "pipeline_steps": pipeline_steps_map[analysis_type],
     }

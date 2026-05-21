@@ -1,0 +1,4 @@
+path,start,end,branch_depth,path_weight,bottleneck_weight,edges
+SOURCE -> Tecnologia -> Mercearia -> SINK,SOURCE,SINK,3,117,17,3
+SOURCE -> Tecnologia -> Higiene,SOURCE,Higiene,2,43,17,2
+SOURCE -> Tecnologia -> Limpeza,SOURCE,Limpeza,2,39,17,2

@@ -1,0 +1,28 @@
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "backend-ramex"))
+
+from forum_temporal_pipeline import signal_counter  # noqa: E402
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="RAMEX-Forum Fase 1 - signal_counter(P,t).")
+    parser.add_argument("ordered_csv")
+    parser.add_argument("--output", default="backend/results/forum/forum_signal_counter.csv")
+    args = parser.parse_args()
+
+    output = Path(args.output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    signal_counter(pd.read_csv(args.ordered_csv)).to_csv(output, index=False, encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()
+

@@ -8,6 +8,22 @@ export type ReportData = {
   analysisType?: ReportAnalysisType;
   datasetType?: string;
   generatedAt: string;
+  eventConstruction?: {
+    mode?: "simple" | "advanced";
+    caseColumn?: string | null;
+    timeColumn?: string;
+    caseWindow?: string;
+    eventColumn?: string;
+    eventColumns?: string[];
+    ignoredColumns?: string[];
+    numericDiscretization?: Record<string, string>;
+    rules?: Record<string, string>;
+    generatedEventColumn?: string;
+    generatedCaseColumn?: string;
+    uniqueEvents?: number;
+    eventExamples?: string[];
+    warnings?: string[];
+  };
   parameters?: {
     minFrequency?: number;
     topN?: number | null;
@@ -74,6 +90,19 @@ export type ReportData = {
     bestAlgorithm?: string;
     structuralType?: string;
     summary?: string;
+    ramex2007Root?: string;
+    ramex2007Edges?: Array<{
+      from: string;
+      to: string;
+      weight: number;
+      level?: number;
+    }>;
+    ramex2007DominantPaths?: Array<{
+      path?: string;
+      branchDepth?: number;
+      pathWeight?: number;
+      bottleneckWeight?: number;
+    }>;
     rows?: Array<{
       algorithm: string;
       method?: string;
@@ -113,6 +142,38 @@ export type ReportData = {
       relativeWeight?: number;
     }>;
     interpretation?: string;
+    temporalPhase1?: {
+      signals?: number;
+      temporalRelations?: number;
+      latencyMax?: number;
+      epsilon?: number;
+      totalInfluenceWeight?: number;
+      graph?: string;
+      matrix?: string;
+    };
+    temporalPhase2?: {
+      heuristicUsed?: string;
+      initialNodeMode?: string;
+      selectedInitialNode?: string | null;
+      initialEdge?: string | null;
+      nodesBefore?: number;
+      edgesBefore?: number;
+      nodesAfter?: number;
+      edgesAfter?: number;
+      preservedInfluencePercent?: number;
+      isDag?: boolean;
+      isTree?: boolean;
+      isPolytree?: boolean;
+      dominantPath?: string[];
+      edges?: Array<{
+        from?: string;
+        to?: string;
+        weight?: number;
+        direction?: string;
+      }>;
+      structureImage?: string;
+      heuristicImage?: string;
+    };
     images?: {
       graph?: string;
       simplified?: string;
@@ -130,6 +191,9 @@ export type ReportData = {
   images?: {
     graph?: string;
     ramex?: string;
+    ramex2007?: string;
+    ramex2007Analytical?: string;
+    ramex2007Sankey?: string;
     polytree?: string;
     forumGraph?: string;
     forumSimplified?: string;
