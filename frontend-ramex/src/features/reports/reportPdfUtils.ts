@@ -21,7 +21,7 @@ const NEAR_TOTAL_EDGE_REDUCTION_PERCENT = 99;
 const DATASET_BENCHMARKS: Record<DatasetKey, DatasetBenchmarks> = {
   dataset01: {
     key: "dataset01",
-    referenceStructure: "Anexo experimental: Back-and-Forward Poly-tree Formal",
+    referenceStructure: "RAMEX 2015 — Back-and-Forward Poly-tree",
     referencePreservedPercent: 1.42,
     polytreeFormalPercent: 1.42,
   },
@@ -33,7 +33,7 @@ const DATASET_BENCHMARKS: Record<DatasetKey, DatasetBenchmarks> = {
   },
   dataset03: {
     key: "dataset03",
-    referenceStructure: "Anexo experimental: Back-and-Forward Poly-tree Formal",
+    referenceStructure: "RAMEX 2015 — Back-and-Forward Poly-tree",
     referencePreservedPercent: 36.93,
     polytreeFormalPercent: 36.93,
   },
@@ -197,9 +197,9 @@ export function buildDatasetSpecificInterpretation(data: ReportData): string {
 export function buildDatasetComparisonSection(): string {
   return [
     "O desempenho RAMEX varia por dataset.",
-    "No dataset01, o anexo experimental Back-and-Forward preserva 1,42% de peso.",
+    "No dataset01, a abordagem RAMEX 2015 Back-and-Forward preserva 1,42% de peso.",
     "No dataset02, o RAMEX 2007 Rooted Branching preserva 59,89% de peso.",
-    "No dataset03, o anexo experimental Back-and-Forward preserva 36,93% de peso.",
+    "No dataset03, a abordagem RAMEX 2015 Back-and-Forward preserva 36,93% de peso.",
     "A Poly-tree formal apresenta 1,42% no dataset01, 49,87% no dataset02 e 36,93% no dataset03.",
     "Os melhores resultados surgem quando há recorrência suficiente para formar caminhos dominantes.",
   ].join("\n\n");

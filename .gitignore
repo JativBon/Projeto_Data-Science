@@ -22,6 +22,7 @@ dist/
 # IDE/editor folders
 .vscode/
 .idea/
+.vs/
 
 # OS generated files
 Thumbs.db

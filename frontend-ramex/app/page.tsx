@@ -616,23 +616,23 @@ const showExperimental = process.env.NEXT_PUBLIC_SHOW_EXPERIMENTAL === "true";
 
 const views: Array<{ id: ViewId; label: string; icon: ElementType; description: string }> = [
   { id: "upload", label: "Upload / Nova Análise", icon: FileUp, description: "Centro de Comando e execução assíncrona" },
-  { id: "pure", label: "RAMEX 2007", icon: Network, description: "Maximum Weight Rooted Branching formal" },
-  { id: "polytree", label: "Poly-tree / Validação", icon: GitBranch, description: "Poly-tree formal e validações estruturais" },
-  { id: "validation", label: "Comparação de Datasets", icon: BarChart3, description: "Comparação RAMEX 2007 formal" },
+  { id: "pure", label: "RAMEX 2007 / 2015", icon: Network, description: "Rooted Branching, Forward e Back-and-Forward" },
+  { id: "sankey", label: "Sankey — Fluxos", icon: Activity, description: "Visualização complementar; não substitui RAMEX" },
+  { id: "polytree", label: "Validação / Poly-tree", icon: GitBranch, description: "Validação estrutural das árvores e poly-trees" },
+  { id: "validation", label: "Comparação de Datasets", icon: BarChart3, description: "Métricas por dataset e abordagem RAMEX" },
   { id: "history", label: "Histórico", icon: HistoryIcon, description: "Análises locais e artefactos gerados" },
   { id: "reports", label: "Relatórios", icon: Download, description: "Exportação técnica em Markdown/PDF" },
   { id: "about", label: "Sobre o RAMEX", icon: BookOpen, description: "Contexto académico e referências" },
-  { id: "forum", label: "RAMEX-Forum", icon: Sigma, description: "Influência temporal: Fase 1 + Fase 2" },
+  { id: "forum", label: "RAMEX-Forum temporal", icon: Sigma, description: "Sinais, latência e influência temporal" },
   { id: "datasets", label: "Datasets de Validação", icon: Grid3X3, description: "Casos estáticos para benchmark" },
   { id: "pipeline", label: "Pipeline RAMEX", icon: GitBranch, description: "Etapas formais do framework" },
-  { id: "demo", label: "Demonstração", icon: Presentation, description: "Dataset → transformação → RAMEX 2007 → Forum" },
+  { id: "demo", label: "Demonstração", icon: Presentation, description: "Dataset → transformação → RAMEX 2007/2015 → RAMEX-Forum temporal" },
   ...(showExperimental
     ? ([
         { id: "matrix", label: "Matriz de Adjacência", icon: Grid3X3, description: "Leitura tabular da transição" },
         { id: "graph", label: "Grafo", icon: Network, description: "Rede completa com amostragem" },
         { id: "ramex", label: "Estrutura RAMEX base", icon: GitBranch, description: "Núcleo selecionado do grafo" },
-        { id: "sankey", label: "Sankey", icon: Activity, description: "Fluxos principais entre eventos" },
-        { id: "polytree", label: "RAMEX Poly-tree Experimental", icon: GitBranch, description: "Estratégias Top-K e Multiobjetivo" },
+        { id: "polytree", label: "Poly-tree experimental", icon: GitBranch, description: "Estratégias Top-K e Multiobjetivo como exploração visual" },
         { id: "summary", label: "Resumo Executivo Antigo", icon: Sigma, description: "Consolidação textual da validação" },
       ] as Array<{ id: ViewId; label: string; icon: ElementType; description: string }> )
     : []),
@@ -720,7 +720,8 @@ function inferColumnMapping(columns: string[], datasetType: UploadDatasetType) {
 }
 
 function parseNumber(value: unknown): number {
-  const parsed = Number(value);
+  if (value === undefined || value === null || value === "") return 0;
+  const parsed = typeof value === "number" ? value : Number(String(value).trim().replace("%", "").replace(",", "."));
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
@@ -905,10 +906,20 @@ async function loadOptionalText(fileName: string): Promise<string | undefined> {
   return response.text();
 }
 
-function formatNumber(value: number, fractionDigits = 0): string {
+function formatNumber(value: unknown, fractionDigits = 0): string {
+  if (value === undefined || value === null || value === "") return "-";
+
+  const parsed =
+    typeof value === "number"
+      ? value
+      : Number(String(value).trim().replace("%", "").replace(",", "."));
+
+  if (!Number.isFinite(parsed)) return String(value);
+
   return new Intl.NumberFormat("pt-PT", {
+    minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
-  }).format(value);
+  }).format(parsed);
 }
 
 function nodesFromEdges(edges: Edge[]): Set<string> {
@@ -1067,10 +1078,10 @@ function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
     errors.push("RAMEX 2007 formal não está disponível neste resultado.");
   }
   if ((type === "forum" || type === "both") && !forum?.temporal_phase1) {
-    errors.push("RAMEX-Forum Fase 1 não está disponível neste resultado.");
+    errors.push("RAMEX-Forum temporal — Fase 1 não está disponível neste resultado.");
   }
   if ((type === "forum" || type === "both") && !forum?.temporal_phase2) {
-    errors.push("RAMEX-Forum Fase 2 não está disponível neste resultado.");
+    errors.push("RAMEX-Forum temporal — Fase 2 não está disponível neste resultado.");
   }
   if (result.coverage_metrics?.warning_messages?.length) {
     warnings.push(...result.coverage_metrics.warning_messages);
@@ -1224,9 +1235,9 @@ function formatDateTime(value?: string): string {
 
 function analysisTypeLabel(value: HistoryAnalysisType): string {
   const labels: Record<HistoryAnalysisType, string> = {
-    pure: "RAMEX 2007",
-    forum: "RAMEX-Forum",
-    both: "Both",
+    pure: "RAMEX 2007 / 2015",
+    forum: "RAMEX-Forum temporal",
+    both: "RAMEX 2007/2015 + RAMEX-Forum temporal",
     unknown: "Desconhecido",
   };
   return labels[value] ?? "Desconhecido";
@@ -1307,7 +1318,7 @@ function buildTechnicalReport(input: {
 
 ## 2. Objetivo da análise
 
-Esta análise separa duas leituras: RAMEX 2007 formal, baseado em transformação da base de dados e Maximum Weight Rooted Branching; e RAMEX-Forum, baseado em influência temporal, smoothing, filtros e extração estrutural.
+Esta análise separa três leituras: RAMEX 2007 formal, baseado em transformação da base de dados e Maximum Weight Rooted Branching; RAMEX 2015, baseado nas heurísticas Forward e Back-and-Forward para tree/poly-tree; e RAMEX-Forum temporal, baseado em influência temporal, smoothing, sinais, latência e extração estrutural.
 
 O RAMEX não analisa todas as variáveis tabulares diretamente. Em vez disso, transforma variáveis selecionadas em eventos sequenciais discretos e depois analisa as transições entre esses eventos.
 
@@ -1325,9 +1336,9 @@ O RAMEX não analisa todas as variáveis tabulares diretamente. Em vez disso, tr
 
 1. Dataset e reconstrução sequencial;
 2. Transformação RAMEX 2007 em rede de estados com SOURCE/SINK;
-3. Condensação RAMEX 2007 por rooted branching;
-4. RAMEX-Forum Fase 1: rede temporal de influência;
-5. RAMEX-Forum Fase 2: Forward Tree ou Back-and-Forward Poly-tree;
+3. Condensação RAMEX 2007 por Maximum Weight Rooted Branching;
+4. RAMEX 2015: Forward Tree ou Back-and-Forward Poly-tree quando aplicável;
+5. RAMEX-Forum temporal: rede de influência e extração estrutural;
 6. Interpretação, gráficos, Sankey e relatório.
 
 ## 4. Camada observacional
@@ -1356,9 +1367,11 @@ RAMEX 2007 é tratado como implementação formal de Cavique 2007: transformaç�
 - A árvore B final deve ser DAG/arborescência.
 - A rede G formal pode conter ciclos; a aciclicidade surge após a condensação.
 
-## 6. RAMEX-Forum temporal
+## 6. RAMEX 2015 e RAMEX-Forum temporal
 
-${input.ramexForum ? `RAMEX-Forum foi executado como pipeline temporal/influência.
+RAMEX 2015 é representado pelas heurísticas Forward e Back-and-Forward sobre a rede de transições. O RAMEX-Forum só deve ser interpretado como pipeline temporal/influência quando existirem dados de sinais, latência e relações temporais.
+
+${input.ramexForum ? `RAMEX-Forum temporal foi executado como pipeline de influência.
 
 ### Fase 1 — influência temporal
 
@@ -1373,22 +1386,23 @@ ${input.ramexForum ? `RAMEX-Forum foi executado como pipeline temporal/influênc
 - Influência preservada Fase 2: ${metricValue(input.ramexForum.temporalPhase2?.preservedInfluencePercent, "%")}
 - Caminho dominante Fase 2: ${metricValue(input.ramexForum.temporalPhase2?.dominantPath?.join(" -> "))}
 
-` : "RAMEX-Forum não foi executado neste resultado."}
+` : "RAMEX-Forum temporal não foi executado neste resultado."}
 
 ## 7. Visualizações
 
 - Grafo observado: fonte = camada observacional.
 - Árvore técnica RAMEX 2007: fonte = rooted branching formal.
 - Sankey RAMEX 2007: fonte = árvore B/rooted branching.
-- Sankey RAMEX-Forum: fonte = influência temporal/estrutura Fase 2.
+- Sankey RAMEX-Forum temporal: fonte = influência temporal/estrutura Fase 2.
+- Sankey de fluxos: visualização complementar; não substitui o algoritmo RAMEX.
 
 Filtros visuais não alteram a análise nem os artefactos CSV/JSON.
 
-${input.pureRamex?.rows?.length ? `## 8. Anexo — heurísticas experimentais/históricas
+${input.pureRamex?.rows?.length ? `## 8. Anexo — RAMEX 2015 / heurísticas complementares
 
-Estas linhas são apresentadas apenas como comparação exploratória, não como análise principal.
+Estas linhas distinguem métodos formais e heurísticas bibliográficas: Forward e Back-and-Forward pertencem ao enquadramento RAMEX 2015; outras heurísticas antigas devem ser lidas apenas como exploração inicial.
 
-| Algoritmo histórico | Método | Arestas | Peso preservado | Raiz / aresta inicial |
+| Abordagem | Método | Arestas | Peso preservado | Raiz / aresta inicial |
 | --- | --- | ---: | ---: | --- |
 ${input.pureRamex.rows.map((row) => `| ${row.algorithm} | ${metricValue(row.method)} | ${metricValue(row.selectedEdges)} | ${metricValue(row.preservedWeightPercent, "%")} | ${metricValue(row.anchor)} |`).join("\n")}
 
@@ -1397,7 +1411,7 @@ ${input.pureRamex.rows.map((row) => `| ${row.algorithm} | ${metricValue(row.meth
 ## ${input.pureRamex?.rows?.length ? "9" : "8"}. Limitações
 
 - As visualizações analíticas e Sankey podem ser filtradas para legibilidade, sem alterar CSV/JSON.
-- A camada histórica/experimental é anexo de comparação e não deve ser confundida com RAMEX 2007 formal.
+- Forward e Back-and-Forward devem ser apresentados como RAMEX 2015; heurísticas antigas/locais devem permanecer apenas como exploração inicial.
 - A fórmula temporal inicial do RAMEX-Forum deve ser calibrada com datasets reais.
 
 ## ${input.pureRamex?.rows?.length ? "10" : "9"}. Trabalho futuro
@@ -1408,7 +1422,7 @@ ${input.pureRamex.rows.map((row) => `| ${row.algorithm} | ${metricValue(row.meth
 
 ## ${input.pureRamex?.rows?.length ? "11" : "10"}. Conclusão
 
-${dynamicInterpretation} A análise distingue RAMEX 2007 formal de RAMEX-Forum temporal e preserva os artefactos completos para validação.
+${dynamicInterpretation} A análise distingue RAMEX 2007 formal, RAMEX 2015 Forward/Back-and-Forward e RAMEX-Forum temporal, preservando os artefactos completos para validação.
 
 ## ${input.pureRamex?.rows?.length ? "12" : "11"}. Referências
 
@@ -1568,10 +1582,10 @@ function pureCompletenessError(result?: UploadResult | null): string | undefined
 function forumCompletenessError(result?: UploadResult | null): string | undefined {
   const forum = result?.ramex_forum ?? result?.forum;
   if (!forum?.temporal_phase1) {
-    return "Output RAMEX-Forum incompleto: Fase 1 temporal não encontrada";
+    return "Output RAMEX-Forum temporal incompleto: Fase 1 temporal não encontrada";
   }
   if (!forum.temporal_phase2) {
-    return "Output RAMEX-Forum incompleto: Fase 2 estrutural não encontrada";
+    return "Output RAMEX-Forum temporal incompleto: Fase 2 estrutural não encontrada";
   }
   return undefined;
 }
@@ -1719,7 +1733,7 @@ function MetricCard({ label, value, note }: { label: string; value: string; note
       className="group relative overflow-hidden rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-2xl shadow-slate-300/20 ring-1 ring-white/70 backdrop-blur-xl"
     >
       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">{label}</p>
-      <p className="mt-3 break-words font-mono text-3xl font-semibold tabular-nums tracking-tight text-slate-950 lg:text-4xl">
+      <p className="mt-3 break-words font-mono text-2xl font-semibold leading-tight tabular-nums tracking-tight text-slate-950 lg:text-3xl">
         {value}
       </p>
       {note && <p className="mt-1 text-xs leading-5 text-slate-500">{note}</p>}
@@ -2460,7 +2474,7 @@ function PolyTreeTable({ rows }: { rows: PolyTreeTableRow[] }) {
               <td className="px-3 py-3 text-right">{formatNumber(row.Weight)}</td>
               <td className="px-3 py-3 text-right">{row.Level ?? "-"}</td>
               <td className="px-3 py-3 text-slate-600">{row.Strategy ?? "-"}</td>
-              <td className="px-3 py-3 text-right">{row.Score === undefined ? "-" : row.Score.toFixed(3)}</td>
+              <td className="px-3 py-3 text-right">{formatNumber(row.Score, 3)}</td>
               <td className="px-3 py-3 text-slate-600">{row.Reason ?? "-"}</td>
             </tr>
           ))}
@@ -3156,7 +3170,7 @@ function PureComparisonPanel({
       <div className="rounded-lg border border-thesis/20 bg-thesis/5 p-5 shadow-panel">
         <p className="text-sm font-semibold text-thesis">Maior peso preservado</p>
         <p className="mt-2 text-2xl font-semibold text-ink">
-          {best?.Algoritmo ?? "Sem dados gerados"} {best?.["Peso preservado (%)"] !== undefined ? `(${best["Peso preservado (%)"].toFixed(2)}%)` : ""}
+          {best?.Algoritmo ?? "Sem dados gerados"} {best?.["Peso preservado (%)"] !== undefined ? `(${formatNumber(best["Peso preservado (%)"], 2)}%)` : ""}
         </p>
         <p className="mt-3 text-sm leading-6 text-slate-700">
           A comparação não aponta para um método único. O desempenho depende da densidade,
@@ -3214,7 +3228,7 @@ function PureComparisonPanel({
                 <td className="px-3 py-3 text-slate-700">{row.Metodo}</td>
                 <td className="px-3 py-3 text-right">{row["Nos selecionados"] ?? "-"}</td>
                 <td className="px-3 py-3 text-right">{row["Arestas selecionadas"] ?? "-"}</td>
-                <td className="px-3 py-3 text-right">{row["Peso preservado (%)"]?.toFixed(2) ?? "-"}%</td>
+                <td className="px-3 py-3 text-right">{formatNumber(row["Peso preservado (%)"], 2)}%</td>
                 <td className="px-3 py-3 text-slate-600">{row["Raiz ou aresta inicial"] ?? "-"}</td>
               </tr>
             ))}
@@ -3291,18 +3305,18 @@ function RamexPurePanel({
   const tabs = [
     ["overview", "Visão Geral"],
     ["ramex2007", "RAMEX 2007"],
-    ["forward", "Forward"],
-    ["backforward", "Back-and-Forward"],
+    ["forward", "RAMEX 2015 — Forward"],
+    ["backforward", "RAMEX 2015 — Back-and-Forward"],
     ["comparison", "Comparação"],
   ] as const;
 
   return (
     <section className="space-y-5">
       <div className="rounded-3xl border border-slate-200/60 bg-white/90 p-6 shadow-2xl ring-1 ring-white/70 backdrop-blur-xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Linha principal</p>
-        <h3 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">RAMEX 2007 formal</h3>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Alinhamento bibliográfico</p>
+        <h3 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">RAMEX 2007 / 2015</h3>
         <p className="mt-3 text-sm leading-7 text-slate-700">
-          Esta seção apresenta o RAMEX 2007 como transformação formal da base de dados numa rede de estados seguida de Maximum Weight Rooted Branching. Forward e Back-and-Forward são mantidas apenas como heurísticas históricas/experimentais de comparação.
+          Esta secção separa o RAMEX 2007 como transformação formal da base de dados numa rede de estados seguida de Maximum Weight Rooted Branching, e o RAMEX 2015 como conjunto de heurísticas Forward e Back-and-Forward para geração de tree/poly-tree.
         </p>
         <button
           disabled
@@ -3335,7 +3349,7 @@ function RamexPurePanel({
             <MetricCard label="Dataset selecionado" value={datasets[datasetId].label} />
             <MetricCard label="Algoritmos disponíveis" value={formatNumber(available)} />
             <MetricCard label="Maior peso preservado" value={best?.Algoritmo ?? "Sem dados gerados"} />
-            <MetricCard label="Peso preservado máximo" value={best?.["Peso preservado (%)"] !== undefined ? `${best["Peso preservado (%)"].toFixed(2)}%` : "Sem dados gerados"} />
+            <MetricCard label="Peso preservado máximo" value={best?.["Peso preservado (%)"] !== undefined ? `${formatNumber(best["Peso preservado (%)"], 2)}%` : "Sem dados gerados"} />
             <MetricCard label="Tipo estrutural" value={structuralType} />
             <MetricCard label="Método(s) mais simples" value={simplestLabel} />
             <MetricCard label="Mais próximo da Poly-tree" value={polyLike?.algorithm ?? "Sem dados gerados"} />
@@ -3355,7 +3369,7 @@ function RamexPurePanel({
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-5 shadow-panel">
               <h3 className="text-lg font-semibold text-ink">Extensões complementares</h3>
               <p className="mt-3 text-sm leading-7 text-slate-700">
-                O RAMEX-Forum é apresentado em aba própria como complemento de análise de influência, mantendo o RAMEX 2007 como linha principal.
+                O RAMEX-Forum temporal é apresentado em aba própria apenas quando existe lógica de influência temporal, sinais, latência e extração estrutural.
               </p>
             </div>
           </div>
@@ -3376,8 +3390,8 @@ function RamexPurePanel({
       {tab === "forward" ? (
         <motion.div key="pure-forward" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
         <PureRamexMethodPanel
-          title="RAMEX Forward Heuristic"
-          description="A Forward Heuristic é adequada quando existe uma raiz conhecida. Expande a estrutura para a frente, escolhendo transições de maior peso para novos nós."
+          title="RAMEX 2015 — Forward Heuristic"
+          description="A Forward Heuristic é adequada quando existe uma raiz ou nó inicial conhecido. Expande a árvore para a frente, escolhendo transições elegíveis de maior peso."
           data={effectiveData?.forward}
           imageFile={uploaded ? undefined : `ramex_forward_dataset${datasetId}.png`}
           imageUrl={uploaded?.files.forward_png ? `${imageBase}${uploaded.files.forward_png}` : undefined}
@@ -3387,8 +3401,8 @@ function RamexPurePanel({
       {tab === "backforward" ? (
         <motion.div key="pure-backforward" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
         <PureRamexMethodPanel
-          title="RAMEX Back-and-Forward Heuristic"
-          description="A Back-and-Forward Heuristic não depende de uma raiz explícita. Começa pela transição mais forte e expande em ambos os sentidos, aproximando-se melhor da ideia de Poly-tree RAMEX."
+          title="RAMEX 2015 — Back-and-Forward Poly-tree"
+          description="A Back-and-Forward Heuristic é adequada quando não existe nó inicial claro. Começa pela relação mais forte e expande em ambos os sentidos, procurando uma poly-tree de maior peso."
           data={effectiveData?.backForward}
           imageFile={uploaded ? undefined : `ramex_back_forward_dataset${datasetId}.png`}
           imageUrl={uploaded?.files.back_forward_formal_png ? `${imageBase}${uploaded.files.back_forward_formal_png}` : undefined}
@@ -3418,7 +3432,7 @@ function RamexForumPanel({
 }) {
   if (!data) {
     return (
-      <EmptyState message="RAMEX-Forum requer resultados temporais gerados pela pipeline Forum. Execute uma análise RAMEX-Forum ou Both para obter Fase 1 e Fase 2." />
+      <EmptyState message="RAMEX-Forum temporal requer resultados gerados pela pipeline de influência temporal. Execute RAMEX-Forum temporal ou análise completa para obter Fase 1 e Fase 2." />
     );
   }
 
@@ -3463,7 +3477,7 @@ function RamexForumPanel({
       {temporal ? (
         <div className="space-y-5">
           <div className="rounded-3xl border border-teal-200/80 bg-gradient-to-br from-teal-50 to-cyan-50 p-6 shadow-2xl shadow-teal-100/50 backdrop-blur-md">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">RAMEX-Forum · Fase 1 formal</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">RAMEX-Forum temporal · Fase 1</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Transformação temporal do problema</h3>
             <p className="mt-3 text-sm leading-7 text-slate-700">
               {temporal.interpretation ?? "O dataset original foi transformado numa rede temporal de influência, onde cada nó representa um sinal/evento e cada aresta representa uma influência temporal suavizada e filtrada."}
@@ -3496,10 +3510,10 @@ function RamexForumPanel({
               </p>
               {temporalGraphImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={temporalGraphImage} alt="Grafo temporal RAMEX-Forum" className="max-h-[34rem] w-full object-contain" />
+                  <img src={temporalGraphImage} alt="Grafo temporal RAMEX-Forum temporal" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
-                <EmptyState message="Grafo temporal RAMEX-Forum ainda não disponível." />
+                <EmptyState message="Grafo temporal RAMEX-Forum temporal ainda não disponível." />
               )}
             </div>
             <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
@@ -3509,17 +3523,17 @@ function RamexForumPanel({
               </p>
               {temporalMatrixImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={temporalMatrixImage} alt="Matriz de influência RAMEX-Forum" className="max-h-[34rem] w-full object-contain" />
+                  <img src={temporalMatrixImage} alt="Matriz de influência RAMEX-Forum temporal" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
-                <EmptyState message="Heatmap RAMEX-Forum ainda não disponível." />
+                <EmptyState message="Heatmap RAMEX-Forum temporal ainda não disponível." />
               )}
             </div>
           </div>
 
           <SankeyPanel
             edges={temporalEdges}
-            title="Sankey temporal RAMEX-Forum"
+            title="Sankey — RAMEX-Forum temporal"
             description="Propagação temporal entre sinais, com espessura proporcional ao peso de influência suavizado."
           />
 
@@ -3562,11 +3576,11 @@ function RamexForumPanel({
               </div>
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
-              <h4 className="font-semibold text-ink">RAMEX-Forum vs Markov</h4>
+              <h4 className="font-semibold text-ink">RAMEX-Forum temporal vs Markov</h4>
               <div className="mt-3 overflow-auto">
                 <table className="min-w-full text-sm">
                   <tbody className="divide-y divide-slate-100">
-                    <tr><td className="py-2 font-semibold">RAMEX-Forum</td><td>Influência temporal global, rede de propagação e pesos absolutos suavizados.</td></tr>
+                    <tr><td className="py-2 font-semibold">RAMEX-Forum temporal</td><td>Influência temporal global, rede de propagação e pesos absolutos suavizados.</td></tr>
                     <tr><td className="py-2 font-semibold">Markov</td><td>Probabilidades locais, dependência imediata e normalização probabilística.</td></tr>
                     <tr><td className="py-2 font-semibold">Nesta fase</td><td>Não são usadas probabilidades Markovianas nem normalização de pesos.</td></tr>
                   </tbody>
@@ -3580,10 +3594,10 @@ function RamexForumPanel({
       {phase2 ? (
         <div className="space-y-5">
           <div className="rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-50 to-white p-6 shadow-2xl shadow-amber-100/50 backdrop-blur-md">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">RAMEX-Forum · Fase 2</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">RAMEX-Forum temporal · Fase 2</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Extração estrutural</h3>
             <p className="mt-3 text-sm leading-7 text-slate-700">
-              {phase2.interpretation ?? "Na Fase 2, o RAMEX-Forum transforma a rede temporal de influência numa estrutura interpretável. Quando existe nó inicial, aplica-se Forward Heuristic. Na ausência de nó inicial claro, aplica-se Back-and-Forward Heuristic para construir uma Poly-tree de influência."}
+              {phase2.interpretation ?? "Na Fase 2, o RAMEX-Forum temporal transforma a rede temporal de influência numa estrutura interpretável. Quando existe nó inicial, aplica-se Forward Heuristic. Na ausência de nó inicial claro, aplica-se Back-and-Forward Heuristic para construir uma Poly-tree de influência."}
             </p>
           </div>
 
@@ -3607,17 +3621,17 @@ function RamexForumPanel({
               <h4 className="font-semibold text-slate-100">Grafo técnico da Fase 2</h4>
               {phase2StructureImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={phase2StructureImage} alt="Estrutura RAMEX-Forum Fase 2" className="max-h-[34rem] w-full object-contain" />
+                  <img src={phase2StructureImage} alt="Estrutura RAMEX-Forum temporal — Fase 2" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
-                <EmptyState message="Estrutura RAMEX-Forum Fase 2 ainda não disponível." />
+                <EmptyState message="Estrutura RAMEX-Forum temporal — Fase 2 ainda não disponível." />
               )}
             </div>
             <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
               <h4 className="font-semibold text-slate-100">{phase2Metrics.heuristic_used === "forward" ? "Forward Tree" : "Back-and-Forward Poly-tree"}</h4>
               {phase2SpecificImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={phase2SpecificImage} alt="Heurística RAMEX-Forum Fase 2" className="max-h-[34rem] w-full object-contain" />
+                  <img src={phase2SpecificImage} alt="Heurística RAMEX-Forum temporal — Fase 2" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
                 <EmptyState message="Imagem específica da heurística ainda não disponível." />
@@ -3627,7 +3641,7 @@ function RamexForumPanel({
 
           <SankeyPanel
             edges={phase2Edges}
-            title="Sankey RAMEX-Forum Fase 2"
+            title="Sankey — RAMEX-Forum temporal Fase 2"
             description="Fluxo da estrutura extraída sobre a rede temporal de influência."
           />
 
@@ -3686,12 +3700,12 @@ function RamexForumPanel({
           </div>
         </div>
       ) : temporal ? (
-        <WarningPanel>RAMEX-Forum Fase 2 requer outputs válidos da Fase 1 e relações de influência após filtragem.</WarningPanel>
+        <WarningPanel>RAMEX-Forum temporal — Fase 2 requer outputs válidos da Fase 1 e relações de influência após filtragem.</WarningPanel>
       ) : null}
 
       <div className="rounded-3xl border border-cyan-200/80 bg-gradient-to-br from-cyan-50 to-teal-50 p-6 shadow-2xl shadow-cyan-200/40 backdrop-blur-md">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Camada experimental mantida</p>
-        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">RAMEX-Forum interpretativo legado</h3>
+        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Análise inspirada em RAMEX-Forum (legado)</h3>
         <p className="mt-3 text-sm leading-7 text-slate-700">
           Esta camada antiga continua disponível por compatibilidade. A Fase 1 formal acima é a transformação temporal com sinais, latência, smoothing e filtros; nenhuma delas substitui o RAMEX 2007 formal.
         </p>
@@ -3712,20 +3726,20 @@ function RamexForumPanel({
           <h4 className="font-semibold text-slate-100">Grafo de influência completo</h4>
           {forumImage ? (
             <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-              <img src={forumImage} alt="Grafo de influência RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
+              <img src={forumImage} alt="Grafo de influência inspirado em RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
             </div>
           ) : (
-            <EmptyState message="Imagem RAMEX-Forum ainda não disponível." />
+            <EmptyState message="Imagem inspirada em RAMEX-Forum ainda não disponível." />
           )}
         </div>
         <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
-          <h4 className="font-semibold text-slate-100">Estrutura simplificada RAMEX-Forum</h4>
+          <h4 className="font-semibold text-slate-100">Estrutura simplificada inspirada em RAMEX-Forum</h4>
           {simplifiedImage ? (
             <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-              <img src={simplifiedImage} alt="Estrutura simplificada RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
+              <img src={simplifiedImage} alt="Estrutura simplificada inspirada em RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
             </div>
           ) : (
-            <EmptyState message="Imagem simplificada RAMEX-Forum ainda não disponível." />
+            <EmptyState message="Imagem simplificada inspirada em RAMEX-Forum ainda não disponível." />
           )}
         </div>
       </div>
@@ -3792,8 +3806,9 @@ function RamexForumPanel({
           <div className="mt-3 overflow-auto">
             <table className="min-w-full text-sm">
               <tbody className="divide-y divide-slate-100">
-                <tr><td className="py-2 font-semibold">RAMEX 2007</td><td>Condensa estrutura sequencial dominante em Poly-tree formal.</td></tr>
-                <tr><td className="py-2 font-semibold">RAMEX-Forum</td><td>Explora influência, centralidade, pesos relativos e caminhos dominantes.</td></tr>
+                <tr><td className="py-2 font-semibold">RAMEX 2007</td><td>Condensa a rede sequencial numa arborescência enraizada de peso máximo.</td></tr>
+                <tr><td className="py-2 font-semibold">RAMEX 2015</td><td>Aplica Forward ou Back-and-Forward para obter tree/poly-tree consoante exista, ou não, nó inicial claro.</td></tr>
+                <tr><td className="py-2 font-semibold">RAMEX-Forum temporal</td><td>Explora influência temporal com sinais, latência, pesos de influência e extração estrutural própria.</td></tr>
                 <tr><td className="py-2 font-semibold">Melhor uso</td><td>Relações complexas e exploração interpretativa complementar.</td></tr>
               </tbody>
             </table>
@@ -4194,11 +4209,11 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
     ? ([
         ["Grafo completo", detail.files.graph_png],
         ["RAMEX 2007", detail.files.ramex2007_png],
-        ["Forward", detail.files.forward_png],
-        ["Back-and-Forward formal", detail.files.back_forward_formal_png],
-        ["Poly-tree", detail.files.polytree_png],
-        ["RAMEX-Forum", detail.files.forum_graph_png],
-        ["RAMEX-Forum simplificado", detail.files.forum_simplified_png],
+        ["RAMEX 2015 — Forward", detail.files.forward_png],
+        ["RAMEX 2015 — Back-and-Forward", detail.files.back_forward_formal_png],
+        ["Poly-tree / validação", detail.files.polytree_png],
+        ["RAMEX-Forum temporal", detail.files.forum_graph_png],
+        ["Análise inspirada em RAMEX-Forum", detail.files.forum_simplified_png],
       ] as Array<[string, string | null | undefined]>).filter((e): e is [string, string] => Boolean(e[1]))
     : [];
 
@@ -4253,9 +4268,9 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
             className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
           >
             <option value="all">Todos os tipos</option>
-            <option value="pure">RAMEX 2007</option>
-            <option value="forum">RAMEX-Forum</option>
-            <option value="both">Both</option>
+            <option value="pure">RAMEX 2007 / 2015</option>
+            <option value="forum">RAMEX-Forum temporal</option>
+            <option value="both">Análise completa</option>
             <option value="unknown">Desconhecido</option>
           </select>
           <select
@@ -4288,9 +4303,9 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
                 <th className="px-4 py-3 text-left">Estado</th>
                 <th className="px-4 py-3 text-right">Nós</th>
                 <th className="px-4 py-3 text-right">Arestas</th>
-                <th className="px-4 py-3 text-left">Melhor RAMEX 2007</th>
+                <th className="px-4 py-3 text-left">Melhor abordagem RAMEX</th>
                 <th className="px-4 py-3 text-right">Peso preservado</th>
-                <th className="px-4 py-3 text-left">Forum</th>
+                <th className="px-4 py-3 text-left">RAMEX-Forum temporal</th>
                 <th className="px-4 py-3 text-left">Ações</th>
               </tr>
             </thead>
@@ -4433,7 +4448,7 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
                       <td className="px-3 py-3 font-semibold text-slate-900">{row.Algoritmo}</td>
                       <td className="px-3 py-3 text-right font-mono font-semibold tabular-nums text-slate-950">{formatNumber(row["Nos selecionados"] ?? 0)}</td>
                       <td className="px-3 py-3 text-right font-mono font-semibold tabular-nums text-slate-950">{formatNumber(row["Arestas selecionadas"] ?? 0)}</td>
-                      <td className="px-3 py-3 text-right font-mono font-semibold tabular-nums text-cyan-800">{((row["Peso preservado (%)"] as number | undefined) ?? 0).toFixed(2)}%</td>
+                      <td className="px-3 py-3 text-right font-mono font-semibold tabular-nums text-cyan-800">{formatNumber(row["Peso preservado (%)"], 2)}%</td>
                       <td className="px-3 py-3 font-medium text-slate-700">{row["Raiz ou aresta inicial"] ?? "-"}</td>
                     </tr>
                   ))}
@@ -4510,7 +4525,7 @@ function ValidationTable({ rows }: { rows: Ramex2007DatasetComparisonRow[] }) {
               <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{formatNumber(row.Nos)}</td>
               <td className="px-3 py-3 text-right font-medium tabular-nums text-slate-700">{formatNumber(row.Arestas)}</td>
               <td className="px-3 py-3 font-medium text-slate-700">{row.Raiz}</td>
-              <td className="px-3 py-3 text-right font-semibold tabular-nums text-slate-800">{row.PesoPreservado.toFixed(2)}%</td>
+              <td className="px-3 py-3 text-right font-semibold tabular-nums text-slate-800">{formatNumber(row.PesoPreservado, 2)}%</td>
               <td className="px-3 py-3 text-slate-700">{row.DAG === undefined ? "-" : String(row.DAG)}</td>
               <td className="px-3 py-3 text-slate-700">{row.Arborescencia === undefined ? "-" : String(row.Arborescencia)}</td>
               <td className="max-w-xl px-3 py-3 text-slate-700">{row.Observacao}</td>
@@ -4527,7 +4542,7 @@ function ValidationCharts({ rows }: { rows: Ramex2007DatasetComparisonRow[] }) {
 
   const chartRows = rows.map((row) => ({
     dataset: row.Dataset.replace("Dataset ", "D"),
-    peso: Number(row.PesoPreservado.toFixed(2)),
+    peso: parseNumber(row.PesoPreservado),
   }));
 
   return (
@@ -4565,11 +4580,12 @@ function AboutRamexPanel() {
     ["Frequência de transições", "Implementado"],
     ["Matriz de adjacência", "Implementado"],
     ["Grafo dirigido ponderado", "Implementado"],
-    ["Estrutura RAMEX 2007", "Implementado na linha RAMEX 2007 formal"],
-    ["RAMEX 2007 Rooted Branching", "Implementação formal Cavique 2007"],
-    ["Forward Heuristic", "Heurística experimental/histórica"],
-    ["Back-and-Forward Heuristic", "Heurística experimental/histórica"],
-    ["Poly-tree completo", "Heurística experimental/histórica"],
+    ["Grafo observado", "Transições reconstruídas diretamente do dataset"],
+    ["RAMEX 2007 Rooted Branching", "Implementação formal Cavique 2007: Maximum Weight Rooted Branching"],
+    ["RAMEX 2015 Forward Heuristic", "Tree quando existe nó inicial conhecido"],
+    ["RAMEX 2015 Back-and-Forward", "Poly-tree quando não existe nó inicial claro"],
+    ["Sankey", "Visualização complementar de fluxos; não substitui RAMEX"],
+    ["Poly-tree completo", "Validação estrutural e visualização complementar"],
   ];
 
   const pipelineSteps = [
@@ -4579,8 +4595,8 @@ function AboutRamexPanel() {
     "Matriz de Adjacência",
     "Grafo",
     "Rooted Branching",
-    "Forward",
-    "Back-and-Forward",
+    "RAMEX 2015 — Forward",
+    "RAMEX 2015 — Back-and-Forward",
     "Poly-tree formal",
     "Interpretação",
   ];
@@ -4689,18 +4705,17 @@ function AboutRamexPanel() {
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-lg border border-thesis/20 bg-thesis/5 p-5 shadow-panel">
-          <h4 className="text-lg font-semibold text-ink">Implementações RAMEX puras</h4>
+          <h4 className="text-lg font-semibold text-ink">Implementações RAMEX alinhadas com a bibliografia</h4>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-700">
-            <li>RAMEX 2007 Rooted Branching</li>
-            <li>Forward Heuristic</li>
-            <li>Back-and-Forward Heuristic</li>
+            <li>RAMEX 2007 — Maximum Weight Rooted Branching</li>
+            <li>RAMEX 2015 — Forward Heuristic</li>
+            <li>RAMEX 2015 — Back-and-Forward Poly-tree</li>
           </ul>
         </div>
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-5 shadow-panel">
-          <h4 className="text-lg font-semibold text-ink">RAMEX-Forum</h4>
+          <h4 className="text-lg font-semibold text-ink">RAMEX-Forum temporal</h4>
           <p className="mt-4 text-sm leading-7 text-slate-700">
-            O RAMEX-Forum é mantido como abordagem complementar para exploração de influência, pesos relativos e
-            caminhos dominantes, sem substituir a Poly-tree formal.
+            O RAMEX-Forum é mantido como abordagem complementar apenas quando existe análise de influência temporal, com sinais, latência, pesos de influência e estrutura própria.
           </p>
         </div>
       </div>
@@ -4785,18 +4800,17 @@ function PipelineRamexPanel() {
     ["Matriz de adjacência", "Origem nas linhas e destino nas colunas.", "matriz_adjacencia.csv"],
     ["Grafo dirigido ponderado", "Rede de eventos com pesos nas arestas.", "grafo_edges.csv / grafo.png"],
     ["Rooted Branching", "Árvore enraizada de peso máximo.", "ramex2007.json"],
-    ["Forward", "Expansão a partir de raiz conhecida.", "ramex_forward.json"],
-    ["Back-and-Forward", "Expansão pela melhor relação inicial.", "ramex_back_forward.json"],
-    ["Poly-tree formal", "Validação estrutural: DAG conectado e árvore não dirigida.", "validação RAMEX 2007"],
+    ["RAMEX 2015 — Forward", "Expansão a partir de nó inicial conhecido.", "ramex_forward.json"],
+    ["RAMEX 2015 — Back-and-Forward", "Expansão pela melhor relação inicial quando não há raiz clara.", "ramex_back_forward.json"],
+    ["Poly-tree formal", "Validação estrutural: DAG conectado e árvore não dirigida.", "validação RAMEX 2015"],
   ];
 
   return (
     <section className="space-y-5">
       <div className="rounded-3xl border border-slate-200/60 bg-white/90 p-5 shadow-2xl ring-1 ring-white/70 backdrop-blur-xl">
-        <h3 className="text-lg font-semibold text-ink">Pipeline RAMEX final</h3>
+        <h3 className="text-lg font-semibold text-ink">Pipeline RAMEX bibliográfica</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          A versão final segue a linha RAMEX pura: transforma dados em rede dirigida ponderada e compara métodos
-          baseados em Rooted Branching, Forward e Back-and-Forward.
+          A versão atual transforma dados em rede dirigida ponderada e separa RAMEX 2007, RAMEX 2015, RAMEX-Forum temporal e visualizações complementares como Sankey.
         </p>
         <div className="mt-4">
           <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
@@ -4859,8 +4873,7 @@ function ReportsPanel({
         <p className="text-sm font-semibold text-thesis">{datasetName}</p>
         <h3 className="mt-1 text-lg font-semibold text-ink">Relatório final RAMEX</h3>
         <p className="mt-3 text-sm leading-6 text-slate-600">
-          O relatório final separa RAMEX 2007 formal, RAMEX-Forum temporal, visualizações complementares, limitações e
-          trabalho futuro. As heurísticas históricas ficam identificadas como comparação experimental.
+          O relatório final separa RAMEX 2007 formal, RAMEX 2015 Forward/Back-and-Forward, RAMEX-Forum temporal, visualizações complementares, limitações e trabalho futuro. As heurísticas locais antigas ficam identificadas apenas como exploração inicial.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <ReportButton onClick={onReport} disabled={!pdfData} />
@@ -4908,11 +4921,12 @@ function DemonstrationPanel({
     ["Transformação", "RAMEX 2007 cria rede de estados com SOURCE, SINK e frequências absolutas."],
     ["Grafo", "Grafo técnico completo e matriz preservam a evidência formal."],
     ["RAMEX 2007", "Rooted Branching condensa a rede numa arborescência de peso máximo."],
-    ["Forum", "RAMEX-Forum calcula influência temporal e extrai Forward Tree ou Poly-tree."],
+    ["RAMEX 2015", "Forward gera tree quando há nó inicial; Back-and-Forward gera poly-tree quando não há raiz clara."],
+    ["RAMEX-Forum temporal", "Calcula influência temporal e extrai Forward Tree ou Back-and-Forward Poly-tree."],
     ["Conclusão", "Relatório final junta métricas, gráficos, Sankey, caminho dominante e limitações."],
   ];
   const validationChecklist = [
-    ["dataset01", "RAMEX 2007 completo + RAMEX-Forum temporal quando reprocessado"],
+    ["dataset01", "RAMEX 2007/2015 completo + RAMEX-Forum temporal quando reprocessado"],
     ["dataset02", "Rooted Branching formal + validação comparativa"],
     ["dataset03", "Dataset pequeno com árvore completa e leitura integral"],
     ["testes_SCADA", "Teste externo recomendado: timestamp real e initial_node=Bomba_ON"],
@@ -4962,9 +4976,7 @@ function DemonstrationPanel({
       <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
         <h4 className="text-lg font-semibold text-ink">Objetivo</h4>
         <p className="mt-3 text-sm leading-7 text-slate-700">
-          Nesta framework, o RAMEX 2007 e o RAMEX-Forum são apresentados como pipelines diferentes. O RAMEX 2007 usa
-          frequências absolutas e rooted branching; o RAMEX-Forum usa influência temporal, latência, smoothing e
-          heurísticas estruturais sobre a rede temporal. As heurísticas antigas ficam assinaladas como históricas.
+          Nesta framework, RAMEX 2007, RAMEX 2015 e RAMEX-Forum temporal são apresentados como camadas diferentes. O RAMEX 2007 usa frequências absolutas e rooted branching; o RAMEX 2015 usa Forward/Back-and-Forward para tree/poly-tree; e o RAMEX-Forum usa influência temporal, latência, smoothing e heurísticas estruturais sobre a rede temporal.
         </p>
       </div>
 
@@ -4985,10 +4997,10 @@ function DemonstrationPanel({
           Upload / Nova Análise
         </button>
         <button onClick={() => onGoTo("pure")} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-thesis shadow-panel">
-          Ver RAMEX 2007  
+          Ver RAMEX 2007 / 2015
         </button>
         <button onClick={() => onGoTo("forum")} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-thesis shadow-panel">
-          Ver RAMEX-Forum
+          Ver RAMEX-Forum temporal
         </button>
         <button onClick={() => onGoTo("validation")} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-thesis shadow-panel">
           Ver Validação
@@ -5444,7 +5456,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
             </p>
           </div>
           <div className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
-            {analysisType === "pure" ? "RAMEX 2007" : analysisType === "forum" ? "Forum" : "Both"}
+            {analysisType === "pure" ? "RAMEX 2007 / 2015" : analysisType === "forum" ? "RAMEX-Forum temporal" : "Análise completa"}
           </div>
         </div>
 
@@ -5514,19 +5526,18 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                 onChange={(event) => setAnalysisType(event.target.value as AnalysisType)}
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/90 px-3 py-2 text-sm transition focus:border-cyan-600 focus:outline-none focus:ring-4 focus:ring-cyan-200"
               >
-                <option value="pure">RAMEX 2007</option>
-                <option value="forum">RAMEX-Forum</option>
-                <option value="both">RAMEX 2007 + RAMEX-Forum</option>
+                <option value="pure">RAMEX 2007 / 2015</option>
+                <option value="forum">RAMEX-Forum temporal</option>
+                <option value="both">RAMEX 2007/2015 + RAMEX-Forum temporal</option>
               </select>
               <p className="mt-2 text-xs leading-5 text-slate-500">
-                O RAMEX 2007 usa frequências absolutas e rooted branching. O RAMEX-Forum usa influência temporal,
-                latência, smoothing, filtros e extração estrutural própria.
+                O RAMEX 2007 usa frequências absolutas e rooted branching. O RAMEX 2015 acrescenta Forward/Back-and-Forward para tree/poly-tree. O RAMEX-Forum usa influência temporal, latência, smoothing, filtros e extração estrutural própria.
               </p>
             </label>
 
             {analysisType !== "pure" ? (
               <div className="rounded-2xl border border-teal-100 bg-teal-50/70 p-4">
-                <h4 className="font-semibold text-ink">Controlos avançados RAMEX-Forum</h4>
+                <h4 className="font-semibold text-ink">Controlos avançados RAMEX-Forum temporal</h4>
                 <p className="mt-2 text-xs leading-5 text-slate-600">
                   Estes parâmetros aplicam-se apenas à Fase 2 sobre a rede temporal de influência. O modo auto escolhe Forward quando existe nó inicial conhecido ou inferível; caso contrário usa Back-and-Forward.
                 </p>
@@ -6517,13 +6528,13 @@ export default function Home() {
           rows: pureRamexRowsForReport(pureRamexData),
         },
         interpretations: {
-          executiveSummary: `${selectedValidation.Interpretacao} Inclui RAMEX 2007 e validação Poly-tree.`,
+          executiveSummary: `${selectedValidation.Interpretacao} Inclui RAMEX 2007, RAMEX 2015 e validação Poly-tree.`,
           graphInterpretation: selectedValidation.Interpretacao,
           ramexInterpretation: "",
           polytreeInterpretation:
             "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
           conclusion:
-            "A análise usa RAMEX 2007 e validação Poly-tree.",
+            "A análise usa RAMEX 2007, RAMEX 2015 e validação Poly-tree.",
         },
         images: {
           graph: dataPath(`grafo_dataset${datasetId}.png`),
@@ -6595,13 +6606,13 @@ export default function Home() {
         },
         ramexForum: forumToReport(uploadedResult.ramex_forum ?? uploadedResult.forum, uploadedResult.job_id),
         interpretations: {
-          executiveSummary: `${uploadedResult.interpretation} Inclui RAMEX 2007 e validação Poly-tree.`,
+          executiveSummary: `${uploadedResult.interpretation} Inclui RAMEX 2007, RAMEX 2015 e validação Poly-tree.`,
           graphInterpretation: uploadedResult.interpretation,
           ramexInterpretation: "",
           polytreeInterpretation:
             "A Poly-tree confirma aciclicidade e conectividade da saída RAMEX.",
           conclusion:
-            "A análise usa RAMEX 2007 e validação Poly-tree.",
+            "A análise usa RAMEX 2007, RAMEX 2015 e validação Poly-tree.",
         },
         images: {
           graph: uploadedResult.files.graph_png
@@ -6640,9 +6651,9 @@ export default function Home() {
     "Dataset 03: padrões fortes e interpretáveis, com poucos nós, transições recorrentes e estrutura RAMEX compreensível.",
   ];
 
-  const modeBadge = viewId === "forum" ? "RAMEX-Forum"
-    : (viewId === "upload" && uploadedResult?.analysis_type === "both") ? "Comparativo"
-    : "RAMEX 2007";
+  const modeBadge = viewId === "forum" ? "RAMEX-Forum temporal"
+    : (viewId === "upload" && uploadedResult?.analysis_type === "both") ? "Análise completa"
+    : "RAMEX 2007 / 2015";
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
@@ -6871,7 +6882,7 @@ export default function Home() {
                     <h3 className="text-lg font-semibold text-ink">RAMEX simplificado - heurística experimental</h3>
                     <p className="mt-3 text-sm leading-6 text-slate-600">
                       Nó raiz destacado: <span className="font-semibold text-amberline">{rootNode ?? "indisponível"}</span>.
-                      Esta fase histórica seleciona ligações dominantes por expansão greedy e não corresponde ao RAMEX 2007 formal. A cobertura é apresentada no Diagnóstico de Cobertura.
+                      Esta fase histórica seleciona ligações dominantes por heurística local/gulosa e não corresponde ao RAMEX 2007 formal. A cobertura é apresentada no Diagnóstico de Cobertura.
                     </p>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                       <MetricCard label="Nós no grafo" value={formatNumber(selectedValidation?.Nos_Grafo ?? 0)} />
@@ -6889,11 +6900,19 @@ export default function Home() {
             ) : null}
 
             {viewId === "sankey" ? (
-              <SankeyPanel
-                edges={uploadedResult?.graph_edges ?? graphEdges}
-                title={uploadedResult ? "Sankey do grafo observado enviado" : `Sankey do ${datasets[datasetId].label}`}
-                description="Visualização dos fluxos principais entre eventos. O limite escolhido é apenas visual e não altera os dados, os filtros nem o RAMEX."
-              />
+              <section className="space-y-4">
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 text-sm leading-6 text-slate-700 shadow-panel">
+                  <p className="font-semibold uppercase tracking-[0.16em] text-amber-700">Visualização complementar</p>
+                  <p className="mt-2">
+                    O Sankey apresenta fluxos agregados entre eventos, produtos ou categorias. Ajuda a interpretar relações dominantes quando o grafo observado fica demasiado denso, mas não substitui o RAMEX 2007, o RAMEX 2015 nem o RAMEX-Forum temporal.
+                  </p>
+                </div>
+                <SankeyPanel
+                  edges={uploadedResult?.graph_edges ?? graphEdges}
+                  title={uploadedResult ? "Sankey do grafo observado enviado" : `Sankey do ${datasets[datasetId].label}`}
+                  description="Visualização complementar dos fluxos principais entre eventos. O limite escolhido é apenas visual e não altera os dados, os filtros nem o RAMEX."
+                />
+              </section>
             ) : null}
 
             {viewId === "polytree" ? (
