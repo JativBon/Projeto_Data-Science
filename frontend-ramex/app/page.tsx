@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ElementType, ReactNode } from "react";
@@ -626,7 +626,7 @@ const views: Array<{ id: ViewId; label: string; icon: ElementType; description: 
   { id: "forum", label: "RAMEX-Forum temporal", icon: Sigma, description: "Sinais, latência e influência temporal" },
   { id: "datasets", label: "Datasets de Validação", icon: Grid3X3, description: "Casos estáticos para benchmark" },
   { id: "pipeline", label: "Pipeline RAMEX", icon: GitBranch, description: "Etapas formais do framework" },
-  { id: "demo", label: "Demonstração", icon: Presentation, description: "Dataset → transformação → RAMEX 2007/2015 → RAMEX-Forum temporal" },
+  { id: "demo", label: "Demonstração", icon: Presentation, description: "Dataset → transformação → RAMEX 2007/2015 → Forum temporal" },
   ...(showExperimental
     ? ([
         { id: "matrix", label: "Matriz de Adjacência", icon: Grid3X3, description: "Leitura tabular da transição" },
@@ -1078,10 +1078,10 @@ function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
     errors.push("RAMEX 2007 formal não está disponível neste resultado.");
   }
   if ((type === "forum" || type === "both") && !forum?.temporal_phase1) {
-    errors.push("RAMEX-Forum temporal — Fase 1 não está disponível neste resultado.");
+    errors.push("RAMEX-Forum Fase 1 não está disponível neste resultado.");
   }
   if ((type === "forum" || type === "both") && !forum?.temporal_phase2) {
-    errors.push("RAMEX-Forum temporal — Fase 2 não está disponível neste resultado.");
+    errors.push("RAMEX-Forum Fase 2 não está disponível neste resultado.");
   }
   if (result.coverage_metrics?.warning_messages?.length) {
     warnings.push(...result.coverage_metrics.warning_messages);
@@ -1237,7 +1237,7 @@ function analysisTypeLabel(value: HistoryAnalysisType): string {
   const labels: Record<HistoryAnalysisType, string> = {
     pure: "RAMEX 2007 / 2015",
     forum: "RAMEX-Forum temporal",
-    both: "RAMEX 2007/2015 + RAMEX-Forum temporal",
+    both: "RAMEX 2007/2015 + Forum temporal",
     unknown: "Desconhecido",
   };
   return labels[value] ?? "Desconhecido";
@@ -1386,7 +1386,7 @@ ${input.ramexForum ? `RAMEX-Forum temporal foi executado como pipeline de influ�
 - Influência preservada Fase 2: ${metricValue(input.ramexForum.temporalPhase2?.preservedInfluencePercent, "%")}
 - Caminho dominante Fase 2: ${metricValue(input.ramexForum.temporalPhase2?.dominantPath?.join(" -> "))}
 
-` : "RAMEX-Forum temporal não foi executado neste resultado."}
+` : "RAMEX-Forum não foi executado neste resultado."}
 
 ## 7. Visualizações
 
@@ -1582,10 +1582,10 @@ function pureCompletenessError(result?: UploadResult | null): string | undefined
 function forumCompletenessError(result?: UploadResult | null): string | undefined {
   const forum = result?.ramex_forum ?? result?.forum;
   if (!forum?.temporal_phase1) {
-    return "Output RAMEX-Forum temporal incompleto: Fase 1 temporal não encontrada";
+    return "Output RAMEX-Forum incompleto: Fase 1 temporal não encontrada";
   }
   if (!forum.temporal_phase2) {
-    return "Output RAMEX-Forum temporal incompleto: Fase 2 estrutural não encontrada";
+    return "Output RAMEX-Forum incompleto: Fase 2 estrutural não encontrada";
   }
   return undefined;
 }
@@ -1695,6 +1695,214 @@ function pureRamexSimplestLabels(data?: PureRamexData): string {
 function pureRamexScientificSummary(validation?: ValidationRow, data?: PureRamexData): string {
   const structuralType = pureRamexStructuralType(validation, data);
   return `Tipo estrutural do dataset: ${structuralType}. ${pureRamexStructuralInterpretation(structuralType)}`;
+}
+
+
+type ValidationCheckStatus = "ok" | "warning" | "na" | "missing";
+
+type TechnicalValidationCheck = {
+  method: string;
+  criterion: string;
+  status: ValidationCheckStatus;
+  evidence: string;
+  recommendation?: string;
+};
+
+function validationStatusLabel(status: ValidationCheckStatus): string {
+  if (status === "ok") return "OK";
+  if (status === "warning") return "Atenção";
+  if (status === "missing") return "Em falta";
+  return "N.A.";
+}
+
+function validationStatusClasses(status: ValidationCheckStatus): string {
+  if (status === "ok") return "border-emerald-200 bg-emerald-50 text-emerald-700";
+  if (status === "warning") return "border-amber-200 bg-amber-50 text-amber-700";
+  if (status === "missing") return "border-red-200 bg-red-50 text-red-700";
+  return "border-slate-200 bg-slate-100 text-slate-600";
+}
+
+function validationStatusIcon(status: ValidationCheckStatus) {
+  if (status === "ok") return <CheckCircle2 className="h-4 w-4" />;
+  if (status === "warning") return <AlertTriangle className="h-4 w-4" />;
+  if (status === "missing") return <X className="h-4 w-4" />;
+  return <Circle className="h-4 w-4" />;
+}
+
+function booleanValidation(
+  value: boolean | undefined,
+  okEvidence: string,
+  warningEvidence: string,
+  unavailableEvidence = "Métrica não exportada nesta execução.",
+): Pick<TechnicalValidationCheck, "status" | "evidence"> {
+  if (value === undefined) return { status: "na", evidence: unavailableEvidence };
+  return value ? { status: "ok", evidence: okEvidence } : { status: "warning", evidence: warningEvidence };
+}
+
+function methodPreservedWeight(result?: PureRamexResult): number | undefined {
+  return result?.preserved_weight_percent ?? result?.metrics?.preserved_weight_percent;
+}
+
+function buildTechnicalValidationRows(data?: PureRamexData, validation?: ValidationRow): TechnicalValidationCheck[] {
+  const rows: TechnicalValidationCheck[] = [];
+  const density = validation?.Densidade_Aproximada;
+  const nodes = validation?.Nos_Grafo ?? data?.ramex2007?.metrics?.original_nodes ?? data?.forward?.metrics?.original_nodes ?? data?.backForward?.metrics?.original_nodes;
+  const edges = validation?.Arestas_Grafo ?? data?.ramex2007?.metrics?.original_edges ?? data?.forward?.metrics?.original_edges ?? data?.backForward?.metrics?.original_edges;
+
+  if (density !== undefined) {
+    rows.push({
+      method: "Grafo observado",
+      criterion: "Densidade visual",
+      status: density > 0.7 ? "warning" : "ok",
+      evidence: density > 0.7
+        ? `Densidade ${formatNumber(density, 4)} com ${formatNumber(nodes ?? 0)} nós e ${formatNumber(edges ?? 0)} arestas; recomenda-se Sankey ou Top-N para leitura.`
+        : `Densidade ${formatNumber(density, 4)}; leitura visual tendencialmente mais estável.`,
+      recommendation: density > 0.7 ? "Usar filtros visuais/Sankey sem alterar CSV/JSON." : undefined,
+    });
+  }
+
+  const ramex2007 = normalizeRamex2007Result(data?.ramex2007);
+  if (!ramex2007) {
+    rows.push({ method: "RAMEX 2007", criterion: "Rooted Branching formal", status: "missing", evidence: "Resultado RAMEX 2007 não disponível." });
+  } else {
+    rows.push({
+      method: "RAMEX 2007",
+      criterion: "Raiz / SOURCE definido",
+      status: ramex2007.root ? "ok" : "warning",
+      evidence: ramex2007.root ? `Raiz identificada: ${ramex2007.root}.` : "Raiz não exportada no artefacto.",
+    });
+    const dag = booleanValidation(ramex2007.isDag, "Estrutura final assinalada como acíclica.", "A estrutura final não foi assinalada como DAG.");
+    rows.push({ method: "RAMEX 2007", criterion: "DAG após condensação", ...dag });
+    const arbo = booleanValidation(ramex2007.isArborescence, "Arborescência validada pela pipeline.", "Arborescência não validada pela pipeline.");
+    rows.push({ method: "RAMEX 2007", criterion: "Arborescência", ...arbo });
+    rows.push({
+      method: "RAMEX 2007",
+      criterion: "In-degree de raiz e nós não-raiz",
+      status: (ramex2007.rootInDegree ?? 0) <= 0 && (ramex2007.maxNonRootInDegree ?? 1) <= 1 ? "ok" : "warning",
+      evidence: `root_in_degree=${formatNumber(ramex2007.rootInDegree ?? 0)}; max_non_root_in_degree=${formatNumber(ramex2007.maxNonRootInDegree ?? 0)}.`,
+    });
+    const expectedEdges = Math.max((ramex2007.nodes ?? 0) - 1, 0);
+    rows.push({
+      method: "RAMEX 2007",
+      criterion: "Arestas = nós - 1",
+      status: ramex2007.edges === expectedEdges ? "ok" : "warning",
+      evidence: `${formatNumber(ramex2007.edges)} arestas para ${formatNumber(ramex2007.nodes)} nós selecionados.`,
+    });
+  }
+
+  const forward = data?.forward;
+  if (!forward) {
+    rows.push({ method: "RAMEX 2015 — Forward", criterion: "Execução com nó inicial", status: "missing", evidence: "Forward não disponível neste resultado." });
+  } else {
+    const fMetrics = forward.metrics ?? {};
+    rows.push({
+      method: "RAMEX 2015 — Forward",
+      criterion: "Nó inicial conhecido",
+      status: forward.root ? "ok" : "na",
+      evidence: forward.root ? `Raiz/nó inicial: ${forward.root}.` : "Não foi exportado nó inicial explícito; interpretar como comparação quando aplicável.",
+    });
+    const acyclic = booleanValidation(fMetrics.is_acyclic ?? fMetrics.is_dag, "Estrutura Forward assinalada como acíclica.", "Forward não foi assinalado como acíclico.");
+    rows.push({ method: "RAMEX 2015 — Forward", criterion: "Tree acíclica", ...acyclic });
+    rows.push({
+      method: "RAMEX 2015 — Forward",
+      criterion: "Peso preservado registado",
+      status: methodPreservedWeight(forward) === undefined ? "na" : "ok",
+      evidence: methodPreservedWeight(forward) === undefined ? "Percentagem não exportada." : `${formatNumber(methodPreservedWeight(forward), 2)}% de peso preservado.`,
+    });
+  }
+
+  const backForward = data?.backForward;
+  if (!backForward) {
+    rows.push({ method: "RAMEX 2015 — Back-and-Forward", criterion: "Poly-tree bidirecional", status: "missing", evidence: "Back-and-Forward não disponível neste resultado." });
+  } else {
+    const bMetrics = backForward.metrics ?? {};
+    const forwardCount = backForward.edges?.filter((edge) => edge.direction === "FORWARD").length ?? 0;
+    const backwardCount = backForward.edges?.filter((edge) => edge.direction === "BACKWARD").length ?? 0;
+    rows.push({
+      method: "RAMEX 2015 — Back-and-Forward",
+      criterion: "Aresta inicial",
+      status: backForward.initial_edge ? "ok" : "na",
+      evidence: backForward.initial_edge
+        ? `${backForward.initial_edge.from} → ${backForward.initial_edge.to} (${formatNumber(backForward.initial_edge.weight ?? 0)}).`
+        : "Aresta inicial não exportada explicitamente.",
+    });
+    const isPoly = bMetrics.is_polytree ?? bMetrics.is_tree_undirected;
+    const polyCheck = booleanValidation(isPoly, "Estrutura assinalada como poly-tree/árvore não dirigida.", "Estrutura não foi assinalada como poly-tree.");
+    rows.push({ method: "RAMEX 2015 — Back-and-Forward", criterion: "Conformidade Poly-tree", ...polyCheck });
+    const connected = booleanValidation(bMetrics.is_connected, "Estrutura assinalada como conectada.", "Estrutura não foi assinalada como conectada.");
+    rows.push({ method: "RAMEX 2015 — Back-and-Forward", criterion: "Conectividade", ...connected });
+    rows.push({
+      method: "RAMEX 2015 — Back-and-Forward",
+      criterion: "Expansão forward/backward",
+      status: forwardCount > 0 && backwardCount > 0 ? "ok" : "warning",
+      evidence: `FORWARD=${formatNumber(forwardCount)}; BACKWARD=${formatNumber(backwardCount)}.`,
+    });
+  }
+
+  rows.push({
+    method: "Sankey",
+    criterion: "Papel da visualização",
+    status: "ok",
+    evidence: "Visualização complementar de fluxos; não substitui RAMEX 2007, RAMEX 2015 nem RAMEX-Forum temporal.",
+  });
+
+  return rows;
+}
+
+function TechnicalValidationPanel({ rows }: { rows: TechnicalValidationCheck[] }) {
+  if (rows.length === 0) {
+    return <EmptyState message="Ainda não existem métricas suficientes para construir o painel de validação técnica." />;
+  }
+
+  const warnings = rows.filter((row) => row.status === "warning" || row.status === "missing").length;
+
+  return (
+    <div className="rounded-3xl border border-slate-200/60 bg-white/90 p-6 shadow-2xl ring-1 ring-white/70 backdrop-blur-xl">
+      <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700">Validação técnica</p>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Diagnóstico das estruturas RAMEX</h3>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+            Esta checklist cruza métricas exportadas pela pipeline com critérios bibliográficos: arborescência RAMEX 2007, heurísticas RAMEX 2015, conformidade Poly-tree e papel complementar do Sankey.
+          </p>
+        </div>
+        <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold ${warnings ? "border-amber-200 bg-amber-50 text-amber-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
+          {warnings ? <AlertTriangle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+          {warnings ? `${warnings} ponto(s) a rever` : "Sem alertas críticos"}
+        </span>
+      </div>
+      <div className="mt-5 overflow-auto rounded-2xl border border-slate-200 bg-white scrollbar-thin">
+        <table className="min-w-full text-sm">
+          <thead className="bg-slate-100 text-xs uppercase tracking-[0.12em] text-slate-600">
+            <tr>
+              <th className="px-4 py-3 text-left">Método</th>
+              <th className="px-4 py-3 text-left">Critério</th>
+              <th className="px-4 py-3 text-left">Estado</th>
+              <th className="px-4 py-3 text-left">Evidência</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, index) => (
+              <tr key={`${row.method}-${row.criterion}-${index}`} className="border-t border-slate-100 align-top odd:bg-white even:bg-slate-50/70">
+                <td className="px-4 py-3 font-semibold text-slate-950">{row.method}</td>
+                <td className="px-4 py-3 text-slate-700">{row.criterion}</td>
+                <td className="px-4 py-3">
+                  <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${validationStatusClasses(row.status)}`}>
+                    {validationStatusIcon(row.status)}
+                    {validationStatusLabel(row.status)}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-slate-600">
+                  {row.evidence}
+                  {row.recommendation ? <span className="mt-1 block text-xs font-semibold text-amber-700">{row.recommendation}</span> : null}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
 
 function datasetLabelToId(label: string): DatasetId | undefined {
@@ -3354,6 +3562,7 @@ function RamexPurePanel({
             <MetricCard label="Método(s) mais simples" value={simplestLabel} />
             <MetricCard label="Mais próximo da Poly-tree" value={polyLike?.algorithm ?? "Sem dados gerados"} />
           </div>
+          <TechnicalValidationPanel rows={buildTechnicalValidationRows(effectiveData, uploadedValidation)} />
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
               <h3 className="text-lg font-semibold text-ink">RAMEX 2007</h3>
@@ -3477,7 +3686,7 @@ function RamexForumPanel({
       {temporal ? (
         <div className="space-y-5">
           <div className="rounded-3xl border border-teal-200/80 bg-gradient-to-br from-teal-50 to-cyan-50 p-6 shadow-2xl shadow-teal-100/50 backdrop-blur-md">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">RAMEX-Forum temporal · Fase 1</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">RAMEX-Forum · Fase 1 formal</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Transformação temporal do problema</h3>
             <p className="mt-3 text-sm leading-7 text-slate-700">
               {temporal.interpretation ?? "O dataset original foi transformado numa rede temporal de influência, onde cada nó representa um sinal/evento e cada aresta representa uma influência temporal suavizada e filtrada."}
@@ -3510,10 +3719,10 @@ function RamexForumPanel({
               </p>
               {temporalGraphImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={temporalGraphImage} alt="Grafo temporal RAMEX-Forum temporal" className="max-h-[34rem] w-full object-contain" />
+                  <img src={temporalGraphImage} alt="Grafo temporal RAMEX-Forum" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
-                <EmptyState message="Grafo temporal RAMEX-Forum temporal ainda não disponível." />
+                <EmptyState message="Grafo temporal RAMEX-Forum ainda não disponível." />
               )}
             </div>
             <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
@@ -3523,17 +3732,17 @@ function RamexForumPanel({
               </p>
               {temporalMatrixImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={temporalMatrixImage} alt="Matriz de influência RAMEX-Forum temporal" className="max-h-[34rem] w-full object-contain" />
+                  <img src={temporalMatrixImage} alt="Matriz de influência RAMEX-Forum" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
-                <EmptyState message="Heatmap RAMEX-Forum temporal ainda não disponível." />
+                <EmptyState message="Heatmap RAMEX-Forum ainda não disponível." />
               )}
             </div>
           </div>
 
           <SankeyPanel
             edges={temporalEdges}
-            title="Sankey — RAMEX-Forum temporal"
+            title="Sankey temporal RAMEX-Forum"
             description="Propagação temporal entre sinais, com espessura proporcional ao peso de influência suavizado."
           />
 
@@ -3576,11 +3785,11 @@ function RamexForumPanel({
               </div>
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
-              <h4 className="font-semibold text-ink">RAMEX-Forum temporal vs Markov</h4>
+              <h4 className="font-semibold text-ink">RAMEX-Forum vs Markov</h4>
               <div className="mt-3 overflow-auto">
                 <table className="min-w-full text-sm">
                   <tbody className="divide-y divide-slate-100">
-                    <tr><td className="py-2 font-semibold">RAMEX-Forum temporal</td><td>Influência temporal global, rede de propagação e pesos absolutos suavizados.</td></tr>
+                    <tr><td className="py-2 font-semibold">RAMEX-Forum</td><td>Influência temporal global, rede de propagação e pesos absolutos suavizados.</td></tr>
                     <tr><td className="py-2 font-semibold">Markov</td><td>Probabilidades locais, dependência imediata e normalização probabilística.</td></tr>
                     <tr><td className="py-2 font-semibold">Nesta fase</td><td>Não são usadas probabilidades Markovianas nem normalização de pesos.</td></tr>
                   </tbody>
@@ -3594,10 +3803,10 @@ function RamexForumPanel({
       {phase2 ? (
         <div className="space-y-5">
           <div className="rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-50 to-white p-6 shadow-2xl shadow-amber-100/50 backdrop-blur-md">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">RAMEX-Forum temporal · Fase 2</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">RAMEX-Forum · Fase 2</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Extração estrutural</h3>
             <p className="mt-3 text-sm leading-7 text-slate-700">
-              {phase2.interpretation ?? "Na Fase 2, o RAMEX-Forum temporal transforma a rede temporal de influência numa estrutura interpretável. Quando existe nó inicial, aplica-se Forward Heuristic. Na ausência de nó inicial claro, aplica-se Back-and-Forward Heuristic para construir uma Poly-tree de influência."}
+              {phase2.interpretation ?? "Na Fase 2, o RAMEX-Forum transforma a rede temporal de influência numa estrutura interpretável. Quando existe nó inicial, aplica-se Forward Heuristic. Na ausência de nó inicial claro, aplica-se Back-and-Forward Heuristic para construir uma Poly-tree de influência."}
             </p>
           </div>
 
@@ -3621,17 +3830,17 @@ function RamexForumPanel({
               <h4 className="font-semibold text-slate-100">Grafo técnico da Fase 2</h4>
               {phase2StructureImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={phase2StructureImage} alt="Estrutura RAMEX-Forum temporal — Fase 2" className="max-h-[34rem] w-full object-contain" />
+                  <img src={phase2StructureImage} alt="Estrutura RAMEX-Forum Fase 2" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
-                <EmptyState message="Estrutura RAMEX-Forum temporal — Fase 2 ainda não disponível." />
+                <EmptyState message="Estrutura RAMEX-Forum Fase 2 ainda não disponível." />
               )}
             </div>
             <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
               <h4 className="font-semibold text-slate-100">{phase2Metrics.heuristic_used === "forward" ? "Forward Tree" : "Back-and-Forward Poly-tree"}</h4>
               {phase2SpecificImage ? (
                 <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-                  <img src={phase2SpecificImage} alt="Heurística RAMEX-Forum temporal — Fase 2" className="max-h-[34rem] w-full object-contain" />
+                  <img src={phase2SpecificImage} alt="Heurística RAMEX-Forum Fase 2" className="max-h-[34rem] w-full object-contain" />
                 </div>
               ) : (
                 <EmptyState message="Imagem específica da heurística ainda não disponível." />
@@ -3641,7 +3850,7 @@ function RamexForumPanel({
 
           <SankeyPanel
             edges={phase2Edges}
-            title="Sankey — RAMEX-Forum temporal Fase 2"
+            title="Sankey RAMEX-Forum Fase 2"
             description="Fluxo da estrutura extraída sobre a rede temporal de influência."
           />
 
@@ -3700,12 +3909,12 @@ function RamexForumPanel({
           </div>
         </div>
       ) : temporal ? (
-        <WarningPanel>RAMEX-Forum temporal — Fase 2 requer outputs válidos da Fase 1 e relações de influência após filtragem.</WarningPanel>
+        <WarningPanel>RAMEX-Forum Fase 2 requer outputs válidos da Fase 1 e relações de influência após filtragem.</WarningPanel>
       ) : null}
 
       <div className="rounded-3xl border border-cyan-200/80 bg-gradient-to-br from-cyan-50 to-teal-50 p-6 shadow-2xl shadow-cyan-200/40 backdrop-blur-md">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Camada experimental mantida</p>
-        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Análise inspirada em RAMEX-Forum (legado)</h3>
+        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">RAMEX-Forum interpretativo legado</h3>
         <p className="mt-3 text-sm leading-7 text-slate-700">
           Esta camada antiga continua disponível por compatibilidade. A Fase 1 formal acima é a transformação temporal com sinais, latência, smoothing e filtros; nenhuma delas substitui o RAMEX 2007 formal.
         </p>
@@ -3726,20 +3935,20 @@ function RamexForumPanel({
           <h4 className="font-semibold text-slate-100">Grafo de influência completo</h4>
           {forumImage ? (
             <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-              <img src={forumImage} alt="Grafo de influência inspirado em RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
+              <img src={forumImage} alt="Grafo de influência RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
             </div>
           ) : (
-            <EmptyState message="Imagem inspirada em RAMEX-Forum ainda não disponível." />
+            <EmptyState message="Imagem RAMEX-Forum ainda não disponível." />
           )}
         </div>
         <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 shadow-2xl ring-1 ring-white/10">
-          <h4 className="font-semibold text-slate-100">Estrutura simplificada inspirada em RAMEX-Forum</h4>
+          <h4 className="font-semibold text-slate-100">Estrutura simplificada RAMEX-Forum</h4>
           {simplifiedImage ? (
             <div className="mt-4 rounded-2xl border border-slate-700 bg-white p-2 shadow-xl">
-              <img src={simplifiedImage} alt="Estrutura simplificada inspirada em RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
+              <img src={simplifiedImage} alt="Estrutura simplificada RAMEX-Forum" className="max-h-[32rem] w-full object-contain" />
             </div>
           ) : (
-            <EmptyState message="Imagem simplificada inspirada em RAMEX-Forum ainda não disponível." />
+            <EmptyState message="Imagem simplificada RAMEX-Forum ainda não disponível." />
           )}
         </div>
       </div>
@@ -4213,7 +4422,7 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
         ["RAMEX 2015 — Back-and-Forward", detail.files.back_forward_formal_png],
         ["Poly-tree / validação", detail.files.polytree_png],
         ["RAMEX-Forum temporal", detail.files.forum_graph_png],
-        ["Análise inspirada em RAMEX-Forum", detail.files.forum_simplified_png],
+        ["RAMEX-Forum legado/inspirado", detail.files.forum_simplified_png],
       ] as Array<[string, string | null | undefined]>).filter((e): e is [string, string] => Boolean(e[1]))
     : [];
 
@@ -4305,7 +4514,7 @@ function HistoryPanel({ onReuse }: { onReuse?: (result: UploadResult) => void })
                 <th className="px-4 py-3 text-right">Arestas</th>
                 <th className="px-4 py-3 text-left">Melhor abordagem RAMEX</th>
                 <th className="px-4 py-3 text-right">Peso preservado</th>
-                <th className="px-4 py-3 text-left">RAMEX-Forum temporal</th>
+                <th className="px-4 py-3 text-left">Forum temporal</th>
                 <th className="px-4 py-3 text-left">Ações</th>
               </tr>
             </thead>
@@ -4922,7 +5131,7 @@ function DemonstrationPanel({
     ["Grafo", "Grafo técnico completo e matriz preservam a evidência formal."],
     ["RAMEX 2007", "Rooted Branching condensa a rede numa arborescência de peso máximo."],
     ["RAMEX 2015", "Forward gera tree quando há nó inicial; Back-and-Forward gera poly-tree quando não há raiz clara."],
-    ["RAMEX-Forum temporal", "Calcula influência temporal e extrai Forward Tree ou Back-and-Forward Poly-tree."],
+    ["Forum temporal", "RAMEX-Forum calcula influência temporal e extrai Forward Tree ou Back-and-Forward Poly-tree."],
     ["Conclusão", "Relatório final junta métricas, gráficos, Sankey, caminho dominante e limitações."],
   ];
   const validationChecklist = [
@@ -5456,7 +5665,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
             </p>
           </div>
           <div className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
-            {analysisType === "pure" ? "RAMEX 2007 / 2015" : analysisType === "forum" ? "RAMEX-Forum temporal" : "Análise completa"}
+            {analysisType === "pure" ? "RAMEX 2007 / 2015" : analysisType === "forum" ? "Forum temporal" : "Análise completa"}
           </div>
         </div>
 
@@ -5537,7 +5746,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 
             {analysisType !== "pure" ? (
               <div className="rounded-2xl border border-teal-100 bg-teal-50/70 p-4">
-                <h4 className="font-semibold text-ink">Controlos avançados RAMEX-Forum temporal</h4>
+                <h4 className="font-semibold text-ink">Controlos avançados RAMEX-Forum</h4>
                 <p className="mt-2 text-xs leading-5 text-slate-600">
                   Estes parâmetros aplicam-se apenas à Fase 2 sobre a rede temporal de influência. O modo auto escolhe Forward quando existe nó inicial conhecido ou inferível; caso contrário usa Back-and-Forward.
                 </p>
@@ -6882,7 +7091,7 @@ export default function Home() {
                     <h3 className="text-lg font-semibold text-ink">RAMEX simplificado - heurística experimental</h3>
                     <p className="mt-3 text-sm leading-6 text-slate-600">
                       Nó raiz destacado: <span className="font-semibold text-amberline">{rootNode ?? "indisponível"}</span>.
-                      Esta fase histórica seleciona ligações dominantes por heurística local/gulosa e não corresponde ao RAMEX 2007 formal. A cobertura é apresentada no Diagnóstico de Cobertura.
+                      Esta fase histórica seleciona ligações dominantes por expansão greedy e não corresponde ao RAMEX 2007 formal. A cobertura é apresentada no Diagnóstico de Cobertura.
                     </p>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                       <MetricCard label="Nós no grafo" value={formatNumber(selectedValidation?.Nos_Grafo ?? 0)} />

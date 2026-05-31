@@ -1,4 +1,4 @@
-﻿import { Document, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import React, { type ReactNode } from "react";
 import type { ReportData } from "./reportPdfTypes";
 import {
@@ -32,6 +32,7 @@ const pipelineSteps = [
   ["Sequências", "Reconstrução da ordem dos eventos por entidade/caso."],
   ["Observado", "Rede dirigida ponderada com frequências absolutas observadas."],
   ["RAMEX 2007", "Transformação formal e Maximum Weight Rooted Branching."],
+  ["RAMEX 2015", "Forward Heuristic e Back-and-Forward para tree/poly-tree."],
   ["RAMEX-Forum temporal", "Influência temporal, smoothing, filtros e estrutura extraída."],
   ["Interpretação", "Síntese automática dos padrões observados."],
 ];
@@ -48,6 +49,7 @@ const columns = {
   bothComparison: tableColumns(["Critério", "22%"], ["RAMEX 2007 formal", "39%"], ["RAMEX-Forum temporal", "39%"]),
   limitations: tableColumns(["Limitação", "48%"], ["Mitigação", "52%"]),
   futureWork: tableColumns(["Área", "28%"], ["Próximo passo", "72%"]),
+  validationDiagnostics: tableColumns(["Método", "22%"], ["Critério", "27%"], ["Estado", "14%"], ["Evidência", "37%"]),
 } satisfies Record<string, TableColumn[]>;
 
 const emptyRows = {
@@ -448,7 +450,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
     const isRamex2007 = rawAlgorithm.includes("RAMEX 2007");
     const isBackForward = rawAlgorithm.includes("Back-and-Forward");
     const displayAlgorithm = datasetBenchmarks && isBackForward
-      ? "Anexo experimental: Back-and-Forward Poly-tree Formal"
+      ? "RAMEX 2015 — Back-and-Forward Poly-tree"
       : rawAlgorithm;
     const displayPreserved = datasetBenchmarks?.key === "dataset02" && isRamex2007
       ? datasetBenchmarks.referencePreservedPercent
@@ -493,8 +495,52 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
   const ramexPureSummary = datasetBenchmarks
     ? `Estrutura de referência no dataset analisado: ${referenceStructureLabel} (${bestPreservedLabel}). Poly-tree formal: ${polyTreeFormalLabel}.`
     : data.pureRamex?.summary ||
-      "Resultados RAMEX 2007 formal ainda não foram gerados para este dataset; o relatório está preparado para integrar a fase 10A e o anexo experimental.";
+      "Resultados RAMEX 2007 formal ainda não foram gerados para este dataset; o relatório está preparado para integrar a fase 10A e as abordagens RAMEX 2015.";
   const showForum = data.analysisType !== "pure" && Boolean(data.ramexForum);
+  const polytreeEdgesExpected = Math.max((data.metrics.polytreeNodes ?? 0) - 1, 0);
+  const hasPolytreeCardinality = typeof data.metrics.polytreeNodes === "number" && typeof data.metrics.polytreeEdges === "number";
+  const technicalValidationRows = [
+    [
+      "Grafo observado",
+      "Densidade visual",
+      (data.metrics.density ?? 0) > 0.7 ? "Atenção" : "OK",
+      (data.metrics.density ?? 0) > 0.7
+        ? `Densidade ${formatNumber(data.metrics.density)}; usar filtros/Sankey para leitura.`
+        : `Densidade ${formatNumber(data.metrics.density)}; leitura visual mais estável.`,
+    ],
+    [
+      "RAMEX 2007",
+      "Rooted Branching formal",
+      data.metrics.ramex2007PreservedPercent !== undefined || (data.pureRamex?.ramex2007Edges?.length ?? 0) > 0 ? "OK" : "N.A.",
+      `Peso preservado RAMEX 2007: ${formatPercent(data.metrics.ramex2007PreservedPercent)}.`,
+    ],
+    [
+      "RAMEX 2015",
+      "Forward / Back-and-Forward",
+      (data.pureRamex?.rows?.length ?? 0) > 0 ? "OK" : "N.A.",
+      `Comparação estrutural: ${safeValue(data.pureRamex?.rows?.length)} abordagem(ns) registada(s).`,
+    ],
+    [
+      "Poly-tree formal",
+      "Arestas = nós - 1",
+      hasPolytreeCardinality ? (data.metrics.polytreeEdges === polytreeEdgesExpected ? "OK" : "Atenção") : "N.A.",
+      hasPolytreeCardinality
+        ? `${formatNumber(data.metrics.polytreeEdges)} arestas para ${formatNumber(data.metrics.polytreeNodes)} nós.`
+        : "Métricas de nós/arestas da Poly-tree não disponíveis.",
+    ],
+    [
+      "Sankey",
+      "Visualização complementar",
+      "OK",
+      "Não substitui RAMEX 2007, RAMEX 2015 nem RAMEX-Forum temporal; apenas facilita a leitura dos fluxos.",
+    ],
+    [
+      "RAMEX-Forum temporal",
+      "Pipeline temporal/influência",
+      showForum ? "OK" : "N.A.",
+      showForum ? "Fases temporais incluídas no relatório." : "Não executado neste resultado.",
+    ],
+  ];
   const reportSubtitle =
     data.analysisType === "forum"
       ? "Relatório RAMEX-Forum temporal"
@@ -766,6 +812,22 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           columns={columns.polytree}
           rows={polytreeRows.length ? polytreeRows : emptyRows.polytree}
         />
+      </PageFrame>
+
+      <PageFrame>
+        <Text style={styles.sectionTitle}>Validação técnica das estruturas</Text>
+        <Text style={styles.text}>
+          Esta checklist resume critérios de conformidade usados para distinguir RAMEX 2007, RAMEX 2015, Poly-tree formal, Sankey e RAMEX-Forum temporal.
+        </Text>
+        <SimpleTable
+          columns={columns.validationDiagnostics}
+          rows={technicalValidationRows}
+        />
+        <View style={styles.highlight}>
+          <Text style={styles.text}>
+            Alertas nesta tabela indicam pontos de leitura ou de visualização a interpretar com cuidado; não invalidam automaticamente os artefactos CSV/JSON preservados pela aplicação.
+          </Text>
+        </View>
       </PageFrame>
 
       <PageFrame>
