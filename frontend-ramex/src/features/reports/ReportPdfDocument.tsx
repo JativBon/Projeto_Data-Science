@@ -32,7 +32,7 @@ const pipelineSteps = [
   ["Sequências", "Reconstrução da ordem dos eventos por entidade/caso."],
   ["Observado", "Rede dirigida ponderada com frequências absolutas observadas."],
   ["RAMEX 2007", "Transformação formal e Maximum Weight Rooted Branching."],
-  ["RAMEX-Forum", "Influência temporal, smoothing, filtros e estrutura extraída."],
+  ["RAMEX-Forum temporal", "Influência temporal, smoothing, filtros e estrutura extraída."],
   ["Interpretação", "Síntese automática dos padrões observados."],
 ];
 
@@ -56,7 +56,7 @@ const emptyRows = {
   polytree: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Output Poly-tree formal não encontrado"]],
   pure: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]],
   forum: [["Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados", "Sem dados gerados"]],
-  forumIncomplete: [["Output RAMEX-Forum incompleto", "-", "-", "-", "-"]],
+  forumIncomplete: [["Output RAMEX-Forum temporal incompleto", "-", "-", "-", "-"]],
 };
 
 const structureRows = [
@@ -68,7 +68,7 @@ const structureRows = [
   ["Poly-tree formal", "Validação estrutural", "Rigor topológico", "Condensa mantendo validação formal"],
 ];
 
-const forumStructureRow = ["RAMEX-Forum", "Explorar influência temporal", "Sinais, latência e estrutura de influência", "Não substitui o RAMEX 2007 formal"];
+const forumStructureRow = ["RAMEX-Forum temporal", "Explorar influência temporal", "Sinais, latência e estrutura de influência", "Não substitui o RAMEX 2007 formal"];
 
 const bothComparisonRows = [
   ["Objetivo", "Transformar a base em rede de estados e obter arborescência provável", "Modelar influência temporal e extrair estrutura interpretável"],
@@ -80,8 +80,8 @@ const bothComparisonRows = [
 
 const limitationRows = [
   [
-    "RAMEX 2007 e RAMEX-Forum têm pesos e objetivos diferentes.",
-    "O relatório separa frequências absolutas RAMEX 2007 de influência temporal RAMEX-Forum.",
+    "RAMEX 2007 e RAMEX-Forum temporal têm pesos e objetivos diferentes.",
+    "O relatório separa frequências absolutas RAMEX 2007 de influência temporal RAMEX-Forum temporal.",
   ],
   [
     "A qualidade dos padrões depende da qualidade e granularidade dos dados.",
@@ -96,7 +96,7 @@ const limitationRows = [
     "O PDF distingue visualização resumida de dados completos exportados em CSV.",
   ],
   [
-    "RAMEX-Forum Fase 1 usa uma fórmula inicial de influência temporal.",
+    "RAMEX-Forum temporal — Fase 1 usa uma fórmula inicial de influência temporal.",
     "A arquitetura deixa a fórmula aberta para calibração futura com datasets reais.",
   ],
   [
@@ -110,7 +110,7 @@ const limitationRows = [
 ];
 
 const futureWorkRows = [
-  ["RAMEX-Forum", "Calibrar fórmulas de influência e decay com dados reais."],
+  ["RAMEX-Forum temporal", "Calibrar fórmulas de influência e decay com dados reais."],
   ["SCADA", "Validar testes_SCADA com timestamps reais e initial_node conhecido."],
   ["Relatórios", "Adicionar anexos automáticos com todos os CSV/JSON relevantes."],
   ["Visualização", "Melhorar navegação SVG em grafos muito grandes."],
@@ -497,9 +497,9 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
   const showForum = data.analysisType !== "pure" && Boolean(data.ramexForum);
   const reportSubtitle =
     data.analysisType === "forum"
-      ? "Relatório RAMEX-Forum"
+      ? "Relatório RAMEX-Forum temporal"
       : data.analysisType === "both"
-        ? "Relatório Comparativo RAMEX 2007 vs RAMEX-Forum"
+        ? "Relatório Comparativo RAMEX 2007 vs RAMEX-Forum temporal"
         : "Relatório RAMEX 2007 formal";
   const forumMetrics = [
     { label: "Nós", value: formatNumber(data.ramexForum?.metrics?.nodes) },
@@ -544,15 +544,15 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
   if (data.analysisType === "forum") {
     return (
       <Document title={`${reportSubtitle} - ${data.datasetName}`}>
-        <CoverPage title="RAMEX-Forum" subtitle={reportSubtitle}>
+        <CoverPage title="RAMEX-Forum temporal" subtitle={reportSubtitle}>
           <DatasetFacts data={data} />
           <Text style={styles.text}>
-            O RAMEX-Forum não substitui o RAMEX 2007 formal. Atua como abordagem complementar para exploração de
+            O RAMEX-Forum temporal não substitui o RAMEX 2007 formal. Atua como abordagem complementar para exploração de
             influência temporal, pesos suavizados, latência e caminhos dominantes.
           </Text>
         </CoverPage>
         <PageFrame>
-          <Text style={styles.sectionTitle}>Sumário RAMEX-Forum</Text>
+          <Text style={styles.sectionTitle}>Sumário RAMEX-Forum temporal</Text>
           <MetricGrid metrics={forumMetrics} />
           <View style={styles.highlight}>
             <Text style={styles.text}>{safeValue(data.ramexForum?.interpretation)}</Text>
@@ -560,22 +560,22 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           </View>
         </PageFrame>
         <PageFrame>
-          <Text style={styles.sectionTitle}>Fase 1 e Fase 2 RAMEX-Forum</Text>
+          <Text style={styles.sectionTitle}>Fase 1 e Fase 2 RAMEX-Forum temporal</Text>
           <Text style={styles.text}>
-            A Fase 2 do RAMEX-Forum aplica heurísticas estruturais sobre a rede temporal de influência produzida na Fase 1. A escolha entre Forward e Back-and-Forward depende da existência de um nó inicial conhecido ou inferível.
+            A Fase 2 do RAMEX-Forum temporal aplica heurísticas estruturais sobre a rede temporal de influência produzida na Fase 1. A escolha entre Forward e Back-and-Forward depende da existência de um nó inicial conhecido ou inferível.
           </Text>
           <Text style={styles.h3}>Fase 1 — rede temporal de influência</Text>
           <MetricGrid metrics={forumPhase1Metrics} />
-          <ImageOrFallback src={data.ramexForum?.temporalPhase1?.graph} label="RAMEX-Forum Fase 1 - rede temporal de influência" />
+          <ImageOrFallback src={data.ramexForum?.temporalPhase1?.graph} label="RAMEX-Forum temporal Fase 1 - rede temporal de influência" />
           <Text style={styles.h3}>Fase 2 — estrutura extraída</Text>
           <MetricGrid metrics={forumPhase2Metrics} />
           <Text style={styles.text}>Caminho dominante Fase 2: {safeValue(data.ramexForum?.temporalPhase2?.dominantPath?.join(" -> "))}</Text>
-          <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum Fase 2 - árvore ou poly-tree" />
+          <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum temporal Fase 2 - árvore ou poly-tree" />
         </PageFrame>
         <PageFrame>
           <Text style={styles.sectionTitle}>Grafo de Influência</Text>
-          <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum - grafo de influência" />
-          <ImageOrFallback src={data.images?.forumSimplified} label="RAMEX-Forum - estrutura simplificada" />
+          <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum temporal - grafo de influência" />
+          <ImageOrFallback src={data.images?.forumSimplified} label="RAMEX-Forum temporal - estrutura simplificada" />
         </PageFrame>
         <PageFrame>
           <Text style={styles.sectionTitle}>Relações Normalizadas</Text>
@@ -587,7 +587,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <PageFrame>
           <Text style={styles.sectionTitle}>Conclusão</Text>
           <Text style={styles.text}>
-            O RAMEX-Forum mostra influência temporal, pesos suavizados e caminhos dominantes. Use estes resultados como
+            O RAMEX-Forum temporal mostra influência temporal, pesos suavizados e caminhos dominantes. Use estes resultados como
             leitura complementar ao RAMEX 2007 formal.
           </Text>
         </PageFrame>
@@ -752,7 +752,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             { label: "Nós", value: formatNumber(data.metrics.polytreeNodes) },
             { label: "Arestas", value: formatNumber(data.metrics.polytreeEdges) },
             { label: "Peso preservado", value: polyTreeFormalLabel },
-            { label: "Formal", value: "RAMEX 2007" },
+            { label: "Formal", value: "RAMEX 2015 / Poly-tree" },
           ]}
         />
         <View style={styles.highlight}>
@@ -803,7 +803,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         />
         <View style={styles.highlight}>
           <Text style={styles.text}>
-            O RAMEX 2007 formal é apresentado separadamente; Forward e Back-and-Forward pertencem ao anexo experimental/histórico.
+            O RAMEX 2007 formal é apresentado separadamente; Forward e Back-and-Forward são apresentados como abordagens RAMEX 2015 para comparação estrutural.
           </Text>
           <Text style={styles.text}>
             Percentagens disponíveis: {ramexPurePercentagesText}.
@@ -913,27 +913,27 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
 
       {showForum ? (
         <PageFrame>
-          <Text style={styles.sectionTitle}>RAMEX-Forum</Text>
+          <Text style={styles.sectionTitle}>RAMEX-Forum temporal</Text>
           <>
             <Text style={styles.text}>
-              O RAMEX-Forum complementa o RAMEX 2007 formal com influência temporal, pesos suavizados e caminhos dominantes.
+              O RAMEX-Forum temporal complementa o RAMEX 2007 formal com influência temporal, pesos suavizados e caminhos dominantes.
             </Text>
             <MetricGrid metrics={forumMetrics} />
             <View style={styles.highlight}>
               <Text style={styles.text}>{safeValue(data.ramexForum?.interpretation)}</Text>
               <Text style={styles.text}>Caminho dominante: {safeValue(data.ramexForum?.dominantPath?.join(" -> "))}</Text>
             </View>
-            <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum - grafo de influência" />
-            <ImageOrFallback src={data.images?.forumSimplified} label="RAMEX-Forum - estrutura simplificada" />
+            <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum temporal - grafo de influência" />
+            <ImageOrFallback src={data.images?.forumSimplified} label="RAMEX-Forum temporal - estrutura simplificada" />
             <Text style={styles.h3}>Fase 1 — rede temporal de influência</Text>
             <MetricGrid metrics={forumPhase1Metrics} />
             <Text style={styles.h3}>Fase 2 — estrutura extraída</Text>
             <Text style={styles.text}>
-              A Fase 2 do RAMEX-Forum aplica heurísticas estruturais sobre a rede temporal de influência produzida na Fase 1. A escolha entre Forward e Back-and-Forward depende da existência de um nó inicial conhecido ou inferível.
+              A Fase 2 do RAMEX-Forum temporal aplica heurísticas estruturais sobre a rede temporal de influência produzida na Fase 1. A escolha entre Forward e Back-and-Forward depende da existência de um nó inicial conhecido ou inferível.
             </Text>
             <MetricGrid metrics={forumPhase2Metrics} />
             <Text style={styles.text}>Caminho dominante Fase 2: {safeValue(data.ramexForum?.temporalPhase2?.dominantPath?.join(" -> "))}</Text>
-            <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum Fase 2 - árvore ou poly-tree" />
+            <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum temporal Fase 2 - árvore ou poly-tree" />
             <SimpleTable
               columns={columns.forum}
               rows={forumRows.length ? forumRows : emptyRows.forum}
