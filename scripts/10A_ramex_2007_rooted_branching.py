@@ -1,8 +1,8 @@
 """
 10A_ramex_2007_rooted_branching.py
 
-Esta fase implementa o RAMEX 2007 formal atraves de Maximum Weight Rooted
-Branching, conforme o artigo de Cavique (2007). Nao usa a expansao greedy local
+Esta fase implementa o RAMEX 2007 formal através de Maximum Weight Rooted
+Branching, conforme o artigo de Cavique (2007). Não usa a expansão greedy local
 mantida em 07_ramex_simplificado.py.
 """
 from __future__ import annotations
@@ -37,12 +37,12 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--allow-self-loops", action="store_true", help="Manter self-loops no input.")
     parser.add_argument("--output-json", default=None, help="JSON a gerar.")
     parser.add_argument("--output-dot", default=None, help="DOT opcional.")
-    parser.add_argument("--output-expanded-paths", default=None, help="CSV opcional com caminhos dominantes da expansao.")
-    parser.add_argument("--compare-simplified", action="store_true", help="Gerar comparacao tecnica com a heuristica 07.")
+    parser.add_argument("--output-expanded-paths", default=None, help="CSV opcional com caminhos dominantes da expansão.")
+    parser.add_argument("--compare-simplified", action="store_true", help="Gerar comparação técnica com a heuristica 07.")
     parser.add_argument("--input-type", choices=["edges"], default="edges", help="Mantido por compatibilidade.")
     args = parser.parse_args()
     if args.root and args.auto_root:
-        parser.error("Use apenas --root ou --auto-root, nao ambos.")
+        parser.error("Use apenas --root ou --auto-root, não ambos.")
     return args
 
 
@@ -60,7 +60,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
     try:
         df = pd.read_csv(path)
     except pd.errors.EmptyDataError as exc:
-        raise ValueError("O CSV de arestas esta vazio.") from exc
+        raise ValueError("O CSV de arestas está vazio.") from exc
 
     if missing := [column for column in REQUIRED_EDGE_COLUMNS if column not in df.columns]:
         raise ValueError(f"Colunas obrigatorias em falta: {missing}")
@@ -74,7 +74,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
     valid_mask = df["From"].notna() & df["To"].notna() & df["Weight"].notna() & (df["Weight"] > 0)
     invalid_count = int(original_len - valid_mask.sum())
     if invalid_count:
-        warnings.append(f"Ignoradas {invalid_count} arestas invalidas ou com peso nao positivo.")
+        warnings.append(f"Ignoradas {invalid_count} arestas inválidas ou com peso não positivo.")
 
     df = df.loc[valid_mask].copy()
     df["From"] = df["From"].astype(str)
@@ -89,7 +89,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
             df = df.loc[~loop_mask].copy()
 
     if df.empty:
-        raise ValueError("Nao existem arestas validas com peso positivo.")
+        raise ValueError("Não existem arestas válidas com peso positivo.")
 
     df = (
         df.groupby(["From", "To"], as_index=False)["Weight"]
@@ -101,7 +101,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
     graph = nx.DiGraph()
     graph.add_weighted_edges_from(df[REQUIRED_EDGE_COLUMNS].itertuples(index=False))
     if graph.number_of_edges() == 0:
-        raise ValueError("Grafo vazio apos validacao das arestas.")
+        raise ValueError("Grafo vazio após validação das arestas.")
     return graph, warnings
 
 
@@ -133,7 +133,7 @@ def choose_auto_root(graph: nx.DiGraph, warnings: list[str]) -> tuple[str, str]:
             node,
         ),
     )
-    warnings.append("No SOURCE/START nao existe e o grafo nao tem nos sem entradas; foi escolhida uma raiz real dominante.")
+    warnings.append("No SOURCE/START não existe e o grafo não tem nós sem entradas; foi escolhida uma raiz real dominante.")
     return chosen, "dominant_real_root"
 
 
@@ -141,7 +141,7 @@ def select_root(graph: nx.DiGraph, requested_root: str | None, auto_root: bool, 
     if requested_root:
         root = str(requested_root).strip()
         if root not in graph:
-            raise ValueError(f"Raiz indicada nao existe no grafo: {root}")
+            raise ValueError(f"Raiz indicada não existe no grafo: {root}")
         return root, "provided_root"
     if auto_root or requested_root is None:
         return choose_auto_root(graph, warnings)
@@ -152,13 +152,13 @@ def reachable_subgraph(graph: nx.DiGraph, root: str, warnings: list[str]) -> nx.
     reachable = set(nx.descendants(graph, root)) | {root}
     unreachable = set(graph.nodes) - reachable
     if unreachable:
-        warnings.append("Nem todos os nos sao alcancaveis a partir da raiz; a arborescencia cobre apenas o subgrafo alcancavel.")
+        warnings.append("Nem todos os nós são alcançáveis a partir da raiz; a arborescência cobre apenas o subgrafo alcançável.")
 
     subgraph = nx.DiGraph(graph.subgraph(reachable).copy())
     if subgraph.number_of_nodes() <= 1:
-        raise ValueError("O subgrafo alcancavel a partir da raiz nao contem nos suficientes.")
+        raise ValueError("O subgrafo alcançável a partir da raiz não contém nós suficientes.")
     if subgraph.number_of_edges() == 0:
-        raise ValueError("O subgrafo alcancavel a partir da raiz nao contem arestas.")
+        raise ValueError("O subgrafo alcançável a partir da raiz não contém arestas.")
     return subgraph
 
 
@@ -181,7 +181,7 @@ def maximum_weight_rooted_branching(graph: nx.DiGraph, root: str) -> nx.DiGraph:
 
 def validate_rooted_branching(tree: nx.DiGraph, root: str) -> dict[str, Any]:
     if root not in tree:
-        raise ValueError("A raiz nao esta presente na arborescencia final.")
+        raise ValueError("A raiz não está presente na arborescência final.")
 
     is_dag = nx.is_directed_acyclic_graph(tree)
     root_in_degree = int(tree.in_degree(root))
@@ -193,15 +193,15 @@ def validate_rooted_branching(tree: nx.DiGraph, root: str) -> dict[str, Any]:
     is_arborescence = is_dag and root_in_degree == 0 and max_non_root_in_degree <= 1 and reachable_from_root and edge_count_ok
 
     if not is_dag:
-        raise ValueError("A arborescencia contem ciclos.")
+        raise ValueError("A arborescência contém ciclos.")
     if root_in_degree != 0:
         raise ValueError("A raiz tem in_degree diferente de 0.")
     if max_non_root_in_degree > 1:
-        raise ValueError("Existe no nao-raiz com in_degree superior a 1.")
+        raise ValueError("Existe nó não-raiz com in_degree superior a 1.")
     if not reachable_from_root:
-        raise ValueError("Nem todos os nos selecionados sao alcancaveis a partir da raiz.")
+        raise ValueError("Nem todos os nós selecionados são alcançáveis a partir da raiz.")
     if not edge_count_ok:
-        raise ValueError("A arborescencia nao cumpre edges = nodes - 1.")
+        raise ValueError("A arborescência não cumpre edges = nodes - 1.")
 
     return {
         "is_dag": is_dag,
@@ -419,7 +419,7 @@ def export_outputs(
     validation = validate_rooted_branching(tree, root)
     rows, levels = tree_rows(tree, root)
     if not rows:
-        raise ValueError("Nao foram selecionadas arestas para exportar.")
+        raise ValueError("Não foram selecionadas arestas para exportar.")
 
     output_csv = Path(args.output_csv)
     output_png = Path(args.output_png)

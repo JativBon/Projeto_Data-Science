@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from collections import Counter, deque
 from itertools import groupby
 from pathlib import Path
@@ -729,6 +730,10 @@ def build_ramex_polytree_multiobjective(graph: nx.DiGraph, root: str, **kw) -> t
     return tree, df
 
 
+_DRAW_EDGE_LIMIT = 300  # acima deste valor usa path rápido (LineCollection)
+_DRAW_LABEL_LIMIT = 80  # acima deste valor omite labels nas arestas
+
+
 def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> None:
     if not graph.edges:
         return
@@ -738,85 +743,130 @@ def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> 
 
     n = graph.number_of_nodes()
     is_small = n <= 10
+    all_edges = list(graph.edges(data=True))
+    is_dense = len(all_edges) > _DRAW_EDGE_LIMIT
+
+    # Grafos densos: limitar ao top-N arestas por peso para visualização
+    if is_dense:
+        all_edges_sorted = sorted(all_edges, key=lambda e: float(e[2].get("weight", 0)), reverse=True)
+        draw_edges = all_edges_sorted[:_DRAW_EDGE_LIMIT]
+        draw_graph_view = nx.DiGraph()
+        draw_graph_view.add_nodes_from(graph.nodes)
+        for u, v, d in draw_edges:
+            draw_graph_view.add_edge(u, v, **d)
+    else:
+        draw_graph_view = graph
+        draw_edges = all_edges
 
     if is_small:
-        pos = nx.circular_layout(graph, scale=1.2)
+        pos = nx.circular_layout(draw_graph_view, scale=1.2)
         figsize = (16, 14)
+        dpi = 300
+    elif is_dense:
+        pos = nx.spring_layout(draw_graph_view, seed=42, k=1.5, iterations=30)
+        figsize = (16, 12)
+        dpi = 120  # DPI reduzido para grafos densos — não há detalhe para escala alta
     else:
         try:
-            pos = nx.nx_agraph.graphviz_layout(graph, prog="dot") if root else nx.spring_layout(graph, seed=42, k=2, iterations=50)
+            pos = nx.nx_agraph.graphviz_layout(draw_graph_view, prog="dot") if root else nx.spring_layout(draw_graph_view, seed=42, k=2, iterations=50)
         except Exception:
-            pos = nx.spring_layout(graph, seed=42, k=2, iterations=50)
+            pos = nx.spring_layout(draw_graph_view, seed=42, k=2, iterations=50)
         figsize = (14, 10)
+        dpi = 300
 
-    fig, ax = plt.subplots(figsize=figsize, dpi=100)
-    edges_list = list(graph.edges(data=True))
-    max_w = max([d["weight"] for _, _, d in edges_list], default=1)
-    curve_radius = 0.35 if is_small else 0.18
+    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+    max_w = max((float(d.get("weight", 1)) for _, _, d in draw_edges), default=1) or 1
 
-    bidirectional = set()
-    for u, v, _ in edges_list:
-        if graph.has_edge(v, u) and (v, u) not in bidirectional and (u, v) not in bidirectional:
-            bidirectional.add((u, v))
-
-    for u, v, data in edges_list:
-        x1, y1 = pos[u]
-        x2, y2 = pos[v]
-        weight = float(data.get("weight", 1))
-        width = 0.8 + (4.2 if is_small else 3.2) * (weight / max_w)
-
-        if (u, v) in bidirectional:
-            connectionstyle = f"arc3,rad={curve_radius}"
-        elif (v, u) in bidirectional:
-            connectionstyle = f"arc3,rad={-curve_radius}"
-        else:
-            connectionstyle = "arc3,rad=0"
-
-        ax.add_patch(FancyArrowPatch(
-            (x1, y1), (x2, y2),
-            connectionstyle=connectionstyle,
+    if is_dense:
+        # Caminho rápido: usa draw_networkx_edges (LineCollection) em vez de FancyArrowPatch
+        edge_list_pairs = [(u, v) for u, v, _ in draw_edges]
+        widths = [0.5 + 2.5 * (float(d.get("weight", 1)) / max_w) for _, _, d in draw_edges]
+        nx.draw_networkx_edges(
+            draw_graph_view, pos,
+            edgelist=edge_list_pairs,
+            width=widths,
+            edge_color="#315f72",
+            alpha=0.55,
+            arrows=True,
             arrowstyle="-|>",
-            mutation_scale=24 if is_small else 15,
-            linewidth=width,
-            color="#315f72",
-            alpha=0.75,
-            zorder=1,
-        ))
+            arrowsize=10,
+            ax=ax,
+        )
+    else:
+        # Caminho detalhado: FancyArrowPatch com curvatura bidirecional
+        curve_radius = 0.35 if is_small else 0.18
+        bidirectional: set[tuple[str, str]] = set()
+        for u, v, _ in draw_edges:
+            if graph.has_edge(v, u) and (v, u) not in bidirectional and (u, v) not in bidirectional:
+                bidirectional.add((u, v))
 
-    colors = ["#f9cb9c" if root and node == root else "#e8f4f8" for node in graph.nodes]
+        for u, v, data in draw_edges:
+            x1, y1 = pos[u]
+            x2, y2 = pos[v]
+            weight = float(data.get("weight", 1))
+            width = 0.8 + (4.2 if is_small else 3.2) * (weight / max_w)
+            if (u, v) in bidirectional:
+                connectionstyle = f"arc3,rad={curve_radius}"
+            elif (v, u) in bidirectional:
+                connectionstyle = f"arc3,rad={-curve_radius}"
+            else:
+                connectionstyle = "arc3,rad=0"
+            ax.add_patch(FancyArrowPatch(
+                (x1, y1), (x2, y2),
+                connectionstyle=connectionstyle,
+                arrowstyle="-|>",
+                mutation_scale=24 if is_small else 15,
+                linewidth=width,
+                color="#315f72",
+                alpha=0.75,
+                zorder=1,
+            ))
+
+    colors = ["#f9cb9c" if root and node == root else "#e8f4f8" for node in draw_graph_view.nodes]
     nx.draw_networkx_nodes(
-        graph, pos,
-        node_size=3600 if is_small else 900,
+        draw_graph_view, pos,
+        node_size=3600 if is_small else (500 if is_dense else 900),
         node_color=colors,
         edgecolors="#315f72",
         linewidths=2.5 if is_small else 1.5,
         ax=ax,
     )
-    nx.draw_networkx_labels(graph, pos, font_size=13 if is_small else 8, font_weight="bold", ax=ax)
+    nx.draw_networkx_labels(
+        draw_graph_view, pos,
+        font_size=13 if is_small else (6 if is_dense else 8),
+        font_weight="bold",
+        ax=ax,
+    )
 
-    edge_labels = {
-        (u, v): int(w) if float(w).is_integer() else round(w, 2)
-        for u, v, d in edges_list
-        for w in [float(d.get("weight", 1))]
-    }
+    show_labels = len(draw_edges) <= _DRAW_LABEL_LIMIT
+    if show_labels:
+        edge_labels = {
+            (u, v): int(w) if float(w).is_integer() else round(w, 2)
+            for u, v, d in draw_edges
+            for w in [float(d.get("weight", 1))]
+        }
+        if is_small:
+            for (u, v), label in edge_labels.items():
+                x = (pos[u][0] + pos[v][0]) / 2
+                y = (pos[u][1] + pos[v][1]) / 2
+                text = ax.text(
+                    x, y, str(label), fontsize=9, ha="center", va="center",
+                    fontweight="bold", color="#315f72",
+                    bbox=dict(boxstyle="round,pad=0.4", facecolor="white", edgecolor="none", alpha=0.85),
+                )
+                text.set_path_effects([withStroke(linewidth=2, foreground="white")])  # type: ignore[arg-type]
+        else:
+            nx.draw_networkx_edge_labels(draw_graph_view, pos, edge_labels=edge_labels, font_size=8, ax=ax)
 
-    if is_small:
-        for (u, v), label in edge_labels.items():
-            x = (pos[u][0] + pos[v][0]) / 2
-            y = (pos[u][1] + pos[v][1]) / 2
-            text = ax.text(
-                x, y, str(label), fontsize=9, ha="center", va="center",
-                fontweight="bold", color="#315f72",
-                bbox=dict(boxstyle="round,pad=0.4", facecolor="white", edgecolor="none", alpha=0.85),
-            )
-            text.set_path_effects([withStroke(linewidth=2, foreground="white")])  # type: ignore[arg-type]
-    else:
-        nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=8, ax=ax)
-
+    if is_dense:
+        ax.set_title(
+            f"Top {len(draw_edges)} de {len(all_edges)} arestas (ordenadas por peso)",
+            fontsize=9, color="#64748b", pad=4,
+        )
     ax.margins(0.15 if is_small else 0.1)
     ax.axis("off")
     plt.tight_layout(pad=2.0 if is_small else 1.0)
-    plt.savefig(output_png, dpi=300, bbox_inches="tight", facecolor="white")
+    plt.savefig(output_png, dpi=dpi, bbox_inches="tight", facecolor="white")
     plt.close()
 
 
@@ -888,10 +938,9 @@ def calculate_coverage_metrics(
         warning_messages.append(
             f"O grafo completo tem {disconnected_components_count} componentes fracamente conexas."
         )
-    if preserved_weight_percent < 20.0:
-        warning_messages.append(
-            f"Peso preservado RAMEX muito baixo face ao grafo completo ({preserved_weight_percent:.2f}%)."
-        )
+    # Nota: preserved_weight_percent refere-se à heurística greedy experimental (RAMEX base),
+    # não ao RAMEX 2007 formal. Condensação abaixo de 20% é esperada em grafos densos —
+    # o RAMEX 2007 formal reporta o seu próprio peso preservado separadamente.
 
     return {
         "original_nodes": original_nodes,
@@ -911,6 +960,10 @@ def calculate_coverage_metrics(
         "removed_by_filter_weight": removed_weight,
         "disconnected_components_count": disconnected_components_count,
         "warning_messages": warning_messages,
+        "methodological_note": (
+            "node_coverage_percent e preserved_weight_percent são métricas auxiliares do projeto "
+            "para avaliar a condensação estrutural. Não estão definidas nos artigos RAMEX originais."
+        ),
     }
 
 
@@ -960,9 +1013,17 @@ def polytree_to_json(g_orig: nx.DiGraph, g_poly: nx.DiGraph, df_poly: pd.DataFra
 
 def interpret(metrics: dict) -> str:
     nodes, edges, dens, pres = metrics["nodes"], metrics["edges"], metrics["density"], metrics["preserved_percentage"]
-    avg_w = metrics["total_weight"] / edges if edges else 0
+    total_w = metrics["total_weight"]
+    avg_w = total_w / edges if edges else 0
 
-    if nodes <= 10 and avg_w >= 5:
+    # Dataset sem repetição de pares (ex: Dataset 02 — todos com frequência 1)
+    if edges > 0 and abs(total_w - edges) < 0.01:
+        headline = (
+            "Dataset sem repetição de pares — cada transição ocorre exatamente uma vez. "
+            "O RAMEX produz uma arborescência válida, mas os padrões globais têm valor analítico limitado "
+            "porque não existe recorrência suficiente para distinguir transições dominantes."
+        )
+    elif nodes <= 10 and avg_w >= 5:
         headline = "O dataset apresenta padrões sequenciais fortes e recorrentes."
     elif nodes >= 100 and dens >= 0.2:
         headline = "Grafo denso, requer filtragem para melhorar a leitura."
@@ -1204,6 +1265,7 @@ def run_pipeline(
     log_cb: LogCallback | None = None,
     **kw,
 ) -> dict[str, Any]:
+    pipeline_start = time.perf_counter()
     output_dir.mkdir(parents=True, exist_ok=True)
     strat = kw.get("polytree_strategy", "top-k")
     analysis_type = kw.get("analysis_type", "pure")
@@ -1477,6 +1539,13 @@ def run_pipeline(
         "pure": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX 2007", "Forward histórico", "Back-and-Forward histórico", "Anexo experimental"],
     }
     pure_legacy = {k: pure[k] for k in ["ramex2007", "forward", "backForward", "comparisonRows", "comparisonMarkdown", "multidatasetMarkdown", "missing"]} if pure else None
+    pipeline_elapsed_seconds = round(time.perf_counter() - pipeline_start, 3)
+
+    _experimental_note = (
+        "Heurística experimental desenvolvida numa fase inicial do projeto. "
+        "Não constitui RAMEX 2007 formal nem RAMEX 2015. "
+        "As abordagens formais estão disponíveis em 'pure' (RAMEX 2007, Forward, Back-and-Forward)."
+    )
 
     return {
         "status": "completed", "analysis_type": analysis_type, "metrics": metrics,
@@ -1487,7 +1556,8 @@ def run_pipeline(
         "matrix": matrix_to_json(matrix_df),
         "graph_edges": edges_to_records(graph_edges_df),
         "ramex_edges": edges_to_records(ramex_df),
-        "polytree": polytree_to_json(graph, g_poly, df_poly, root, strat, params),
+        "ramex_edges_note": _experimental_note,
+        "polytree": {**polytree_to_json(graph, g_poly, df_poly, root, strat, params), "is_experimental": True, "experimental_note": _experimental_note},
         "polytree_edges": edges_to_records(df_poly),
         "files": files,
         "transition_matrix": transition_matrix_data,
@@ -1513,4 +1583,5 @@ def run_pipeline(
             },
         },
         "pipeline_steps": pipeline_steps_map[analysis_type],
+        "pipeline_elapsed_seconds": pipeline_elapsed_seconds,
     }

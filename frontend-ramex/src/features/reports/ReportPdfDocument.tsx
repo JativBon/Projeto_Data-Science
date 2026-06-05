@@ -90,32 +90,27 @@ const limitationRows = [
     "A aplicação valida dados, sequências curtas, eventos ausentes e densidade do grafo.",
   ],
   [
-    "Datasets densos podem beneficiar de filtros de visualização.",
-    "A framework suporta filtros por frequência e top N antes da análise estrutural.",
+    "Grafos muito densos produzem visualizações com muitas arestas sobrepostas.",
+    "O artefacto limita a visualização do grafo observado às 300 arestas de maior peso; a análise RAMEX corre sempre sobre o grafo completo.",
   ],
   [
-    "Algumas visualizações são simplificadas.",
-    "O PDF distingue visualização resumida de dados completos exportados em CSV.",
+    "Algumas visualizações no PDF são simplificadas face ao artefacto interativo.",
+    "O PDF preserva árvore técnica completa, CSV e JSON com todas as arestas como evidência formal.",
   ],
   [
     "RAMEX-Forum temporal — Fase 1 usa uma fórmula inicial de influência temporal.",
-    "A arquitetura deixa a fórmula aberta para calibração futura com datasets reais.",
-  ],
-  [
-    "Sankey e grafos analíticos podem ocultar arestas por legibilidade.",
-    "A árvore técnica, CSV e JSON completos são preservados como evidência formal.",
+    "A arquitetura permite calibração futura da fórmula com datasets reais (trabalho futuro).",
   ],
   [
     "A Poly-tree formal exige validação topológica explícita.",
-    "A implementação regista métricas estruturais, aciclicidade, conectividade e conformidade da Poly-tree.",
+    "A implementação valida DAG, conectividade e is_tree(undirected) após cada execução, com exceção em caso de violação.",
   ],
 ];
 
 const futureWorkRows = [
-  ["RAMEX-Forum temporal", "Calibrar fórmulas de influência e decay com dados reais."],
-  ["SCADA", "Validar testes_SCADA com timestamps reais e initial_node conhecido."],
-  ["Relatórios", "Adicionar anexos automáticos com todos os CSV/JSON relevantes."],
-  ["Visualização", "Melhorar navegação SVG em grafos muito grandes."],
+  ["RAMEX-Forum temporal", "Calibrar fórmulas de influência temporal e decay com datasets reais de maior dimensão."],
+  ["SCADA", "Validar com testes_SCADA usando timestamps reais e initial_node explícito."],
+  ["Escalabilidade", "Otimizar execução para datasets com mais de 500 nós ou 100 000 sequências."],
 ];
 
 const styles = StyleSheet.create({
@@ -723,12 +718,17 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           A matriz de adjacência representa eventos de origem nas linhas e eventos de destino nas colunas. Cada célula
           guarda a frequência de transição observada.
         </Text>
-        <View style={styles.highlight}>
-          <Text style={styles.text}>
-            Matriz demasiado extensa para apresentação integral no PDF quando o dataset é grande. Consultar CSV gerado
-            pela aplicação.
-          </Text>
-        </View>
+        {data.metrics.nodes <= 12 && data.transitionMatrix && Object.keys(data.transitionMatrix).length > 0 ? (
+          <TransitionMatrixTable transitionMatrix={data.transitionMatrix} />
+        ) : (
+          <View style={styles.highlight}>
+            <Text style={styles.text}>
+              {data.metrics.nodes <= 12
+                ? "Matriz de adjacência não disponível neste resultado. Consultar CSV gerado pela aplicação."
+                : `Matriz ${data.metrics.nodes}×${data.metrics.nodes} — demasiado extensa para apresentação integral no PDF. Consultar CSV gerado pela aplicação.`}
+            </Text>
+          </View>
+        )}
       </PageFrame>
 
       <PageFrame>
@@ -752,20 +752,31 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           <Text style={styles.text}>• Peso (frequência): contagem absoluta de vezes que cada transição ocorreu.</Text>
           <Text style={styles.text}>• Direção: ordem observada nas sequências (de origem para destino).</Text>
         </View>
-        <SimpleTable
-          columns={columns.graph}
-          rows={
-            (data.allTransitions && data.allTransitions.length > 0
-              ? data.allTransitions.slice(0, data.allTransitions.length <= 20 ? data.allTransitions.length : 20)
-              : data.topTransitions.slice(0, 10)
-            ).map((edge) => [edge.from, edge.to, formatNumber(edge.weight)])
-          }
-        />
-        {data.allTransitions && data.allTransitions.length > 20 ? (
-          <Text style={[styles.text, styles.muted]}>
-            Tabela mostra as 20 transições principais. Consulte o CSV gerado para a lista completa de {data.allTransitions.length} transições.
-          </Text>
-        ) : null}
+        {(() => {
+          const transitions = data.allTransitions && data.allTransitions.length > 0
+            ? data.allTransitions
+            : data.topTransitions;
+          // Mostra todas as transições para datasets pequenos (≤ 60 arestas).
+          // Para datasets grandes, limita a 30 para não tornar o PDF ilegível.
+          const SMALL_DATASET_LIMIT = 60;
+          const LARGE_DATASET_LIMIT = 30;
+          const limit = transitions.length <= SMALL_DATASET_LIMIT ? transitions.length : LARGE_DATASET_LIMIT;
+          const shown = transitions.slice(0, limit);
+          const truncated = transitions.length > limit;
+          return (
+            <>
+              <SimpleTable
+                columns={columns.graph}
+                rows={shown.map((edge) => [edge.from, edge.to, formatNumber(edge.weight)])}
+              />
+              {truncated ? (
+                <Text style={[styles.text, styles.muted]}>
+                  Tabela mostra as {limit} transições principais. Consulte o CSV gerado para a lista completa de {transitions.length} transições.
+                </Text>
+              ) : null}
+            </>
+          );
+        })()}
       </PageFrame>
 
       <PageFrame>
@@ -891,15 +902,19 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             <ImageOrFallback src={data.images.ramex2007Analytical} label="Visualização analítica dos ramos dominantes" />
           </>
         ) : null}
+        <Text style={styles.h3}>Sankey RAMEX 2007 - Fluxo da arborescência</Text>
+        <Text style={styles.text}>
+          Esta visualização complementa o grafo técnico, permitindo observar a propagação dos ramos a partir da raiz.
+        </Text>
         {data.images?.ramex2007Sankey ? (
-          <>
-            <Text style={styles.h3}>Sankey RAMEX 2007 - Fluxo da arborescência</Text>
+          <ImageOrFallback src={data.images.ramex2007Sankey} label="Sankey RAMEX 2007" />
+        ) : (
+          <View style={styles.highlight}>
             <Text style={styles.text}>
-              Esta visualização complementa o grafo técnico, permitindo observar a propagação dos ramos a partir da raiz.
+              Fluxo Sankey calculado a partir dos caminhos dominantes da arborescência. Consultar tabela abaixo e visualização interativa no artefacto.
             </Text>
-            <ImageOrFallback src={data.images.ramex2007Sankey} label="Sankey RAMEX 2007" />
-          </>
-        ) : null}
+          </View>
+        )}
         <SimpleTable
           columns={columns.dominantPaths}
           rows={dominantPathRows.length ? dominantPathRows : [["Sem dados gerados", "-", "-", "-"]]}
@@ -955,7 +970,16 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           metrics={[
             { label: "Arestas no grafo", value: formatNumber(data.metrics.edges) },
             { label: "Arestas na Poly-tree", value: formatNumber(data.metrics.polytreeEdges) },
-            { label: "Redução", value: `${(100 - ((data.metrics.polytreeEdges ?? 0) / (data.metrics.edges ?? 1)) * 100).toFixed(1)}%` },
+            {
+              label: "Redução",
+              value: (() => {
+                const g = data.metrics.edges ?? 0;
+                const p = data.metrics.polytreeEdges ?? 0;
+                // A poly-tree inclui SOURCE/SINK — pode ter mais arestas que o grafo base
+                if (!g || p > g) return "N/A (inclui SOURCE/SINK)";
+                return `${(100 - (p / g) * 100).toFixed(1)}%`;
+              })(),
+            },
             { label: "Peso preservado", value: polyTreeFormalLabel },
           ]}
         />
