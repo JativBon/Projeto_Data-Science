@@ -515,6 +515,7 @@ type PureRamexResult = {
     is_arborescence?: boolean;
     reachable_from_root?: boolean;
   };
+  root_selection_method?: string;
   edges?: PureRamexEdge[];
   warnings?: string[];
   transformation?: {
@@ -955,9 +956,8 @@ function withCoverageMetrics(result: UploadResult): UploadResult {
   if (uncoveredNodes.length > 0) {
     warningMessages.push(`${uncoveredNodes.length} nó(s) do grafo filtrado não aparecem na estrutura RAMEX atual.`);
   }
-  if (preservedWeightPercent < 20) {
-    warningMessages.push(`Peso preservado RAMEX muito baixo face ao grafo original reportado (${preservedWeightPercent.toFixed(2)}%).`);
-  }
+  // Aviso de peso preservado removido: refere-se à heurística greedy experimental (RAMEX base),
+  // não ao RAMEX 2007 formal. Condensação baixa é esperada em grafos densos e não é um erro.
 
   return {
     ...result,
@@ -1887,9 +1887,6 @@ function CoverageDiagnosticsPanel({ metrics }: { metrics?: CoverageMetrics }) {
         </div>
       ) : null}
 
-      <InfoCallout>
-        Nesta fase, estas métricas são de diagnóstico. A lógica atual da pipeline mantém os filtros antes do RAMEX; a próxima fase será separar filtros de análise e filtros de visualização.
-      </InfoCallout>
     </section>
   );
 }
@@ -3029,8 +3026,26 @@ function PureRamexMethodPanel({
           <>
             <MetricCard label="Acíclico" value={metrics.is_acyclic === undefined ? "Sem dados gerados" : String(metrics.is_acyclic)} />
             <MetricCard label="Conectado" value={metrics.is_connected === undefined ? "Sem dados gerados" : String(metrics.is_connected)} />
-            <MetricCard label="Forward" value={formatNumber(forwardCount)} />
-            <MetricCard label="Backward" value={formatNumber(backwardCount)} />
+            {metrics.is_polytree !== undefined ? (
+              <MetricCard label="Poly-tree válida" value={String(metrics.is_polytree)} />
+            ) : null}
+            {data.root ? (
+              <MetricCard label="Raiz" value={String(data.root)} />
+            ) : null}
+            {(data.root_selection_method ?? data.root_selection) ? (
+              <MetricCard
+                label="Critério da raiz"
+                value={
+                  (data.root_selection_method ?? data.root_selection) === "from_10A"
+                    ? "Herdada do RAMEX 2007"
+                    : (data.root_selection_method ?? data.root_selection) === "max_out_weight_fallback"
+                      ? "Maior peso de saída (fallback)"
+                      : String(data.root_selection_method ?? data.root_selection)
+                }
+              />
+            ) : null}
+            <MetricCard label="Arestas Forward" value={formatNumber(forwardCount)} />
+            <MetricCard label="Arestas Backward" value={formatNumber(backwardCount)} />
           </>
         )}
       </div>
@@ -5146,7 +5161,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
     try {
       const payload = {
         job_id: jobId,
-        dataset_type: eventMode === "advanced" ? "event_table" : datasetType,
+        dataset_type: (canMapColumns && eventMode === "advanced") ? "event_table" : datasetType,
         analysis_type: analysisType,
         case_column: canMapColumns ? caseColumn : undefined,
         entity_column: canMapColumns ? caseColumn : undefined,
@@ -5501,6 +5516,10 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                 onChange={(event) => {
                   const nextType = event.target.value as UploadDatasetType;
                   setDatasetType(nextType);
+                  // Sequências simples não suporta modo avançado — repor para simples
+                  if (nextType === "simple_sequences") {
+                    setEventMode("simple");
+                  }
                   if (columns.length > 0) {
                     const mapping = inferColumnMapping(columns, nextType);
                     setCaseColumn(mapping.caseColumn);
@@ -5612,13 +5631,22 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                     </button>
                     <button
                       type="button"
+                      disabled={!canMapColumns}
+                      title={!canMapColumns ? "Modo avançado não disponível para Sequências simples" : undefined}
                       onClick={() => {
+                        if (!canMapColumns) return;
                         setEventMode("advanced");
                         const inferred = inferAdvancedEventColumns(columns, caseColumn, timeColumn, eventColumn);
                         setAdvancedEventColumns(inferred.selected);
                         setNumericDiscretization((current) => ({ ...inferred.numericRules, ...current }));
                       }}
-                      className={`rounded-xl px-3 py-2 text-sm font-semibold ${eventMode === "advanced" ? "bg-thesis text-white" : "border border-slate-200 bg-white text-slate-700"}`}
+                      className={`rounded-xl px-3 py-2 text-sm font-semibold ${
+                        !canMapColumns
+                          ? "cursor-not-allowed border border-slate-200 bg-white text-slate-300"
+                          : eventMode === "advanced"
+                            ? "bg-thesis text-white"
+                            : "border border-slate-200 bg-white text-slate-700"
+                      }`}
                     >
                       Modo avançado de eventos
                     </button>

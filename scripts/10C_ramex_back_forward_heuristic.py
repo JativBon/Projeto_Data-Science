@@ -21,10 +21,10 @@ METHOD_NAME = "ramex_back_forward_heuristic"
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="RAMEX Back-and-Forward Heuristic a partir de um CSV.")
     parser.add_argument("input_edges_csv", help="CSV de entrada (From, To, Weight).")
-    parser.add_argument("output_csv", help="CSV de saÃ­da.")
-    parser.add_argument("output_png", help="PNG de saÃ­da.")
+    parser.add_argument("output_csv", help="CSV de saí­da.")
+    parser.add_argument("output_png", help="PNG de saí­da.")
     parser.add_argument("--start-edge", default="auto", help="Aresta inicial: auto ou From->To.")
-    parser.add_argument("--max-iterations", type=int, default=1000, help="NÃºmero mÃ¡ximo de iteraÃ§Ãµes.")
+    parser.add_argument("--max-iterations", type=int, default=1000, help="Número máximo de iterações.")
     parser.add_argument("--output-json", default=None, help="JSON opcional.")
     parser.add_argument("--output-dot", default=None, help="Ficheiro DOT opcional.")
     
@@ -76,7 +76,7 @@ def choose_initial_edge(graph: nx.DiGraph, start_edge: str) -> tuple[str, str, f
 
     u, v = [p.strip() for p in start_edge.split(sep, 1)]
     if not graph.has_edge(u, v):
-        raise ValueError(f"A aresta inicial indicada nÃ£o existe: {u} -> {v}")
+        raise ValueError(f"A aresta inicial indicada não existe: {u} -> {v}")
     
     return u, v, float(graph[u][v]["weight"])
 
@@ -119,7 +119,7 @@ def build_back_forward_tree(graph: nx.DiGraph, initial_edge: tuple[str, str, flo
             break
 
     if not tree.edges:
-        raise ValueError("NÃ£o foi possÃ­vel construir a poly-tree Back-and-Forward.")
+        raise ValueError("Não foi possível construir a poly-tree Back-and-Forward.")
     return tree
 
 
@@ -175,6 +175,10 @@ def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, initial: tuple[str, str,
     orig_w = sum(d["weight"] for _, _, d in graph.edges(data=True))
     sel_w = sum(d["weight"] for _, _, d in tree.edges(data=True))
 
+    is_dag = nx.is_directed_acyclic_graph(tree)
+    is_connected = nx.is_weakly_connected(tree) if tree.nodes else False
+    is_polytree = is_dag and nx.is_tree(tree.to_undirected())
+
     payload = {
         "algorithm": "RAMEX Back-and-Forward Heuristic",
         "initial_edge": {"from": u, "to": v, "weight": w},
@@ -183,8 +187,9 @@ def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, initial: tuple[str, str,
             "selected_nodes": tree.number_of_nodes(), "selected_edges": tree.number_of_edges(),
             "original_weight_sum": orig_w, "selected_weight_sum": sel_w,
             "preserved_weight_percent": (sel_w / orig_w * 100) if orig_w else 0,
-            "is_acyclic": nx.is_directed_acyclic_graph(tree),
-            "is_connected": nx.is_weakly_connected(tree) if tree.nodes else False,
+            "is_acyclic": is_dag,
+            "is_connected": is_connected,
+            "is_polytree": is_polytree,
         },
         "nodes": [{"id": n, "level": levels[n]} for n in sorted(tree.nodes, key=lambda n: (levels[n], n))],
         "edges": [{"from": o, "to": t, "weight": d["weight"], "level": r["Level"], "direction": r["Direction"]} for r, (o, t, d) in zip(rows, ordered_edges)],
@@ -258,9 +263,11 @@ def main() -> None:
         tree = build_back_forward_tree(graph, initial_edge, args.max_iterations)
 
         if not nx.is_directed_acyclic_graph(tree):
-            raise ValueError("O output contÃ©m ciclos.")
+            raise ValueError("O output contém ciclos.")
         if not nx.is_weakly_connected(tree):
-            raise ValueError("A estrutura final nÃ£o estÃ¡ conectada.")
+            raise ValueError("A estrutura final não está conetada.")
+        if not nx.is_tree(tree.to_undirected()):
+            raise ValueError("A estrutura final não satisfaz a condição de poly-tree (grafo não dirigido não é árvore).")
 
         if tree.number_of_nodes() < graph.number_of_nodes():
             warnings.append(f"IncluÃ­dos {tree.number_of_nodes()} de {graph.number_of_nodes()} nÃ³s originais.")
@@ -270,11 +277,12 @@ def main() -> None:
 
         m = payload["metrics"]
         print(f"Ficheiro lido: {args.input_edges_csv}")
-        if invalid_count: print(f"Aviso: {invalid_count} arestas invÃ¡lidas ignoradas.")
-        print(f"NÃ³s originais: {m['original_nodes']} | Arestas originais: {m['original_edges']}")
+        if invalid_count: print(f"Aviso: {invalid_count} arestas inválidas ignoradas.")
+        print(f"Nós originais: {m['original_nodes']} | Arestas originais: {m['original_edges']}")
         print(f"Arestas selecionadas: {m['selected_edges']}")
         print(f"Peso preservado: {m['preserved_weight_percent']:.2f}%")
-        
+        print(f"Poly-tree válida: {m['is_polytree']}")
+
         if warnings:
             print("\nAvisos:\n" + "\n".join(f"- {w}" for w in warnings))
 

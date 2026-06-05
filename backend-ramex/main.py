@@ -9,13 +9,41 @@ from uuid import uuid4
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, UploadFile  # type: ignore
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
-from fastapi.responses import FileResponse, JSONResponse  # type: ignore
+from fastapi.responses import JSONResponse, Response  # type: ignore
 from pydantic import BaseModel  # type: ignore
 
 from artifact_validation import validate_job_artifacts
 from ramex_pipeline import ALLOWED_EXTENSIONS, detect_columns, run_pipeline, safe_filename
 
 BASE_DIR = Path(__file__).resolve().parent
+
+_MEDIA_TYPES: dict[str, str] = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".svg": "image/svg+xml",
+    ".pdf": "application/pdf",
+    ".csv": "text/csv; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".md": "text/markdown; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8",
+    ".graphml": "application/xml; charset=utf-8",
+}
+
+
+def _file_response(file_path: Path, filename: str | None = None) -> Response:
+    """Lê o ficheiro para memória antes de responder.
+
+    Evita o problema Windows onde FileResponse define Content-Length via
+    stat() e depois envia mais bytes do que prometeu quando os metadados do
+    filesystem ainda estão em cache de uma escrita recente.
+    """
+    content = file_path.read_bytes()
+    media_type = _MEDIA_TYPES.get(file_path.suffix.lower(), "application/octet-stream")
+    headers = {}
+    if filename:
+        headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return Response(content=content, media_type=media_type, headers=headers)
 UPLOAD_DIR = BASE_DIR / "uploads"
 OUTPUT_DIR = BASE_DIR / "outputs"
 
@@ -531,9 +559,9 @@ def get_ramex_history_detail(job_id: str) -> dict[str, Any]:
 
 
 @app.get("/api/ramex/history/{job_id}/file/{filename:path}")
-def get_ramex_history_file(job_id: str, filename: str) -> FileResponse:
+def get_ramex_history_file(job_id: str, filename: str) -> Response:
     file_path = safe_history_file_path(job_id, filename)
-    return FileResponse(file_path, filename=file_path.name)
+    return _file_response(file_path, filename=file_path.name)
 
 
 async def _save_upload(file: UploadFile) -> tuple[str, Path, str]:
@@ -781,11 +809,11 @@ def get_ramex_forum_result(job_id: str) -> Any:
 
 
 @app.get("/api/ramex-forum/jobs/{job_id}/file/{filename}")
-def get_ramex_forum_file(job_id: str, filename: str) -> FileResponse:
+def get_ramex_forum_file(job_id: str, filename: str) -> Response:
     file_path = OUTPUT_DIR / job_id / "ramex_forum" / safe_filename(filename)
     if not file_path.is_file():
         raise HTTPException(status_code=404, detail="Ficheiro RAMEX-Forum não encontrado.")
-    return FileResponse(file_path, filename=file_path.name)
+    return _file_response(file_path, filename=file_path.name)
 
 
 @app.get("/api/results/{job_id}")
@@ -800,8 +828,8 @@ def validate_artifacts(job_id: str) -> dict[str, Any]:
 
 
 @app.get("/api/file/{job_id}/{filename}")
-def get_file(job_id: str, filename: str) -> FileResponse:
+def get_file(job_id: str, filename: str) -> Response:
     file_path = OUTPUT_DIR / job_id / safe_filename(filename)
     if not file_path.is_file():
         raise HTTPException(status_code=404, detail="Ficheiro não encontrado.")
-    return FileResponse(file_path, filename=file_path.name)
+    return _file_response(file_path, filename=file_path.name)

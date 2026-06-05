@@ -21,9 +21,9 @@ METHOD_NAME = "ramex_forward_heuristic"
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="RAMEX Forward Heuristic a partir de um CSV.")
     parser.add_argument("input_edges_csv", help="CSV de arestas (From, To, Weight).")
-    parser.add_argument("output_csv", help="CSV de saÃ­da.")
-    parser.add_argument("output_png", help="PNG de saÃ­da.")
-    parser.add_argument("--root", required=True, help="Raiz para iniciar a expansÃ£o.")
+    parser.add_argument("output_csv", help="CSV de saída.")
+    parser.add_argument("output_png", help="PNG de saída.")
+    parser.add_argument("--root", required=True, help="Raiz para iniciar a expansão.")
     parser.add_argument("--output-json", default=None, help="JSON opcional.")
     return parser.parse_args()
 
@@ -35,7 +35,7 @@ def load_edges(path_text: str) -> tuple[pd.DataFrame, int]:
 
     df = pd.read_csv(path)
     if missing := [c for c in REQUIRED_COLUMNS if c not in df.columns]:
-        raise ValueError(f"Colunas obrigatÃ³rias em falta: {missing}")
+        raise ValueError(f"Colunas obrigatórias em falta: {missing}")
 
     df["From"] = df["From"].astype(str).str.strip()
     df["To"] = df["To"].astype(str).str.strip()
@@ -45,7 +45,7 @@ def load_edges(path_text: str) -> tuple[pd.DataFrame, int]:
     valid_df = df.dropna(subset=REQUIRED_COLUMNS).query("Weight > 0").copy()
 
     if valid_df.empty:
-        raise ValueError("NÃ£o existem arestas vÃ¡lidas com peso positivo.")
+        raise ValueError("Não existem arestas válidas com peso positivo.")
 
     return valid_df.sort_values(by="Weight", ascending=False).reset_index(drop=True), initial_len - len(valid_df)
 
@@ -55,13 +55,13 @@ def build_graph(df: pd.DataFrame) -> nx.DiGraph:
     for u, v, w in df[REQUIRED_COLUMNS].itertuples(index=False):
         graph.add_edge(u, v, weight=float(w))
     if not graph.edges:
-        raise ValueError("O grafo nÃ£o contÃ©m arestas.")
+        raise ValueError("O grafo não contém arestas.")
     return graph
 
 
 def build_forward_tree(graph: nx.DiGraph, root: str) -> nx.DiGraph:
     if root not in graph:
-        raise ValueError(f"A raiz indicada nÃ£o existe no grafo: {root}")
+        raise ValueError(f"A raiz indicada não existe no grafo: {root}")
 
     tree = nx.DiGraph()
     tree.add_node(root)
@@ -92,7 +92,7 @@ def build_forward_tree(graph: nx.DiGraph, root: str) -> nx.DiGraph:
         included.add(v)
 
     if not tree.edges:
-        raise ValueError("NÃ£o foi possÃ­vel selecionar arestas a partir da raiz.")
+        raise ValueError("Não foi possível selecionar arestas a partir da raiz.")
     return tree
 
 
@@ -148,6 +148,9 @@ def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, root: str, args: argpars
     orig_w = sum(d["weight"] for _, _, d in graph.edges(data=True))
     sel_w = sum(d["weight"] for _, _, d in tree.edges(data=True))
 
+    is_dag = nx.is_directed_acyclic_graph(tree)
+    is_connected = nx.is_weakly_connected(tree) if tree.nodes else False
+
     payload = {
         "algorithm": "RAMEX Forward Heuristic",
         "root": root,
@@ -156,7 +159,8 @@ def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, root: str, args: argpars
             "selected_nodes": tree.number_of_nodes(), "selected_edges": tree.number_of_edges(),
             "original_weight_sum": orig_w, "selected_weight_sum": sel_w,
             "preserved_weight_percent": (sel_w / orig_w * 100) if orig_w else 0,
-            "is_acyclic": nx.is_directed_acyclic_graph(tree),
+            "is_acyclic": is_dag,
+            "is_connected": is_connected,
         },
         "nodes": [{"id": n, "level": levels.get(n, 0), "is_root": n == root} 
                   for n in sorted(tree.nodes, key=lambda n: (levels.get(n, 0), n))],
@@ -212,17 +216,19 @@ def main() -> None:
         tree = build_forward_tree(graph, args.root)
 
         if not nx.is_directed_acyclic_graph(tree):
-            raise ValueError("O output contÃ©m ciclos.")
+            raise ValueError("O output contém ciclos.")
+        if not nx.is_weakly_connected(tree):
+            raise ValueError("A estrutura Forward resultante não está conectada.")
 
         payload = export_outputs(graph, tree, args.root, args)
         draw_tree(tree, args.root, Path(args.output_png))
 
         m = payload["metrics"]
         print(f"Ficheiro lido: {args.input_edges_csv}")
-        if invalid_count: print(f"Aviso: ignoradas {invalid_count} arestas invÃ¡lidas.")
-        print(f"Raiz: {args.root}\nNÃ³s originais: {m['original_nodes']} | Arestas originais: {m['original_edges']}")
+        if invalid_count: print(f"Aviso: ignoradas {invalid_count} arestas inválidas.")
+        print(f"Raiz: {args.root}\nNós originais: {m['original_nodes']} | Arestas originais: {m['original_edges']}")
         print(f"Arestas selecionadas: {m['selected_edges']}\nSoma dos pesos: {m['selected_weight_sum']:.2f}")
-        print(f"Peso preservado: {m['preserved_weight_percent']:.2f}%\nOutput acÃ­clico: {m['is_acyclic']}")
+        print(f"Peso preservado: {m['preserved_weight_percent']:.2f}%\nOutput acíclico: {m['is_acyclic']} | Conectado: {m['is_connected']}")
         print(f"Gerados: CSV, PNG, e JSON com sucesso.")
 
     except Exception as exc:

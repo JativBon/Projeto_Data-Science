@@ -386,28 +386,42 @@ function buildRamexAnalyticalDataUrl(data: ReportData): string | undefined {
 async function svgDataUrlToPng(dataUrl?: string): Promise<string | undefined> {
   if (!dataUrl || !dataUrl.startsWith("data:image/svg+xml")) return dataUrl;
   if (typeof window === "undefined") return undefined;
+
+  // Normalizar para base64 para maior compatibilidade cross-browser
+  // encodeURIComponent pode produzir data URLs que alguns browsers recusam num Image element
+  const normalizeToBase64 = (url: string): string => {
+    if (url.includes(";base64,")) return url;
+    try {
+      const svgText = decodeURIComponent(url.replace("data:image/svg+xml;charset=utf-8,", ""));
+      return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgText)))}`;
+    } catch {
+      return url;
+    }
+  };
+
+  const normalizedUrl = normalizeToBase64(dataUrl);
+
   return await new Promise((resolve) => {
     const image = new window.Image();
     image.onload = () => {
       try {
+        const W = 980;
+        const H = 520;
         const canvas = document.createElement("canvas");
-        canvas.width = image.naturalWidth || 980;
-        canvas.height = image.naturalHeight || 520;
+        canvas.width = W;
+        canvas.height = H;
         const context = canvas.getContext("2d");
-        if (!context) {
-          resolve(undefined);
-          return;
-        }
+        if (!context) { resolve(undefined); return; }
         context.fillStyle = "#ffffff";
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(image, 0, 0);
+        context.fillRect(0, 0, W, H);
+        context.drawImage(image, 0, 0, W, H);
         resolve(canvas.toDataURL("image/png"));
       } catch {
         resolve(undefined);
       }
     };
     image.onerror = () => resolve(undefined);
-    image.src = dataUrl;
+    image.src = normalizedUrl;
   });
 }
 
