@@ -672,14 +672,14 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           A matriz de adjacência representa eventos de origem nas linhas e eventos de destino nas colunas. Cada célula
           guarda a frequência de transição observada.
         </Text>
-        {data.metrics.nodes <= 12 && data.transitionMatrix && Object.keys(data.transitionMatrix).length > 0 ? (
+        {(data.metrics.nodes ?? 0) <= 12 && data.transitionMatrix && Object.keys(data.transitionMatrix).length > 0 ? (
           <TransitionMatrixTable transitionMatrix={data.transitionMatrix} />
         ) : (
           <View style={styles.highlight}>
             <Text style={styles.text}>
-              {data.metrics.nodes <= 12
+              {(data.metrics.nodes ?? 0) <= 12
                 ? "Matriz de adjacência não disponível neste resultado. Consultar CSV gerado pela aplicação."
-                : `Matriz ${data.metrics.nodes}×${data.metrics.nodes} — demasiado extensa para apresentação integral no PDF. Consultar CSV gerado pela aplicação.`}
+                : `Matriz ${data.metrics.nodes ?? "?"}×${data.metrics.nodes ?? "?"} — demasiado extensa para apresentação integral no PDF. Consultar CSV gerado pela aplicação.`}
             </Text>
           </View>
         )}

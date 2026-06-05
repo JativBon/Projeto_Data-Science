@@ -733,6 +733,30 @@ def build_ramex_polytree_multiobjective(graph: nx.DiGraph, root: str, **kw) -> t
 _DRAW_EDGE_LIMIT = 300  # acima deste valor usa path rápido (LineCollection)
 _DRAW_LABEL_LIMIT = 80  # acima deste valor omite labels nas arestas
 
+# ---------------------------------------------------------------------------
+# Helpers de layout
+# ---------------------------------------------------------------------------
+
+def _graphviz_layout_safe(g: nx.DiGraph, prog: str, fallback_prog: str | None = None) -> dict:
+    """Tenta graphviz; se falhar usa spring_layout."""
+    for p in ([prog] + ([fallback_prog] if fallback_prog else [])):
+        try:
+            return nx.nx_agraph.graphviz_layout(g, prog=p)
+        except Exception:
+            pass
+    return nx.spring_layout(g, seed=42, k=2.5, iterations=60)
+
+
+def _scale_node_sizes(g: nx.DiGraph, base: int, scale: int) -> list[int]:
+    """Tamanho de nó proporcional ao grau total (in+out), com mínimo garantido."""
+    degrees = dict(g.degree())
+    max_deg = max(degrees.values(), default=1) or 1
+    return [base + int(scale * degrees[n] / max_deg) for n in g.nodes]
+
+
+# ---------------------------------------------------------------------------
+# draw_graph — ponto de entrada principal
+# ---------------------------------------------------------------------------
 
 def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> None:
     if not graph.edges:
@@ -742,11 +766,11 @@ def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> 
     from matplotlib.patheffects import withStroke  # type: ignore
 
     n = graph.number_of_nodes()
-    is_small = n <= 10
+    is_small = n <= 12
     all_edges = list(graph.edges(data=True))
     is_dense = len(all_edges) > _DRAW_EDGE_LIMIT
 
-    # Grafos densos: limitar ao top-N arestas por peso para visualização
+    # ---- filtrar arestas para visualização ----
     if is_dense:
         all_edges_sorted = sorted(all_edges, key=lambda e: float(e[2].get("weight", 0)), reverse=True)
         draw_edges = all_edges_sorted[:_DRAW_EDGE_LIMIT]
@@ -758,43 +782,59 @@ def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> 
         draw_graph_view = graph
         draw_edges = all_edges
 
+    # ---- layout ----
     if is_small:
-        pos = nx.circular_layout(draw_graph_view, scale=1.2)
-        figsize = (16, 14)
+        pos = nx.circular_layout(draw_graph_view, scale=2.0)
+        figsize = (18, 16)
         dpi = 300
+        base_node = 3200
+        scale_node = 2400
+        font_sz = 13
     elif is_dense:
-        pos = nx.spring_layout(draw_graph_view, seed=42, k=1.5, iterations=30)
-        figsize = (16, 12)
-        dpi = 120  # DPI reduzido para grafos densos — não há detalhe para escala alta
+        # Grafo completo/denso: sfdp (força-dirigido esparso) — melhor que spring para muitos nós
+        pos = _graphviz_layout_safe(draw_graph_view, "sfdp", "fdp")
+        figsize = (26, 22)
+        dpi = 180
+        base_node = 220
+        scale_node = 600
+        font_sz = 7
+    elif root:
+        # Árvore / arborescência: layout hierárquico com dot
+        pos = _graphviz_layout_safe(draw_graph_view, "dot")
+        figsize = (30, 24)
+        dpi = 200
+        base_node = 800
+        scale_node = 2000
+        font_sz = 10
     else:
-        try:
-            pos = nx.nx_agraph.graphviz_layout(draw_graph_view, prog="dot") if root else nx.spring_layout(draw_graph_view, seed=42, k=2, iterations=50)
-        except Exception:
-            pos = nx.spring_layout(draw_graph_view, seed=42, k=2, iterations=50)
-        figsize = (14, 10)
-        dpi = 300
+        # DAG sem root explícita: neato ou spring
+        pos = _graphviz_layout_safe(draw_graph_view, "neato")
+        figsize = (24, 20)
+        dpi = 200
+        base_node = 800
+        scale_node = 2000
+        font_sz = 10
 
     fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
     max_w = max((float(d.get("weight", 1)) for _, _, d in draw_edges), default=1) or 1
 
+    # ---- arestas ----
     if is_dense:
-        # Caminho rápido: usa draw_networkx_edges (LineCollection) em vez de FancyArrowPatch
         edge_list_pairs = [(u, v) for u, v, _ in draw_edges]
-        widths = [0.5 + 2.5 * (float(d.get("weight", 1)) / max_w) for _, _, d in draw_edges]
+        widths = [0.4 + 2.8 * (float(d.get("weight", 1)) / max_w) for _, _, d in draw_edges]
         nx.draw_networkx_edges(
             draw_graph_view, pos,
             edgelist=edge_list_pairs,
             width=widths,
             edge_color="#315f72",
-            alpha=0.55,
+            alpha=0.45,
             arrows=True,
             arrowstyle="-|>",
-            arrowsize=10,
+            arrowsize=8,
             ax=ax,
         )
     else:
-        # Caminho detalhado: FancyArrowPatch com curvatura bidirecional
-        curve_radius = 0.35 if is_small else 0.18
+        curve_radius = 0.35 if is_small else 0.15
         bidirectional: set[tuple[str, str]] = set()
         for u, v, _ in draw_edges:
             if graph.has_edge(v, u) and (v, u) not in bidirectional and (u, v) not in bidirectional:
@@ -804,40 +844,44 @@ def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> 
             x1, y1 = pos[u]
             x2, y2 = pos[v]
             weight = float(data.get("weight", 1))
-            width = 0.8 + (4.2 if is_small else 3.2) * (weight / max_w)
+            width = 0.8 + (4.5 if is_small else 3.8) * (weight / max_w)
             if (u, v) in bidirectional:
-                connectionstyle = f"arc3,rad={curve_radius}"
+                cs = f"arc3,rad={curve_radius}"
             elif (v, u) in bidirectional:
-                connectionstyle = f"arc3,rad={-curve_radius}"
+                cs = f"arc3,rad={-curve_radius}"
             else:
-                connectionstyle = "arc3,rad=0"
+                cs = "arc3,rad=0"
             ax.add_patch(FancyArrowPatch(
                 (x1, y1), (x2, y2),
-                connectionstyle=connectionstyle,
+                connectionstyle=cs,
                 arrowstyle="-|>",
-                mutation_scale=24 if is_small else 15,
+                mutation_scale=28 if is_small else 18,
                 linewidth=width,
                 color="#315f72",
-                alpha=0.75,
+                alpha=0.80,
                 zorder=1,
             ))
 
-    colors = ["#f9cb9c" if root and node == root else "#e8f4f8" for node in draw_graph_view.nodes]
+    # ---- nós ----
+    node_sizes = _scale_node_sizes(draw_graph_view, base_node, scale_node)
+    colors = ["#f9cb9c" if root and node == root else "#dceef5" for node in draw_graph_view.nodes]
     nx.draw_networkx_nodes(
         draw_graph_view, pos,
-        node_size=3600 if is_small else (500 if is_dense else 900),
+        node_size=node_sizes,
         node_color=colors,
         edgecolors="#315f72",
-        linewidths=2.5 if is_small else 1.5,
+        linewidths=2.5 if is_small else 1.8,
         ax=ax,
     )
     nx.draw_networkx_labels(
         draw_graph_view, pos,
-        font_size=13 if is_small else (6 if is_dense else 8),
+        font_size=font_sz,
         font_weight="bold",
+        font_color="#0f172a",
         ax=ax,
     )
 
+    # ---- labels nas arestas ----
     show_labels = len(draw_edges) <= _DRAW_LABEL_LIMIT
     if show_labels:
         edge_labels = {
@@ -850,22 +894,26 @@ def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> 
                 x = (pos[u][0] + pos[v][0]) / 2
                 y = (pos[u][1] + pos[v][1]) / 2
                 text = ax.text(
-                    x, y, str(label), fontsize=9, ha="center", va="center",
+                    x, y, str(label), fontsize=10, ha="center", va="center",
                     fontweight="bold", color="#315f72",
-                    bbox=dict(boxstyle="round,pad=0.4", facecolor="white", edgecolor="none", alpha=0.85),
+                    bbox=dict(boxstyle="round,pad=0.4", facecolor="white", edgecolor="none", alpha=0.88),
                 )
                 text.set_path_effects([withStroke(linewidth=2, foreground="white")])  # type: ignore[arg-type]
         else:
-            nx.draw_networkx_edge_labels(draw_graph_view, pos, edge_labels=edge_labels, font_size=8, ax=ax)
+            nx.draw_networkx_edge_labels(
+                draw_graph_view, pos, edge_labels=edge_labels,
+                font_size=max(7, font_sz - 2), ax=ax,
+                bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="none", alpha=0.75),
+            )
 
     if is_dense:
         ax.set_title(
             f"Top {len(draw_edges)} de {len(all_edges)} arestas (ordenadas por peso)",
-            fontsize=9, color="#64748b", pad=4,
+            fontsize=11, color="#64748b", pad=6,
         )
-    ax.margins(0.15 if is_small else 0.1)
+    ax.margins(0.18 if is_small else 0.12)
     ax.axis("off")
-    plt.tight_layout(pad=2.0 if is_small else 1.0)
+    plt.tight_layout(pad=2.5 if is_small else 1.5)
     plt.savefig(output_png, dpi=dpi, bbox_inches="tight", facecolor="white")
     plt.close()
 
@@ -1108,14 +1156,31 @@ def structural_type(nodes: int, density: float, ramex2007_preserved: float) -> s
 def run_pure_ramex_outputs(
     output_dir: Path,
     job_id: str,
-    graph_edges_csv: Path,
-    graph_edges_df: pd.DataFrame,
+    graph_edges_csv: Path,           # CSV para 10A (grafo G com SOURCE/SINK)
+    graph_edges_df: pd.DataFrame,    # DataFrame do grafo G (com SOURCE/SINK)
     metrics: dict[str, Any],
     progress_cb: ProgressCallback | None = None,
     log_cb: LogCallback | None = None,
+    clean_graph_edges_csv: Path | None = None,    # CSV para 10B/10C (grafo observado sem SOURCE/SINK)
+    clean_graph_edges_df: pd.DataFrame | None = None,  # DataFrame sem SOURCE/SINK
 ) -> dict[str, Any]:
     output_dir = output_dir.resolve()
     graph_edges_csv = graph_edges_csv.resolve()
+    # 10B e 10C devem usar o grafo observado puro (sem SOURCE/SINK) — RAMEX 2015
+    # Se não for fornecido, derivar do grafo G excluindo os nós virtuais
+    _virtual = {SOURCE_NODE, SINK_NODE}
+    if clean_graph_edges_csv is not None and clean_graph_edges_csv.exists():
+        heuristic_csv = clean_graph_edges_csv.resolve()
+        heuristic_df = clean_graph_edges_df if clean_graph_edges_df is not None else pd.read_csv(heuristic_csv)
+    else:
+        # Fallback: filtrar SOURCE/SINK do próprio grafo G
+        heuristic_df = graph_edges_df[
+            ~graph_edges_df["From"].astype(str).isin(_virtual) &
+            ~graph_edges_df["To"].astype(str).isin(_virtual)
+        ].copy()
+        _heuristic_tmp = output_dir / f"heuristic_graph_edges_{job_id}.csv"
+        heuristic_df.to_csv(_heuristic_tmp, index=False)
+        heuristic_csv = _heuristic_tmp
     files = {
         "ramex2007_csv": f"ramex2007_{job_id}.csv",
         "ramex2007_json": f"ramex2007_{job_id}.json",
@@ -1151,18 +1216,27 @@ def run_pure_ramex_outputs(
     if log_cb and (selected_edges := ramex2007.get("metrics", {}).get("selected_edges")) is not None:
         log_cb(f"RAMEX 2007 concluído: {selected_edges} arestas selecionadas")
 
-    graph_nodes = set(graph_edges_df["From"].astype(str)) | set(graph_edges_df["To"].astype(str))
-    root_10a = str(ramex2007.get("root", ""))
-    if root_10a in graph_nodes:
-        forward_root, root_method = root_10a, "from_10A"
+    # Determinar root para Forward no grafo LIMPO (sem SOURCE/SINK)
+    # A root do RAMEX 2007 é SOURCE — não válida para o grafo limpo.
+    # Usar o nó com maior peso de saída no grafo observado.
+    clean_nodes = set(heuristic_df["From"].astype(str)) | set(heuristic_df["To"].astype(str))
+    root_10a_real = str(ramex2007.get("root", ""))
+    if root_10a_real and root_10a_real not in _virtual and root_10a_real in clean_nodes:
+        # Raiz real (não SOURCE/SINK) herdada do RAMEX 2007
+        forward_root, root_method = root_10a_real, "from_10A_real_root"
     else:
-        forward_root, root_method = choose_max_out_weight_root(graph_edges_df), "max_out_weight_fallback"
+        # Escolher nó com maior peso de saída no grafo observado
+        forward_root, root_method = choose_max_out_weight_root(heuristic_df), "max_out_weight_clean_graph"
+
+    if log_cb:
+        log_cb(f"Forward/Back-and-Forward usam grafo limpo: {len(clean_nodes)} nós, {len(heuristic_df)} arestas (sem SOURCE/SINK)")
+        log_cb(f"Forward root: {forward_root} ({root_method})")
 
     if progress_cb:
-        progress_cb("forward", "Execução RAMEX Forward")
+        progress_cb("forward", "Execução RAMEX 2015 Forward (grafo observado)")
     run_python_script([
         str(script_path("10B_ramex_forward_heuristic.py")),
-        str(graph_edges_csv), str(output_dir / files["forward_csv"]),
+        str(heuristic_csv), str(output_dir / files["forward_csv"]),
         str(output_dir / files["forward_png"]),
         "--root", forward_root, "--output-json", str(output_dir / files["forward_json"]),
     ], log_cb=log_cb, step_name="RAMEX Forward")
@@ -1171,10 +1245,10 @@ def run_pure_ramex_outputs(
     (output_dir / files["forward_json"]).write_text(json.dumps(forward, ensure_ascii=False, indent=2), encoding="utf-8")
 
     if progress_cb:
-        progress_cb("polytree_formal", "Execução Back-and-Forward Poly-tree Formal")
+        progress_cb("polytree_formal", "Execução RAMEX 2015 Back-and-Forward (grafo observado)")
     run_python_script([
         str(script_path("10C_ramex_back_forward_polytree_formal.py")),
-        str(graph_edges_csv), str(output_dir / files["back_forward_formal_csv"]),
+        str(heuristic_csv), str(output_dir / files["back_forward_formal_csv"]),
         str(output_dir / files["back_forward_formal_png"]),
         "--output-json", str(output_dir / files["back_forward_formal_json"]),
     ], log_cb=log_cb, step_name="Back-and-Forward Poly-tree Formal")
@@ -1421,8 +1495,13 @@ def run_pipeline(
     pure: dict[str, Any] | None = None
     if analysis_type in {"pure", "both"}:
         pure = run_pure_ramex_outputs(
-            output_dir, output_dir.name, output_dir / files["ramex2007_graph_edges_csv"],
-            ramex2007_graph_edges_df[["From", "To", "Weight"]], metrics, progress_cb=progress_cb, log_cb=log_cb,
+            output_dir, output_dir.name,
+            output_dir / files["ramex2007_graph_edges_csv"],   # 10A: grafo G com SOURCE/SINK
+            ramex2007_graph_edges_df[["From", "To", "Weight"]],
+            metrics,
+            progress_cb=progress_cb, log_cb=log_cb,
+            clean_graph_edges_csv=output_dir / files["graph_edges_csv"],   # 10B/10C: grafo observado puro
+            clean_graph_edges_df=graph_edges_df,
         )
         files.update(pure["files"])
         if pure.get("ramex2007"):

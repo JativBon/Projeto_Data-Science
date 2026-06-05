@@ -46,6 +46,8 @@ import {
 import { ReportExportButton } from "../src/features/reports/ReportExportButton";
 import type { ReportData } from "../src/features/reports/reportPdfTypes";
 import { RamexSankey } from "../src/components/RamexSankey";
+import { RamexGraphViewer } from "../src/components/RamexGraphViewer";
+import type { GraphEdge as RamexGraphEdge } from "../src/components/RamexGraphViewer";
 
 type DatasetId = "01" | "02" | "03";
 type ViewId =
@@ -3003,13 +3005,33 @@ function PureRamexMethodPanel({
       <div className="rounded-2xl border border-white/50 bg-white/75 p-6 shadow-xl shadow-slate-200/50 backdrop-blur-md">
         <h3 className="text-xl font-semibold tracking-tight text-slate-950">{title}</h3>
         <p className="mt-3 text-sm leading-7 text-slate-700">{description}</p>
+        {normalized2007 && (
+          <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50/80 px-4 py-2.5 text-xs leading-5 text-amber-900">
+            <strong>Nota sobre o grafo G:</strong> O RAMEX 2007 transforma o grafo observado adicionando dois nós virtuais —{" "}
+            <strong>SOURCE</strong> (origem de todas as sequências) e <strong>SINK</strong> (destino final) — e as respetivas
+            transições. Os valores <em>Nós grafo G</em> e <em>Arestas grafo G</em> referem-se a este grafo transformado,
+            não ao grafo observado original (visível na aba Visão Geral).
+          </p>
+        )}
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <MetricCard label={data.root ? "Raiz" : "Aresta inicial"} value={normalized2007?.root ?? anchor} />
         {normalized2007 ? <MetricCard label="Critério da raiz" value={normalized2007.rootSelection ?? "Sem dados gerados"} /> : null}
-        <MetricCard label="Nós originais" value={formatNumber(metrics.original_nodes ?? data.nodes_original ?? 0)} />
-        <MetricCard label="Arestas originais" value={formatNumber(metrics.original_edges ?? data.edges_original ?? 0)} />
-        <MetricCard label="Nós selecionados" value={formatNumber(normalized2007?.nodes ?? metrics.selected_nodes ?? 0)} />
+        <MetricCard
+          label={normalized2007 ? "Nós grafo G" : "Nós no grafo"}
+          value={formatNumber(metrics.original_nodes ?? data.nodes_original ?? 0)}
+          note={normalized2007 ? "Inclui SOURCE e SINK virtuais" : "Grafo observado (sem SOURCE/SINK)"}
+        />
+        <MetricCard
+          label={normalized2007 ? "Arestas grafo G" : "Arestas no grafo"}
+          value={formatNumber(metrics.original_edges ?? data.edges_original ?? 0)}
+          note={normalized2007 ? "Inclui transições SOURCE/SINK" : "Grafo observado (sem SOURCE/SINK)"}
+        />
+        <MetricCard
+          label="Nós selecionados"
+          value={formatNumber(normalized2007?.nodes ?? metrics.selected_nodes ?? 0)}
+          note={normalized2007 ? "Inclui SOURCE e SINK se alcançados" : undefined}
+        />
         <MetricCard label="Arestas selecionadas" value={formatNumber(normalized2007?.edges ?? metrics.selected_edges ?? 0)} />
         <MetricCard label="Peso selecionado" value={formatNumber(normalized2007?.selectedWeight ?? metrics.selected_weight_sum ?? 0)} />
         <MetricCard label="Peso preservado" value={`${(normalized2007?.preservedWeightPercent ?? metrics.preserved_weight_percent ?? 0).toFixed(2)}%`} />
@@ -3885,6 +3907,8 @@ function GraphViewer({
   mode,
   legend,
   children,
+  graphEdges,
+  graphRoot,
 }: {
   title: string;
   subtitle: string;
@@ -3894,6 +3918,8 @@ function GraphViewer({
   mode: GraphViewerMode;
   legend?: string;
   children?: ReactNode;
+  graphEdges?: RamexGraphEdge[];
+  graphRoot?: string;
 }) {
   const accent = graphAccentClasses(mode);
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -3901,6 +3927,7 @@ function GraphViewer({
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"image" | "interactive">(graphEdges?.length ? "interactive" : "image");
 
   function clampPosition(pos: { x: number; y: number }, s = scale) {
     const rect = viewportRef.current?.getBoundingClientRect();
@@ -3972,6 +3999,40 @@ function GraphViewer({
         </div>
       </div>
 
+      {/* Toggle imagem / interativo */}
+      {graphEdges?.length ? (
+        <div className="mt-4 flex items-center gap-2">
+          <div className="flex gap-1 rounded-xl border border-slate-700 bg-slate-900 p-1">
+            <button
+              type="button"
+              onClick={() => setViewMode("interactive")}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${viewMode === "interactive" ? "bg-slate-700 text-white" : "text-slate-400 hover:text-slate-200"}`}
+            >
+              ✦ Interativo
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("image")}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${viewMode === "image" ? "bg-slate-700 text-white" : "text-slate-400 hover:text-slate-200"}`}
+            >
+              Imagem estática
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {viewMode === "interactive" && graphEdges?.length ? (
+        <div className="mt-4">
+          <RamexGraphViewer
+            edges={graphEdges}
+            root={graphRoot}
+            title={title}
+            subtitle={subtitle}
+            highlightColor="#c8914b"
+          />
+        </div>
+      ) : (
+        <>
       <div className="mt-5 flex flex-wrap gap-2">
         <button type="button" onClick={() => updateScale(scale + 0.2)} className="inline-flex items-center gap-1 rounded-full border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-100 hover:bg-slate-900">
           <ZoomIn className="h-3.5 w-3.5" /> Zoom +
@@ -4036,6 +4097,8 @@ function GraphViewer({
       <p className="mt-3 text-xs leading-5 text-slate-400">
         A interação por nó/aresta está disponível na tabela de relações; a imagem exportada é estática.
       </p>
+        </>
+      )}
 
       {children ? <div className="mt-5">{children}</div> : null}
 
@@ -6179,6 +6242,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
               edges={normalizedResult?.observed.edges}
               mode="complete"
               legend="Grafo observado"
+              graphEdges={normalizedResult?.observed.graphEdges ?? result?.graph_edges}
             >
               <GraphRelationsTable title="Transição" rows={graphRelationRows} mode="complete" />
             </GraphViewer>
@@ -6192,6 +6256,16 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                 edges={normalizedResult?.ramex2007.phase2.metrics?.selected_edges}
                 mode="pure"
                 legend="RAMEX 2007"
+                graphEdges={(normalizedResult?.ramex2007.phase2.selectedEdges ?? []).map((raw) => {
+                  const e = raw as Record<string, unknown>;
+                  return {
+                    From: String(e.from ?? e.From ?? ""),
+                    To: String(e.to ?? e.To ?? ""),
+                    Weight: Number(e.weight ?? e.Weight ?? 0),
+                    Level: e.level !== undefined ? Number(e.level) : undefined,
+                  };
+                })}
+                graphRoot={normalizedResult?.ramex2007.phase2.root}
               >
                 <GraphRelationsTable
                   title="Aresta selecionada"
@@ -6216,6 +6290,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                 edges={normalizedResult?.forum.phase2?.metrics?.edges_after}
                 mode="forum"
                 legend="RAMEX-Forum temporal"
+                graphEdges={forumRelationRows.map((r) => ({ From: r.from, To: r.to, Weight: r.weight ?? 0 }))}
               >
                 <GraphRelationsTable title="Influência selecionada" rows={forumRelationRows} mode="forum" />
               </GraphViewer>

@@ -175,43 +175,66 @@ def draw_forum_graph(
         for u, v, data in top_edges:
             graph_to_draw.add_edge(u, v, **data)
 
-    plt.figure(figsize=(13, 9))
-    try:
-        prog = "dot" if simplified else "circo"
-        pos = nx.nx_agraph.graphviz_layout(graph_to_draw, prog=prog)
-    except Exception:
-        pos = nx.spring_layout(graph_to_draw, seed=42, weight="relative_weight", iterations=35)
+    n_nodes = graph_to_draw.number_of_nodes()
+    n_edges_draw = graph_to_draw.number_of_edges()
+
+    # layout hierárquico para grafos simplificados; sfdp para grafos de influência densos
+    for prog in (["dot"] if simplified else ["sfdp", "fdp"]):
+        try:
+            pos = nx.nx_agraph.graphviz_layout(graph_to_draw, prog=prog)
+            break
+        except Exception:
+            pos = None
+    if pos is None:
+        pos = nx.spring_layout(graph_to_draw, seed=42, weight="relative_weight", iterations=50, k=2.0)
+
+    # figsize dinâmico: grafos maiores precisam de mais espaço
+    fig_w = max(18, min(32, n_nodes * 0.55))
+    fig_h = max(14, min(26, n_nodes * 0.45))
+    plt.figure(figsize=(fig_w, fig_h), dpi=200)
 
     strengths = {node: 0.0 for node in graph_to_draw.nodes}
     for u, v, data in graph_to_draw.edges(data=True):
         strengths[u] += float(data.get("weight", 0.0))
         strengths[v] += float(data.get("weight", 0.0))
     max_strength = max(strengths.values(), default=1.0) or 1.0
-    node_sizes = [300 + 1500 * strengths[n] / max_strength for n in graph_to_draw.nodes]
+    # Tamanho mínimo maior para garantir legibilidade dos labels
+    node_sizes = [900 + 2800 * strengths[n] / max_strength for n in graph_to_draw.nodes]
 
     edge_data = [(float(d.get("relative_weight", 0.0)), u, v, d) for u, v, d in graph_to_draw.edges(data=True)]
     max_rel = max((rw for rw, *_ in edge_data), default=1.0) or 1.0
-    widths = [0.5 + 4.0 * rw / max_rel for rw, *_ in edge_data]
-    edge_colors = ["#1f5f78" if rw >= max_rel * 0.7 else "#8aa6b2" for rw, *_ in edge_data]
+    widths = [0.6 + 4.5 * rw / max_rel for rw, *_ in edge_data]
+    edge_colors = ["#1f5f78" if rw >= max_rel * 0.65 else "#7aafc0" for rw, *_ in edge_data]
 
     highlight = set(highlight_path or [])
-    node_colors = ["#d8903f" if n in highlight else "#dce9ee" for n in graph_to_draw.nodes]
+    node_colors = ["#d8903f" if n in highlight else "#dceef5" for n in graph_to_draw.nodes]
 
-    nx.draw_networkx_nodes(graph_to_draw, pos, node_size=node_sizes, node_color=node_colors, edgecolors="#315f72", linewidths=1.2)
-    nx.draw_networkx_edges(
-        graph_to_draw, pos, width=widths, edge_color=edge_colors, alpha=0.65,
-        arrows=True, arrowstyle="-|>", arrowsize=12 if graph_to_draw.number_of_edges() > 80 else 20,
+    nx.draw_networkx_nodes(
+        graph_to_draw, pos, node_size=node_sizes, node_color=node_colors,
+        edgecolors="#315f72", linewidths=1.8,
     )
-    nx.draw_networkx_labels(graph_to_draw, pos, font_size=7 if graph_to_draw.number_of_nodes() > 40 else 9, font_weight="bold")
+    nx.draw_networkx_edges(
+        graph_to_draw, pos, width=widths, edge_color=edge_colors, alpha=0.70,
+        arrows=True, arrowstyle="-|>",
+        arrowsize=14 if n_edges_draw > 80 else 22,
+    )
+    font_sz = 8 if n_nodes > 50 else (9 if n_nodes > 30 else 11)
+    nx.draw_networkx_labels(
+        graph_to_draw, pos, font_size=font_sz, font_weight="bold", font_color="#0f172a",
+    )
 
-    if graph_to_draw.number_of_edges() <= 80:
+    if n_edges_draw <= 80:
         edge_labels = {(u, v): f"{float(d.get('relative_weight', 0.0)):.1f}%" for u, v, d in graph_to_draw.edges(data=True)}
-        nx.draw_networkx_edge_labels(graph_to_draw, pos, edge_labels=edge_labels, font_size=8, label_pos=0.55)
+        nx.draw_networkx_edge_labels(
+            graph_to_draw, pos, edge_labels=edge_labels,
+            font_size=max(7, font_sz - 1), label_pos=0.55,
+            bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="none", alpha=0.78),
+        )
 
-    plt.title(title, fontsize=15, fontweight="bold")
+    plt.title(title, fontsize=16, fontweight="bold", pad=12)
     plt.axis("off")
-    plt.tight_layout()
-    plt.savefig(output_png, dpi=300, bbox_inches="tight")
+    plt.tight_layout(pad=1.5)
+    plt.savefig(output_png, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close()
 
 
