@@ -175,10 +175,10 @@ export function RamexSankey({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 className="text-lg font-semibold tracking-tight text-slate-950">
-            Sankey RAMEX 2007 — Fluxo da arborescência
+            Sankey RAMEX — Estrutura selecionada
           </h4>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
-            Propagação de peso a partir da raiz. A espessura e altura de cada banda é proporcional ao peso da transição.
+            Propagação de peso a partir da estrutura selecionada. A espessura e altura de cada banda é proporcional ao peso da transição.
           </p>
         </div>
         {isLarge && (
@@ -208,7 +208,7 @@ export function RamexSankey({
           viewBox={`0 0 ${canvasW} ${canvasH}`}
           style={{ minWidth: canvasW, height: Math.max(400, canvasH) }}
           role="img"
-          aria-label="Sankey RAMEX 2007"
+          aria-label="Sankey RAMEX"
         >
           <rect width={canvasW} height={canvasH} rx="12" fill="#f8fafc" />
 

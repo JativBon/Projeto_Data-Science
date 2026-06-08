@@ -194,8 +194,31 @@ export type ReportData = {
     ramex2007?: string;
     ramex2007Analytical?: string;
     ramex2007Sankey?: string;
+    forwardSankey?: string;
+    backForwardSankeyTop50?: string;
+    backForwardSankeyFull?: string;
     polytree?: string;
     forumGraph?: string;
     forumSimplified?: string;
+  };
+  frontendExports?: {
+    observedGraph?: string;
+    ramex2007Graph?: string;
+    ramex2007Sankey?: string;
+    forwardSankey?: string;
+    backForwardSankeyTop50?: string;
+    backForwardSankeyFull?: string;
+    polytree?: string;
+    temporalPhase1?: string;
+    temporalPhase2?: string;
+  };
+  backendTechnicalImages?: {
+    graph?: string;
+    ramex2007?: string;
+    forward?: string;
+    backForward?: string;
+    polytree?: string;
+    forumGraph?: string;
+    forumPhase2?: string;
   };
 };

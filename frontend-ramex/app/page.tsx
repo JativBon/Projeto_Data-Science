@@ -45,9 +45,10 @@ import {
 } from "recharts";
 import { ReportExportButton } from "../src/features/reports/ReportExportButton";
 import type { ReportData } from "../src/features/reports/reportPdfTypes";
-import { RamexSankey } from "../src/components/RamexSankey";
+import { RamexSankeyPlotly } from "../src/components/RamexSankeyPlotly";
+import type { SankeyStructureType } from "../src/components/RamexSankeyPlotly";
 import { RamexGraphViewer } from "../src/components/RamexGraphViewer";
-import type { GraphEdge as RamexGraphEdge } from "../src/components/RamexGraphViewer";
+import type { GraphEdge as RamexGraphEdge, GraphType as RamexGraphType, GraphValidationMetrics as RamexGraphValidationMetrics } from "../src/components/RamexGraphViewer";
 
 type DatasetId = "01" | "02" | "03";
 type ViewId =
@@ -259,9 +260,43 @@ type UploadResult = {
     dense: boolean;
   };
   coverage_metrics?: CoverageMetrics;
+  metadata?: {
+    artifact_semantics_version?: number;
+    artifact_semantics?: Record<string, ArtifactMetadata>;
+    interpretation?: Record<string, string>;
+  };
   top_transitions: Edge[];
   matrix: MatrixData;
+  observed_graph?: {
+    metadata?: ArtifactMetadata;
+    warning?: string;
+    validation?: RamexGraphValidationMetrics;
+    edges?: Edge[];
+    nodes?: number;
+    edge_count?: number;
+    total_weight?: number;
+    density?: number;
+    files?: Record<string, string>;
+  };
+  filtered_graph?: {
+    metadata?: ArtifactMetadata;
+    warning?: string;
+    validation?: RamexGraphValidationMetrics;
+    edges?: Edge[];
+    nodes?: number;
+    edge_count?: number;
+    total_weight?: number;
+    is_filtered?: boolean;
+    files?: Record<string, string>;
+  };
   graph_edges: Edge[];
+  simplified_ramex?: {
+    metadata?: ArtifactMetadata;
+    warning?: string;
+    edges?: Edge[];
+    note?: string;
+    files?: Record<string, string>;
+  };
   ramex_edges: Edge[];
   event_construction?: {
     mode?: EventMode;
@@ -306,19 +341,37 @@ type UploadResult = {
   forum?: RamexForumData | null;
   pure_ramex?: PureRamexData;
   formal_polytree?: PureRamexResult;
+  polytree_formal?: PureRamexResult;
   pure_validation?: {
     best_algorithm?: string;
     structural_type?: string;
     summary?: string;
   };
   ramex_forum?: RamexForumData | null;
+  sankey?: {
+    metadata?: ArtifactMetadata;
+    observed_edges_source?: string;
+    final_edges_source?: string;
+    warning?: string;
+  };
+  visualizations?: Record<string, unknown>;
   files: Record<string, string>;
   interpretation: string;
   pipeline_steps: string[];
 };
 
+type ArtifactMetadata = {
+  label?: string;
+  description?: string;
+  warning?: string;
+  interpretation?: string;
+  structural_note?: string;
+};
+
 type NormalizedUploadResult = {
   observed: {
+    metadata?: ArtifactMetadata;
+    validation?: RamexGraphValidationMetrics;
     sequences: number;
     nodes: number;
     edges: number;
@@ -329,6 +382,12 @@ type NormalizedUploadResult = {
     adjacencyMatrix?: MatrixData;
     graphImage?: string;
     sankeyData: Edge[];
+  };
+  filtered: {
+    metadata?: ArtifactMetadata;
+    validation?: RamexGraphValidationMetrics;
+    graphEdges: Edge[];
+    isFiltered?: boolean;
   };
   ramex2007: {
     available: boolean;
@@ -343,6 +402,8 @@ type NormalizedUploadResult = {
       hasCycles?: boolean;
     };
     phase2: {
+      metadata?: ArtifactMetadata;
+      validation?: RamexGraphValidationMetrics;
       root?: string;
       method?: string;
       treeCompleteImage?: string;
@@ -360,6 +421,8 @@ type NormalizedUploadResult = {
   };
   experimental: {
     available: boolean;
+    simplifiedMetadata?: ArtifactMetadata;
+    polytreeMetadata?: ArtifactMetadata;
     simplified?: Edge[];
     forward?: PureRamexResult;
     backForward?: PureRamexResult;
@@ -437,6 +500,9 @@ type HistoryJobDetail = HistoryJob & {
 };
 
 type PolyTreeData = {
+  artifact_type?: string;
+  metadata?: ArtifactMetadata;
+  interpretation?: string;
   root: string;
   strategy?: PolyTreeStrategy | string;
   nodes: Array<{ id: string; level: number }>;
@@ -475,6 +541,10 @@ type PureRamexEdge = {
 };
 
 type PureRamexResult = {
+  artifact_type?: string;
+  metadata?: ArtifactMetadata;
+  back_forward_metadata?: ArtifactMetadata;
+  interpretation?: string;
   algorithm: string;
   method?: string;
   root?: string;
@@ -486,6 +556,7 @@ type PureRamexResult = {
   total_weight_original?: number;
   selected_weight?: number;
   preserved_weight_percent?: number;
+  is_valid_arborescence?: boolean;
   is_dag?: boolean;
   is_arborescence?: boolean;
   root_in_degree?: number;
@@ -516,9 +587,32 @@ type PureRamexResult = {
     max_indegree_except_root?: number;
     is_arborescence?: boolean;
     reachable_from_root?: boolean;
+    is_valid_arborescence?: boolean;
+    is_valid_polytree?: boolean;
+    undirected_is_tree?: boolean;
+    max_in_degree?: number;
+    convergence_nodes?: string[];
+  };
+  validation?: {
+    is_valid_arborescence?: boolean;
+    is_valid_polytree?: boolean;
+    is_dag?: boolean;
+    undirected_is_tree?: boolean;
+    all_reachable_from_root?: boolean;
+    nodes?: number;
+    edges?: number;
+    expected_edges?: number;
+    max_in_degree?: number;
+    max_non_root_in_degree?: number;
+    convergence_nodes?: string[];
+    total_selected_weight?: number;
+    original_total_weight?: number;
+    preserved_weight_percentage?: number;
+    validation_messages?: string[];
   };
   root_selection_method?: string;
   edges?: PureRamexEdge[];
+  nodes?: Array<string | { id?: string; label?: string; name?: string }>;
   warnings?: string[];
   transformation?: {
     ordered_csv?: string;
@@ -619,8 +713,8 @@ const showExperimental = process.env.NEXT_PUBLIC_SHOW_EXPERIMENTAL === "true";
 
 const views: Array<{ id: ViewId; label: string; icon: ElementType; description: string }> = [
   { id: "upload", label: "Upload / Nova Análise", icon: FileUp, description: "Centro de Comando e execução assíncrona" },
-  { id: "pure", label: "RAMEX 2007 / 2015", icon: Network, description: "Rooted Branching, Forward e Back-and-Forward" },
-  { id: "sankey", label: "Sankey — Fluxos", icon: Activity, description: "Visualização complementar; não substitui RAMEX" },
+  { id: "pure", label: "RAMEX formal / heurísticas", icon: Network, description: "RAMEX 2007 formal, Forward e Back-and-Forward" },
+  { id: "sankey", label: "Sankey observado", icon: Activity, description: "Visualização exploratória da rede original" },
   { id: "polytree", label: "Validação / Poly-tree", icon: GitBranch, description: "Validação estrutural das árvores e poly-trees" },
   { id: "validation", label: "Comparação de Datasets", icon: BarChart3, description: "Métricas por dataset e abordagem RAMEX" },
   { id: "history", label: "Histórico", icon: HistoryIcon, description: "Análises locais e artefactos gerados" },
@@ -633,8 +727,8 @@ const views: Array<{ id: ViewId; label: string; icon: ElementType; description: 
   ...(showExperimental
     ? ([
         { id: "matrix", label: "Matriz de Adjacência", icon: Grid3X3, description: "Leitura tabular da transição" },
-        { id: "graph", label: "Grafo", icon: Network, description: "Rede completa com amostragem" },
-        { id: "ramex", label: "Estrutura RAMEX base", icon: GitBranch, description: "Núcleo selecionado do grafo" },
+        { id: "graph", label: "Grafo observado", icon: Network, description: "Rede original completa com amostragem" },
+        { id: "ramex", label: "RAMEX simplificado experimental", icon: GitBranch, description: "Baseline heurístico do grafo observado" },
         { id: "polytree", label: "Poly-tree experimental", icon: GitBranch, description: "Estratégias Top-K e Multiobjetivo como exploração visual" },
         { id: "summary", label: "Resumo Executivo Antigo", icon: Sigma, description: "Consolidação textual da validação" },
       ] as Array<{ id: ViewId; label: string; icon: ElementType; description: string }> )
@@ -651,7 +745,7 @@ function normalizeRamex2007Result(
   if (!raw) return undefined;
   const metrics = raw.metrics ?? {};
   return {
-    algorithm: raw.algorithm ?? "RAMEX 2007 Rooted Branching",
+    algorithm: raw.algorithm ?? "RAMEX 2007 formal",
     method: raw.method,
     root: raw.root,
     rootSelection: raw.root_selection,
@@ -1091,16 +1185,24 @@ function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
 
   return {
     observed: {
+      metadata: result.observed_graph?.metadata ?? result.metadata?.artifact_semantics?.observed_graph,
+      validation: result.observed_graph?.validation as RamexGraphValidationMetrics | undefined,
       sequences: result.metrics.sequences,
-      nodes: result.metrics.nodes,
-      edges: result.metrics.edges,
-      density: result.metrics.density,
-      totalWeight: result.metrics.total_weight,
+      nodes: result.observed_graph?.nodes ?? result.metrics.nodes,
+      edges: result.observed_graph?.edge_count ?? result.metrics.edges,
+      density: result.observed_graph?.density ?? result.metrics.density,
+      totalWeight: result.observed_graph?.total_weight ?? result.metrics.total_weight,
       topTransitions: result.top_transitions ?? [],
-      graphEdges: result.graph_edges ?? [],
+      graphEdges: result.observed_graph?.edges ?? result.graph_edges ?? [],
       adjacencyMatrix: result.matrix,
       graphImage: uploadFileUrl(result, result.files.graph_png),
-      sankeyData: result.graph_edges ?? [],
+      sankeyData: result.observed_graph?.edges ?? result.graph_edges ?? [],
+    },
+    filtered: {
+      metadata: result.filtered_graph?.metadata ?? result.metadata?.artifact_semantics?.filtered_graph,
+      validation: result.filtered_graph?.validation as RamexGraphValidationMetrics | undefined,
+      graphEdges: result.filtered_graph?.edges ?? result.graph_edges ?? [],
+      isFiltered: result.filtered_graph?.is_filtered,
     },
     ramex2007: {
       available: Boolean(ramex2007),
@@ -1120,6 +1222,8 @@ function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
         hasCycles: true,
       },
       phase2: {
+        metadata: ramex2007?.metadata ?? result.metadata?.artifact_semantics?.ramex2007,
+        validation: ramex2007?.validation as RamexGraphValidationMetrics | undefined,
         root: ramex2007?.root,
         method: ramex2007?.method ?? ramex2007?.algorithm,
         treeCompleteImage: uploadFileUrl(result, result.files.ramex2007_png),
@@ -1136,7 +1240,9 @@ function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
     },
     experimental: {
       available: Boolean(showExperimental && (result.ramex_edges?.length || pure.forward || pure.backForward)),
-      simplified: result.ramex_edges,
+      simplifiedMetadata: result.simplified_ramex?.metadata ?? result.metadata?.artifact_semantics?.simplified_ramex,
+      polytreeMetadata: result.polytree?.metadata ?? result.metadata?.artifact_semantics?.simplified_ramex,
+      simplified: result.simplified_ramex?.edges ?? result.ramex_edges,
       forward: pure.forward,
       backForward: pure.backForward,
       comparisons: pure.comparisonRows,
@@ -1151,6 +1257,54 @@ function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
 
 type SankeyLimit = 20 | 50 | 100 | "all";
 type SankeyRecord = { source: string; target: string; value: number };
+type SankeyMode = "ramex2007" | "forward" | "polytree" | "observed";
+type PolytreeSankeyView = "interpretive" | "complete";
+type SankeyPlotEdge = { from: string; to: string; weight: number; level?: number };
+type PureRamexTab = "overview" | "ramex2007" | "forward" | "backforward" | "comparison";
+
+function isDatasetId(value: string | null): value is DatasetId {
+  return value === "01" || value === "02" || value === "03";
+}
+
+function isViewId(value: string | null): value is ViewId {
+  return Boolean(value && views.some((view) => view.id === value));
+}
+
+function isSankeyMode(value: string | null): value is SankeyMode {
+  return value === "ramex2007" || value === "forward" || value === "polytree" || value === "observed";
+}
+
+function isPolytreeSankeyView(value: string | null): value is PolytreeSankeyView {
+  return value === "interpretive" || value === "complete";
+}
+
+function isPureRamexTab(value: string | null): value is PureRamexTab {
+  return value === "overview" || value === "ramex2007" || value === "forward" || value === "backforward" || value === "comparison";
+}
+
+function initialSearchParams(): URLSearchParams | undefined {
+  if (typeof window === "undefined") return undefined;
+  return new URLSearchParams(window.location.search);
+}
+
+function frontendExportBase(id: string) {
+  return `/reports/assets/frontend_exports/${id}`;
+}
+
+function frontendReportExports(id: string): ReportData["frontendExports"] {
+  const base = frontendExportBase(id);
+  return {
+    observedGraph: `${base}/observed_graph_frontend.png`,
+    ramex2007Graph: `${base}/ramex2007_graph_frontend.png`,
+    ramex2007Sankey: `${base}/ramex2007_sankey_frontend.png`,
+    forwardSankey: `${base}/forward_sankey_frontend.png`,
+    backForwardSankeyTop50: `${base}/back_forward_sankey_frontend_top50.png`,
+    backForwardSankeyFull: `${base}/back_forward_sankey_frontend_full.png`,
+    polytree: `${base}/polytree_frontend.png`,
+    temporalPhase1: `${base}/temporal_phase1_frontend.png`,
+    temporalPhase2: `${base}/temporal_phase2_frontend.png`,
+  };
+}
 
 function readFirstString(record: Record<string, unknown>, keys: string[]): string {
   for (const key of keys) {
@@ -1196,6 +1350,76 @@ function edgesToSankeyRecords(edges: unknown[]): SankeyRecord[] {
 
 function applySankeyLimit(records: SankeyRecord[], limit: SankeyLimit): SankeyRecord[] {
   return limit === "all" ? records : records.slice(0, limit);
+}
+
+function sankeyNodeCountFromRecords(records: SankeyRecord[]): number {
+  return new Set(records.flatMap((record) => [record.source, record.target])).size;
+}
+
+function edgesToPlotEdges(edges: unknown[], limit?: number): SankeyPlotEdge[] {
+  const records = edgesToSankeyRecords(edges);
+  const limited = limit ? records.slice(0, limit) : records;
+  return limited.map((record) => {
+    const raw = edges.find((edge) => {
+      if (!edge || typeof edge !== "object") return false;
+      const item = edge as Record<string, unknown>;
+      return readFirstString(item, ["from", "From", "source", "Source", "origem"]) === record.source
+        && readFirstString(item, ["to", "To", "target", "Target", "destino"]) === record.target;
+    }) as Record<string, unknown> | undefined;
+    const level = raw ? readFirstNumber(raw, ["level", "Level"]) : 0;
+    return {
+      from: record.source,
+      to: record.target,
+      weight: record.value,
+      level: level > 0 ? level : undefined,
+    };
+  });
+}
+
+function pureResultIsValidForSankey(result: PureRamexResult | undefined, mode: SankeyMode): boolean {
+  if (!result?.edges?.length) return false;
+  if (mode === "ramex2007") {
+    const hasExplicitValidation = result.is_valid_arborescence !== undefined
+      || result.validation?.is_valid_arborescence !== undefined
+      || result.metrics?.is_valid_arborescence !== undefined
+      || result.metrics?.is_arborescence !== undefined;
+    if (!hasExplicitValidation) return true;
+    return Boolean(
+      result.is_valid_arborescence
+      ?? result.validation?.is_valid_arborescence
+      ?? result.metrics?.is_valid_arborescence
+      ?? result.metrics?.is_arborescence
+    );
+  }
+  if (mode === "polytree") {
+    const hasExplicitValidation = result.validation?.is_valid_polytree !== undefined
+      || result.metrics?.is_polytree !== undefined
+      || result.metrics?.undirected_is_tree !== undefined;
+    if (!hasExplicitValidation) return true;
+    return Boolean(
+      result.validation?.is_valid_polytree
+      ?? result.metrics?.is_polytree
+      ?? result.metrics?.undirected_is_tree
+    );
+  }
+  if (mode === "forward") {
+    return Boolean(result.metrics?.is_acyclic ?? result.metrics?.is_dag ?? true);
+  }
+  return true;
+}
+
+function sankeyModeTitle(mode: SankeyMode) {
+  if (mode === "ramex2007") return "Sankey RAMEX 2007 — Arborescência Selecionada";
+  if (mode === "polytree") return "Sankey Back-and-Forward — Poly-tree Formal";
+  if (mode === "forward") return "Sankey Forward — Estrutura Selecionada";
+  return "Sankey Diagnóstico — Grafo Observado Filtrado";
+}
+
+function sankeyModeDescription(mode: SankeyMode) {
+  if (mode === "ramex2007") return "Usa apenas as arestas da arborescência selecionada por Maximum Weight Rooted Branching.";
+  if (mode === "polytree") return "Usa apenas as arestas da estrutura formal Back-and-Forward; o layout é calculado pela árvore não dirigida, mantendo a direção real dos links.";
+  if (mode === "forward") return "Usa apenas as arestas selecionadas pela Forward Heuristic.";
+  return "Esta visualização é exploratória e pode conter cruzamentos por representar a rede completa de transições.";
 }
 
 function sanitizeReportName(value: string): string {
@@ -1341,9 +1565,9 @@ O RAMEX não analisa todas as variáveis tabulares diretamente. Em vez disso, tr
 3. Condensação RAMEX 2007 por Maximum Weight Rooted Branching;
 4. RAMEX 2015: Forward Tree ou Back-and-Forward Poly-tree quando aplicável;
 5. RAMEX-Forum temporal: rede de influência e extração estrutural;
-6. Interpretação, gráficos, Sankey e relatório.
+6. Interpretação, gráficos, Sankey observado complementar, Sankey RAMEX final e relatório.
 
-## 4. Camada observacional
+## 4. Grafo observado completo
 
 - Número de sequências: ${metricValue(input.metrics.sequences)}
 - Número de nós: ${metricValue(input.metrics.nodes)}
@@ -1351,7 +1575,7 @@ O RAMEX não analisa todas as variáveis tabulares diretamente. Em vez disso, tr
 - Soma total dos pesos: ${metricValue(input.metrics.totalWeight)}
 - Densidade: ${metricValue(input.metrics.density)}
 
-O grafo observado representa as transições reconstruídas diretamente do dataset. Não inclui SOURCE/SINK, exceto quando se abre explicitamente a rede formal RAMEX 2007.
+O grafo observado completo representa a rede original de transições reconstruída diretamente do dataset. Pode conter ciclos, múltiplas entradas e elevada densidade. Não inclui SOURCE/SINK, exceto quando se abre explicitamente a rede formal RAMEX 2007.
 
 ### Top transições observadas
 
@@ -1392,11 +1616,13 @@ ${input.ramexForum ? `RAMEX-Forum temporal foi executado como pipeline de influ�
 
 ## 7. Visualizações
 
-- Grafo observado: fonte = camada observacional.
+- Grafo observado completo: fonte = rede original de transições; pode conter ciclos e elevada densidade.
+- Grafo observado filtrado: visualização exploratória; não representa a saída final RAMEX.
+- RAMEX simplificado experimental: baseline heurístico; não corresponde ao RAMEX 2007 formal.
 - Árvore técnica RAMEX 2007: fonte = rooted branching formal.
-- Sankey RAMEX 2007: fonte = árvore B/rooted branching.
+- Sankey RAMEX final: fonte = árvore B/rooted branching ou estrutura RAMEX selecionada.
+- Sankey observado: diagnóstico visual da rede original; pode apresentar cruzamentos.
 - Sankey RAMEX-Forum temporal: fonte = influência temporal/estrutura Fase 2.
-- Sankey de fluxos: visualização complementar; não substitui o algoritmo RAMEX.
 
 Filtros visuais não alteram a análise nem os artefactos CSV/JSON.
 
@@ -1477,6 +1703,92 @@ function pureEdgeToTable(edge: PureRamexEdge): PolyTreeTableRow {
     Level: edge.level,
     Reason: edge.direction,
   };
+}
+
+function getForwardGraph(result?: UploadResult | null): PureRamexResult | undefined {
+  return result?.pure_ramex?.forward ?? result?.pure?.forward;
+}
+
+function getBackForwardPolytreeGraph(result?: UploadResult | null): PureRamexResult | undefined {
+  const pureRamex = result?.pure_ramex as (PureRamexData & { back_forward_formal?: PureRamexResult; back_forward?: PureRamexResult }) | undefined;
+  return pureRamex?.backForward
+    ?? pureRamex?.back_forward_formal
+    ?? pureRamex?.back_forward
+    ?? result?.pure?.back_forward_formal
+    ?? result?.formal_polytree
+    ?? result?.polytree_formal;
+}
+
+function pureRamexGraphEdges(result?: PureRamexResult): RamexGraphEdge[] {
+  return (result?.edges ?? [])
+    .map((edge) => ({
+      From: edge.from ?? "",
+      To: edge.to ?? "",
+      Weight: Number(edge.weight ?? 0),
+      Level: edge.level,
+    }))
+    .filter((edge) => edge.From && edge.To);
+}
+
+function pureRamexNodeCount(result: PureRamexResult | undefined, edges: RamexGraphEdge[]) {
+  const explicitNodes = result?.validation?.nodes
+    ?? result?.metrics?.selected_nodes
+    ?? result?.nodes_selected
+    ?? result?.nodes?.length;
+  if (explicitNodes !== undefined) return explicitNodes;
+  return new Set(edges.flatMap((edge) => [edge.From, edge.To])).size;
+}
+
+function pureRamexGraphValidation(result: PureRamexResult | undefined, graphType: "forward" | "polytree"): RamexGraphValidationMetrics | undefined {
+  if (!result) return undefined;
+  const edges = pureRamexGraphEdges(result);
+  const nodes = pureRamexNodeCount(result, edges);
+  const edgeCount = result.validation?.edges ?? result.metrics?.selected_edges ?? result.edges_selected ?? edges.length;
+  const expectedEdges = result.validation?.expected_edges ?? Math.max(nodes - 1, 0);
+  const isDag = result.validation?.is_dag ?? result.metrics?.is_dag ?? result.metrics?.is_acyclic ?? result.is_dag;
+  const isArborescence = result.validation?.is_valid_arborescence
+    ?? result.metrics?.is_valid_arborescence
+    ?? result.metrics?.is_arborescence
+    ?? result.is_valid_arborescence
+    ?? result.is_arborescence;
+  const isPolytree = result.validation?.is_valid_polytree
+    ?? result.metrics?.is_valid_polytree
+    ?? result.metrics?.is_polytree
+    ?? result.metrics?.undirected_is_tree
+    ?? result.metrics?.is_tree_undirected;
+
+  return {
+    is_dag: isDag,
+    is_valid_arborescence: isArborescence,
+    is_arborescence: isArborescence,
+    is_valid_forward_tree: graphType === "forward" ? isArborescence ?? isDag : undefined,
+    is_valid_polytree: graphType === "polytree" ? isPolytree : undefined,
+    is_polytree: graphType === "polytree" ? isPolytree : undefined,
+    nodes,
+    edges: edgeCount,
+    expected_edges: expectedEdges,
+  };
+}
+
+function pureRamexPreservedPercent(result?: PureRamexResult): number | undefined {
+  return result?.validation?.preserved_weight_percentage
+    ?? result?.metrics?.preserved_weight_percent
+    ?? result?.preserved_weight_percent;
+}
+
+function PureRamexGraphStats({ result, edges }: { result?: PureRamexResult; edges: RamexGraphEdge[] }) {
+  if (!result) return null;
+  const nodes = pureRamexNodeCount(result, edges);
+  const preserved = pureRamexPreservedPercent(result);
+  const convergenceNodes = result.validation?.convergence_nodes ?? result.metrics?.convergence_nodes ?? [];
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <MetricCard label="Nós selecionados" value={formatNumber(nodes)} />
+      <MetricCard label="Arestas selecionadas" value={formatNumber(result.validation?.edges ?? result.metrics?.selected_edges ?? result.edges_selected ?? edges.length)} />
+      <MetricCard label="Peso preservado" value={preserved !== undefined ? `${preserved.toFixed(2)}%` : "n/d"} />
+      <MetricCard label="Nós de convergência" value={formatNumber(convergenceNodes.length)} />
+    </div>
+  );
 }
 
 function forumToReport(
@@ -1675,7 +1987,7 @@ function pureRamexStructuralInterpretation(structuralType: string): string {
     return "Em grafos densos, os métodos reduzem muitas transições para uma estrutura acíclica curta. O peso preservado tende a ser baixo.";
   }
   if (structuralType === "grafo quase linear / sequencial") {
-    return "Em grafos quase lineares, o RAMEX 2007 Rooted Branching tende a preservar mais peso porque a ordem já está definida.";
+    return "Em grafos quase lineares, o RAMEX 2007 formal tende a preservar mais peso porque a ordem já está definida.";
   }
   if (structuralType === "grafo pequeno e completo") {
     return "Em grafos pequenos e completos, as diferenças entre métodos tendem a ser reduzidas.";
@@ -2176,191 +2488,202 @@ function GraphCanvas({
 function SankeyPanel({
   edges,
   title = "Sankey de transições",
-  description = "Fluxos principais entre eventos do grafo observado.",
+  description = "Visualização exploratória dos fluxos principais da rede original; não representa a saída final RAMEX.",
+  root,
+  initialEdge,
+  preservedWeight,
+  structureType = "observed",
 }: {
   edges: unknown[];
   title?: string;
   description?: string;
+  root?: string;
+  initialEdge?: PureRamexResult["initial_edge"];
+  preservedWeight?: number;
+  structureType?: SankeyStructureType;
 }) {
-  const allRecords = useMemo(() => edgesToSankeyRecords(edges), [edges]);
-  const [limit, setLimit] = useState<SankeyLimit>(() => (allRecords.length > 100 ? 50 : "all"));
-  const shownRecords = useMemo(() => applySankeyLimit(allRecords, limit), [allRecords, limit]);
-  const totalWeight = allRecords.reduce((sum, edge) => sum + edge.value, 0);
-  const shownWeight = shownRecords.reduce((sum, edge) => sum + edge.value, 0);
-  const omittedEdges = Math.max(allRecords.length - shownRecords.length, 0);
-  const percentShown = totalWeight > 0 ? shownWeight / totalWeight * 100 : 0;
+  const sankeyEdges = useMemo(
+    () => edgesToPlotEdges(edges),
+    [edges],
+  );
+  if (!sankeyEdges.length) return <EmptyState message="Não existem transições válidas para construir Sankey." />;
+  return (
+    <RamexSankeyPlotly
+      edges={sankeyEdges}
+      root={root}
+      initialEdge={initialEdge}
+      preservedWeight={preservedWeight}
+      title={title}
+      subtitle={description}
+      structureType={structureType}
+    />
+  );
+}
 
-  const sankey = useMemo(() => {
-    const sourceTotals = new Map<string, number>();
-    const targetTotals = new Map<string, number>();
-    for (const edge of shownRecords) {
-      sourceTotals.set(edge.source, (sourceTotals.get(edge.source) ?? 0) + edge.value);
-      targetTotals.set(edge.target, (targetTotals.get(edge.target) ?? 0) + edge.value);
-    }
+function RamexFinalSankeyPanel({
+  pureData,
+  observedEdges,
+  initialMode,
+  initialPolytreeView,
+}: {
+  pureData?: PureRamexData;
+  observedEdges: unknown[];
+  initialMode?: SankeyMode;
+  initialPolytreeView?: PolytreeSankeyView;
+}) {
+  const [mode, setMode] = useState<SankeyMode>(initialMode ?? "ramex2007");
+  const [observedLimit, setObservedLimit] = useState<30 | 50>(30);
+  const [polytreeView, setPolytreeView] = useState<PolytreeSankeyView>(initialPolytreeView ?? "interpretive");
 
-    const sources = Array.from(sourceTotals.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    const targets = Array.from(targetTotals.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    const width = 1180;
-    const height = Math.max(420, Math.max(sources.length, targets.length, 1) * 34 + 80);
-    const top = 42;
-    const bottom = height - 42;
-    const nodeHeight = 18;
-    const sourceStep = sources.length > 1 ? (bottom - top) / (sources.length - 1) : 0;
-    const targetStep = targets.length > 1 ? (bottom - top) / (targets.length - 1) : 0;
-    const sourceY = new Map(sources.map(([node], index) => [node, top + sourceStep * index]));
-    const targetY = new Map(targets.map(([node], index) => [node, top + targetStep * index]));
-    const maxValue = Math.max(...shownRecords.map((edge) => edge.value), 1);
+  useEffect(() => {
+    const params = initialSearchParams();
+    if (!params) return;
+    const nextMode = params.get("sankeyMode");
+    const nextPolytreeView = params.get("polytreeView");
+    if (isSankeyMode(nextMode)) setMode(nextMode);
+    if (isPolytreeSankeyView(nextPolytreeView)) setPolytreeView(nextPolytreeView);
+  }, []);
 
-    const sourceLabelX = 36;
-    const sourceNodeX = 286;
-    const targetNodeX = width - 304;
-    const targetLabelX = width - 36;
-    const sourceValueX = sourceNodeX + 150;
-    const targetValueX = targetNodeX - 10;
-    const flowStartX = sourceNodeX + 154;
-    const flowEndX = targetNodeX - 14;
+  const options = useMemo(() => {
+    const items: Array<{ id: SankeyMode; label: string; result?: PureRamexResult; valid: boolean }> = [
+      { id: "ramex2007", label: "RAMEX 2007 final", result: pureData?.ramex2007, valid: pureResultIsValidForSankey(pureData?.ramex2007, "ramex2007") },
+      { id: "forward", label: "Forward final", result: pureData?.forward, valid: pureResultIsValidForSankey(pureData?.forward, "forward") },
+      { id: "polytree", label: "Back-and-Forward Formal", result: pureData?.backForward, valid: pureResultIsValidForSankey(pureData?.backForward, "polytree") },
+      { id: "observed", label: "Diagnóstico observado", valid: observedEdges.length > 0 },
+    ];
+    return items;
+  }, [observedEdges.length, pureData]);
 
-    return {
-      width,
-      height,
-      nodeHeight,
-      sources,
-      targets,
-      sourceY,
-      targetY,
-      maxValue,
-      sourceLabelX,
-      sourceNodeX,
-      targetNodeX,
-      targetLabelX,
-      sourceValueX,
-      targetValueX,
-      flowStartX,
-      flowEndX,
-    };
-  }, [shownRecords]);
+  useEffect(() => {
+    const requestedMode = initialSearchParams()?.get("sankeyMode") ?? null;
+    if (isSankeyMode(requestedMode)) return;
+    if (options.some((option) => option.id === mode && option.valid)) return;
+    const next = options.find((option) => option.id !== "observed" && option.valid) ?? options.find((option) => option.valid);
+    if (next) setMode(next.id);
+  }, [mode, options]);
 
-  if (allRecords.length === 0) {
-    return <EmptyState message="Não existem transições válidas para construir Sankey." />;
-  }
+  const active = options.find((option) => option.id === mode) ?? options[0];
+  const finalResult = active?.id === "observed" ? undefined : active?.result;
+  const isObserved = mode === "observed";
+  const isPolytree = mode === "polytree";
+  const polytreeRecords = useMemo(
+    () => isPolytree ? edgesToSankeyRecords(finalResult?.edges ?? []) : [],
+    [finalResult?.edges, isPolytree],
+  );
+  const polytreeTotalNodes = sankeyNodeCountFromRecords(polytreeRecords);
+  const polytreeNeedsInterpretive = isPolytree && polytreeTotalNodes > 60;
+  const polytreeLimit = polytreeNeedsInterpretive && polytreeView === "interpretive" ? 50 : undefined;
+  const selectedEdges = useMemo(() => {
+    if (isObserved) return edgesToPlotEdges(observedEdges, observedLimit);
+    return edgesToPlotEdges(finalResult?.edges ?? [], polytreeLimit);
+  }, [finalResult?.edges, isObserved, observedEdges, observedLimit, polytreeLimit]);
+  const observedTotal = edgesToSankeyRecords(observedEdges).length;
+  const hiddenObserved = isObserved ? Math.max(observedTotal - selectedEdges.length, 0) : 0;
+  const root = mode === "ramex2007" || mode === "forward" ? finalResult?.root : undefined;
+  const initialEdge = isPolytree ? finalResult?.initial_edge : undefined;
+  const preservedWeight =
+    finalResult?.selected_weight
+    ?? finalResult?.metrics?.selected_weight_sum
+    ?? finalResult?.validation?.total_selected_weight
+    ?? selectedEdges.reduce((sum, edge) => sum + edge.weight, 0);
 
   return (
     <section className="space-y-4">
-      <div className="rounded-3xl border border-cyan-200/70 bg-white/90 p-5 shadow-xl shadow-cyan-100/40">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-panel">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Sankey</p>
-            <h3 className="mt-1 text-xl font-semibold text-slate-950">{title}</h3>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{description}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-thesis">Sankey RAMEX</p>
+            <h3 className="mt-2 text-lg font-semibold text-ink">Estrutura selecionada para visualização</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              O Sankey final usa apenas arestas da estrutura RAMEX selecionada. O grafo observado fica separado como diagnóstico para evitar confundir rede completa com resultado final.
+            </p>
           </div>
-          <label className="min-w-[12rem] text-sm">
-            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Limite visual</span>
-            <select
-              value={String(limit)}
-              onChange={(event) => setLimit(event.target.value === "all" ? "all" : Number(event.target.value) as SankeyLimit)}
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm"
-            >
-              <option value="20">Top 20</option>
-              <option value="50">Top 50</option>
-              <option value="100">Top 100</option>
-              <option value="all">Todas</option>
-            </select>
-          </label>
+          <div className="flex flex-wrap gap-2">
+            {options.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                disabled={!option.valid}
+                onClick={() => setMode(option.id)}
+                className={`rounded-full border px-3 py-2 text-xs font-semibold transition ${
+                  mode === option.id
+                    ? "border-thesis bg-thesis text-white"
+                    : option.valid
+                      ? "border-slate-200 bg-white text-slate-700 hover:border-thesis/40"
+                      : "border-slate-100 bg-slate-100 text-slate-400"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
-
-        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <MetricCard label="Nós" value={formatNumber(new Set(allRecords.flatMap((edge) => [edge.source, edge.target])).size)} />
-          <MetricCard label="Arestas totais" value={formatNumber(allRecords.length)} />
-          <MetricCard label="Arestas mostradas" value={formatNumber(shownRecords.length)} />
-          <MetricCard label="Peso mostrado" value={formatNumber(shownWeight, 2)} />
-          <MetricCard label="Peso visualizado" value={`${percentShown.toFixed(1)}%`} />
-        </div>
-
-        <p className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
-          Este limite afeta apenas a visualização Sankey, não os dados nem o RAMEX.
-        </p>
       </div>
 
-      {shownRecords.length > 100 ? (
-        <WarningPanel>
-          Sankey com muitas relações: a leitura pode ficar densa. Use Top 20, Top 50 ou Top 100 para focar os fluxos principais.
-        </WarningPanel>
+      {!active?.valid ? (
+        <WarningPanel>Esta estrutura não está validada; por isso não é apresentada como Sankey final.</WarningPanel>
       ) : null}
 
-      {omittedEdges > 0 ? (
-        <WarningPanel>
-          Visualização parcial: {formatNumber(omittedEdges)} arestas foram omitidas apenas no Sankey, preservando {percentShown.toFixed(1)}% do peso total mostrado.
-        </WarningPanel>
+      {isObserved ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 text-sm leading-6 text-amber-900 shadow-panel">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <p>
+              Esta visualização é exploratória e pode conter cruzamentos por representar a rede completa de transições.
+              Mostrando top {selectedEdges.length} de {observedTotal} arestas{hiddenObserved > 0 ? `; ${hiddenObserved} ocultas por legibilidade.` : "."}
+            </p>
+            <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-amber-800">
+              Limite
+              <select
+                value={observedLimit}
+                onChange={(event) => setObservedLimit(Number(event.target.value) as 30 | 50)}
+                className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm normal-case tracking-normal text-slate-900"
+              >
+                <option value={30}>Top 30</option>
+                <option value={50}>Top 50</option>
+              </select>
+            </label>
+          </div>
+        </div>
       ) : null}
 
-      <div className="overflow-auto rounded-3xl border border-white/60 bg-white/90 p-4 shadow-xl shadow-slate-200/50">
-        <svg viewBox={`0 0 ${sankey.width} ${sankey.height}`} className="min-h-[34rem] w-full min-w-[980px]">
-          <defs>
-            <linearGradient id="sankeyFlow" x1="0%" x2="100%" y1="0%" y2="0%">
-              <stop offset="0%" stopColor="#0e7490" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#d8903f" stopOpacity="0.55" />
-            </linearGradient>
-          </defs>
+      {polytreeNeedsInterpretive ? (
+        <div className="rounded-2xl border border-violet-200 bg-violet-50/80 p-5 text-sm leading-6 text-violet-950 shadow-panel">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <p>
+              Vista interpretativa por defeito: top {selectedEdges.length} arestas por peso da poly-tree formal.
+              O JSON/CSV exportado mantém a estrutura completa com {polytreeRecords.length} arestas e {polytreeTotalNodes} nós.
+            </p>
+            <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-violet-800">
+              Versão
+              <select
+                value={polytreeView}
+                onChange={(event) => setPolytreeView(event.target.value as PolytreeSankeyView)}
+                className="rounded-lg border border-violet-200 bg-white px-3 py-2 text-sm normal-case tracking-normal text-slate-900"
+              >
+                <option value="interpretive">Interpretativa top 50</option>
+                <option value="complete">Completa</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      ) : null}
 
-          {shownRecords.map((edge, index) => {
-            const y1 = sankey.sourceY.get(edge.source) ?? 0;
-            const y2 = sankey.targetY.get(edge.target) ?? 0;
-            const strokeWidth = Math.max(1.2, Math.min(22, 1 + edge.value / sankey.maxValue * 20));
-            const x1 = sankey.flowStartX;
-            const x2 = sankey.flowEndX;
-            const key = `${edge.source}-${edge.target}-${index}`;
-            return (
-              <g key={key}>
-                <path
-                  d={`M ${x1} ${y1} C ${x1 + 220} ${y1}, ${x2 - 220} ${y2}, ${x2} ${y2}`}
-                  fill="none"
-                  stroke="url(#sankeyFlow)"
-                  strokeWidth={strokeWidth}
-                  strokeLinecap="round"
-                  opacity={0.28 + Math.min(0.5, edge.value / sankey.maxValue * 0.5)}
-                />
-                <title>{`${edge.source} -> ${edge.target}: ${formatNumber(edge.value, 2)}`}</title>
-              </g>
-            );
-          })}
-
-          {sankey.sources.map(([node, value]) => {
-            const y = sankey.sourceY.get(node) ?? 0;
-            return (
-              <g key={`source-${node}`}>
-                <title>{`${node}: ${formatNumber(value, 2)}`}</title>
-                <text x={sankey.sourceLabelX} y={y + 4} className="fill-slate-700 text-[11px] font-semibold">
-                  {node}
-                </text>
-                <rect x={sankey.sourceNodeX} y={y - sankey.nodeHeight / 2} width="140" height={sankey.nodeHeight} rx="5" fill="#dce9ee" stroke="#315f72" />
-                <text x={sankey.sourceValueX} y={y + 4} className="fill-slate-500 font-mono text-[10px]">
-                  {formatNumber(value, 1)}
-                </text>
-              </g>
-            );
-          })}
-
-          {sankey.targets.map(([node, value]) => {
-            const y = sankey.targetY.get(node) ?? 0;
-            return (
-              <g key={`target-${node}`}>
-                <title>{`${node}: ${formatNumber(value, 2)}`}</title>
-                <text x={sankey.targetValueX} y={y + 4} textAnchor="end" className="fill-slate-500 font-mono text-[10px]">
-                  {formatNumber(value, 1)}
-                </text>
-                <rect x={sankey.targetNodeX} y={y - sankey.nodeHeight / 2} width="140" height={sankey.nodeHeight} rx="5" fill="#f7dfb8" stroke="#b7791f" />
-                <text x={sankey.targetLabelX} y={y + 4} textAnchor="end" className="fill-slate-700 text-[11px] font-semibold">
-                  {node}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
+      <div data-export-id={`sankey-${mode}${mode === "polytree" ? `-${polytreeView}` : ""}`}>
+        <SankeyPanel
+          edges={selectedEdges}
+          root={root}
+          initialEdge={initialEdge}
+          preservedWeight={preservedWeight}
+          structureType={mode === "observed" ? "observed" : mode === "polytree" ? "polytree" : mode}
+          title={sankeyModeTitle(mode)}
+          description={sankeyModeDescription(mode)}
+        />
       </div>
     </section>
   );
 }
 
+// ---------------------------------------------------------------------------
 function PolyTreeCanvas({ data }: { data: PolyTreeData }) {
   const graph = useMemo(() => {
     const levels = new Map<number, Array<{ id: string; level: number }>>();
@@ -2523,10 +2846,10 @@ function PolyTreePanel({
         </div>
         <div className="space-y-4">
           <div className="rounded-lg border border-thesis/20 bg-thesis/5 p-5 shadow-panel">
-            <h3 className="text-lg font-semibold text-ink">RAMEX Poly-tree</h3>
+            <h3 className="text-lg font-semibold text-ink">Poly-tree experimental</h3>
             <p className="mt-3 text-sm leading-7 text-slate-700">
-              O RAMEX Poly-tree preserva múltiplos ramos relevantes, permitindo uma visão mais rica dos padrões
-              sequenciais do que a árvore simplificada.
+              Esta visualização preserva múltiplos ramos relevantes como exploração heurística. A Poly-tree formal
+              validada é a estrutura Back-and-Forward cujo grafo não dirigido é uma árvore.
             </p>
             <p className="mt-3 text-sm leading-7 text-slate-700">
               As duas estratégias podem produzir estrutura semelhante quando o dataset é pequeno, denso e com poucas
@@ -3159,7 +3482,14 @@ function PureRamexMethodPanel({
           </div>
           <RamexAnalyticalTree edges={data.edges ?? []} root={normalized2007.root} />
           <RamexFlowReading edges={data.edges ?? []} expansion={data.expansion} />
-          <RamexSankey edges={data.edges ?? []} root={normalized2007.root} preservedWeight={normalized2007.selectedWeight} />
+          <RamexSankeyPlotly
+            edges={data.edges ?? []}
+            root={normalized2007.root}
+            preservedWeight={normalized2007.selectedWeight}
+            structureType="ramex2007"
+            title="Sankey RAMEX 2007 — Arborescência Selecionada"
+            subtitle="Usa apenas as arestas da arborescência selecionada por Maximum Weight Rooted Branching."
+          />
           <RamexExpansionPlayer edges={data.edges ?? []} root={normalized2007.root} />
         </>
       ) : (
@@ -3289,13 +3619,21 @@ function RamexPurePanel({
   data,
   uploaded,
   validation,
+  initialTab,
 }: {
   datasetId: DatasetId;
   data?: PureRamexData;
   uploaded?: UploadResult | null;
   validation?: ValidationRow;
+  initialTab?: PureRamexTab;
 }) {
-  const [tab, setTab] = useState<"overview" | "ramex2007" | "forward" | "backforward" | "comparison">("overview");
+  const [tab, setTab] = useState<PureRamexTab>(initialTab ?? "overview");
+  useEffect(() => {
+    const params = initialSearchParams();
+    if (!params) return;
+    const nextTab = params.get("pureTab");
+    if (isPureRamexTab(nextTab)) setTab(nextTab);
+  }, []);
   const uploadedPure: PureRamexData | undefined = uploaded?.pure_ramex
     ? {
         ...uploaded.pure_ramex,
@@ -3414,10 +3752,10 @@ function RamexPurePanel({
       ) : null}
 
       {tab === "ramex2007" ? (
-        <motion.div key="pure-2007" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+        <motion.div data-export-id="ramex2007-graph" key="pure-2007" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
         <PureRamexMethodPanel
-          title="RAMEX 2007 Rooted Branching"
-          description="O RAMEX 2007 Rooted Branching usa Maximum Weight Rooted Branching na fase 10A formal. A fase simplificada 07 é mantida apenas como heurística exploratória."
+          title="RAMEX 2007 formal"
+          description="O RAMEX 2007 formal usa Maximum Weight Rooted Branching na fase 10A. A fase simplificada 07 é mantida apenas como baseline heurístico experimental."
           data={effectiveData?.ramex2007}
           imageFile={uploaded ? undefined : `ramex2007_dataset${datasetId}.png`}
           imageUrl={uploaded?.files.ramex2007_png ? `${imageBase}${uploaded.files.ramex2007_png}` : undefined}
@@ -3425,7 +3763,7 @@ function RamexPurePanel({
         </motion.div>
       ) : null}
       {tab === "forward" ? (
-        <motion.div key="pure-forward" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+        <motion.div data-export-id="forward-graph" key="pure-forward" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
         <PureRamexMethodPanel
           title="RAMEX 2015 — Forward Heuristic"
           description="A Forward Heuristic é adequada quando existe uma raiz ou nó inicial conhecido. Expande a árvore para a frente, escolhendo transições elegíveis de maior peso."
@@ -3436,7 +3774,7 @@ function RamexPurePanel({
         </motion.div>
       ) : null}
       {tab === "backforward" ? (
-        <motion.div key="pure-backforward" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+        <motion.div data-export-id="back-forward-graph" key="pure-backforward" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
         <PureRamexMethodPanel
           title="RAMEX 2015 — Back-and-Forward Poly-tree"
           description="A Back-and-Forward Heuristic é adequada quando não existe nó inicial claro. Começa pela relação mais forte e expande em ambos os sentidos, procurando uma poly-tree de maior peso."
@@ -3512,7 +3850,7 @@ function RamexForumPanel({
   return (
     <section className="space-y-5">
       {temporal ? (
-        <div className="space-y-5">
+        <div className="space-y-5" data-export-id="temporal-phase1">
           <div className="rounded-3xl border border-teal-200/80 bg-gradient-to-br from-teal-50 to-cyan-50 p-6 shadow-2xl shadow-teal-100/50 backdrop-blur-md">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">RAMEX-Forum temporal · Fase 1</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Transformação temporal do problema</h3>
@@ -3629,7 +3967,7 @@ function RamexForumPanel({
       ) : null}
 
       {phase2 ? (
-        <div className="space-y-5">
+        <div className="space-y-5" data-export-id="temporal-phase2">
           <div className="rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-50 to-white p-6 shadow-2xl shadow-amber-100/50 backdrop-blur-md">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">RAMEX-Forum temporal · Fase 2</p>
             <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Extração estrutural</h3>
@@ -3909,6 +4247,8 @@ function GraphViewer({
   children,
   graphEdges,
   graphRoot,
+  graphType,
+  graphValidation,
 }: {
   title: string;
   subtitle: string;
@@ -3920,8 +4260,11 @@ function GraphViewer({
   children?: ReactNode;
   graphEdges?: RamexGraphEdge[];
   graphRoot?: string;
+  graphType?: RamexGraphType;
+  graphValidation?: RamexGraphValidationMetrics;
 }) {
   const accent = graphAccentClasses(mode);
+  const resolvedGraphType: RamexGraphType = graphType ?? (mode === "complete" ? "observed" : mode === "pure" ? "ramex2007" : "filtered");
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<{ dragging: boolean; x: number; y: number }>({ dragging: false, x: 0, y: 0 });
   const [scale, setScale] = useState(1);
@@ -4029,6 +4372,8 @@ function GraphViewer({
             title={title}
             subtitle={subtitle}
             highlightColor="#c8914b"
+            graphType={resolvedGraphType}
+            validationMetrics={graphValidation}
           />
         </div>
       ) : (
@@ -4657,13 +5002,15 @@ function AboutRamexPanel() {
     ["Geração de pares A → B", "Implementado"],
     ["Frequência de transições", "Implementado"],
     ["Matriz de adjacência", "Implementado"],
-    ["Grafo dirigido ponderado", "Implementado"],
-    ["Grafo observado", "Transições reconstruídas diretamente do dataset"],
-    ["RAMEX 2007 Rooted Branching", "Implementação formal Cavique 2007: Maximum Weight Rooted Branching"],
-    ["RAMEX 2015 Forward Heuristic", "Tree quando existe nó inicial conhecido"],
-    ["RAMEX 2015 Back-and-Forward", "Poly-tree quando não existe nó inicial claro"],
-    ["Sankey", "Visualização complementar de fluxos; não substitui RAMEX"],
-    ["Poly-tree completo", "Validação estrutural e visualização complementar"],
+    ["Grafo observado completo", "Rede original de transições; pode conter ciclos, múltiplas entradas e elevada densidade"],
+    ["Grafo observado filtrado", "Visualização exploratória; não representa a saída final RAMEX"],
+    ["RAMEX simplificado experimental", "Baseline heurístico; não corresponde ao RAMEX 2007 formal"],
+    ["RAMEX 2007 formal", "Maximum Weight Rooted Branching; arborescência dirigida extraída da rede ponderada"],
+    ["Forward Heuristic", "Heurística com raiz conhecida"],
+    ["Back-and-Forward Poly-tree", "Heurística para ausência de raiz clara"],
+    ["Poly-tree formal validada", "DAG cujo grafo não dirigido é uma árvore"],
+    ["Sankey RAMEX final", "Fluxo das arestas selecionadas pela estrutura RAMEX"],
+    ["Sankey observado", "Visualização exploratória da rede original; pode apresentar cruzamentos"],
   ];
 
   const pipelineSteps = [
@@ -4671,11 +5018,11 @@ function AboutRamexPanel() {
     "Sequências",
     "Pares",
     "Matriz de Adjacência",
-    "Grafo",
-    "Rooted Branching",
-    "RAMEX 2015 — Forward",
-    "RAMEX 2015 — Back-and-Forward",
-    "Poly-tree formal",
+    "Grafo observado completo",
+    "RAMEX 2007 formal",
+    "Forward Heuristic",
+    "Back-and-Forward Poly-tree",
+    "Poly-tree formal validada",
     "Interpretação",
   ];
 
@@ -5361,6 +5708,12 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 
   const rootNode = result?.metrics.root;
   const normalizedResult = result ? normalizeUploadResult(result) : undefined;
+  const uploadForwardGraph = getForwardGraph(result);
+  const uploadBackForwardPolytreeGraph = getBackForwardPolytreeGraph(result);
+  const uploadForwardEdges = pureRamexGraphEdges(uploadForwardGraph);
+  const uploadBackForwardPolytreeEdges = pureRamexGraphEdges(uploadBackForwardPolytreeGraph);
+  const uploadForwardValidation = pureRamexGraphValidation(uploadForwardGraph, "forward");
+  const uploadBackForwardPolytreeValidation = pureRamexGraphValidation(uploadBackForwardPolytreeGraph, "polytree");
   const formalMetrics = result?.formal_polytree?.metrics;
   const uploadPureRows = result?.pure_ramex?.comparisonRows ?? [];
   const uploadBest = result?.pure_validation?.best_algorithm ?? pureRamexBest(result?.pure_ramex);
@@ -5487,6 +5840,20 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
             : undefined,
           forumSimplified: (result.ramex_forum ?? result.forum)?.files?.simplified_png
             ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${(result.ramex_forum ?? result.forum)?.files?.simplified_png}`
+            : undefined,
+        },
+        frontendExports: frontendReportExports(result.job_id),
+        backendTechnicalImages: {
+          graph: normalizedResult?.observed.graphImage,
+          ramex2007: normalizedResult?.ramex2007.phase2.treeCompleteImage,
+          backForward: result.files.back_forward_formal_png
+            ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.back_forward_formal_png}`
+            : undefined,
+          forumGraph: (result.ramex_forum ?? result.forum)?.files?.graph_png
+            ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${(result.ramex_forum ?? result.forum)?.files?.graph_png}`
+            : undefined,
+          forumPhase2: (result.ramex_forum ?? result.forum)?.temporal_phase2?.files?.phase2_structure_png
+            ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${(result.ramex_forum ?? result.forum)?.temporal_phase2?.files?.phase2_structure_png}`
             : undefined,
         },
       }
@@ -6185,7 +6552,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
             <MetricCard label="Nós" value={formatNumber(result.metrics.nodes)} />
             <MetricCard label="Arestas" value={formatNumber(result.metrics.edges)} />
             <MetricCard label="Densidade" value={result.metrics.density.toFixed(4)} />
-            <MetricCard label="Camada observacional" value={formatNumber(normalizedResult?.observed.totalWeight ?? 0)} note="peso total observado" />
+            <MetricCard label="Grafo observado completo" value={formatNumber(normalizedResult?.observed.totalWeight ?? 0)} note="peso total da rede original" />
           </div>
 
           <CoverageDiagnosticsPanel metrics={result.coverage_metrics} />
@@ -6211,7 +6578,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 
           {result.metrics.dense || result.graph_edges.length > 220 ? (
             <WarningPanel>
-              Grafo denso: a visualização em rede pode ocultar ou sobrepor relações. Use Sankey ou filtros visuais para interpretar os fluxos principais.
+              Grafo observado completo denso: a visualização em rede pode ocultar ou sobrepor relações. Esta camada é exploratória e não representa a saída final RAMEX.
             </WarningPanel>
           ) : null}
 
@@ -6235,14 +6602,16 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 
           <div className="grid grid-cols-1 gap-8">
             <GraphViewer
-              title="Camada observacional — grafo observado"
-              subtitle="Rede dirigida ponderada construída a partir das transições observadas no dataset. O grafo observado representa as transições completas disponíveis para análise."
+              title={normalizedResult?.observed.metadata?.label ?? "Grafo observado completo"}
+              subtitle={normalizedResult?.observed.metadata?.structural_note ?? "Rede original de transições. Pode conter ciclos, múltiplas entradas e elevada densidade."}
               imageSrc={graphImageSrc}
               nodes={normalizedResult?.observed.nodes}
               edges={normalizedResult?.observed.edges}
               mode="complete"
-              legend="Grafo observado"
+              legend="Rede original de transições"
               graphEdges={normalizedResult?.observed.graphEdges ?? result?.graph_edges}
+              graphType="observed"
+              graphValidation={normalizedResult?.observed.validation}
             >
               <GraphRelationsTable title="Transição" rows={graphRelationRows} mode="complete" />
             </GraphViewer>
@@ -6250,12 +6619,14 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
             {result.analysis_type !== "forum" ? (
               <GraphViewer
                 title="RAMEX 2007 formal — árvore técnica"
-                subtitle={`Maximum Weight Rooted Branching sobre a rede formal RAMEX 2007. Não usa heurísticas históricas como fallback. Raiz: ${normalizedResult?.ramex2007.phase2.root ?? "indisponível"}.`}
+                subtitle={`${normalizedResult?.ramex2007.phase2.metadata?.description ?? "Maximum Weight Rooted Branching"}: arborescência dirigida extraída da rede ponderada. Raiz: ${normalizedResult?.ramex2007.phase2.root ?? "indisponível"}.`}
                 imageSrc={pureImageSrc}
                 nodes={normalizedResult?.ramex2007.phase2.metrics?.selected_nodes}
                 edges={normalizedResult?.ramex2007.phase2.metrics?.selected_edges}
                 mode="pure"
                 legend="RAMEX 2007"
+                graphType="ramex2007"
+                graphValidation={normalizedResult?.ramex2007.phase2.validation}
                 graphEdges={(normalizedResult?.ramex2007.phase2.selectedEdges ?? []).map((raw) => {
                   const e = raw as Record<string, unknown>;
                   return {
@@ -6275,10 +6646,56 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
               </GraphViewer>
             ) : null}
 
-            <SankeyPanel
-              edges={normalizedResult?.observed.sankeyData ?? []}
-              title="Sankey do grafo observado"
-              description="Fluxos de transição construídos a partir das arestas disponíveis no resultado da análise."
+            <div data-export-id="forward-tree-card" className="space-y-3">
+              {uploadForwardEdges.length > 0 ? (
+                <>
+                  <PureRamexGraphStats result={uploadForwardGraph} edges={uploadForwardEdges} />
+                  <RamexGraphViewer
+                    graphType="forward"
+                    title="Forward Heuristic — Árvore Selecionada"
+                    subtitle="Estrutura enraizada obtida pela heurística Forward, usada como comparação operacional ao RAMEX 2007 formal."
+                    edges={uploadForwardEdges}
+                    root={uploadForwardGraph?.root}
+                    validationMetrics={uploadForwardValidation}
+                  />
+                </>
+              ) : (
+                <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 text-sm font-semibold text-slate-500 shadow-panel">
+                  Forward Heuristic não disponível para este resultado.
+                </div>
+              )}
+            </div>
+
+            <div data-export-id="backforward-polytree-card" className="space-y-3">
+              {uploadBackForwardPolytreeEdges.length > 0 ? (
+                <>
+                  <PureRamexGraphStats result={uploadBackForwardPolytreeGraph} edges={uploadBackForwardPolytreeEdges} />
+                  <RamexGraphViewer
+                    graphType="polytree"
+                    title="Back-and-Forward — Poly-tree Formal"
+                    subtitle="Estrutura formal validada como poly-tree: DAG cujo grafo não dirigido corresponde a uma árvore."
+                    edges={uploadBackForwardPolytreeEdges}
+                    root={uploadBackForwardPolytreeGraph?.root}
+                    highlightColor="#7c3aed"
+                    validationMetrics={uploadBackForwardPolytreeValidation}
+                  />
+                </>
+              ) : (
+                <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 text-sm font-semibold text-slate-500 shadow-panel">
+                  Poly-tree Back-and-Forward não disponível para este resultado.
+                </div>
+              )}
+            </div>
+
+            <RamexFinalSankeyPanel
+              pureData={result.pure_ramex ?? {
+                ramex2007: result.pure?.ramex2007,
+                forward: result.pure?.forward,
+                backForward: result.pure?.back_forward_formal ?? result.formal_polytree ?? result.polytree_formal,
+                comparisonRows: [],
+                missing: [],
+              }}
+              observedEdges={normalizedResult?.filtered.graphEdges ?? normalizedResult?.observed.sankeyData ?? []}
             />
 
             {result.analysis_type === "both" || result.analysis_type === "forum" ? (
@@ -6291,6 +6708,8 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                 mode="forum"
                 legend="RAMEX-Forum temporal"
                 graphEdges={forumRelationRows.map((r) => ({ From: r.from, To: r.to, Weight: r.weight ?? 0 }))}
+                graphType="filtered"
+                graphValidation={normalizedResult?.filtered.validation}
               >
                 <GraphRelationsTable title="Influência selecionada" rows={forumRelationRows} mode="forum" />
               </GraphViewer>
@@ -6299,7 +6718,10 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 
           {showExperimental && result.polytree ? (
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-ink">RAMEX Poly-tree</h3>
+              <h3 className="text-lg font-semibold text-ink">RAMEX simplificado experimental — Poly-tree exploratória</h3>
+              <p className="text-sm leading-6 text-slate-600">
+                Baseline heurístico preservado para comparação; não corresponde ao RAMEX 2007 formal nem à Poly-tree formal validada.
+              </p>
               <PolyTreePanel data={result.polytree} rows={result.polytree_edges ?? []} />
               {result.files.polytree_png ? (
                 <a
@@ -6319,8 +6741,19 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
 }
 
 export default function Home() {
-  const [datasetId, setDatasetId] = useState<DatasetId>("03");
-  const [viewId, setViewId] = useState<ViewId>("upload");
+  const initialParams = initialSearchParams();
+  const datasetParam = initialParams?.get("dataset") ?? null;
+  const viewParam = initialParams?.get("view") ?? null;
+  const sankeyModeParam = initialParams?.get("sankeyMode") ?? null;
+  const polytreeViewParam = initialParams?.get("polytreeView") ?? null;
+  const pureTabParam = initialParams?.get("pureTab") ?? null;
+  const initialDataset: DatasetId = isDatasetId(datasetParam) ? datasetParam : "03";
+  const initialView: ViewId = isViewId(viewParam) ? viewParam : "upload";
+  const initialSankeyMode: SankeyMode | undefined = isSankeyMode(sankeyModeParam) ? sankeyModeParam : undefined;
+  const initialPolytreeSankeyView: PolytreeSankeyView | undefined = isPolytreeSankeyView(polytreeViewParam) ? polytreeViewParam : undefined;
+  const initialPureTab: PureRamexTab | undefined = isPureRamexTab(pureTabParam) ? pureTabParam : undefined;
+  const [datasetId, setDatasetId] = useState<DatasetId>(initialDataset);
+  const [viewId, setViewId] = useState<ViewId>(initialView);
   const [validationRows, setValidationRows] = useState<ValidationRow[]>([]);
   const [ramex2007ComparisonRows, setRamex2007ComparisonRows] = useState<Ramex2007DatasetComparisonRow[]>([]);
   const [matrix, setMatrix] = useState<MatrixData>();
@@ -6335,6 +6768,15 @@ export default function Home() {
   const [executiveText, setExecutiveText] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
   const [uploadedResult, setUploadedResult] = useState<UploadResult | null>(null);
+
+  useEffect(() => {
+    const params = initialSearchParams();
+    if (!params) return;
+    const nextDataset = params.get("dataset");
+    const nextView = params.get("view");
+    if (isDatasetId(nextDataset)) setDatasetId(nextDataset);
+    if (isViewId(nextView)) setViewId(nextView);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -6645,6 +7087,14 @@ export default function Home() {
           ramex2007: dataPath(`ramex2007_dataset${datasetId}.png`),
           polytree: dataPath(`ramex_back_forward_formal_dataset${datasetId}.png`),
         },
+        frontendExports: frontendReportExports(`dataset${datasetId}`),
+        backendTechnicalImages: {
+          graph: dataPath(`grafo_dataset${datasetId}.png`),
+          ramex2007: dataPath(`ramex2007_dataset${datasetId}.png`),
+          forward: dataPath(`ramex_forward_dataset${datasetId}.png`),
+          backForward: dataPath(`ramex_back_forward_formal_dataset${datasetId}.png`),
+          polytree: dataPath(`ramex_back_forward_formal_dataset${datasetId}.png`),
+        },
       }
     : undefined;
 
@@ -6737,10 +7187,41 @@ export default function Home() {
             ? `${API_BASE_URL}/api/ramex-forum/jobs/${uploadedResult.job_id}/file/${(uploadedResult.ramex_forum ?? uploadedResult.forum)?.files?.simplified_png}`
             : undefined,
         },
+        frontendExports: frontendReportExports(uploadedResult.job_id),
+        backendTechnicalImages: {
+          graph: uploadedResult.files.graph_png
+            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.graph_png}`
+            : undefined,
+          ramex2007: uploadedResult.files.ramex2007_png
+            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.ramex2007_png}`
+            : undefined,
+          forward: uploadedResult.files.forward_png
+            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.forward_png}`
+            : undefined,
+          backForward: uploadedResult.files.back_forward_formal_png
+            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.back_forward_formal_png}`
+            : undefined,
+          forumGraph: (uploadedResult.ramex_forum ?? uploadedResult.forum)?.files?.graph_png
+            ? `${API_BASE_URL}/api/ramex-forum/jobs/${uploadedResult.job_id}/file/${(uploadedResult.ramex_forum ?? uploadedResult.forum)?.files?.graph_png}`
+            : undefined,
+          forumPhase2: (uploadedResult.ramex_forum ?? uploadedResult.forum)?.temporal_phase2?.files?.phase2_structure_png
+            ? `${API_BASE_URL}/api/ramex-forum/jobs/${uploadedResult.job_id}/file/${(uploadedResult.ramex_forum ?? uploadedResult.forum)?.temporal_phase2?.files?.phase2_structure_png}`
+            : undefined,
+        },
       }
     : undefined;
 
   const currentReportData = uploadedResult ? uploadedReportData : staticReportData;
+  const sankeyPureData: PureRamexData | undefined = uploadedResult
+    ? uploadedResult.pure_ramex ?? {
+        ramex2007: uploadedResult.pure?.ramex2007,
+        forward: uploadedResult.pure?.forward,
+        backForward: uploadedResult.pure?.back_forward_formal ?? uploadedResult.formal_polytree ?? uploadedResult.polytree_formal,
+        comparisonRows: [],
+        missing: [],
+      }
+    : pureRamexData;
+  const sankeyObservedEdges = uploadedResult?.filtered_graph?.edges ?? uploadedResult?.graph_edges ?? graphEdges;
 
   function handleSelectPreloadedDataset(id: DatasetId) {
     setDatasetId(id);
@@ -6900,7 +7381,7 @@ export default function Home() {
             ) : null}
 
             {viewId === "pure" ? (
-              <RamexPurePanel datasetId={datasetId} data={pureRamexData} uploaded={uploadedResult} validation={selectedValidation} />
+              <RamexPurePanel datasetId={datasetId} data={pureRamexData} uploaded={uploadedResult} validation={selectedValidation} initialTab={initialPureTab} />
             ) : null}
 
             {viewId === "forum" ? (
@@ -6950,21 +7431,21 @@ export default function Home() {
             ) : null}
 
             {viewId === "graph" ? (
-              <section className="space-y-4">
+              <section className="space-y-4" data-export-id="observed-graph">
                 <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm leading-6 text-slate-600 shadow-panel">
-                  O grafo observado representa as transições completas disponíveis para análise. Limitações indicadas neste ecrã são apenas visuais.
+                  <span className="font-semibold text-slate-800">Grafo observado completo:</span> rede original de transições. Pode conter ciclos, múltiplas entradas e elevada densidade; limitações indicadas neste ecrã são apenas visuais.
                 </div>
                 <GraphCanvas edges={graphEdges} denseHint={denseGraph} />
                 <div className="grid gap-4 lg:grid-cols-2">
                   <img
                     src={dataPath(`grafo_dataset${datasetId}.png`)}
-                    alt={`Grafo do dataset ${datasetId}`}
+                    alt={`Grafo observado completo do dataset ${datasetId}`}
                     className="max-h-[32rem] w-full rounded-lg border border-slate-200 bg-white object-contain p-3 shadow-panel"
                   />
                   {datasetId === "01" ? (
                     <img
                       src={dataPath("grafo_dataset01_top50_fase06.png")}
-                      alt="Grafo filtrado top 50 do dataset 01"
+                      alt="Grafo observado filtrado top 50 do dataset 01 - visualização exploratória"
                       className="max-h-[32rem] w-full rounded-lg border border-slate-200 bg-white object-contain p-3 shadow-panel"
                     />
                   ) : null}
@@ -6985,13 +7466,13 @@ export default function Home() {
                     <h3 className="text-lg font-semibold text-ink">RAMEX simplificado - heurística experimental</h3>
                     <p className="mt-3 text-sm leading-6 text-slate-600">
                       Nó raiz destacado: <span className="font-semibold text-amberline">{rootNode ?? "indisponível"}</span>.
-                      Esta fase histórica seleciona ligações dominantes por heurística local/gulosa e não corresponde ao RAMEX 2007 formal. A cobertura é apresentada no Diagnóstico de Cobertura.
+                      Esta fase histórica é um baseline heurístico: seleciona ligações dominantes por heurística local/gulosa e não corresponde ao RAMEX 2007 formal. A cobertura é apresentada no Diagnóstico de Cobertura.
                     </p>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                       <MetricCard label="Nós no grafo" value={formatNumber(selectedValidation?.Nos_Grafo ?? 0)} />
-                      <MetricCard label="Nós RAMEX" value={formatNumber(new Set(ramexEdges.flatMap((edge) => [edge.From, edge.To])).size)} />
+                      <MetricCard label="Nós baseline" value={formatNumber(new Set(ramexEdges.flatMap((edge) => [edge.From, edge.To])).size)} />
                       <MetricCard label="Arestas no grafo" value={formatNumber(selectedValidation?.Arestas_Grafo ?? graphEdges.length)} />
-                      <MetricCard label="Arestas RAMEX" value={formatNumber(ramexEdges.length)} />
+                      <MetricCard label="Arestas baseline" value={formatNumber(ramexEdges.length)} />
                     </div>
                     <p className="mt-4 text-3xl font-semibold text-thesis">
                       {(selectedValidation?.Percentagem_Peso_Preservado ?? 0).toFixed(2)}%
@@ -7003,27 +7484,15 @@ export default function Home() {
             ) : null}
 
             {viewId === "sankey" ? (
-              <section className="space-y-4">
-                <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 text-sm leading-6 text-slate-700 shadow-panel">
-                  <p className="font-semibold uppercase tracking-[0.16em] text-amber-700">Visualização complementar</p>
-                  <p className="mt-2">
-                    O Sankey apresenta fluxos agregados entre eventos, produtos ou categorias. Ajuda a interpretar relações dominantes quando o grafo observado fica demasiado denso, mas não substitui o RAMEX 2007, o RAMEX 2015 nem o RAMEX-Forum temporal.
-                  </p>
-                </div>
-                <SankeyPanel
-                  edges={uploadedResult?.graph_edges ?? graphEdges}
-                  title={uploadedResult ? "Sankey do grafo observado enviado" : `Sankey do ${datasets[datasetId].label}`}
-                  description="Visualização complementar dos fluxos principais entre eventos. O limite escolhido é apenas visual e não altera os dados, os filtros nem o RAMEX."
-                />
-              </section>
+              <RamexFinalSankeyPanel pureData={sankeyPureData} observedEdges={sankeyObservedEdges} initialMode={initialSankeyMode} initialPolytreeView={initialPolytreeSankeyView} />
             ) : null}
 
             {viewId === "polytree" ? (
-              <section className="space-y-4">
+              <section className="space-y-4" data-export-id="polytree-view">
                 <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-panel">
-                  <h3 className="text-lg font-semibold text-ink">Leitura da Poly-tree</h3>
+                  <h3 className="text-lg font-semibold text-ink">Leitura da Poly-tree experimental</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-600">
-                    A estrutura RAMEX seleciona ligações dominantes e pode não cobrir todos os nós do grafo original. A cobertura é apresentada no Diagnóstico de Cobertura.
+                    Esta aba mostra uma Poly-tree exploratória ou os artefactos carregados. A Poly-tree formal validada é a estrutura Back-and-Forward cujo grafo não dirigido é uma árvore.
                   </p>
                   <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                     <MetricCard label="Nós no grafo" value={formatNumber(uploadedResult?.metrics.nodes ?? selectedValidation?.Nos_Grafo ?? 0)} />

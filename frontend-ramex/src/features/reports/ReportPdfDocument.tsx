@@ -93,7 +93,7 @@ const limitationRows = [
   ],
   [
     "Algumas visualizações no PDF são simplificadas face ao artefacto interativo.",
-    "O PDF preserva árvore técnica completa, CSV e JSON com todas as arestas como evidência formal.",
+    "O PDF passa a usar exports do frontend como figuras principais; CSV, JSON, DOT e imagens backend ficam como evidência formal/anexo técnico.",
   ],
   [
     "RAMEX-Forum temporal — Fase 1 usa uma fórmula inicial de influência temporal.",
@@ -490,6 +490,15 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
     : data.pureRamex?.summary ||
       "Resultados RAMEX 2007 formal ainda não foram gerados para este dataset; o relatório está preparado para integrar a fase 10A e o anexo experimental.";
   const showForum = data.analysisType !== "pure" && Boolean(data.ramexForum);
+  const hasBackendTechnicalImages = Boolean(
+    data.backendTechnicalImages?.graph
+    || data.backendTechnicalImages?.ramex2007
+    || data.backendTechnicalImages?.forward
+    || data.backendTechnicalImages?.backForward
+    || data.backendTechnicalImages?.polytree
+    || data.backendTechnicalImages?.forumGraph
+    || data.backendTechnicalImages?.forumPhase2
+  );
   const reportSubtitle =
     data.analysisType === "forum"
       ? "Relatório RAMEX-Forum temporal"
@@ -561,11 +570,11 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           </Text>
           <Text style={styles.h3}>Fase 1 — rede temporal de influência</Text>
           <MetricGrid metrics={forumPhase1Metrics} />
-          <ImageOrFallback src={data.ramexForum?.temporalPhase1?.graph} label="RAMEX-Forum temporal Fase 1 - rede temporal de influência" />
+          <ImageOrFallback src={data.ramexForum?.temporalPhase1?.graph} label="RAMEX-Forum temporal Fase 1 - export frontend" />
           <Text style={styles.h3}>Fase 2 — estrutura extraída</Text>
           <MetricGrid metrics={forumPhase2Metrics} />
           <Text style={styles.text}>Caminho dominante Fase 2: {safeValue(data.ramexForum?.temporalPhase2?.dominantPath?.join(" -> "))}</Text>
-          <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum temporal Fase 2 - árvore ou poly-tree" />
+          <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum temporal Fase 2 - export frontend" />
         </PageFrame>
         <PageFrame>
           <Text style={styles.sectionTitle}>Grafo de Influência</Text>
@@ -698,7 +707,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             { label: "Densidade", value: formatNumber(data.metrics.density) },
           ]}
         />
-        <ImageOrFallback src={data.images?.graph} label="Grafo dirigido ponderado" />
+        <ImageOrFallback src={data.images?.graph} label="Grafo observado completo - export frontend" />
         <View style={styles.highlight}>
           <Text style={styles.h3}>Legenda</Text>
           <Text style={styles.text}>• Nós: categorias, eventos ou entidades observadas nas sequências.</Text>
@@ -746,7 +755,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           ]}
         />
         <Text style={styles.text}>{ramexInterpretation}</Text>
-        <ImageOrFallback src={data.images?.ramex} label="Estrutura RAMEX base" />
+        <ImageOrFallback src={data.images?.ramex} label="Estrutura RAMEX base - anexo experimental" />
         <SimpleTable
           columns={columns.ramex}
           rows={ramexRows.length ? ramexRows : emptyRows.ramex}
@@ -772,7 +781,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
           </Text>
         </View>
         <Text style={styles.text}>{polytreeInterpretation}</Text>
-        <ImageOrFallback src={data.images?.polytree} label="Poly-tree formal" />
+        <ImageOrFallback src={data.images?.polytree} label="Poly-tree formal - export frontend" />
         <SimpleTable
           columns={columns.polytree}
           rows={polytreeRows.length ? polytreeRows : emptyRows.polytree}
@@ -823,11 +832,11 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             {ramexPureSummary}
           </Text>
         </View>
-        <Text style={styles.h3}>Figura - Árvore RAMEX 2007 completa, sem cortes</Text>
+        <Text style={styles.h3}>Figura - RAMEX 2007 formal / árvore técnica</Text>
         <Text style={styles.text}>
-          A árvore técnica completa apresenta todos os nós e todas as arestas selecionadas pelo Maximum Weight Rooted Branching, servindo como evidência formal da arborescência obtida.
+          Figura principal exportada da vista frontend correspondente. A árvore técnica completa e os ficheiros CSV/JSON continuam disponíveis como evidência formal.
         </Text>
-        <ImageOrFallback src={data.images?.ramex2007} label="Árvore RAMEX 2007 completa, sem cortes" />
+        <ImageOrFallback src={data.images?.ramex2007} label="RAMEX 2007 formal - export frontend" />
         <Text style={styles.text}>
           O grafo técnico completo é mantido sem filtros para validação académica. As visualizações analíticas e Sankey são complementares e servem apenas para facilitar a interpretação humana da estrutura.
         </Text>
@@ -840,9 +849,9 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             <ImageOrFallback src={data.images.ramex2007Analytical} label="Visualização analítica dos ramos dominantes" />
           </>
         ) : null}
-        <Text style={styles.h3}>Sankey RAMEX 2007 - Fluxo da arborescência</Text>
+        <Text style={styles.h3}>Sankey RAMEX 2007 - vista frontend</Text>
         <Text style={styles.text}>
-          Esta visualização complementa o grafo técnico, permitindo observar a propagação dos ramos a partir da raiz.
+          Export da vista RAMEX 2007 final; usa apenas as arestas da arborescência selecionada.
         </Text>
         {data.images?.ramex2007Sankey ? (
           <ImageOrFallback src={data.images.ramex2007Sankey} label="Sankey RAMEX 2007" />
@@ -853,6 +862,33 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             </Text>
           </View>
         )}
+        {data.images?.forwardSankey ? (
+          <>
+            <Text style={styles.h3}>Sankey Forward - vista frontend</Text>
+            <Text style={styles.text}>
+              Export da vista Forward final; usa apenas as arestas selecionadas pela Forward Heuristic.
+            </Text>
+            <ImageOrFallback src={data.images.forwardSankey} label="Sankey Forward" />
+          </>
+        ) : null}
+        {data.images?.backForwardSankeyTop50 ? (
+          <>
+            <Text style={styles.h3}>Sankey Back-and-Forward Formal - vista interpretativa</Text>
+            <Text style={styles.text}>
+              Export da vista Back-and-Forward Formal; quando a poly-tree é densa, a figura principal usa top 50 arestas por peso. JSON/CSV preservam a estrutura completa.
+            </Text>
+            <ImageOrFallback src={data.images.backForwardSankeyTop50} label="Sankey Back-and-Forward Formal top 50" />
+          </>
+        ) : null}
+        {data.images?.backForwardSankeyFull ? (
+          <>
+            <Text style={styles.h3}>Sankey Back-and-Forward Formal - versão completa</Text>
+            <Text style={styles.text}>
+              Versão completa exportada do frontend para consulta quando a densidade visual for aceitável.
+            </Text>
+            <ImageOrFallback src={data.images.backForwardSankeyFull} label="Sankey Back-and-Forward Formal completo" />
+          </>
+        ) : null}
         <SimpleTable
           columns={columns.dominantPaths}
           rows={dominantPathRows.length ? dominantPathRows : [["Sem dados gerados", "-", "-", "-"]]}
@@ -883,7 +919,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             Use o grafo completo para comparar a rede original com a estrutura selecionada.
           </Text>
         </View>
-        <ImageOrFallback src={data.images?.graph} label="Grafo dirigido ponderado (completo)" />
+        <ImageOrFallback src={data.images?.graph} label="Grafo observado completo - export frontend" />
         
         {data.transitionMatrix && data.metrics.nodes && data.metrics.nodes <= 10 && (
           <>
@@ -903,7 +939,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             A Poly-tree não mostra todas as transições. Mostra a seleção acíclica e conectada.
           </Text>
         </View>
-        <ImageOrFallback src={data.images?.polytree} label="Poly-tree formal (estrutura condensada)" />
+        <ImageOrFallback src={data.images?.polytree} label="Poly-tree formal - export frontend" />
         <MetricGrid
           metrics={[
             { label: "Arestas no grafo", value: formatNumber(data.metrics.edges) },
@@ -947,7 +983,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
               <Text style={styles.text}>{safeValue(data.ramexForum?.interpretation)}</Text>
               <Text style={styles.text}>Caminho dominante: {safeValue(data.ramexForum?.dominantPath?.join(" -> "))}</Text>
             </View>
-            <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum temporal - grafo de influência" />
+            <ImageOrFallback src={data.images?.forumGraph} label="RAMEX-Forum temporal - export frontend Fase 1" />
             <ImageOrFallback src={data.images?.forumSimplified} label="RAMEX-Forum temporal - estrutura simplificada" />
             <Text style={styles.h3}>Fase 1 — rede temporal de influência</Text>
             <MetricGrid metrics={forumPhase1Metrics} />
@@ -957,7 +993,7 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
             </Text>
             <MetricGrid metrics={forumPhase2Metrics} />
             <Text style={styles.text}>Caminho dominante Fase 2: {safeValue(data.ramexForum?.temporalPhase2?.dominantPath?.join(" -> "))}</Text>
-            <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum temporal Fase 2 - árvore ou poly-tree" />
+            <ImageOrFallback src={data.ramexForum?.temporalPhase2?.structureImage} label="RAMEX-Forum temporal Fase 2 - export frontend" />
             <SimpleTable
               columns={columns.forum}
               rows={forumRows.length ? forumRows : emptyRows.forum}
@@ -1007,6 +1043,22 @@ export function ReportPdfDocument({ data }: { data: ReportData }) {
         <Text style={styles.sectionTitle}>Conclusão</Text>
         <Text style={styles.text}>{conclusion}</Text>
       </PageFrame>
+
+      {hasBackendTechnicalImages ? (
+        <PageFrame>
+          <Text style={styles.sectionTitle}>Anexo técnico - evidência backend</Text>
+          <Text style={styles.text}>
+            As figuras principais do relatório são exports do frontend. Este anexo preserva imagens técnicas antigas geradas pelo backend quando disponíveis, juntamente com CSV/JSON/DOT nos artefactos do job.
+          </Text>
+          {data.backendTechnicalImages?.graph ? <ImageOrFallback src={data.backendTechnicalImages.graph} label="Backend - grafo observado completo" /> : null}
+          {data.backendTechnicalImages?.ramex2007 ? <ImageOrFallback src={data.backendTechnicalImages.ramex2007} label="Backend - RAMEX 2007 formal" /> : null}
+          {data.backendTechnicalImages?.forward ? <ImageOrFallback src={data.backendTechnicalImages.forward} label="Backend - Forward Heuristic" /> : null}
+          {data.backendTechnicalImages?.backForward ? <ImageOrFallback src={data.backendTechnicalImages.backForward} label="Backend - Back-and-Forward Formal" /> : null}
+          {data.backendTechnicalImages?.polytree ? <ImageOrFallback src={data.backendTechnicalImages.polytree} label="Backend - Poly-tree formal" /> : null}
+          {data.backendTechnicalImages?.forumGraph ? <ImageOrFallback src={data.backendTechnicalImages.forumGraph} label="Backend - RAMEX-Forum temporal Fase 1" /> : null}
+          {data.backendTechnicalImages?.forumPhase2 ? <ImageOrFallback src={data.backendTechnicalImages.forumPhase2} label="Backend - RAMEX-Forum temporal Fase 2" /> : null}
+        </PageFrame>
+      ) : null}
 
       <PageFrame>
         <Text style={styles.sectionTitle}>Referências</Text>

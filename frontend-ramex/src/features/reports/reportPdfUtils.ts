@@ -426,7 +426,27 @@ async function svgDataUrlToPng(dataUrl?: string): Promise<string | undefined> {
 }
 
 export async function prepareReportImages(data: ReportData): Promise<ReportData> {
-  const [graph, ramex, ramex2007, polytree, forumGraph, forumSimplified, forumPhase1Graph, forumPhase1Matrix, forumPhase2Structure, forumPhase2Heuristic] = await Promise.all([
+  const [
+    graph,
+    ramex,
+    ramex2007,
+    polytree,
+    forumGraph,
+    forumSimplified,
+    forumPhase1Graph,
+    forumPhase1Matrix,
+    forumPhase2Structure,
+    forumPhase2Heuristic,
+    frontendObservedGraph,
+    frontendRamex2007Graph,
+    frontendRamex2007Sankey,
+    frontendForwardSankey,
+    frontendBackForwardSankeyTop50,
+    frontendBackForwardSankeyFull,
+    frontendPolytree,
+    frontendTemporalPhase1,
+    frontendTemporalPhase2,
+  ] = await Promise.all([
     imageToDataUrl(data.images?.graph),
     imageToDataUrl(data.images?.ramex),
     imageToDataUrl(data.images?.ramex2007),
@@ -437,32 +457,56 @@ export async function prepareReportImages(data: ReportData): Promise<ReportData>
     imageToDataUrl(data.ramexForum?.temporalPhase1?.matrix),
     imageToDataUrl(data.ramexForum?.temporalPhase2?.structureImage),
     imageToDataUrl(data.ramexForum?.temporalPhase2?.heuristicImage),
+    imageToDataUrl(data.frontendExports?.observedGraph),
+    imageToDataUrl(data.frontendExports?.ramex2007Graph),
+    imageToDataUrl(data.frontendExports?.ramex2007Sankey),
+    imageToDataUrl(data.frontendExports?.forwardSankey),
+    imageToDataUrl(data.frontendExports?.backForwardSankeyTop50),
+    imageToDataUrl(data.frontendExports?.backForwardSankeyFull),
+    imageToDataUrl(data.frontendExports?.polytree),
+    imageToDataUrl(data.frontendExports?.temporalPhase1),
+    imageToDataUrl(data.frontendExports?.temporalPhase2),
   ]);
   const ramex2007Analytical = await svgDataUrlToPng(data.images?.ramex2007Analytical ?? buildRamexAnalyticalDataUrl(data));
-  const ramex2007Sankey = await svgDataUrlToPng(data.images?.ramex2007Sankey ?? buildRamexSankeyDataUrl(data));
+  const ramex2007Sankey = frontendRamex2007Sankey
+    ?? await svgDataUrlToPng(data.images?.ramex2007Sankey ?? buildRamexSankeyDataUrl(data));
 
   return {
     ...data,
     images: {
-      graph,
+      graph: frontendObservedGraph ?? graph,
       ramex,
-      ramex2007,
+      ramex2007: frontendRamex2007Graph ?? ramex2007,
       ramex2007Analytical,
       ramex2007Sankey,
-      polytree,
-      forumGraph,
+      forwardSankey: frontendForwardSankey ?? data.images?.forwardSankey,
+      backForwardSankeyTop50: frontendBackForwardSankeyTop50 ?? data.images?.backForwardSankeyTop50,
+      backForwardSankeyFull: frontendBackForwardSankeyFull ?? data.images?.backForwardSankeyFull,
+      polytree: frontendPolytree ?? polytree,
+      forumGraph: frontendTemporalPhase1 ?? forumGraph,
       forumSimplified,
+    },
+    frontendExports: {
+      observedGraph: frontendObservedGraph,
+      ramex2007Graph: frontendRamex2007Graph,
+      ramex2007Sankey,
+      forwardSankey: frontendForwardSankey,
+      backForwardSankeyTop50: frontendBackForwardSankeyTop50,
+      backForwardSankeyFull: frontendBackForwardSankeyFull,
+      polytree: frontendPolytree,
+      temporalPhase1: frontendTemporalPhase1,
+      temporalPhase2: frontendTemporalPhase2,
     },
     ramexForum: data.ramexForum ? {
       ...data.ramexForum,
       temporalPhase1: data.ramexForum.temporalPhase1 ? {
         ...data.ramexForum.temporalPhase1,
-        graph: forumPhase1Graph,
+        graph: frontendTemporalPhase1 ?? forumPhase1Graph,
         matrix: forumPhase1Matrix,
       } : undefined,
       temporalPhase2: data.ramexForum.temporalPhase2 ? {
         ...data.ramexForum.temporalPhase2,
-        structureImage: forumPhase2Structure,
+        structureImage: frontendTemporalPhase2 ?? forumPhase2Structure,
         heuristicImage: forumPhase2Heuristic,
       } : undefined,
     } : undefined,
