@@ -13,6 +13,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
+from ramex_validation import validate_forward_tree
 
 REQUIRED_COLUMNS = ["From", "To", "Weight"]
 METHOD_NAME = "ramex_forward_heuristic"
@@ -108,22 +109,38 @@ def dataset_label_from_path(path: Path) -> str:
 
 
 def hierarchical_layout(graph: nx.DiGraph, root: str) -> dict:
-    try:
-        return nx.nx_agraph.graphviz_layout(graph, prog="dot", args="-Grankdir=TB")
-    except Exception:
-        levels = nx.single_source_shortest_path_length(graph.to_undirected(), root) if root in graph else {}
-        grouped: dict[int, list[str]] = {}
-        for node in graph.nodes:
-            grouped.setdefault(levels.get(node, 0), []).append(node)
-        shells = [sorted(nodes, key=str) for _, nodes in sorted(grouped.items())]
-        shell_pos = nx.shell_layout(graph, nlist=shells)
-        return {
-            node: (
-                shell_pos[node][0] * (1 + 0.12 * levels.get(node, 0)),
-                -1.9 * levels.get(node, 0) + shell_pos[node][1] * 0.2,
+    n = graph.number_of_nodes()
+    # nodesep e ranksep escalados: grafos maiores precisam de mais espaço
+    nodesep = max(0.6, min(2.0, 60 / max(n, 1)))
+    ranksep = max(1.0, min(3.5, 80 / max(n, 1)))
+    for prog in ("dot",):
+        try:
+            return nx.nx_agraph.graphviz_layout(
+                graph, prog=prog,
+                args=f"-Grankdir=TB -Gnodesep={nodesep:.2f} -Granksep={ranksep:.2f}",
             )
-            for node in graph.nodes
-        }
+        except Exception:
+            pass
+    # Fallback manual: BFS por níveis com espaçamento uniforme
+    levels: dict[str, int] = {}
+    if root in graph:
+        for node, lvl in nx.single_source_shortest_path_length(graph, root).items():
+            levels[node] = lvl
+    for node in graph.nodes:
+        levels.setdefault(node, 0)
+    grouped: dict[int, list[str]] = {}
+    for node, lvl in levels.items():
+        grouped.setdefault(lvl, []).append(node)
+    max_lvl = max(grouped.keys(), default=0)
+    pos: dict[str, tuple[float, float]] = {}
+    for lvl, nodes in grouped.items():
+        nodes_sorted = sorted(nodes, key=str)
+        count = len(nodes_sorted)
+        for i, node in enumerate(nodes_sorted):
+            x = (i - (count - 1) / 2) * max(1.5, 8 / max(count, 1))
+            y = -(lvl / max(max_lvl, 1)) * 10
+            pos[node] = (x, y)
+    return pos
 
 
 def edge_color_scale(tree: nx.DiGraph) -> list:
@@ -145,22 +162,29 @@ def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, root: str, args: argpars
     pd.DataFrame(rows).to_csv(args.output_csv, index=False, encoding="utf-8")
 
     # JSON
-    orig_w = sum(d["weight"] for _, _, d in graph.edges(data=True))
-    sel_w = sum(d["weight"] for _, _, d in tree.edges(data=True))
-
-    is_dag = nx.is_directed_acyclic_graph(tree)
-    is_connected = nx.is_weakly_connected(tree) if tree.nodes else False
+    validation = validate_forward_tree(tree, root, graph)
+    orig_w = validation["original_total_weight"]
+    sel_w = validation["total_selected_weight"]
+    is_dag = validation["is_dag"]
+    is_connected = bool(validation["all_reachable_from_root"])
 
     payload = {
         "algorithm": "RAMEX Forward Heuristic",
         "root": root,
+        "validation": validation,
         "metrics": {
             "original_nodes": graph.number_of_nodes(), "original_edges": graph.number_of_edges(),
             "selected_nodes": tree.number_of_nodes(), "selected_edges": tree.number_of_edges(),
             "original_weight_sum": orig_w, "selected_weight_sum": sel_w,
-            "preserved_weight_percent": (sel_w / orig_w * 100) if orig_w else 0,
+            "preserved_weight_percent": validation["preserved_weight_percentage"],
             "is_acyclic": is_dag,
+            "is_dag": is_dag,
             "is_connected": is_connected,
+            "is_valid_forward_tree": validation["is_valid_forward_tree"],
+            "all_reachable_from_root": validation["all_reachable_from_root"],
+            "expected_max_edges": validation["expected_max_edges"],
+            "max_in_degree": validation["max_in_degree"],
+            "max_out_degree": validation["max_out_degree"],
         },
         "nodes": [{"id": n, "level": levels.get(n, 0), "is_root": n == root} 
                   for n in sorted(tree.nodes, key=lambda n: (levels.get(n, 0), n))],
@@ -173,38 +197,55 @@ def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, root: str, args: argpars
     Path(args.output_png).parent.mkdir(parents=True, exist_ok=True)
     out_json.parent.mkdir(parents=True, exist_ok=True)
     out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    (out_json.parent / "forward_metrics.json").write_text(json.dumps(validation, ensure_ascii=False, indent=2), encoding="utf-8")
     
     return payload
 
 
 def draw_tree(tree: nx.DiGraph, root: str, output_png: Path) -> None:
+    n = tree.number_of_nodes()
     pos = hierarchical_layout(tree, root)
     degrees = dict(tree.to_undirected().degree())
 
-    colors = ["#f4b183" if n == root else "#dce9ee" for n in tree.nodes]
-    max_w = max([d["weight"] for _, _, d in tree.edges(data=True)], default=1)
-    widths = [1.0 + 5.0 * (d["weight"] / max_w) for _, _, d in tree.edges(data=True)]
-    node_sizes = [1900 + 420 * degrees.get(n, 0) for n in tree.nodes]
-    font_size = 9 if tree.number_of_nodes() <= 15 else 7
+    # Dimensões escaladas com o número de nós
+    if n <= 15:
+        figsize, dpi, font_size, node_base, node_scale = (16, 12), 300, 12, 2400, 800
+    elif n <= 50:
+        figsize, dpi, font_size, node_base, node_scale = (22, 16), 250, 9, 1400, 500
+    elif n <= 120:
+        figsize, dpi, font_size, node_base, node_scale = (28, 20), 200, 7, 900, 300
+    else:
+        figsize, dpi, font_size, node_base, node_scale = (36, 26), 180, 6, 600, 200
 
-    plt.figure(figsize=(18, 11))
-    nx.draw_networkx_nodes(tree, pos, node_color=colors, node_size=node_sizes, edgecolors="#1f2937", linewidths=1.4)
+    colors = ["#f4b183" if n_id == root else "#dceef5" for n_id in tree.nodes]
+    max_w = max((d["weight"] for _, _, d in tree.edges(data=True)), default=1) or 1
+    widths = [0.8 + 4.0 * (d["weight"] / max_w) for _, _, d in tree.edges(data=True)]
+    node_sizes = [node_base + node_scale * degrees.get(nd, 0) for nd in tree.nodes]
+
+    plt.figure(figsize=figsize)
+    nx.draw_networkx_nodes(tree, pos, node_color=colors, node_size=node_sizes,
+                           edgecolors="#315f72", linewidths=1.6)
     nx.draw_networkx_edges(
-        tree, pos, width=widths, arrows=True, arrowstyle="-|>", arrowsize=20,
-        edge_color=edge_color_scale(tree), alpha=0.88, connectionstyle="arc3,rad=0.02"
+        tree, pos, width=widths, arrows=True, arrowstyle="-|>",
+        arrowsize=max(12, 22 - n // 15),
+        edge_color=edge_color_scale(tree), alpha=0.85, connectionstyle="arc3,rad=0.02",
     )
-    nx.draw_networkx_labels(tree, pos, font_size=font_size, font_weight="bold")
+    nx.draw_networkx_labels(tree, pos, font_size=font_size, font_weight="bold",
+                            font_color="#0f172a")
 
-    labels = {(u, v): str(fmt_wt(d["weight"])) for u, v, d in tree.edges(data=True)}
-    nx.draw_networkx_edge_labels(
-        tree, pos, edge_labels=labels, font_size=max(font_size - 1, 6),
-        bbox={"boxstyle": "round,pad=0.18", "fc": "white", "ec": "#cbd5e1", "alpha": 0.85},
-    )
+    # Labels nas arestas só para grafos pequenos
+    if n <= 60:
+        labels = {(u, v): str(fmt_wt(d["weight"])) for u, v, d in tree.edges(data=True)}
+        nx.draw_networkx_edge_labels(
+            tree, pos, edge_labels=labels, font_size=max(font_size - 2, 5),
+            bbox={"boxstyle": "round,pad=0.18", "fc": "white", "ec": "#cbd5e1", "alpha": 0.85},
+        )
 
-    plt.title(f"RAMEX - Forward Heuristic - {dataset_label_from_path(output_png)}", fontsize=16, fontweight="bold")
+    plt.title(f"RAMEX - Forward Heuristic - {dataset_label_from_path(output_png)}",
+              fontsize=14, fontweight="bold", pad=10)
     plt.axis("off")
-    plt.tight_layout()
-    plt.savefig(output_png, dpi=300, bbox_inches="tight")
+    plt.tight_layout(pad=1.5)
+    plt.savefig(output_png, dpi=dpi, bbox_inches="tight", facecolor="white")
     plt.close()
 
 def main() -> None:
@@ -237,4 +278,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

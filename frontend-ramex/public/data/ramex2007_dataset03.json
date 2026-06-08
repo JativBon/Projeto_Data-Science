@@ -1,194 +1,175 @@
 {
-    "algorithm":  "RAMEX 2007 Rooted Branching",
-    "method":  "maximum_weight_rooted_branching",
-    "paper_alignment":  {
-                            "main_phases":  [
-                                                "transformacao_da_base_de_dados_em_rede_de_transicao_de_estados",
-                                                "pesquisa_de_sequencia_de_ramificacao_altamente_provavel"
-                                            ],
-                            "condensation":  "Maximum Weight Rooted Branching (Fulkerson/Edmonds)",
-                            "expansion":  "percurso da arborescencia B para reconstruir caminhos dominantes",
-                            "complexity":  "O(N^2)"
-                        },
-    "root":  "SOURCE",
-    "root_selection":  "provided_root",
-    "nodes_original":  6,
-    "edges_original":  20,
-    "nodes_selected":  6,
-    "edges_selected":  5,
-    "total_weight_original":  452.0,
-    "selected_weight":  165.0,
-    "preserved_weight_percent":  36.50442477876106,
-    "reachable_total_weight":  452.0,
-    "preserved_reachable_weight_percent":  36.50442477876106,
-    "is_dag":  true,
-    "is_arborescence":  true,
-    "root_in_degree":  0,
-    "max_non_root_in_degree":  1,
-    "reachable_from_root":  true,
-    "original_graph_has_cycles":  true,
-    "original_graph_can_contain_cycles":  true,
-    "expanded_paths_csv":  "data\\csv\\ramex2007_expanded_paths_dataset03.csv",
-    "tree_complete_png":  "assets\\png\\ramex2007_dataset03_tree_complete.png",
-    "warnings":  [
-
-                 ],
-    "nodes":  [
-                  {
-                      "id":  "SOURCE",
-                      "level":  0,
-                      "is_root":  true
-                  },
-                  {
-                      "id":  "Tecnologia",
-                      "level":  1,
-                      "is_root":  false
-                  },
-                  {
-                      "id":  "Higiene",
-                      "level":  2,
-                      "is_root":  false
-                  },
-                  {
-                      "id":  "Limpeza",
-                      "level":  2,
-                      "is_root":  false
-                  },
-                  {
-                      "id":  "Mercearia",
-                      "level":  2,
-                      "is_root":  false
-                  },
-                  {
-                      "id":  "SINK",
-                      "level":  3,
-                      "is_root":  false
-                  }
-              ],
-    "edges":  [
-                  {
-                      "from":  "SOURCE",
-                      "to":  "Tecnologia",
-                      "weight":  17,
-                      "level":  1
-                  },
-                  {
-                      "from":  "Tecnologia",
-                      "to":  "Higiene",
-                      "weight":  26,
-                      "level":  2
-                  },
-                  {
-                      "from":  "Tecnologia",
-                      "to":  "Limpeza",
-                      "weight":  22,
-                      "level":  2
-                  },
-                  {
-                      "from":  "Tecnologia",
-                      "to":  "Mercearia",
-                      "weight":  75,
-                      "level":  2
-                  },
-                  {
-                      "from":  "Mercearia",
-                      "to":  "SINK",
-                      "weight":  25,
-                      "level":  3
-                  }
-              ],
-    "condensation":  {
-                         "input_nodes":  6,
-                         "input_edges":  20,
-                         "output_nodes":  6,
-                         "output_edges":  5,
-                         "compression_ratio":  0.25,
-                         "removed_edges":  15,
-                         "preserved_weight":  165.0,
-                         "preserved_weight_percent":  36.50442477876106,
-                         "rooted_branching_algorithm":  "Fulkerson/Edmonds maximum weight rooted branching"
-                     },
-    "expansion":  {
-                      "dominant_paths":  [
-                                             {
-                                                 "path":  "SOURCE -\u003e Tecnologia -\u003e Mercearia -\u003e SINK",
-                                                 "start":  "SOURCE",
-                                                 "end":  "SINK",
-                                                 "branch_depth":  3,
-                                                 "path_weight":  117,
-                                                 "bottleneck_weight":  17,
-                                                 "edges":  3
-                                             },
-                                             {
-                                                 "path":  "SOURCE -\u003e Tecnologia -\u003e Higiene",
-                                                 "start":  "SOURCE",
-                                                 "end":  "Higiene",
-                                                 "branch_depth":  2,
-                                                 "path_weight":  43,
-                                                 "bottleneck_weight":  17,
-                                                 "edges":  2
-                                             },
-                                             {
-                                                 "path":  "SOURCE -\u003e Tecnologia -\u003e Limpeza",
-                                                 "start":  "SOURCE",
-                                                 "end":  "Limpeza",
-                                                 "branch_depth":  2,
-                                                 "path_weight":  39,
-                                                 "bottleneck_weight":  17,
-                                                 "edges":  2
-                                             }
-                                         ],
-                      "metrics":  {
-                                      "dominant_paths_count":  3,
-                                      "max_branch_depth":  3,
-                                      "average_branching_factor":  1.6666666666666667,
-                                      "max_branching_factor":  3
-                                  },
-                      "expanded_paths_csv":  "data\\csv\\ramex2007_expanded_paths_dataset03.csv"
-                  },
-    "compare_simplified":  [
-
-                           ],
-    "metrics":  {
-                    "original_nodes":  6,
-                    "original_edges":  20,
-                    "reachable_nodes":  6,
-                    "reachable_edges":  20,
-                    "selected_nodes":  6,
-                    "selected_edges":  5,
-                    "original_weight_sum":  452.0,
-                    "reachable_weight_sum":  452.0,
-                    "selected_weight_sum":  165.0,
-                    "preserved_weight_percent":  36.50442477876106,
-                    "preserved_reachable_weight_percent":  36.50442477876106,
-                    "is_acyclic":  true,
-                    "is_dag":  true,
-                    "is_arborescence":  true,
-                    "is_connected":  true,
-                    "root_in_degree":  0,
-                    "max_indegree_except_root":  1,
-                    "max_non_root_in_degree":  1,
-                    "reachable_from_root":  true,
-                    "original_graph_has_cycles":  true,
-                    "compression_ratio":  0.25,
-                    "removed_edges":  15,
-                    "preserved_weight":  165.0,
-                    "branch_depth":  3,
-                    "branching_factor":  1.6666666666666667
-                },
-    "transformation":  {
-                           "ordered_csv":  "ramex2007_ordered_dataset03.csv",
-                           "sequences_csv":  "ramex2007_sequences_dataset03.csv",
-                           "graph_edges_csv":  "ramex2007_graph_edges_dataset03.csv",
-                           "adjacency_matrix_csv":  "ramex2007_adjacency_matrix_dataset03.csv",
-                           "adjacency_matrix_png":  "ramex2007_adjacency_matrix_dataset03.png",
-                           "source_node":  "SOURCE",
-                           "sink_node":  "SINK",
-                           "original_graph_can_contain_cycles":  true,
-                           "global_view_note":  "O RAMEX apresenta uma visao global da base de dados porque todas as transicoes entre itens sao incorporadas numa unica rede de estados.",
-                           "markov_difference":  {
-                                                     "RAMEX":  "frequencias absolutas",
-                                                     "Markov":  "frequencias relativas/probabilidades"
-                                                 }
-                       }
+  "algorithm": "RAMEX 2007 Rooted Branching",
+  "method": "maximum_weight_rooted_branching",
+  "paper_alignment": {
+    "main_phases": [
+      "transformacao_da_base_de_dados_em_rede_de_transicao_de_estados",
+      "pesquisa_de_sequencia_de_ramificacao_altamente_provavel"
+    ],
+    "condensation": "Maximum Weight Rooted Branching (Fulkerson/Edmonds)",
+    "expansion": "percurso da arborescencia B para reconstruir caminhos dominantes",
+    "complexity": "O(N^2)"
+  },
+  "root": "SOURCE",
+  "root_selection": "provided_root",
+  "nodes_original": 6,
+  "edges_original": 20,
+  "nodes_selected": 6,
+  "edges_selected": 5,
+  "total_weight_original": 452.0,
+  "selected_weight": 165.0,
+  "preserved_weight_percent": 36.50442477876106,
+  "reachable_total_weight": 452.0,
+  "preserved_reachable_weight_percent": 36.50442477876106,
+  "is_dag": true,
+  "is_arborescence": true,
+  "root_in_degree": 0,
+  "max_non_root_in_degree": 1,
+  "reachable_from_root": true,
+  "original_graph_has_cycles": true,
+  "original_graph_can_contain_cycles": true,
+  "expanded_paths_csv": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\frontend-ramex\\public\\data\\ramex2007_expanded_paths_dataset03.csv",
+  "tree_complete_png": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\frontend-ramex\\public\\data\\ramex2007_dataset03_tree_complete.png",
+  "warnings": [],
+  "nodes": [
+    {
+      "id": "SOURCE",
+      "level": 0,
+      "is_root": true
+    },
+    {
+      "id": "Tecnologia",
+      "level": 1,
+      "is_root": false
+    },
+    {
+      "id": "Higiene",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Limpeza",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "Mercearia",
+      "level": 2,
+      "is_root": false
+    },
+    {
+      "id": "SINK",
+      "level": 3,
+      "is_root": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "SOURCE",
+      "to": "Tecnologia",
+      "weight": 17,
+      "level": 1
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Higiene",
+      "weight": 26,
+      "level": 2
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Limpeza",
+      "weight": 22,
+      "level": 2
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Mercearia",
+      "weight": 75,
+      "level": 2
+    },
+    {
+      "from": "Mercearia",
+      "to": "SINK",
+      "weight": 25,
+      "level": 3
+    }
+  ],
+  "condensation": {
+    "input_nodes": 6,
+    "input_edges": 20,
+    "output_nodes": 6,
+    "output_edges": 5,
+    "compression_ratio": 0.25,
+    "removed_edges": 15,
+    "preserved_weight": 165.0,
+    "preserved_weight_percent": 36.50442477876106,
+    "rooted_branching_algorithm": "Fulkerson/Edmonds maximum weight rooted branching"
+  },
+  "expansion": {
+    "dominant_paths": [
+      {
+        "path": "SOURCE -> Tecnologia -> Mercearia -> SINK",
+        "start": "SOURCE",
+        "end": "SINK",
+        "branch_depth": 3,
+        "path_weight": 117,
+        "bottleneck_weight": 17,
+        "edges": 3
+      },
+      {
+        "path": "SOURCE -> Tecnologia -> Higiene",
+        "start": "SOURCE",
+        "end": "Higiene",
+        "branch_depth": 2,
+        "path_weight": 43,
+        "bottleneck_weight": 17,
+        "edges": 2
+      },
+      {
+        "path": "SOURCE -> Tecnologia -> Limpeza",
+        "start": "SOURCE",
+        "end": "Limpeza",
+        "branch_depth": 2,
+        "path_weight": 39,
+        "bottleneck_weight": 17,
+        "edges": 2
+      }
+    ],
+    "metrics": {
+      "dominant_paths_count": 3,
+      "max_branch_depth": 3,
+      "average_branching_factor": 1.6666666666666667,
+      "max_branching_factor": 3
+    },
+    "expanded_paths_csv": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\frontend-ramex\\public\\data\\ramex2007_expanded_paths_dataset03.csv"
+  },
+  "compare_simplified": [],
+  "metrics": {
+    "original_nodes": 6,
+    "original_edges": 20,
+    "reachable_nodes": 6,
+    "reachable_edges": 20,
+    "selected_nodes": 6,
+    "selected_edges": 5,
+    "original_weight_sum": 452.0,
+    "reachable_weight_sum": 452.0,
+    "selected_weight_sum": 165.0,
+    "preserved_weight_percent": 36.50442477876106,
+    "preserved_reachable_weight_percent": 36.50442477876106,
+    "is_acyclic": true,
+    "is_dag": true,
+    "is_arborescence": true,
+    "is_connected": true,
+    "root_in_degree": 0,
+    "max_indegree_except_root": 1,
+    "max_non_root_in_degree": 1,
+    "reachable_from_root": true,
+    "original_graph_has_cycles": true,
+    "compression_ratio": 0.25,
+    "removed_edges": 15,
+    "preserved_weight": 165.0,
+    "branch_depth": 3,
+    "branching_factor": 1.6666666666666667
+  }
 }

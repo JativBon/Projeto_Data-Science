@@ -140,22 +140,37 @@ def dataset_label_from_path(path: Path) -> str:
 
 
 def hierarchical_layout(graph: nx.DiGraph, root: str) -> dict:
-    try:
-        return nx.nx_agraph.graphviz_layout(graph, prog="dot", args="-Grankdir=TB")
-    except Exception:
-        levels = calculate_levels(graph, root) if root in graph else {}
-        grouped: dict[int, list[str]] = {}
-        for node in graph.nodes:
-            grouped.setdefault(levels.get(node, 0), []).append(node)
-        shells = [sorted(nodes, key=str) for _, nodes in sorted(grouped.items())]
-        shell_pos = nx.shell_layout(graph, nlist=shells)
-        return {
-            node: (
-                shell_pos[node][0] * (1 + 0.12 * levels.get(node, 0)),
-                -1.9 * levels.get(node, 0) + shell_pos[node][1] * 0.2,
-            )
-            for node in graph.nodes
-        }
+    n = graph.number_of_nodes()
+    nodesep = max(0.6, min(2.0, 60 / max(n, 1)))
+    ranksep = max(1.0, min(3.5, 80 / max(n, 1)))
+    # Para poly-trees com arestas bidirecionais, 'dot' pode criar layouts desequilibrados.
+    # Usamos 'neato' como primeira opção para Back-and-Forward.
+    for prog, args in [
+        ("neato", f"-Gnodesep={nodesep:.2f}"),
+        ("dot",   f"-Grankdir=TB -Gnodesep={nodesep:.2f} -Granksep={ranksep:.2f}"),
+        ("fdp",   ""),
+    ]:
+        try:
+            return nx.nx_agraph.graphviz_layout(graph, prog=prog, args=args)
+        except Exception:
+            pass
+    # Fallback manual com BFS
+    levels = calculate_levels(graph, root) if root in graph else {}
+    for node in graph.nodes:
+        levels.setdefault(node, 0)
+    grouped: dict[int, list[str]] = {}
+    for node, lvl in levels.items():
+        grouped.setdefault(lvl, []).append(node)
+    max_lvl = max(grouped.keys(), default=0)
+    pos: dict[str, tuple[float, float]] = {}
+    for lvl, nodes in grouped.items():
+        nodes_sorted = sorted(nodes, key=str)
+        count = len(nodes_sorted)
+        for i, node in enumerate(nodes_sorted):
+            x = (i - (count - 1) / 2) * max(1.5, 8 / max(count, 1))
+            y = -(lvl / max(max_lvl, 1)) * 10
+            pos[node] = (x, y)
+    return pos
 
 
 def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, initial: tuple[str, str, float], warnings: list[str], args: argparse.Namespace) -> dict:
@@ -213,43 +228,58 @@ def export_outputs(graph: nx.DiGraph, tree: nx.DiGraph, initial: tuple[str, str,
 
 def draw_tree(tree: nx.DiGraph, initial: tuple[str, str, float], output_png: Path) -> None:
     u, v, _ = initial
+    n = tree.number_of_nodes()
     pos = hierarchical_layout(tree, u)
     degrees = dict(tree.to_undirected().degree())
 
-    colors = ["#f4b183" if n in {u, v} else "#dce9ee" for n in tree.nodes]
-    max_w = max([d["weight"] for _, _, d in tree.edges(data=True)], default=1)
-    node_sizes = [1700 + 420 * degrees.get(n, 0) for n in tree.nodes]
-    font_size = 9 if tree.number_of_nodes() <= 15 else 7
+    # Dimensões escaladas com o número de nós
+    if n <= 15:
+        figsize, dpi, font_size, node_base, node_scale, arrowsize = (16, 12), 300, 12, 2200, 800, 22
+    elif n <= 50:
+        figsize, dpi, font_size, node_base, node_scale, arrowsize = (22, 16), 250, 9, 1300, 500, 18
+    elif n <= 120:
+        figsize, dpi, font_size, node_base, node_scale, arrowsize = (28, 20), 200, 7, 850, 280, 14
+    else:
+        figsize, dpi, font_size, node_base, node_scale, arrowsize = (36, 26), 180, 6, 550, 180, 10
 
-    plt.figure(figsize=(18, 11))
-    nx.draw_networkx_nodes(tree, pos, node_color=colors, node_size=node_sizes, edgecolors="#1f2937", linewidths=1.4)
-    nx.draw_networkx_labels(tree, pos, font_size=font_size, font_weight="bold")
+    colors = ["#f4b183" if nd in {u, v} else "#dceef5" for nd in tree.nodes]
+    max_w = max((d["weight"] for _, _, d in tree.edges(data=True)), default=1) or 1
+    node_sizes = [node_base + node_scale * degrees.get(nd, 0) for nd in tree.nodes]
+
+    plt.figure(figsize=figsize)
+    nx.draw_networkx_nodes(tree, pos, node_color=colors, node_size=node_sizes,
+                           edgecolors="#315f72", linewidths=1.6)
+    nx.draw_networkx_labels(tree, pos, font_size=font_size, font_weight="bold",
+                            font_color="#0f172a")
 
     edge_colors = {"INITIAL": "#b45309", "FORWARD": "#2563eb", "BACKWARD": "#7c3aed"}
     legend_handles = []
     for direction, color in edge_colors.items():
         edges = [(o, t) for o, t, d in tree.edges(data=True) if d.get("direction") == direction]
         if edges:
-            widths = [1.0 + 5.0 * (tree[o][t]["weight"] / max_w) for o, t in edges]
+            widths = [0.8 + 3.5 * (tree[o][t]["weight"] / max_w) for o, t in edges]
             nx.draw_networkx_edges(
                 tree, pos, edgelist=edges, width=widths, edge_color=color,
-                arrows=True, arrowstyle="-|>", arrowsize=20, alpha=0.86,
+                arrows=True, arrowstyle="-|>", arrowsize=arrowsize, alpha=0.82,
                 connectionstyle="arc3,rad=0.04",
             )
             legend_handles.append(plt.Line2D([0], [0], color=color, lw=3, label=direction))
 
-    labels = {(o, t): str(fmt_wt(d["weight"])) for o, t, d in tree.edges(data=True)}
-    nx.draw_networkx_edge_labels(
-        tree, pos, edge_labels=labels, font_size=max(font_size - 1, 6),
-        bbox={"boxstyle": "round,pad=0.18", "fc": "white", "ec": "#cbd5e1", "alpha": 0.85},
-    )
+    # Labels nas arestas só para grafos pequenos
+    if n <= 60:
+        labels = {(o, t): str(fmt_wt(d["weight"])) for o, t, d in tree.edges(data=True)}
+        nx.draw_networkx_edge_labels(
+            tree, pos, edge_labels=labels, font_size=max(font_size - 2, 5),
+            bbox={"boxstyle": "round,pad=0.18", "fc": "white", "ec": "#cbd5e1", "alpha": 0.85},
+        )
 
     if legend_handles:
-        plt.legend(handles=legend_handles, loc="upper right", frameon=True)
-    plt.title(f"RAMEX - Back-and-Forward Heuristic - {dataset_label_from_path(output_png)}", fontsize=16, fontweight="bold")
+        plt.legend(handles=legend_handles, loc="upper right", frameon=True, fontsize=10)
+    plt.title(f"RAMEX Back-and-Forward Poly-tree Formal - {dataset_label_from_path(output_png)}",
+              fontsize=14, fontweight="bold", pad=10)
     plt.axis("off")
-    plt.tight_layout()
-    plt.savefig(output_png, dpi=300, bbox_inches="tight")
+    plt.tight_layout(pad=1.5)
+    plt.savefig(output_png, dpi=dpi, bbox_inches="tight", facecolor="white")
     plt.close()
 
 def main() -> None:

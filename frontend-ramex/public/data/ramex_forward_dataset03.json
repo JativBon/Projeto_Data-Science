@@ -9,7 +9,8 @@
     "original_weight_sum": 352.0,
     "selected_weight_sum": 123.0,
     "preserved_weight_percent": 34.94318181818182,
-    "is_acyclic": true
+    "is_acyclic": true,
+    "is_connected": true
   },
   "nodes": [
     {
@@ -36,12 +37,6 @@
   "edges": [
     {
       "from": "Tecnologia",
-      "to": "Mercearia",
-      "weight": 75.0,
-      "level": 1
-    },
-    {
-      "from": "Tecnologia",
       "to": "Higiene",
       "weight": 26.0,
       "level": 1
@@ -50,6 +45,12 @@
       "from": "Tecnologia",
       "to": "Limpeza",
       "weight": 22.0,
+      "level": 1
+    },
+    {
+      "from": "Tecnologia",
+      "to": "Mercearia",
+      "weight": 75.0,
       "level": 1
     }
   ]

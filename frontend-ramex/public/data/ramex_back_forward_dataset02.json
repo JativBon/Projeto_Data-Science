@@ -1,558 +1,207 @@
 {
   "algorithm": "RAMEX Back-and-Forward Heuristic",
   "initial_edge": {
-    "from": "1005",
-    "to": "987",
+    "from": "10838",
+    "to": "11168",
     "weight": 1.0
   },
   "metrics": {
     "original_nodes": 281,
     "original_edges": 272,
-    "selected_nodes": 49,
-    "selected_edges": 48,
+    "selected_nodes": 17,
+    "selected_edges": 16,
     "original_weight_sum": 272.0,
-    "selected_weight_sum": 48.0,
-    "preserved_weight_percent": 17.647058823529413,
+    "selected_weight_sum": 16.0,
+    "preserved_weight_percent": 5.88235294117647,
     "is_acyclic": true,
-    "is_connected": true
+    "is_connected": true,
+    "is_polytree": true
   },
   "nodes": [
     {
-      "id": "1005",
+      "id": "10838",
       "level": 0
     },
     {
-      "id": "3100",
+      "id": "11168",
       "level": 1
     },
     {
-      "id": "987",
+      "id": "222134",
       "level": 1
     },
     {
-      "id": "1319",
+      "id": "3019",
       "level": 2
     },
     {
-      "id": "329097",
+      "id": "45475",
       "level": 2
     },
     {
-      "id": "1857",
+      "id": "9533",
       "level": 3
     },
     {
-      "id": "2581",
-      "level": 3
-    },
-    {
-      "id": "2372",
+      "id": "6317",
       "level": 4
     },
     {
-      "id": "3225",
-      "level": 4
-    },
-    {
-      "id": "302",
+      "id": "6562",
       "level": 5
     },
     {
-      "id": "942",
-      "level": 5
-    },
-    {
-      "id": "29",
+      "id": "2450",
       "level": 6
     },
     {
-      "id": "29206",
-      "level": 6
-    },
-    {
-      "id": "32921",
-      "level": 6
-    },
-    {
-      "id": "3350",
-      "level": 6
-    },
-    {
-      "id": "13449",
+      "id": "7681",
       "level": 7
     },
     {
-      "id": "1475",
-      "level": 7
-    },
-    {
-      "id": "156",
-      "level": 7
-    },
-    {
-      "id": "177487",
-      "level": 7
-    },
-    {
-      "id": "81",
-      "level": 7
-    },
-    {
-      "id": "811",
-      "level": 7
-    },
-    {
-      "id": "1021",
+      "id": "3491",
       "level": 8
     },
     {
-      "id": "1355",
-      "level": 8
-    },
-    {
-      "id": "3266",
-      "level": 8
-    },
-    {
-      "id": "8169",
-      "level": 8
-    },
-    {
-      "id": "25214",
+      "id": "10053",
       "level": 9
     },
     {
-      "id": "6241",
-      "level": 9
-    },
-    {
-      "id": "65",
-      "level": 9
-    },
-    {
-      "id": "7399",
-      "level": 9
-    },
-    {
-      "id": "1130",
+      "id": "427",
       "level": 10
     },
     {
-      "id": "2069",
-      "level": 10
-    },
-    {
-      "id": "2154",
+      "id": "8527",
       "level": 11
     },
     {
-      "id": "453",
-      "level": 11
-    },
-    {
-      "id": "2848",
+      "id": "5870",
       "level": 12
     },
     {
-      "id": "955",
-      "level": 12
-    },
-    {
-      "id": "201",
+      "id": "181",
       "level": 13
     },
     {
-      "id": "7983",
-      "level": 13
-    },
-    {
-      "id": "2719",
+      "id": "696",
       "level": 14
-    },
-    {
-      "id": "429",
-      "level": 14
-    },
-    {
-      "id": "2037",
-      "level": 15
-    },
-    {
-      "id": "930",
-      "level": 15
-    },
-    {
-      "id": "28",
-      "level": 16
-    },
-    {
-      "id": "6575",
-      "level": 16
-    },
-    {
-      "id": "126",
-      "level": 17
-    },
-    {
-      "id": "2487",
-      "level": 17
-    },
-    {
-      "id": "1043",
-      "level": 18
-    },
-    {
-      "id": "2408",
-      "level": 19
-    },
-    {
-      "id": "4951",
-      "level": 20
-    },
-    {
-      "id": "3514",
-      "level": 21
     }
   ],
   "edges": [
     {
-      "from": "1005",
-      "to": "987",
+      "from": "10838",
+      "to": "11168",
       "weight": 1.0,
       "level": 0,
       "direction": "INITIAL"
     },
     {
-      "from": "3100",
-      "to": "1005",
+      "from": "222134",
+      "to": "10838",
       "weight": 1.0,
       "level": 1,
       "direction": "BACKWARD"
     },
     {
-      "from": "329097",
-      "to": "3100",
+      "from": "45475",
+      "to": "222134",
       "weight": 1.0,
       "level": 2,
       "direction": "BACKWARD"
     },
     {
-      "from": "2581",
-      "to": "329097",
-      "weight": 1.0,
-      "level": 3,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "3225",
-      "to": "2581",
-      "weight": 1.0,
-      "level": 4,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "942",
-      "to": "3225",
-      "weight": 1.0,
-      "level": 5,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "3350",
-      "to": "942",
-      "weight": 1.0,
-      "level": 6,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "1475",
-      "to": "3350",
-      "weight": 1.0,
-      "level": 7,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "8169",
-      "to": "1475",
-      "weight": 1.0,
-      "level": 8,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "6241",
-      "to": "8169",
-      "weight": 1.0,
-      "level": 9,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "987",
-      "to": "1319",
+      "from": "11168",
+      "to": "3019",
       "weight": 1.0,
       "level": 2,
       "direction": "FORWARD"
     },
     {
-      "from": "1319",
-      "to": "1857",
+      "from": "3019",
+      "to": "9533",
       "weight": 1.0,
       "level": 3,
       "direction": "FORWARD"
     },
     {
-      "from": "1857",
-      "to": "2372",
+      "from": "9533",
+      "to": "6317",
       "weight": 1.0,
       "level": 4,
       "direction": "FORWARD"
     },
     {
-      "from": "2372",
-      "to": "302",
+      "from": "6317",
+      "to": "6562",
       "weight": 1.0,
       "level": 5,
       "direction": "FORWARD"
     },
     {
-      "from": "32921",
-      "to": "302",
-      "weight": 1.0,
-      "level": 6,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "811",
-      "to": "32921",
-      "weight": 1.0,
-      "level": 7,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "3266",
-      "to": "811",
-      "weight": 1.0,
-      "level": 8,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "25214",
-      "to": "3266",
-      "weight": 1.0,
-      "level": 9,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "302",
-      "to": "29",
+      "from": "6562",
+      "to": "2450",
       "weight": 1.0,
       "level": 6,
       "direction": "FORWARD"
     },
     {
-      "from": "13449",
-      "to": "29",
-      "weight": 1.0,
-      "level": 7,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "1355",
-      "to": "13449",
-      "weight": 1.0,
-      "level": 8,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "65",
-      "to": "1355",
-      "weight": 1.0,
-      "level": 9,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "1130",
-      "to": "65",
-      "weight": 1.0,
-      "level": 10,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "2154",
-      "to": "1130",
-      "weight": 1.0,
-      "level": 11,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "2848",
-      "to": "2154",
-      "weight": 1.0,
-      "level": 12,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "201",
-      "to": "2848",
-      "weight": 1.0,
-      "level": 13,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "429",
-      "to": "201",
-      "weight": 1.0,
-      "level": 14,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "2037",
-      "to": "429",
-      "weight": 1.0,
-      "level": 15,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "6575",
-      "to": "2037",
-      "weight": 1.0,
-      "level": 16,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "2487",
-      "to": "6575",
-      "weight": 1.0,
-      "level": 17,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "1043",
-      "to": "2487",
-      "weight": 1.0,
-      "level": 18,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "2408",
-      "to": "1043",
-      "weight": 1.0,
-      "level": 19,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "4951",
-      "to": "2408",
-      "weight": 1.0,
-      "level": 20,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "3514",
-      "to": "4951",
-      "weight": 1.0,
-      "level": 21,
-      "direction": "BACKWARD"
-    },
-    {
-      "from": "29",
-      "to": "156",
+      "from": "2450",
+      "to": "7681",
       "weight": 1.0,
       "level": 7,
       "direction": "FORWARD"
     },
     {
-      "from": "29",
-      "to": "81",
-      "weight": 1.0,
-      "level": 7,
-      "direction": "FORWARD"
-    },
-    {
-      "from": "302",
-      "to": "29206",
-      "weight": 1.0,
-      "level": 6,
-      "direction": "FORWARD"
-    },
-    {
-      "from": "29206",
-      "to": "177487",
-      "weight": 1.0,
-      "level": 7,
-      "direction": "FORWARD"
-    },
-    {
-      "from": "177487",
-      "to": "1021",
+      "from": "7681",
+      "to": "3491",
       "weight": 1.0,
       "level": 8,
       "direction": "FORWARD"
     },
     {
-      "from": "1021",
-      "to": "7399",
+      "from": "3491",
+      "to": "10053",
       "weight": 1.0,
       "level": 9,
       "direction": "FORWARD"
     },
     {
-      "from": "7399",
-      "to": "2069",
+      "from": "10053",
+      "to": "427",
       "weight": 1.0,
       "level": 10,
       "direction": "FORWARD"
     },
     {
-      "from": "2069",
-      "to": "453",
+      "from": "427",
+      "to": "8527",
       "weight": 1.0,
       "level": 11,
       "direction": "FORWARD"
     },
     {
-      "from": "453",
-      "to": "955",
+      "from": "8527",
+      "to": "5870",
       "weight": 1.0,
       "level": 12,
       "direction": "FORWARD"
     },
     {
-      "from": "955",
-      "to": "7983",
+      "from": "5870",
+      "to": "181",
       "weight": 1.0,
       "level": 13,
       "direction": "FORWARD"
     },
     {
-      "from": "7983",
-      "to": "2719",
+      "from": "181",
+      "to": "696",
       "weight": 1.0,
       "level": 14,
-      "direction": "FORWARD"
-    },
-    {
-      "from": "2719",
-      "to": "930",
-      "weight": 1.0,
-      "level": 15,
-      "direction": "FORWARD"
-    },
-    {
-      "from": "930",
-      "to": "28",
-      "weight": 1.0,
-      "level": 16,
-      "direction": "FORWARD"
-    },
-    {
-      "from": "28",
-      "to": "126",
-      "weight": 1.0,
-      "level": 17,
       "direction": "FORWARD"
     }
   ],
   "warnings": [
-    "Foram incluidos 49 de 281 nos; os restantes nao tinham candidatos validos."
+    "IncluÃ­dos 17 de 281 nÃ³s originais."
   ]
 }

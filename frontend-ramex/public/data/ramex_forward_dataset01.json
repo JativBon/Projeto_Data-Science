@@ -9,7 +9,8 @@
     "original_weight_sum": 139834.0,
     "selected_weight_sum": 1842.0,
     "preserved_weight_percent": 1.3172761989215784,
-    "is_acyclic": true
+    "is_acyclic": true,
+    "is_connected": true
   },
   "nodes": [
     {
@@ -1045,10 +1046,10 @@
       "level": 2
     },
     {
-      "from": "15",
-      "to": "93",
-      "weight": 8.0,
-      "level": 3
+      "from": "132",
+      "to": "109",
+      "weight": 9.0,
+      "level": 2
     },
     {
       "from": "132",
@@ -1057,9 +1058,15 @@
       "level": 2
     },
     {
-      "from": "132",
-      "to": "109",
-      "weight": 9.0,
+      "from": "185",
+      "to": "101",
+      "weight": 8.0,
+      "level": 2
+    },
+    {
+      "from": "185",
+      "to": "131",
+      "weight": 11.0,
       "level": 2
     },
     {
@@ -1075,48 +1082,6 @@
       "level": 3
     },
     {
-      "from": "168",
-      "to": "179",
-      "weight": 11.0,
-      "level": 4
-    },
-    {
-      "from": "168",
-      "to": "155",
-      "weight": 9.0,
-      "level": 4
-    },
-    {
-      "from": "168",
-      "to": "66",
-      "weight": 9.0,
-      "level": 4
-    },
-    {
-      "from": "179",
-      "to": "45",
-      "weight": 9.0,
-      "level": 5
-    },
-    {
-      "from": "185",
-      "to": "131",
-      "weight": 11.0,
-      "level": 2
-    },
-    {
-      "from": "185",
-      "to": "101",
-      "weight": 8.0,
-      "level": 2
-    },
-    {
-      "from": "131",
-      "to": "89",
-      "weight": 10.0,
-      "level": 3
-    },
-    {
       "from": "131",
       "to": "177",
       "weight": 9.0,
@@ -1129,8 +1094,32 @@
       "level": 3
     },
     {
-      "from": "89",
-      "to": "74",
+      "from": "131",
+      "to": "89",
+      "weight": 10.0,
+      "level": 3
+    },
+    {
+      "from": "15",
+      "to": "93",
+      "weight": 8.0,
+      "level": 3
+    },
+    {
+      "from": "168",
+      "to": "155",
+      "weight": 9.0,
+      "level": 4
+    },
+    {
+      "from": "168",
+      "to": "179",
+      "weight": 11.0,
+      "level": 4
+    },
+    {
+      "from": "168",
+      "to": "66",
       "weight": 9.0,
       "level": 4
     },
@@ -1141,14 +1130,32 @@
       "level": 4
     },
     {
+      "from": "89",
+      "to": "74",
+      "weight": 9.0,
+      "level": 4
+    },
+    {
       "from": "155",
       "to": "7",
       "weight": 9.0,
       "level": 5
     },
     {
-      "from": "7",
-      "to": "184",
+      "from": "179",
+      "to": "45",
+      "weight": 9.0,
+      "level": 5
+    },
+    {
+      "from": "74",
+      "to": "23",
+      "weight": 11.0,
+      "level": 5
+    },
+    {
+      "from": "45",
+      "to": "141",
       "weight": 10.0,
       "level": 6
     },
@@ -1159,8 +1166,8 @@
       "level": 6
     },
     {
-      "from": "45",
-      "to": "141",
+      "from": "7",
+      "to": "184",
       "weight": 10.0,
       "level": 6
     },
@@ -1168,12 +1175,6 @@
       "from": "141",
       "to": "200",
       "weight": 10.0,
-      "level": 7
-    },
-    {
-      "from": "163",
-      "to": "165",
-      "weight": 11.0,
       "level": 7
     },
     {
@@ -1189,22 +1190,10 @@
       "level": 7
     },
     {
-      "from": "165",
-      "to": "183",
-      "weight": 9.0,
-      "level": 8
-    },
-    {
-      "from": "165",
-      "to": "130",
-      "weight": 8.0,
-      "level": 8
-    },
-    {
-      "from": "11",
-      "to": "62",
-      "weight": 10.0,
-      "level": 8
+      "from": "163",
+      "to": "165",
+      "weight": 11.0,
+      "level": 7
     },
     {
       "from": "11",
@@ -1220,20 +1209,62 @@
     },
     {
       "from": "11",
-      "to": "84",
-      "weight": 9.0,
-      "level": 8
-    },
-    {
-      "from": "11",
       "to": "53",
       "weight": 8.0,
       "level": 8
     },
     {
+      "from": "11",
+      "to": "62",
+      "weight": 10.0,
+      "level": 8
+    },
+    {
+      "from": "11",
+      "to": "84",
+      "weight": 9.0,
+      "level": 8
+    },
+    {
+      "from": "165",
+      "to": "130",
+      "weight": 8.0,
+      "level": 8
+    },
+    {
+      "from": "165",
+      "to": "183",
+      "weight": 9.0,
+      "level": 8
+    },
+    {
+      "from": "130",
+      "to": "33",
+      "weight": 7.0,
+      "level": 9
+    },
+    {
+      "from": "166",
+      "to": "81",
+      "weight": 10.0,
+      "level": 9
+    },
+    {
+      "from": "53",
+      "to": "69",
+      "weight": 9.0,
+      "level": 9
+    },
+    {
       "from": "62",
       "to": "169",
       "weight": 13.0,
+      "level": 9
+    },
+    {
+      "from": "84",
+      "to": "197",
+      "weight": 9.0,
       "level": 9
     },
     {
@@ -1255,16 +1286,10 @@
       "level": 10
     },
     {
-      "from": "166",
-      "to": "81",
-      "weight": 10.0,
-      "level": 9
-    },
-    {
-      "from": "84",
-      "to": "197",
+      "from": "197",
+      "to": "24",
       "weight": 9.0,
-      "level": 9
+      "level": 10
     },
     {
       "from": "10",
@@ -1279,10 +1304,22 @@
       "level": 11
     },
     {
-      "from": "102",
-      "to": "181",
-      "weight": 11.0,
-      "level": 12
+      "from": "196",
+      "to": "9",
+      "weight": 10.0,
+      "level": 11
+    },
+    {
+      "from": "24",
+      "to": "88",
+      "weight": 9.0,
+      "level": 11
+    },
+    {
+      "from": "86",
+      "to": "6",
+      "weight": 9.0,
+      "level": 11
     },
     {
       "from": "102",
@@ -1298,15 +1335,87 @@
     },
     {
       "from": "102",
+      "to": "181",
+      "weight": 11.0,
+      "level": 12
+    },
+    {
+      "from": "102",
       "to": "38",
       "weight": 9.0,
       "level": 12
+    },
+    {
+      "from": "119",
+      "to": "90",
+      "weight": 9.0,
+      "level": 12
+    },
+    {
+      "from": "9",
+      "to": "198",
+      "weight": 12.0,
+      "level": 12
+    },
+    {
+      "from": "103",
+      "to": "113",
+      "weight": 8.0,
+      "level": 13
+    },
+    {
+      "from": "103",
+      "to": "127",
+      "weight": 8.0,
+      "level": 13
+    },
+    {
+      "from": "103",
+      "to": "20",
+      "weight": 9.0,
+      "level": 13
+    },
+    {
+      "from": "103",
+      "to": "43",
+      "weight": 9.0,
+      "level": 13
+    },
+    {
+      "from": "147",
+      "to": "32",
+      "weight": 9.0,
+      "level": 13
     },
     {
       "from": "181",
       "to": "121",
       "weight": 10.0,
       "level": 13
+    },
+    {
+      "from": "198",
+      "to": "104",
+      "weight": 9.0,
+      "level": 13
+    },
+    {
+      "from": "198",
+      "to": "193",
+      "weight": 9.0,
+      "level": 13
+    },
+    {
+      "from": "104",
+      "to": "195",
+      "weight": 10.0,
+      "level": 14
+    },
+    {
+      "from": "113",
+      "to": "91",
+      "weight": 8.0,
+      "level": 14
     },
     {
       "from": "121",
@@ -1327,45 +1436,33 @@
       "level": 14
     },
     {
-      "from": "119",
-      "to": "90",
+      "from": "193",
+      "to": "159",
       "weight": 9.0,
-      "level": 12
+      "level": 14
     },
     {
-      "from": "103",
-      "to": "20",
+      "from": "193",
+      "to": "17",
       "weight": 9.0,
-      "level": 13
-    },
-    {
-      "from": "103",
-      "to": "43",
-      "weight": 9.0,
-      "level": 13
-    },
-    {
-      "from": "103",
-      "to": "113",
-      "weight": 8.0,
-      "level": 13
-    },
-    {
-      "from": "103",
-      "to": "127",
-      "weight": 8.0,
-      "level": 13
-    },
-    {
-      "from": "147",
-      "to": "32",
-      "weight": 9.0,
-      "level": 13
+      "level": 14
     },
     {
       "from": "20",
       "to": "137",
       "weight": 9.0,
+      "level": 14
+    },
+    {
+      "from": "32",
+      "to": "118",
+      "weight": 9.0,
+      "level": 14
+    },
+    {
+      "from": "32",
+      "to": "3",
+      "weight": 11.0,
       "level": 14
     },
     {
@@ -1381,9 +1478,33 @@
       "level": 14
     },
     {
-      "from": "167",
-      "to": "161",
-      "weight": 10.0,
+      "from": "118",
+      "to": "100",
+      "weight": 9.0,
+      "level": 15
+    },
+    {
+      "from": "118",
+      "to": "55",
+      "weight": 15.0,
+      "level": 15
+    },
+    {
+      "from": "118",
+      "to": "73",
+      "weight": 8.0,
+      "level": 15
+    },
+    {
+      "from": "137",
+      "to": "180",
+      "weight": 8.0,
+      "level": 15
+    },
+    {
+      "from": "159",
+      "to": "59",
+      "weight": 9.0,
       "level": 15
     },
     {
@@ -1393,22 +1514,22 @@
       "level": 15
     },
     {
-      "from": "161",
-      "to": "63",
-      "weight": 9.0,
-      "level": 16
+      "from": "167",
+      "to": "161",
+      "weight": 10.0,
+      "level": 15
     },
     {
-      "from": "32",
-      "to": "3",
-      "weight": 11.0,
-      "level": 14
+      "from": "190",
+      "to": "34",
+      "weight": 10.0,
+      "level": 15
     },
     {
-      "from": "32",
-      "to": "118",
+      "from": "195",
+      "to": "133",
       "weight": 9.0,
-      "level": 14
+      "level": 15
     },
     {
       "from": "3",
@@ -1423,22 +1544,70 @@
       "level": 15
     },
     {
+      "from": "4",
+      "to": "117",
+      "weight": 10.0,
+      "level": 15
+    },
+    {
+      "from": "4",
+      "to": "154",
+      "weight": 9.0,
+      "level": 15
+    },
+    {
+      "from": "4",
+      "to": "16",
+      "weight": 9.0,
+      "level": 15
+    },
+    {
+      "from": "50",
+      "to": "126",
+      "weight": 9.0,
+      "level": 15
+    },
+    {
+      "from": "87",
+      "to": "142",
+      "weight": 9.0,
+      "level": 15
+    },
+    {
+      "from": "87",
+      "to": "172",
+      "weight": 10.0,
+      "level": 15
+    },
+    {
+      "from": "87",
+      "to": "18",
+      "weight": 10.0,
+      "level": 15
+    },
+    {
+      "from": "100",
+      "to": "143",
+      "weight": 9.0,
+      "level": 16
+    },
+    {
+      "from": "100",
+      "to": "68",
+      "weight": 9.0,
+      "level": 16
+    },
+    {
       "from": "115",
       "to": "75",
       "weight": 8.0,
       "level": 16
     },
     {
-      "from": "63",
-      "to": "40",
-      "weight": 11.0,
-      "level": 17
-    },
-    {
-      "from": "40",
-      "to": "95",
+      "from": "117",
+      "to": "64",
       "weight": 9.0,
-      "level": 18
+      "level": 16
     },
     {
       "from": "122",
@@ -1453,62 +1622,14 @@
       "level": 16
     },
     {
-      "from": "139",
-      "to": "82",
-      "weight": 9.0,
-      "level": 17
-    },
-    {
-      "from": "196",
-      "to": "9",
-      "weight": 10.0,
-      "level": 11
-    },
-    {
-      "from": "9",
-      "to": "198",
-      "weight": 12.0,
-      "level": 12
-    },
-    {
-      "from": "198",
-      "to": "104",
-      "weight": 9.0,
-      "level": 13
-    },
-    {
-      "from": "198",
-      "to": "193",
-      "weight": 9.0,
-      "level": 13
-    },
-    {
-      "from": "86",
-      "to": "6",
-      "weight": 9.0,
-      "level": 11
-    },
-    {
-      "from": "104",
-      "to": "195",
-      "weight": 10.0,
-      "level": 14
-    },
-    {
-      "from": "195",
-      "to": "133",
-      "weight": 9.0,
-      "level": 15
-    },
-    {
-      "from": "133",
-      "to": "41",
-      "weight": 10.0,
+      "from": "126",
+      "to": "30",
+      "weight": 8.0,
       "level": 16
     },
     {
       "from": "133",
-      "to": "98",
+      "to": "41",
       "weight": 10.0,
       "level": 16
     },
@@ -1525,82 +1646,64 @@
       "level": 16
     },
     {
-      "from": "41",
-      "to": "124",
-      "weight": 11.0,
-      "level": 17
-    },
-    {
-      "from": "41",
-      "to": "12",
-      "weight": 9.0,
-      "level": 17
-    },
-    {
-      "from": "98",
-      "to": "65",
-      "weight": 13.0,
-      "level": 17
-    },
-    {
-      "from": "65",
-      "to": "157",
+      "from": "133",
+      "to": "98",
       "weight": 10.0,
-      "level": 18
+      "level": 16
     },
     {
-      "from": "48",
-      "to": "162",
+      "from": "142",
+      "to": "123",
+      "weight": 9.0,
+      "level": 16
+    },
+    {
+      "from": "142",
+      "to": "21",
+      "weight": 8.0,
+      "level": 16
+    },
+    {
+      "from": "154",
+      "to": "29",
       "weight": 10.0,
-      "level": 17
+      "level": 16
     },
     {
-      "from": "48",
-      "to": "111",
-      "weight": 9.0,
-      "level": 17
-    },
-    {
-      "from": "193",
-      "to": "159",
-      "weight": 9.0,
-      "level": 14
-    },
-    {
-      "from": "193",
-      "to": "17",
-      "weight": 9.0,
-      "level": 14
-    },
-    {
-      "from": "159",
-      "to": "59",
-      "weight": 9.0,
-      "level": 15
-    },
-    {
-      "from": "137",
-      "to": "180",
+      "from": "16",
+      "to": "105",
       "weight": 8.0,
-      "level": 15
+      "level": 16
     },
     {
-      "from": "118",
-      "to": "55",
-      "weight": 15.0,
-      "level": 15
-    },
-    {
-      "from": "118",
-      "to": "100",
+      "from": "16",
+      "to": "42",
       "weight": 9.0,
-      "level": 15
+      "level": 16
     },
     {
-      "from": "118",
-      "to": "73",
-      "weight": 8.0,
-      "level": 15
+      "from": "161",
+      "to": "63",
+      "weight": 9.0,
+      "level": 16
+    },
+    {
+      "from": "172",
+      "to": "153",
+      "weight": 9.0,
+      "level": 16
+    },
+    {
+      "from": "18",
+      "to": "160",
+      "weight": 10.0,
+      "level": 16
+    },
+    {
+      "from": "18",
+      "to": "178",
+      "weight": 9.0,
+      "level": 16
     },
     {
       "from": "55",
@@ -1609,21 +1712,21 @@
       "level": 16
     },
     {
-      "from": "100",
-      "to": "143",
-      "weight": 9.0,
+      "from": "73",
+      "to": "138",
+      "weight": 8.0,
       "level": 16
     },
     {
-      "from": "100",
-      "to": "68",
-      "weight": 9.0,
-      "level": 16
+      "from": "105",
+      "to": "112",
+      "weight": 7.0,
+      "level": 17
     },
     {
-      "from": "143",
-      "to": "99",
-      "weight": 10.0,
+      "from": "139",
+      "to": "82",
+      "weight": 9.0,
       "level": 17
     },
     {
@@ -1639,9 +1742,141 @@
       "level": 17
     },
     {
-      "from": "192",
-      "to": "83",
+      "from": "143",
+      "to": "99",
       "weight": 10.0,
+      "level": 17
+    },
+    {
+      "from": "160",
+      "to": "135",
+      "weight": 9.0,
+      "level": 17
+    },
+    {
+      "from": "160",
+      "to": "70",
+      "weight": 8.0,
+      "level": 17
+    },
+    {
+      "from": "178",
+      "to": "174",
+      "weight": 9.0,
+      "level": 17
+    },
+    {
+      "from": "29",
+      "to": "14",
+      "weight": 11.0,
+      "level": 17
+    },
+    {
+      "from": "29",
+      "to": "151",
+      "weight": 12.0,
+      "level": 17
+    },
+    {
+      "from": "29",
+      "to": "170",
+      "weight": 10.0,
+      "level": 17
+    },
+    {
+      "from": "29",
+      "to": "5",
+      "weight": 9.0,
+      "level": 17
+    },
+    {
+      "from": "41",
+      "to": "12",
+      "weight": 9.0,
+      "level": 17
+    },
+    {
+      "from": "41",
+      "to": "124",
+      "weight": 11.0,
+      "level": 17
+    },
+    {
+      "from": "42",
+      "to": "148",
+      "weight": 10.0,
+      "level": 17
+    },
+    {
+      "from": "48",
+      "to": "111",
+      "weight": 9.0,
+      "level": 17
+    },
+    {
+      "from": "48",
+      "to": "162",
+      "weight": 10.0,
+      "level": 17
+    },
+    {
+      "from": "63",
+      "to": "40",
+      "weight": 11.0,
+      "level": 17
+    },
+    {
+      "from": "98",
+      "to": "65",
+      "weight": 13.0,
+      "level": 17
+    },
+    {
+      "from": "111",
+      "to": "78",
+      "weight": 10.0,
+      "level": 18
+    },
+    {
+      "from": "12",
+      "to": "182",
+      "weight": 10.0,
+      "level": 18
+    },
+    {
+      "from": "135",
+      "to": "152",
+      "weight": 9.0,
+      "level": 18
+    },
+    {
+      "from": "148",
+      "to": "51",
+      "weight": 9.0,
+      "level": 18
+    },
+    {
+      "from": "151",
+      "to": "136",
+      "weight": 8.0,
+      "level": 18
+    },
+    {
+      "from": "151",
+      "to": "56",
+      "weight": 9.0,
+      "level": 18
+    },
+    {
+      "from": "170",
+      "to": "171",
+      "weight": 8.0,
+      "level": 18
+    },
+    {
+      "from": "174",
+      "to": "156",
+      "weight": 9.0,
       "level": 18
     },
     {
@@ -1651,34 +1886,94 @@
       "level": 18
     },
     {
-      "from": "83",
-      "to": "134",
+      "from": "192",
+      "to": "83",
       "weight": 10.0,
-      "level": 19
+      "level": 18
     },
     {
-      "from": "134",
-      "to": "71",
+      "from": "40",
+      "to": "95",
+      "weight": 9.0,
+      "level": 18
+    },
+    {
+      "from": "5",
+      "to": "176",
       "weight": 10.0,
-      "level": 20
+      "level": 18
     },
     {
-      "from": "134",
-      "to": "39",
-      "weight": 9.0,
-      "level": 20
-    },
-    {
-      "from": "71",
-      "to": "85",
-      "weight": 9.0,
-      "level": 21
+      "from": "5",
+      "to": "80",
+      "weight": 10.0,
+      "level": 18
     },
     {
       "from": "52",
       "to": "129",
       "weight": 9.0,
       "level": 18
+    },
+    {
+      "from": "65",
+      "to": "157",
+      "weight": 10.0,
+      "level": 18
+    },
+    {
+      "from": "129",
+      "to": "144",
+      "weight": 8.0,
+      "level": 19
+    },
+    {
+      "from": "129",
+      "to": "67",
+      "weight": 9.0,
+      "level": 19
+    },
+    {
+      "from": "129",
+      "to": "76",
+      "weight": 10.0,
+      "level": 19
+    },
+    {
+      "from": "136",
+      "to": "199",
+      "weight": 9.0,
+      "level": 19
+    },
+    {
+      "from": "156",
+      "to": "125",
+      "weight": 9.0,
+      "level": 19
+    },
+    {
+      "from": "176",
+      "to": "128",
+      "weight": 8.0,
+      "level": 19
+    },
+    {
+      "from": "176",
+      "to": "19",
+      "weight": 8.0,
+      "level": 19
+    },
+    {
+      "from": "176",
+      "to": "25",
+      "weight": 9.0,
+      "level": 19
+    },
+    {
+      "from": "176",
+      "to": "31",
+      "weight": 9.0,
+      "level": 19
     },
     {
       "from": "36",
@@ -1693,8 +1988,50 @@
       "level": 19
     },
     {
-      "from": "189",
-      "to": "194",
+      "from": "51",
+      "to": "149",
+      "weight": 9.0,
+      "level": 19
+    },
+    {
+      "from": "80",
+      "to": "13",
+      "weight": 12.0,
+      "level": 19
+    },
+    {
+      "from": "83",
+      "to": "134",
+      "weight": 10.0,
+      "level": 19
+    },
+    {
+      "from": "125",
+      "to": "57",
+      "weight": 9.0,
+      "level": 20
+    },
+    {
+      "from": "13",
+      "to": "146",
+      "weight": 8.0,
+      "level": 20
+    },
+    {
+      "from": "134",
+      "to": "39",
+      "weight": 9.0,
+      "level": 20
+    },
+    {
+      "from": "134",
+      "to": "71",
+      "weight": 10.0,
+      "level": 20
+    },
+    {
+      "from": "144",
+      "to": "94",
       "weight": 10.0,
       "level": 20
     },
@@ -1703,6 +2040,48 @@
       "to": "108",
       "weight": 9.0,
       "level": 20
+    },
+    {
+      "from": "189",
+      "to": "194",
+      "weight": 10.0,
+      "level": 20
+    },
+    {
+      "from": "199",
+      "to": "22",
+      "weight": 9.0,
+      "level": 20
+    },
+    {
+      "from": "31",
+      "to": "175",
+      "weight": 9.0,
+      "level": 20
+    },
+    {
+      "from": "108",
+      "to": "77",
+      "weight": 9.0,
+      "level": 21
+    },
+    {
+      "from": "108",
+      "to": "8",
+      "weight": 10.0,
+      "level": 21
+    },
+    {
+      "from": "146",
+      "to": "79",
+      "weight": 9.0,
+      "level": 21
+    },
+    {
+      "from": "175",
+      "to": "173",
+      "weight": 9.0,
+      "level": 21
     },
     {
       "from": "194",
@@ -1723,26 +2102,20 @@
       "level": 21
     },
     {
-      "from": "108",
-      "to": "8",
-      "weight": 10.0,
+      "from": "57",
+      "to": "26",
+      "weight": 8.0,
       "level": 21
     },
     {
-      "from": "108",
-      "to": "77",
+      "from": "71",
+      "to": "85",
       "weight": 9.0,
       "level": 21
     },
     {
       "from": "1",
       "to": "47",
-      "weight": 9.0,
-      "level": 22
-    },
-    {
-      "from": "107",
-      "to": "92",
       "weight": 9.0,
       "level": 22
     },
@@ -1765,280 +2138,10 @@
       "level": 22
     },
     {
-      "from": "12",
-      "to": "182",
-      "weight": 10.0,
-      "level": 18
-    },
-    {
-      "from": "4",
-      "to": "117",
-      "weight": 10.0,
-      "level": 15
-    },
-    {
-      "from": "4",
-      "to": "154",
+      "from": "107",
+      "to": "92",
       "weight": 9.0,
-      "level": 15
-    },
-    {
-      "from": "4",
-      "to": "16",
-      "weight": 9.0,
-      "level": 15
-    },
-    {
-      "from": "117",
-      "to": "64",
-      "weight": 9.0,
-      "level": 16
-    },
-    {
-      "from": "154",
-      "to": "29",
-      "weight": 10.0,
-      "level": 16
-    },
-    {
-      "from": "29",
-      "to": "151",
-      "weight": 12.0,
-      "level": 17
-    },
-    {
-      "from": "29",
-      "to": "14",
-      "weight": 11.0,
-      "level": 17
-    },
-    {
-      "from": "29",
-      "to": "170",
-      "weight": 10.0,
-      "level": 17
-    },
-    {
-      "from": "29",
-      "to": "5",
-      "weight": 9.0,
-      "level": 17
-    },
-    {
-      "from": "151",
-      "to": "56",
-      "weight": 9.0,
-      "level": 18
-    },
-    {
-      "from": "151",
-      "to": "136",
-      "weight": 8.0,
-      "level": 18
-    },
-    {
-      "from": "170",
-      "to": "171",
-      "weight": 8.0,
-      "level": 18
-    },
-    {
-      "from": "5",
-      "to": "176",
-      "weight": 10.0,
-      "level": 18
-    },
-    {
-      "from": "5",
-      "to": "80",
-      "weight": 10.0,
-      "level": 18
-    },
-    {
-      "from": "176",
-      "to": "25",
-      "weight": 9.0,
-      "level": 19
-    },
-    {
-      "from": "176",
-      "to": "31",
-      "weight": 9.0,
-      "level": 19
-    },
-    {
-      "from": "176",
-      "to": "128",
-      "weight": 8.0,
-      "level": 19
-    },
-    {
-      "from": "176",
-      "to": "19",
-      "weight": 8.0,
-      "level": 19
-    },
-    {
-      "from": "80",
-      "to": "13",
-      "weight": 12.0,
-      "level": 19
-    },
-    {
-      "from": "13",
-      "to": "146",
-      "weight": 8.0,
-      "level": 20
-    },
-    {
-      "from": "31",
-      "to": "175",
-      "weight": 9.0,
-      "level": 20
-    },
-    {
-      "from": "175",
-      "to": "173",
-      "weight": 9.0,
-      "level": 21
-    },
-    {
-      "from": "16",
-      "to": "42",
-      "weight": 9.0,
-      "level": 16
-    },
-    {
-      "from": "16",
-      "to": "105",
-      "weight": 8.0,
-      "level": 16
-    },
-    {
-      "from": "42",
-      "to": "148",
-      "weight": 10.0,
-      "level": 17
-    },
-    {
-      "from": "148",
-      "to": "51",
-      "weight": 9.0,
-      "level": 18
-    },
-    {
-      "from": "51",
-      "to": "149",
-      "weight": 9.0,
-      "level": 19
-    },
-    {
-      "from": "87",
-      "to": "172",
-      "weight": 10.0,
-      "level": 15
-    },
-    {
-      "from": "87",
-      "to": "18",
-      "weight": 10.0,
-      "level": 15
-    },
-    {
-      "from": "87",
-      "to": "142",
-      "weight": 9.0,
-      "level": 15
-    },
-    {
-      "from": "172",
-      "to": "153",
-      "weight": 9.0,
-      "level": 16
-    },
-    {
-      "from": "18",
-      "to": "160",
-      "weight": 10.0,
-      "level": 16
-    },
-    {
-      "from": "18",
-      "to": "178",
-      "weight": 9.0,
-      "level": 16
-    },
-    {
-      "from": "160",
-      "to": "135",
-      "weight": 9.0,
-      "level": 17
-    },
-    {
-      "from": "160",
-      "to": "70",
-      "weight": 8.0,
-      "level": 17
-    },
-    {
-      "from": "135",
-      "to": "152",
-      "weight": 9.0,
-      "level": 18
-    },
-    {
-      "from": "178",
-      "to": "174",
-      "weight": 9.0,
-      "level": 17
-    },
-    {
-      "from": "174",
-      "to": "156",
-      "weight": 9.0,
-      "level": 18
-    },
-    {
-      "from": "156",
-      "to": "125",
-      "weight": 9.0,
-      "level": 19
-    },
-    {
-      "from": "125",
-      "to": "57",
-      "weight": 9.0,
-      "level": 20
-    },
-    {
-      "from": "57",
-      "to": "26",
-      "weight": 8.0,
-      "level": 21
-    },
-    {
-      "from": "111",
-      "to": "78",
-      "weight": 10.0,
-      "level": 18
-    },
-    {
-      "from": "129",
-      "to": "76",
-      "weight": 10.0,
-      "level": 19
-    },
-    {
-      "from": "129",
-      "to": "67",
-      "weight": 9.0,
-      "level": 19
-    },
-    {
-      "from": "129",
-      "to": "144",
-      "weight": 8.0,
-      "level": 19
+      "level": 22
     },
     {
       "from": "85",
@@ -2065,6 +2168,12 @@
       "level": 23
     },
     {
+      "from": "187",
+      "to": "96",
+      "weight": 9.0,
+      "level": 23
+    },
+    {
       "from": "35",
       "to": "27",
       "weight": 10.0,
@@ -2077,58 +2186,10 @@
       "level": 24
     },
     {
-      "from": "54",
-      "to": "188",
-      "weight": 10.0,
-      "level": 25
-    },
-    {
       "from": "60",
       "to": "114",
       "weight": 8.0,
       "level": 24
-    },
-    {
-      "from": "197",
-      "to": "24",
-      "weight": 9.0,
-      "level": 10
-    },
-    {
-      "from": "24",
-      "to": "88",
-      "weight": 9.0,
-      "level": 11
-    },
-    {
-      "from": "142",
-      "to": "123",
-      "weight": 9.0,
-      "level": 16
-    },
-    {
-      "from": "142",
-      "to": "21",
-      "weight": 8.0,
-      "level": 16
-    },
-    {
-      "from": "74",
-      "to": "23",
-      "weight": 11.0,
-      "level": 5
-    },
-    {
-      "from": "113",
-      "to": "91",
-      "weight": 8.0,
-      "level": 14
-    },
-    {
-      "from": "187",
-      "to": "96",
-      "weight": 9.0,
-      "level": 23
     },
     {
       "from": "96",
@@ -2143,70 +2204,10 @@
       "level": 25
     },
     {
-      "from": "53",
-      "to": "69",
-      "weight": 9.0,
-      "level": 9
-    },
-    {
-      "from": "73",
-      "to": "138",
-      "weight": 8.0,
-      "level": 16
-    },
-    {
-      "from": "190",
-      "to": "34",
+      "from": "54",
+      "to": "188",
       "weight": 10.0,
-      "level": 15
-    },
-    {
-      "from": "50",
-      "to": "126",
-      "weight": 9.0,
-      "level": 15
-    },
-    {
-      "from": "126",
-      "to": "30",
-      "weight": 8.0,
-      "level": 16
-    },
-    {
-      "from": "144",
-      "to": "94",
-      "weight": 10.0,
-      "level": 20
-    },
-    {
-      "from": "146",
-      "to": "79",
-      "weight": 9.0,
-      "level": 21
-    },
-    {
-      "from": "136",
-      "to": "199",
-      "weight": 9.0,
-      "level": 19
-    },
-    {
-      "from": "199",
-      "to": "22",
-      "weight": 9.0,
-      "level": 20
-    },
-    {
-      "from": "105",
-      "to": "112",
-      "weight": 7.0,
-      "level": 17
-    },
-    {
-      "from": "130",
-      "to": "33",
-      "weight": 7.0,
-      "level": 9
+      "level": 25
     }
   ]
 }

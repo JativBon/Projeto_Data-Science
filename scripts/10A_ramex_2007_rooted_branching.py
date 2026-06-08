@@ -1,8 +1,8 @@
-"""
+﻿"""
 10A_ramex_2007_rooted_branching.py
 
-Esta fase implementa o RAMEX 2007 formal através de Maximum Weight Rooted
-Branching, conforme o artigo de Cavique (2007). Não usa a expansão greedy local
+Esta fase implementa o RAMEX 2007 formal atravÃ©s de Maximum Weight Rooted
+Branching, conforme o artigo de Cavique (2007). NÃ£o usa a expansÃ£o greedy local
 mantida em 07_ramex_simplificado.py.
 """
 from __future__ import annotations
@@ -22,6 +22,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
+from ramex_validation import validate_rooted_branching as common_validate_rooted_branching
 
 REQUIRED_EDGE_COLUMNS = ["From", "To", "Weight"]
 METHOD_NAME = "maximum_weight_rooted_branching"
@@ -37,12 +38,12 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--allow-self-loops", action="store_true", help="Manter self-loops no input.")
     parser.add_argument("--output-json", default=None, help="JSON a gerar.")
     parser.add_argument("--output-dot", default=None, help="DOT opcional.")
-    parser.add_argument("--output-expanded-paths", default=None, help="CSV opcional com caminhos dominantes da expansão.")
-    parser.add_argument("--compare-simplified", action="store_true", help="Gerar comparação técnica com a heuristica 07.")
+    parser.add_argument("--output-expanded-paths", default=None, help="CSV opcional com caminhos dominantes da expansÃ£o.")
+    parser.add_argument("--compare-simplified", action="store_true", help="Gerar comparaÃ§Ã£o tÃ©cnica com a heuristica 07.")
     parser.add_argument("--input-type", choices=["edges"], default="edges", help="Mantido por compatibilidade.")
     args = parser.parse_args()
     if args.root and args.auto_root:
-        parser.error("Use apenas --root ou --auto-root, não ambos.")
+        parser.error("Use apenas --root ou --auto-root, nÃ£o ambos.")
     return args
 
 
@@ -60,7 +61,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
     try:
         df = pd.read_csv(path)
     except pd.errors.EmptyDataError as exc:
-        raise ValueError("O CSV de arestas está vazio.") from exc
+        raise ValueError("O CSV de arestas estÃ¡ vazio.") from exc
 
     if missing := [column for column in REQUIRED_EDGE_COLUMNS if column not in df.columns]:
         raise ValueError(f"Colunas obrigatorias em falta: {missing}")
@@ -74,7 +75,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
     valid_mask = df["From"].notna() & df["To"].notna() & df["Weight"].notna() & (df["Weight"] > 0)
     invalid_count = int(original_len - valid_mask.sum())
     if invalid_count:
-        warnings.append(f"Ignoradas {invalid_count} arestas inválidas ou com peso não positivo.")
+        warnings.append(f"Ignoradas {invalid_count} arestas invÃ¡lidas ou com peso nÃ£o positivo.")
 
     df = df.loc[valid_mask].copy()
     df["From"] = df["From"].astype(str)
@@ -89,7 +90,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
             df = df.loc[~loop_mask].copy()
 
     if df.empty:
-        raise ValueError("Não existem arestas válidas com peso positivo.")
+        raise ValueError("NÃ£o existem arestas vÃ¡lidas com peso positivo.")
 
     df = (
         df.groupby(["From", "To"], as_index=False)["Weight"]
@@ -101,7 +102,7 @@ def load_edges(path: Path, allow_self_loops: bool) -> tuple[nx.DiGraph, list[str
     graph = nx.DiGraph()
     graph.add_weighted_edges_from(df[REQUIRED_EDGE_COLUMNS].itertuples(index=False))
     if graph.number_of_edges() == 0:
-        raise ValueError("Grafo vazio após validação das arestas.")
+        raise ValueError("Grafo vazio apÃ³s validaÃ§Ã£o das arestas.")
     return graph, warnings
 
 
@@ -133,7 +134,7 @@ def choose_auto_root(graph: nx.DiGraph, warnings: list[str]) -> tuple[str, str]:
             node,
         ),
     )
-    warnings.append("No SOURCE/START não existe e o grafo não tem nós sem entradas; foi escolhida uma raiz real dominante.")
+    warnings.append("No SOURCE/START nÃ£o existe e o grafo nÃ£o tem nÃ³s sem entradas; foi escolhida uma raiz real dominante.")
     return chosen, "dominant_real_root"
 
 
@@ -141,7 +142,7 @@ def select_root(graph: nx.DiGraph, requested_root: str | None, auto_root: bool, 
     if requested_root:
         root = str(requested_root).strip()
         if root not in graph:
-            raise ValueError(f"Raiz indicada não existe no grafo: {root}")
+            raise ValueError(f"Raiz indicada nÃ£o existe no grafo: {root}")
         return root, "provided_root"
     if auto_root or requested_root is None:
         return choose_auto_root(graph, warnings)
@@ -152,17 +153,27 @@ def reachable_subgraph(graph: nx.DiGraph, root: str, warnings: list[str]) -> nx.
     reachable = set(nx.descendants(graph, root)) | {root}
     unreachable = set(graph.nodes) - reachable
     if unreachable:
-        warnings.append("Nem todos os nós são alcançáveis a partir da raiz; a arborescência cobre apenas o subgrafo alcançável.")
+        warnings.append("Nem todos os nÃ³s sÃ£o alcanÃ§Ã¡veis a partir da raiz; a arborescÃªncia cobre apenas o subgrafo alcanÃ§Ã¡vel.")
 
     subgraph = nx.DiGraph(graph.subgraph(reachable).copy())
     if subgraph.number_of_nodes() <= 1:
-        raise ValueError("O subgrafo alcançável a partir da raiz não contém nós suficientes.")
+        raise ValueError("O subgrafo alcanÃ§Ã¡vel a partir da raiz nÃ£o contÃ©m nÃ³s suficientes.")
     if subgraph.number_of_edges() == 0:
-        raise ValueError("O subgrafo alcançável a partir da raiz não contém arestas.")
+        raise ValueError("O subgrafo alcanÃ§Ã¡vel a partir da raiz nÃ£o contÃ©m arestas.")
     return subgraph
 
 
-def maximum_weight_rooted_branching(graph: nx.DiGraph, root: str) -> nx.DiGraph:
+def maximum_weight_rooted_branching(graph: nx.DiGraph, root: str | None = None, warnings: list[str] | None = None) -> nx.DiGraph:
+    if warnings is None:
+        warnings = []
+    if root is None:
+        root, root_selection = choose_auto_root(graph, warnings)
+    else:
+        root = str(root)
+        root_selection = "provided_root"
+    if root not in graph:
+        raise ValueError(f"Raiz indicada nÃ£o existe no grafo: {root}")
+
     working = nx.DiGraph(graph.copy())
     working.remove_edges_from(list(working.in_edges(root)))
     branching = nx.algorithms.tree.branchings.maximum_spanning_arborescence(
@@ -176,42 +187,19 @@ def maximum_weight_rooted_branching(graph: nx.DiGraph, root: str) -> nx.DiGraph:
     tree.add_nodes_from(str(node) for node in branching.nodes)
     for source, target, data in branching.edges(data=True):
         tree.add_edge(str(source), str(target), weight=float(data.get("weight", 0)))
+    tree.graph["root"] = root
+    tree.graph["root_selection"] = root_selection
     return tree
 
 
+def validate_ramex2007_arborescence(tree: nx.DiGraph, root: str, original_graph: nx.DiGraph) -> dict[str, Any]:
+    return common_validate_rooted_branching(tree, root, original_graph)
+
 def validate_rooted_branching(tree: nx.DiGraph, root: str) -> dict[str, Any]:
-    if root not in tree:
-        raise ValueError("A raiz não está presente na arborescência final.")
-
-    is_dag = nx.is_directed_acyclic_graph(tree)
-    root_in_degree = int(tree.in_degree(root))
-    non_root_degrees = [int(degree) for node, degree in tree.in_degree() if node != root]
-    max_non_root_in_degree = max(non_root_degrees, default=0)
-    reachable = set(nx.descendants(tree, root)) | {root}
-    reachable_from_root = reachable == set(tree.nodes)
-    edge_count_ok = tree.number_of_edges() == tree.number_of_nodes() - 1 if tree.number_of_nodes() > 0 else True
-    is_arborescence = is_dag and root_in_degree == 0 and max_non_root_in_degree <= 1 and reachable_from_root and edge_count_ok
-
-    if not is_dag:
-        raise ValueError("A arborescência contém ciclos.")
-    if root_in_degree != 0:
-        raise ValueError("A raiz tem in_degree diferente de 0.")
-    if max_non_root_in_degree > 1:
-        raise ValueError("Existe nó não-raiz com in_degree superior a 1.")
-    if not reachable_from_root:
-        raise ValueError("Nem todos os nós selecionados são alcançáveis a partir da raiz.")
-    if not edge_count_ok:
-        raise ValueError("A arborescência não cumpre edges = nodes - 1.")
-
-    return {
-        "is_dag": is_dag,
-        "is_arborescence": is_arborescence,
-        "root_in_degree": root_in_degree,
-        "max_non_root_in_degree": max_non_root_in_degree,
-        "reachable_from_root": reachable_from_root,
-        "edge_count_ok": edge_count_ok,
-    }
-
+    validation = common_validate_rooted_branching(tree, root)
+    if not validation["is_valid_rooted_branching"]:
+        raise ValueError("; ".join(validation["validation_messages"]))
+    return validation
 
 def tree_rows(tree: nx.DiGraph, root: str) -> tuple[list[dict[str, Any]], dict[str, int]]:
     levels = nx.single_source_shortest_path_length(tree, root)
@@ -355,7 +343,7 @@ def draw_tree(tree: nx.DiGraph, root: str, output_png: Path) -> None:
             font_size=edge_label_font,
             bbox={"boxstyle": "round,pad=0.12", "fc": "white", "ec": "#cbd5e1", "alpha": 0.88},
         )
-    plt.title("RAMEX 2007 - Arvore tecnica completa sem cortes", fontsize=18, fontweight="bold")
+    plt.title("RAMEX 2007 â€” ArborescÃªncia Dirigida por Maximum Weight Rooted Branching", fontsize=18, fontweight="bold")
     plt.axis("off")
     plt.tight_layout()
     output_png.parent.mkdir(parents=True, exist_ok=True)
@@ -407,6 +395,16 @@ def write_compare_simplified(graph: nx.DiGraph, formal_tree: nx.DiGraph, root: s
     return rows
 
 
+def canonical_export_paths(output_csv: Path, output_json: Path, output_png: Path) -> dict[str, Path]:
+    return {
+        "edges_csv": output_csv.parent / "ramex2007_edges.csv",
+        "nodes_csv": output_csv.parent / "ramex2007_nodes.csv",
+        "tree_json": output_json.parent / "ramex2007_tree.json",
+        "metrics_json": output_json.parent / "ramex2007_metrics.json",
+        "tree_png": output_png.parent / "ramex2007_tree.png",
+    }
+
+
 def export_outputs(
     graph: nx.DiGraph,
     reachable_graph: nx.DiGraph,
@@ -416,21 +414,25 @@ def export_outputs(
     args: argparse.Namespace,
     warnings: list[str],
 ) -> dict[str, Any]:
-    validation = validate_rooted_branching(tree, root)
+    validation = validate_ramex2007_arborescence(tree, root, graph)
     rows, levels = tree_rows(tree, root)
     if not rows:
-        raise ValueError("Não foram selecionadas arestas para exportar.")
+        raise ValueError("NÃ£o foram selecionadas arestas para exportar.")
 
     output_csv = Path(args.output_csv)
     output_png = Path(args.output_png)
     output_json = Path(args.output_json) if args.output_json else Path("data/json") / output_csv.with_suffix(".json").name
+    canonical_paths = canonical_export_paths(output_csv, output_json, output_png)
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     output_json.parent.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(rows, columns=["From", "To", "Weight", "Level"]).to_csv(output_csv, index=False, encoding="utf-8")
+    edge_rows_df = pd.DataFrame(rows, columns=["From", "To", "Weight", "Level"])
+    edge_rows_df.to_csv(output_csv, index=False, encoding="utf-8")
+    edge_rows_df.to_csv(canonical_paths["edges_csv"], index=False, encoding="utf-8")
     draw_tree(tree, root, output_png)
     complete_png = output_png.with_name(output_png.stem + "_tree_complete.png")
     if complete_png != output_png:
         shutil.copyfile(output_png, complete_png)
+    shutil.copyfile(output_png, canonical_paths["tree_png"])
 
     total_weight_original = sum(float(data["weight"]) for _, _, data in graph.edges(data=True))
     reachable_total_weight = sum(float(data["weight"]) for _, _, data in reachable_graph.edges(data=True))
@@ -449,9 +451,33 @@ def export_outputs(
         columns=["path", "start", "end", "branch_depth", "path_weight", "bottleneck_weight", "edges"],
     ).to_csv(expanded_paths_csv, index=False, encoding="utf-8")
 
+    node_rows = [
+        {
+            "Node": str(node),
+            "Level": levels.get(str(node), 0),
+            "IsRoot": str(node) == root,
+            "InDegree": int(tree.in_degree(node)),
+            "OutDegree": int(tree.out_degree(node)),
+        }
+        for node in sorted(tree.nodes, key=lambda item: (levels.get(str(item), 0), str(item)))
+    ]
+    pd.DataFrame(node_rows, columns=["Node", "Level", "IsRoot", "InDegree", "OutDegree"]).to_csv(
+        canonical_paths["nodes_csv"],
+        index=False,
+        encoding="utf-8",
+    )
+
+    final_label = (
+        "RAMEX 2007 formal"
+        if validation["is_valid_arborescence"]
+        else "Estrutura RAMEX 2007 invÃ¡lida â€” requer revisÃ£o."
+    )
+
     payload = {
-        "algorithm": "RAMEX 2007 Rooted Branching",
+        "algorithm": final_label,
+        "display_title": final_label,
         "method": METHOD_NAME,
+        "artifact_type": "ramex2007_formal" if validation["is_valid_arborescence"] else "ramex2007_invalid_structure",
         "paper_alignment": {
             "main_phases": [
                 "transformacao_da_base_de_dados_em_rede_de_transicao_de_estados",
@@ -473,16 +499,19 @@ def export_outputs(
         "reachable_total_weight": reachable_total_weight,
         "preserved_reachable_weight_percent": preserved_reachable,
         "is_dag": validation["is_dag"],
-        "is_arborescence": validation["is_arborescence"],
+        "is_arborescence": validation["is_valid_arborescence"],
+        "is_valid_arborescence": validation["is_valid_arborescence"],
         "root_in_degree": validation["root_in_degree"],
         "max_non_root_in_degree": validation["max_non_root_in_degree"],
-        "reachable_from_root": validation["reachable_from_root"],
+        "reachable_from_root": validation["all_reachable_from_root"],
         "original_graph_has_cycles": original_has_cycles,
         "original_graph_can_contain_cycles": True,
         "expanded_paths_csv": str(expanded_paths_csv),
         "tree_complete_png": str(complete_png),
+        "canonical_exports": {key: str(path) for key, path in canonical_paths.items()},
+        "validation": validation,
         "warnings": warnings,
-        "nodes": [{"id": str(node), "level": levels.get(str(node), 0), "is_root": str(node) == root} for node in sorted(tree.nodes, key=lambda item: (levels.get(str(item), 0), str(item)))],
+        "nodes": [{"id": row["Node"], "level": row["Level"], "is_root": row["IsRoot"]} for row in node_rows],
         "edges": [{"from": row["From"], "to": row["To"], "weight": row["Weight"], "level": row["Level"]} for row in rows],
         "condensation": {
             "input_nodes": graph.number_of_nodes(),
@@ -515,12 +544,15 @@ def export_outputs(
             "preserved_reachable_weight_percent": preserved_reachable,
             "is_acyclic": validation["is_dag"],
             "is_dag": validation["is_dag"],
-            "is_arborescence": validation["is_arborescence"],
-            "is_connected": validation["reachable_from_root"],
+            "is_arborescence": validation["is_valid_arborescence"],
+            "is_valid_arborescence": validation["is_valid_arborescence"],
+            "is_connected": validation["all_reachable_from_root"],
             "root_in_degree": validation["root_in_degree"],
             "max_indegree_except_root": validation["max_non_root_in_degree"],
             "max_non_root_in_degree": validation["max_non_root_in_degree"],
-            "reachable_from_root": validation["reachable_from_root"],
+            "reachable_from_root": validation["all_reachable_from_root"],
+            "all_reachable_from_root": validation["all_reachable_from_root"],
+            "expected_edges": validation["expected_edges"],
             "original_graph_has_cycles": original_has_cycles,
             "compression_ratio": compression_ratio,
             "removed_edges": removed_edges,
@@ -530,6 +562,8 @@ def export_outputs(
         },
     }
     output_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    canonical_paths["tree_json"].write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    canonical_paths["metrics_json"].write_text(json.dumps(validation, ensure_ascii=False, indent=2), encoding="utf-8")
 
     if args.output_dot:
         dot_path = Path(args.output_dot)
@@ -552,12 +586,17 @@ def main() -> None:
         tree = maximum_weight_rooted_branching(reachable_graph, root)
         payload = export_outputs(graph, reachable_graph, tree, root, root_selection, args, warnings)
 
+        print("RAMEX 2007 formal executado")
         print(f"Ficheiro lido: {args.input_edges_csv}")
         print(f"Raiz: {payload['root']} | criterio: {payload['root_selection']}")
         print(f"Nos originais: {payload['nodes_original']} | Arestas originais: {payload['edges_original']}")
         print(f"Nos selecionados: {payload['nodes_selected']} | Arestas selecionadas: {payload['edges_selected']}")
         print(f"Peso preservado: {payload['selected_weight']:.2f} de {payload['total_weight_original']:.2f} ({payload['preserved_weight_percent']:.2f}%)")
+        print(f"Validade estrutural: {payload['is_valid_arborescence']}")
         print(f"DAG: {payload['is_dag']} | Arborescencia: {payload['is_arborescence']} | root_in_degree: {payload['root_in_degree']} | max_non_root_in_degree: {payload['max_non_root_in_degree']}")
+        print("Ficheiros exportados:")
+        for label, path in payload.get("canonical_exports", {}).items():
+            print(f"- {label}: {path}")
         if payload["warnings"]:
             print("\nAvisos:\n" + "\n".join(f"- {warning}" for warning in payload["warnings"]))
     except Exception as exc:
@@ -567,3 +606,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -20,13 +20,72 @@ import matplotlib.pyplot as plt  # type: ignore
 import networkx as nx  # type: ignore
 import pandas as pd  # type: ignore
 
+SCRIPTS_DIR = Path(__file__).resolve().parents[1] / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 from forum_temporal_pipeline import run_forum_temporal_phase1, run_forum_temporal_phase2
 from ramex_forum_pipeline import run_ramex_forum
+from ramex_validation import validate_forward_tree, validate_observed_graph, validate_polytree, validate_rooted_branching
 
 ALLOWED_EXTENSIONS = {".txt", ".csv", ".xlsx"}
 
 ProgressCallback = Callable[[str, str], None]
 LogCallback = Callable[[str], None]
+
+
+ARTIFACT_SEMANTICS: dict[str, dict[str, str]] = {
+    "observed_graph": {
+        "label": "Grafo observado completo",
+        "description": "Rede original de transições",
+        "warning": "Rede completa extraída dos dados; pode ser densa e conter ciclos.",
+        "structural_note": "Pode conter ciclos, múltiplas entradas e elevada densidade",
+    },
+    "filtered_graph": {
+        "label": "Grafo observado filtrado",
+        "description": "Visualização exploratória",
+        "warning": "Não representa a saída final RAMEX",
+        "structural_note": "Subconjunto visual da rede original após filtros de legibilidade",
+    },
+    "simplified_ramex": {
+        "label": "RAMEX simplificado experimental",
+        "description": "Baseline heurístico",
+        "warning": "Não corresponde ao RAMEX 2007 formal",
+        "structural_note": "Heurística histórica/gulosa mantida apenas para comparação",
+    },
+    "ramex2007": {
+        "label": "RAMEX 2007 formal",
+        "description": "Maximum Weight Rooted Branching",
+        "interpretation": "Estrutura condensada obtida por rooted branching.",
+        "structural_note": "Arborescência dirigida extraída da rede ponderada",
+    },
+    "forward": {
+        "label": "Forward Heuristic",
+        "description": "Heurística com raiz conhecida",
+        "structural_note": "Expansão dirigida a partir de um nó inicial definido ou inferido",
+    },
+    "back_forward": {
+        "label": "Back-and-Forward Poly-tree",
+        "description": "Heurística para ausência de raiz clara",
+        "structural_note": "Expansão em ambos os sentidos a partir de uma relação dominante",
+    },
+    "polytree_formal": {
+        "label": "Poly-tree formal validada",
+        "description": "DAG cujo grafo não dirigido é uma árvore",
+        "interpretation": "Estrutura acíclica com forma de poly-tree.",
+        "structural_note": "Validação exige DAG e árvore no grafo não dirigido",
+    },
+    "sankey": {
+        "label": "Sankey RAMEX final",
+        "description": "Fluxo visual das arestas selecionadas pela estrutura RAMEX",
+        "warning": "O Sankey final deve usar apenas arestas da estrutura RAMEX selecionada.",
+        "structural_note": "Sankey observado é apenas diagnóstico complementar",
+    },
+}
+
+
+def artifact_meta(key: str) -> dict[str, str]:
+    return dict(ARTIFACT_SEMANTICS[key])
 
 
 def safe_filename(filename: str) -> str:
@@ -74,18 +133,75 @@ def normalize_text_value(value: Any) -> str | None:
 
 
 def load_simple_sequences(file_path: Path) -> list[list[str]]:
+    """
+    Carrega sequências simples de um ficheiro TXT ou CSV.
+
+    Formatos suportados:
+    1. Uma sequência por linha (itens separados por vírgula ou espaço):
+          a c d e h
+          a b d e g
+    2. Com coluna de contagem (a última coluna numérica ou cabeçalho count/n/#count):
+          sequence,count
+          acdeh,455
+          abdeg,191
+       ou sem cabeçalho:
+          a c d e h,455
+          a b d e g,191
+    """
     if file_path.suffix.lower() not in {".txt", ".csv"}:
         raise ValueError("Sequências simples devem usar ficheiro TXT ou CSV.")
 
-    sequences = [
-        [t.strip() for t in line.split("," if "," in line else None) if t.strip()]
-        for line in file_path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
-    valid = [seq for seq in sequences if len(seq) >= 2]
-    if not valid:
+    raw_lines = [ln.strip() for ln in file_path.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    if not raw_lines:
+        raise ValueError("Ficheiro vazio.")
+
+    # Detectar se existe cabeçalho com coluna de contagem
+    COUNT_HEADERS = {"count", "n", "#count", "freq", "frequency", "weight", "repetitions", "contagem"}
+    SEQ_HEADERS   = {"sequence", "seq", "sequencia", "sequência", "event_stream", "events"}
+
+    header_line = raw_lines[0].lower()
+    has_count_header = any(h in header_line for h in COUNT_HEADERS)
+    has_seq_header   = any(h in header_line for h in SEQ_HEADERS)
+
+    if has_count_header or has_seq_header:
+        data_lines = raw_lines[1:]  # saltar cabeçalho
+    else:
+        data_lines = raw_lines
+
+    sequences: list[list[str]] = []
+
+    for line in data_lines:
+        # Tentar separar por vírgula primeiro
+        parts = [p.strip() for p in line.split(",")]
+
+        # Detectar se o último token é um número inteiro (contagem)
+        count = 1
+        if len(parts) >= 2:
+            try:
+                count = int(parts[-1])
+                seq_part = ",".join(parts[:-1]).strip()
+            except ValueError:
+                seq_part = line
+        else:
+            seq_part = line
+
+        # Expandir os itens da sequência (por vírgula, tab ou espaço)
+        if "," in seq_part:
+            items = [t.strip() for t in seq_part.split(",") if t.strip()]
+        else:
+            items = [t.strip() for t in seq_part.split() if t.strip()]
+
+        # Se a sequência é uma palavra contínua sem separadores (ex: "acdeh"), expandir em caracteres
+        if len(items) == 1 and len(items[0]) > 1:
+            items = list(items[0])
+
+        if len(items) >= 2:
+            for _ in range(max(1, count)):
+                sequences.append(items)
+
+    if not sequences:
         raise ValueError("Não foram encontradas sequências válidas com tamanho mínimo 2.")
-    return valid
+    return sequences
 
 
 def sanitize_event_part(value: Any) -> str | None:
@@ -906,11 +1022,18 @@ def draw_graph(graph: nx.DiGraph, output_png: Path, root: str | None = None) -> 
                 bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="none", alpha=0.75),
             )
 
+    output_name = output_png.name.lower()
+    if "ramex_simplificado" in output_name:
+        title = "RAMEX simplificado experimental - baseline heuristico"
+    elif "ramex_polytree" in output_name:
+        title = "Poly-tree experimental - visualizacao exploratoria"
+    elif "grafo" in output_name:
+        title = "Grafo observado completo - rede original de transicoes"
+    else:
+        title = "Visualizacao da rede RAMEX"
     if is_dense:
-        ax.set_title(
-            f"Top {len(draw_edges)} de {len(all_edges)} arestas (ordenadas por peso)",
-            fontsize=11, color="#64748b", pad=6,
-        )
+        title = f"{title}\nTop {len(draw_edges)} de {len(all_edges)} arestas para legibilidade"
+    ax.set_title(title, fontsize=12 if not is_dense else 10, color="#0f172a", pad=8)
     ax.margins(0.18 if is_small else 0.12)
     ax.axis("off")
     plt.tight_layout(pad=2.5 if is_small else 1.5)
@@ -936,6 +1059,36 @@ def edges_to_records(df: pd.DataFrame) -> list[dict[str, Any]]:
 
 def graph_weight_sum(graph: nx.DiGraph) -> float:
     return float(sum(float(d.get("weight", 0.0) or 0.0) for _, _, d in graph.edges(data=True)))
+
+
+def dataframe_to_digraph(df: pd.DataFrame) -> nx.DiGraph:
+    graph = nx.DiGraph()
+    if df is None or df.empty:
+        return graph
+    for row in df.to_dict(orient="records"):
+        source = str(row.get("From") or row.get("from") or "").strip()
+        target = str(row.get("To") or row.get("to") or "").strip()
+        try:
+            weight = float(row.get("Weight", row.get("weight", 0)) or 0)
+        except (TypeError, ValueError):
+            weight = 0.0
+        if source and target and weight > 0:
+            graph.add_edge(source, target, weight=weight)
+    return graph
+
+
+def edge_records_to_digraph(records: list[dict[str, Any]] | None) -> nx.DiGraph:
+    graph = nx.DiGraph()
+    for row in records or []:
+        source = str(row.get("from") or row.get("From") or "").strip()
+        target = str(row.get("to") or row.get("To") or "").strip()
+        try:
+            weight = float(row.get("weight", row.get("Weight", 0)) or 0)
+        except (TypeError, ValueError):
+            weight = 0.0
+        if source and target and weight > 0:
+            graph.add_edge(source, target, weight=weight)
+    return graph
 
 
 def calculate_coverage_metrics(
@@ -1049,6 +1202,9 @@ def polytree_to_json(g_orig: nx.DiGraph, g_poly: nx.DiGraph, df_poly: pd.DataFra
         levels[dst] = min(levels.get(dst, level), level)
 
     return {
+        "artifact_type": "simplified_polytree_experimental",
+        "metadata": artifact_meta("simplified_ramex"),
+        "interpretation": "Poly-tree exploratória gerada como baseline heurístico; não representa o RAMEX 2007 formal.",
         "root": root,
         "strategy": strat,
         "metrics": metrics | {"strategy": strat},
@@ -1096,7 +1252,14 @@ def run_python_script(args: list[str], log_cb: LogCallback | None = None, step_n
     repo_root = Path(__file__).resolve().parents[1]
     if log_cb:
         log_cb(f"Comando executado ({step_name or Path(args[0]).name}): {' '.join(command)}")
-    result = subprocess.run(command, cwd=repo_root, capture_output=True, text=True)
+    result = subprocess.run(
+        command,
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     if result.returncode != 0:
         detail = result.stderr.strip() or result.stdout.strip() or "erro sem detalhe"
         raise ValueError(
@@ -1106,10 +1269,25 @@ def run_python_script(args: list[str], log_cb: LogCallback | None = None, step_n
 
 
 def choose_max_out_weight_root(edges_df: pd.DataFrame) -> str:
-    grouped = edges_df.groupby("From")["Weight"].sum().sort_values(ascending=False)
-    if grouped.empty:
+    """
+    Escolhe a raiz para o Forward heurístico.
+    Prioridade:
+      1. Nós com in-degree 0 no grafo observado (início natural das sequências),
+         desempatados por maior peso de saída.
+      2. Se nenhum nó tiver in-degree 0, usa o nó com maior peso de saída total.
+    """
+    if edges_df.empty:
         raise ValueError("Não foi possível escolher raiz por peso de saída.")
-    return str(grouped.index[0])
+    out_weight = edges_df.groupby("From")["Weight"].sum()
+    all_nodes = set(edges_df["From"].astype(str)) | set(edges_df["To"].astype(str))
+    nodes_with_incoming = set(edges_df["To"].astype(str))
+    zero_indegree = sorted(all_nodes - nodes_with_incoming)
+    if zero_indegree:
+        # Entre os nós sem entradas, escolher o de maior peso de saída
+        best = max(zero_indegree, key=lambda n: float(out_weight.get(n, 0)))
+        return str(best)
+    # Fallback: maior peso de saída global
+    return str(out_weight.sort_values(ascending=False).index[0])
 
 
 def pure_anchor(payload: dict[str, Any]) -> str:
@@ -1124,9 +1302,9 @@ def pure_anchor(payload: dict[str, Any]) -> str:
 def pure_validation_rows(ramex2007: dict[str, Any], forward: dict[str, Any], back_forward: dict[str, Any]) -> list[dict[str, Any]]:
     rows = []
     for label, payload in [
-        ("RAMEX 2007 Rooted Branching", ramex2007),
-        ("RAMEX Forward Heuristic", forward),
-        ("RAMEX Back-and-Forward Poly-tree Formal", back_forward),
+        ("RAMEX 2007 formal", ramex2007),
+        ("Forward Heuristic", forward),
+        ("Back-and-Forward Poly-tree", back_forward),
     ]:
         m = payload.get("metrics", {})
         rows.append({
@@ -1185,13 +1363,24 @@ def run_pure_ramex_outputs(
         "ramex2007_csv": f"ramex2007_{job_id}.csv",
         "ramex2007_json": f"ramex2007_{job_id}.json",
         "ramex2007_png": f"ramex2007_{job_id}.png",
+        "ramex2007_edges_csv": "ramex2007_edges.csv",
+        "ramex2007_nodes_csv": "ramex2007_nodes.csv",
+        "ramex2007_tree_json": "ramex2007_tree.json",
+        "ramex2007_metrics_json": "ramex2007_metrics.json",
+        "ramex2007_tree_png": "ramex2007_tree.png",
         "ramex2007_expanded_paths_csv": f"ramex2007_expanded_paths_{job_id}.csv",
         "forward_csv": f"ramex_forward_{job_id}.csv",
         "forward_json": f"ramex_forward_{job_id}.json",
         "forward_png": f"ramex_forward_{job_id}.png",
+        "forward_metrics_json": "forward_metrics.json",
         "back_forward_formal_csv": f"ramex_back_forward_formal_{job_id}.csv",
         "back_forward_formal_json": f"ramex_back_forward_formal_{job_id}.json",
         "back_forward_formal_png": f"ramex_back_forward_formal_{job_id}.png",
+        "back_forward_polytree_formal_edges_csv": "back_forward_polytree_formal_edges.csv",
+        "back_forward_polytree_formal_json": "back_forward_polytree_formal.json",
+        "back_forward_polytree_formal_metrics_json": "back_forward_polytree_formal_metrics.json",
+        "back_forward_polytree_formal_hierarchical_png": "back_forward_polytree_formal_hierarchical.png",
+        "back_forward_polytree_formal_neato_optional_png": "back_forward_polytree_formal_neato_optional.png",
         "validation_pure_csv": f"validacao_ramex_puro_{job_id}.csv",
         "validation_pure_json": f"validacao_ramex_puro_{job_id}.json",
         "validation_pure_md": f"validacao_ramex_puro_{job_id}.md",
@@ -1213,6 +1402,33 @@ def run_pure_ramex_outputs(
         "--output-expanded-paths", str(output_dir / files["ramex2007_expanded_paths_csv"]),
     ], log_cb=log_cb, step_name="RAMEX 2007 Rooted Branching")
     ramex2007 = json.loads((output_dir / files["ramex2007_json"]).read_text(encoding="utf-8"))
+    ramex2007_tree = edge_records_to_digraph(ramex2007.get("edges"))
+    if ramex2007_tree.number_of_edges():
+        ramex2007_validation = validate_rooted_branching(ramex2007_tree, ramex2007.get("root") or SOURCE_NODE, dataframe_to_digraph(graph_edges_df))
+        ramex2007["validation"] = ramex2007_validation
+        ramex2007["metrics"] = {**ramex2007.get("metrics", {}), **{
+            "is_dag": ramex2007_validation["is_dag"],
+            "is_arborescence": ramex2007_validation["is_valid_rooted_branching"],
+            "is_valid_arborescence": ramex2007_validation["is_valid_rooted_branching"],
+            "all_reachable_from_root": ramex2007_validation["all_reachable_from_root"],
+            "expected_edges": ramex2007_validation["expected_edges"],
+            "max_in_degree": ramex2007_validation["max_in_degree"],
+            "max_non_root_in_degree": ramex2007_validation["max_non_root_in_degree"],
+            "preserved_weight_percent": ramex2007_validation["preserved_weight_percentage"],
+        }}
+        (output_dir / files["ramex2007_metrics_json"]).write_text(json.dumps(ramex2007_validation, ensure_ascii=False, indent=2), encoding="utf-8")
+    ramex2007_valid = bool(ramex2007.get("is_valid_arborescence") or (ramex2007.get("validation") or {}).get("is_valid_arborescence"))
+    ramex2007["artifact_type"] = "ramex2007_formal" if ramex2007_valid else "ramex2007_invalid_structure"
+    ramex2007["metadata"] = artifact_meta("ramex2007") if ramex2007_valid else {
+        "label": "Estrutura RAMEX 2007 inválida — requer revisão.",
+        "description": "Maximum Weight Rooted Branching sem validação estrutural final",
+        "warning": "Não apresentar como RAMEX 2007 final até corrigir a estrutura.",
+    }
+    ramex2007["interpretation"] = (
+        artifact_meta("ramex2007")["interpretation"]
+        if ramex2007_valid
+        else "Estrutura RAMEX 2007 inválida — requer revisão."
+    )
     if log_cb and (selected_edges := ramex2007.get("metrics", {}).get("selected_edges")) is not None:
         log_cb(f"RAMEX 2007 concluído: {selected_edges} arestas selecionadas")
 
@@ -1233,7 +1449,7 @@ def run_pure_ramex_outputs(
         log_cb(f"Forward root: {forward_root} ({root_method})")
 
     if progress_cb:
-        progress_cb("forward", "Execução RAMEX 2015 Forward (grafo observado)")
+        progress_cb("forward", "Execução Forward Heuristic sobre o grafo observado")
     run_python_script([
         str(script_path("10B_ramex_forward_heuristic.py")),
         str(heuristic_csv), str(output_dir / files["forward_csv"]),
@@ -1241,11 +1457,29 @@ def run_pure_ramex_outputs(
         "--root", forward_root, "--output-json", str(output_dir / files["forward_json"]),
     ], log_cb=log_cb, step_name="RAMEX Forward")
     forward = json.loads((output_dir / files["forward_json"]).read_text(encoding="utf-8"))
+    forward_tree = edge_records_to_digraph(forward.get("edges"))
+    if forward_tree.number_of_edges():
+        forward_validation = validate_forward_tree(forward_tree, forward.get("root") or forward_root, dataframe_to_digraph(heuristic_df))
+        forward["validation"] = forward_validation
+        forward["metrics"] = {**forward.get("metrics", {}), **{
+            "is_dag": forward_validation["is_dag"],
+            "is_acyclic": forward_validation["is_dag"],
+            "is_valid_forward_tree": forward_validation["is_valid_forward_tree"],
+            "all_reachable_from_root": forward_validation["all_reachable_from_root"],
+            "expected_max_edges": forward_validation["expected_max_edges"],
+            "max_in_degree": forward_validation["max_in_degree"],
+            "max_out_degree": forward_validation["max_out_degree"],
+            "preserved_weight_percent": forward_validation["preserved_weight_percentage"],
+        }}
+        (output_dir / files["forward_metrics_json"]).write_text(json.dumps(forward_validation, ensure_ascii=False, indent=2), encoding="utf-8")
+    forward["artifact_type"] = "forward_heuristic"
+    forward["metadata"] = artifact_meta("forward")
+    forward["interpretation"] = "Heurística RAMEX 2015 aplicada a partir de uma raiz conhecida ou inferida."
     forward["root_selection_method"] = root_method
     (output_dir / files["forward_json"]).write_text(json.dumps(forward, ensure_ascii=False, indent=2), encoding="utf-8")
 
     if progress_cb:
-        progress_cb("polytree_formal", "Execução RAMEX 2015 Back-and-Forward (grafo observado)")
+        progress_cb("polytree_formal", "Execução Back-and-Forward Poly-tree formal sobre o grafo observado")
     run_python_script([
         str(script_path("10C_ramex_back_forward_polytree_formal.py")),
         str(heuristic_csv), str(output_dir / files["back_forward_formal_csv"]),
@@ -1253,6 +1487,43 @@ def run_pure_ramex_outputs(
         "--output-json", str(output_dir / files["back_forward_formal_json"]),
     ], log_cb=log_cb, step_name="Back-and-Forward Poly-tree Formal")
     back_forward = json.loads((output_dir / files["back_forward_formal_json"]).read_text(encoding="utf-8"))
+    back_forward_tree = edge_records_to_digraph(back_forward.get("edges"))
+    if back_forward_tree.number_of_edges():
+        back_forward_validation = validate_polytree(back_forward_tree, dataframe_to_digraph(heuristic_df))
+        back_forward["validation"] = back_forward_validation
+        back_forward["metrics"] = {**back_forward.get("metrics", {}), **{
+            "is_dag": back_forward_validation["is_dag"],
+            "is_acyclic": back_forward_validation["is_dag"],
+            "is_polytree": back_forward_validation["is_valid_polytree"],
+            "is_tree_undirected": back_forward_validation["undirected_is_tree"],
+            "undirected_is_tree": back_forward_validation["undirected_is_tree"],
+            "expected_edges": back_forward_validation["expected_edges"],
+            "max_in_degree": back_forward_validation["max_in_degree"],
+            "convergence_nodes": back_forward_validation["convergence_nodes"],
+            "preserved_weight_percent": back_forward_validation["preserved_weight_percentage"],
+        }}
+    polytree_valid = bool(back_forward.get("metrics", {}).get("is_polytree") or (back_forward.get("validation") or {}).get("is_valid_polytree"))
+    back_forward["artifact_type"] = "polytree_formal" if polytree_valid else "polytree_formal_invalid"
+    back_forward["metadata"] = artifact_meta("polytree_formal") if polytree_valid else {
+        "label": "Estrutura Back-and-Forward inválida — requer revisão.",
+        "description": "Heurística Back-and-Forward sem validação formal de poly-tree",
+        "warning": "Não apresentar como poly-tree formal até corrigir a estrutura.",
+    }
+    back_forward["back_forward_metadata"] = artifact_meta("back_forward")
+    back_forward["interpretation"] = (
+        artifact_meta("polytree_formal")["interpretation"]
+        if polytree_valid
+        else "Estrutura Back-and-Forward inválida — requer revisão."
+    )
+    (output_dir / files["back_forward_formal_json"]).write_text(json.dumps(back_forward, ensure_ascii=False, indent=2), encoding="utf-8")
+    (output_dir / files["back_forward_polytree_formal_json"]).write_text(json.dumps(back_forward, ensure_ascii=False, indent=2), encoding="utf-8")
+    if isinstance(back_forward.get("validation"), dict):
+        (output_dir / files["back_forward_polytree_formal_metrics_json"]).write_text(
+            json.dumps(back_forward["validation"], ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+    if not (output_dir / files["back_forward_polytree_formal_neato_optional_png"]).is_file():
+        files.pop("back_forward_polytree_formal_neato_optional_png", None)
 
     if progress_cb:
         progress_cb("validacao", "Anexo experimental de heurísticas históricas")
@@ -1524,6 +1795,15 @@ def run_pipeline(
                 json.dumps(pure["ramex2007"], ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
+            (output_dir / files["ramex2007_tree_json"]).write_text(
+                json.dumps(pure["ramex2007"], ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            if isinstance(pure["ramex2007"].get("validation"), dict):
+                (output_dir / files["ramex2007_metrics_json"]).write_text(
+                    json.dumps(pure["ramex2007"]["validation"], ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
 
     forum: dict[str, Any] | None = None
     if analysis_type in {"forum", "both"}:
@@ -1614,8 +1894,8 @@ def run_pipeline(
 
     pipeline_steps_map = {
         "forum": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX-Forum"],
-        "both": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX 2007", "Forward histórico", "Back-and-Forward histórico", "Anexo experimental", "RAMEX-Forum"],
-        "pure": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo", "RAMEX 2007", "Forward histórico", "Back-and-Forward histórico", "Anexo experimental"],
+        "both": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo observado completo", "RAMEX 2007 formal", "Forward Heuristic", "Back-and-Forward Poly-tree", "Anexo experimental", "RAMEX-Forum"],
+        "pure": ["ficheiro recebido", "parsing", "sequencias", "pares", "matriz", "grafo observado completo", "RAMEX 2007 formal", "Forward Heuristic", "Back-and-Forward Poly-tree", "Anexo experimental"],
     }
     pure_legacy = {k: pure[k] for k in ["ramex2007", "forward", "backForward", "comparisonRows", "comparisonMarkdown", "multidatasetMarkdown", "missing"]} if pure else None
     pipeline_elapsed_seconds = round(time.perf_counter() - pipeline_start, 3)
@@ -1625,28 +1905,118 @@ def run_pipeline(
         "Não constitui RAMEX 2007 formal nem RAMEX 2015. "
         "As abordagens formais estão disponíveis em 'pure' (RAMEX 2007, Forward, Back-and-Forward)."
     )
+    observed_validation = validate_observed_graph(dataframe_to_digraph(edges_df))
+    filtered_validation = validate_observed_graph(graph)
+    observed_graph_payload = {
+        "metadata": artifact_meta("observed_graph"),
+        "warning": artifact_meta("observed_graph")["warning"],
+        "validation": observed_validation,
+        "edges": edges_to_records(edges_df),
+        "nodes": n,
+        "edge_count": e,
+        "total_weight": tw,
+        "density": density,
+        "files": {"pairs_csv": files["pairs_csv"], "matrix_csv": files["matrix_csv"]},
+    }
+    filtered_graph_payload = {
+        "metadata": artifact_meta("filtered_graph"),
+        "warning": artifact_meta("filtered_graph")["warning"],
+        "validation": filtered_validation,
+        "edges": edges_to_records(graph_edges_df),
+        "nodes": graph.number_of_nodes(),
+        "edge_count": graph.number_of_edges(),
+        "total_weight": graph_weight_sum(graph),
+        "is_filtered": len(graph_edges_df) != len(edges_df),
+        "files": {"graph_edges_csv": files["graph_edges_csv"], "graph_png": files["graph_png"]},
+    }
+    simplified_ramex_payload = {
+        "metadata": artifact_meta("simplified_ramex"),
+        "warning": artifact_meta("simplified_ramex")["warning"],
+        "edges": edges_to_records(ramex_df),
+        "note": _experimental_note,
+        "files": {"ramex_csv": files["ramex_csv"], "ramex_png": files["ramex_png"]},
+    }
+    sankey_payload = {
+        "metadata": artifact_meta("sankey"),
+        "observed_edges_source": "filtered_graph.edges",
+        "final_edges_source": "pure_ramex.ramex2007.edges",
+        "warning": artifact_meta("sankey")["warning"],
+    }
 
     return {
         "status": "completed", "analysis_type": analysis_type, "metrics": metrics,
+        "metadata": {
+            "artifact_semantics_version": 1,
+            "artifact_semantics": ARTIFACT_SEMANTICS,
+            "interpretation": {
+                "observed_graph": artifact_meta("observed_graph")["warning"],
+                "ramex2007": artifact_meta("ramex2007")["interpretation"],
+                "polytree_formal": artifact_meta("polytree_formal")["interpretation"],
+                "sankey": artifact_meta("sankey")["warning"],
+            },
+        },
         "event_construction": event_construction,
         "coverage_metrics": coverage_metrics,
         "interpretation": interpret(metrics),
         "top_transitions": edges_to_records(edges_df.head(5)),
         "matrix": matrix_to_json(matrix_df),
+        "observed_graph": observed_graph_payload,
+        "filtered_graph": filtered_graph_payload,
         "graph_edges": edges_to_records(graph_edges_df),
+        "simplified_ramex": simplified_ramex_payload,
         "ramex_edges": edges_to_records(ramex_df),
         "ramex_edges_note": _experimental_note,
         "polytree": {**polytree_to_json(graph, g_poly, df_poly, root, strat, params), "is_experimental": True, "experimental_note": _experimental_note},
         "polytree_edges": edges_to_records(df_poly),
+        "sankey": sankey_payload,
+        "visualizations": {
+            "observed_graph": {
+                "title": artifact_meta("observed_graph")["label"],
+                "subtitle": artifact_meta("observed_graph")["description"],
+                "warning": artifact_meta("observed_graph")["warning"],
+                "file": files["graph_png"],
+            },
+            "filtered_graph": {
+                "title": artifact_meta("filtered_graph")["label"],
+                "subtitle": artifact_meta("filtered_graph")["description"],
+                "warning": artifact_meta("filtered_graph")["warning"],
+                "file": files["graph_png"],
+            },
+            "simplified_ramex": {
+                "title": artifact_meta("simplified_ramex")["label"],
+                "subtitle": artifact_meta("simplified_ramex")["description"],
+                "warning": artifact_meta("simplified_ramex")["warning"],
+                "file": files["ramex_png"],
+            },
+            "ramex2007": {
+                "title": artifact_meta("ramex2007")["label"],
+                "subtitle": artifact_meta("ramex2007")["description"],
+                "interpretation": artifact_meta("ramex2007")["interpretation"],
+                "file": files.get("ramex2007_png"),
+            },
+            "polytree_formal": {
+                "title": artifact_meta("polytree_formal")["label"],
+                "subtitle": artifact_meta("polytree_formal")["description"],
+                "interpretation": artifact_meta("polytree_formal")["interpretation"],
+                "file": files.get("back_forward_polytree_formal_hierarchical_png") or files.get("back_forward_formal_png"),
+            },
+            "sankey": sankey_payload,
+        },
         "files": files,
         "transition_matrix": transition_matrix_data,
         "pure": pure_response_payload(pure),
         "forum": forum,
         "pure_ramex": pure_legacy,
         "formal_polytree": pure["backForward"] if pure else None,
+        "polytree_formal": pure["backForward"] if pure else None,
         "pure_validation": pure["validation"] if pure else None,
         "ramex_forum": forum,
         "ramex2007_transformation": {
+            "metadata": {
+                "label": "Rede formal RAMEX 2007",
+                "description": "Rede dirigida ponderada com SOURCE/SINK usada como entrada do rooted branching",
+                "warning": "Esta rede ainda não é a arborescência final; pode conter ciclos antes da condensação.",
+            },
             "ordered_rows": len(ramex2007_ordered_df),
             "sequence_rows": len(ramex2007_sequences_df),
             "graph_edges": edges_to_records(ramex2007_graph_edges_df),

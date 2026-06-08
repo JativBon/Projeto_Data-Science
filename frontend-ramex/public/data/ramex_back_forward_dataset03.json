@@ -14,7 +14,8 @@
     "selected_weight_sum": 130.0,
     "preserved_weight_percent": 36.93181818181818,
     "is_acyclic": true,
-    "is_connected": true
+    "is_connected": true,
+    "is_polytree": true
   },
   "nodes": [
     {
