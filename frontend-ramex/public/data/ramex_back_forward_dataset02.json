@@ -1,9 +1,46 @@
 {
-  "algorithm": "RAMEX Back-and-Forward Heuristic",
+  "algorithm": "Back-and-Forward Poly-tree Formal",
+  "display_title": "Back-and-Forward Poly-tree Formal",
+  "method": "ramex_back_forward_polytree_formal",
+  "artifact_type": "polytree_formal",
   "initial_edge": {
     "from": "10838",
     "to": "11168",
     "weight": 1.0
+  },
+  "validation": {
+    "nodes": 17,
+    "edges": 16,
+    "total_weight": 16.0,
+    "average_degree": 1.8823529411764706,
+    "max_in_degree": 1,
+    "max_out_degree": 1,
+    "number_of_sources": 1,
+    "number_of_sinks": 1,
+    "density": 0.058823529411764705,
+    "preserved_weight_percentage": 5.88235294117647,
+    "preserved_weight_percent": 5.88235294117647,
+    "is_valid_polytree": true,
+    "is_polytree": true,
+    "is_dag": true,
+    "is_acyclic": true,
+    "undirected_is_tree": true,
+    "is_tree_undirected": true,
+    "expected_edges": 16,
+    "edge_count_ok": true,
+    "convergence_nodes": [],
+    "total_selected_weight": 16.0,
+    "original_total_weight": 272.0,
+    "validation_messages": [
+      "Poly-tree formal validada: DAG cujo grafo não dirigido é uma árvore."
+    ]
+  },
+  "canonical_exports": {
+    "edges_csv": "frontend-ramex\\public\\data\\back_forward_polytree_formal_edges.csv",
+    "tree_json": "frontend-ramex\\public\\data\\back_forward_polytree_formal.json",
+    "metrics_json": "frontend-ramex\\public\\data\\back_forward_polytree_formal_metrics.json",
+    "hierarchical_png": "frontend-ramex\\public\\data\\back_forward_polytree_formal_hierarchical.png",
+    "paper_style_png": "frontend-ramex\\public\\data\\back_forward_polytree_paper_style.png"
   },
   "metrics": {
     "original_nodes": 281,
@@ -15,7 +52,13 @@
     "preserved_weight_percent": 5.88235294117647,
     "is_acyclic": true,
     "is_connected": true,
-    "is_polytree": true
+    "is_polytree": true,
+    "is_tree_undirected": true,
+    "undirected_is_tree": true,
+    "expected_edges": 16,
+    "max_in_degree": 1,
+    "convergence_nodes": [],
+    "rejected_edges_count": 0
   },
   "nodes": [
     {
@@ -201,6 +244,7 @@
       "direction": "FORWARD"
     }
   ],
+  "rejected_edges": [],
   "warnings": [
     "IncluÃ­dos 17 de 281 nÃ³s originais."
   ]

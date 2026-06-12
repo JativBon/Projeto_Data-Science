@@ -1,6 +1,35 @@
 {
   "algorithm": "RAMEX Forward Heuristic",
   "root": "150",
+  "validation": {
+    "nodes": 200,
+    "edges": 199,
+    "total_weight": 1842.0,
+    "average_degree": 1.99,
+    "max_in_degree": 1,
+    "max_out_degree": 5,
+    "number_of_sources": 1,
+    "number_of_sinks": 77,
+    "density": 0.005,
+    "preserved_weight_percentage": 1.3172761989215784,
+    "preserved_weight_percent": 1.3172761989215784,
+    "is_valid_forward_tree": true,
+    "root": "150",
+    "root_exists": true,
+    "is_dag": true,
+    "is_acyclic": true,
+    "all_reachable_from_root": true,
+    "reachable_from_root": true,
+    "edge_count_ok": true,
+    "expected_max_edges": 199,
+    "selected_nodes": 200,
+    "selected_edges": 199,
+    "total_selected_weight": 1842.0,
+    "original_total_weight": 139834.0,
+    "validation_messages": [
+      "Forward Heuristic validada como expansão dirigida a partir da raiz."
+    ]
+  },
   "metrics": {
     "original_nodes": 200,
     "original_edges": 38815,
@@ -10,7 +39,13 @@
     "selected_weight_sum": 1842.0,
     "preserved_weight_percent": 1.3172761989215784,
     "is_acyclic": true,
-    "is_connected": true
+    "is_dag": true,
+    "is_connected": true,
+    "is_valid_forward_tree": true,
+    "all_reachable_from_root": true,
+    "expected_max_edges": 199,
+    "max_in_degree": 1,
+    "max_out_degree": 5
   },
   "nodes": [
     {

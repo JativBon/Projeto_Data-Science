@@ -35,7 +35,7 @@ type Node = {
   isConvergence: boolean;
 };
 
-type LayoutMode = "hierarchical" | "force";
+type LayoutMode = "paperStyle" | "hierarchical" | "force";
 
 type GraphIndex = {
   nodeIds: Set<string>;
@@ -245,6 +245,7 @@ function buildHierarchicalLayout(
   canvasW: number,
   canvasH: number,
   graphType: GraphType,
+  paperStyle = false,
 ): Map<string, Node> {
   const index = buildGraphIndex(edges);
   const visualRoot = chooseVisualRoot(edges, rootId, graphType, index);
@@ -258,8 +259,8 @@ function buildHierarchicalLayout(
   });
 
   const totalLevels = Math.max(1, ...byLevel.keys()) + 1;
-  const paddingX = 80;
-  const paddingY = 70;
+  const paddingX = paperStyle ? 115 : 80;
+  const paddingY = paperStyle ? 95 : 70;
   const usableH = canvasH - paddingY * 2;
   const usableW = canvasW - paddingX * 2;
   const nodes = new Map<string, Node>();
@@ -270,9 +271,11 @@ function buildHierarchicalLayout(
       || (index.weightByNode.get(b) ?? 0) - (index.weightByNode.get(a) ?? 0)
       || a.localeCompare(b)
     );
-    const y = paddingY + (level / Math.max(totalLevels - 1, 1)) * usableH;
+    const rank = level / Math.max(totalLevels - 1, 1);
     orderedIds.forEach((id, idx) => {
-      const x = paddingX + ((idx + 0.5) / orderedIds.length) * usableW;
+      const spread = orderedIds.length > 1 ? idx / (orderedIds.length - 1) : 0.5;
+      const x = paperStyle ? paddingX + rank * usableW : paddingX + ((idx + 0.5) / orderedIds.length) * usableW;
+      const y = paperStyle ? paddingY + spread * usableH : paddingY + rank * usableH;
       nodes.set(id, {
         id,
         x,
@@ -286,6 +289,29 @@ function buildHierarchicalLayout(
   });
 
   return nodes;
+}
+
+function nodeDimensions(node: Node, maxWeight: number, paperStyle: boolean): { rx: number; ry: number } {
+  if (!paperStyle) {
+    const radius = nodeRadius(node, maxWeight);
+    return { rx: radius, ry: radius };
+  }
+  const shortLabel = node.id.length <= 3;
+  return {
+    rx: Math.max(shortLabel ? 34 : 46, Math.min(115, node.id.length * 5 + 17)),
+    ry: shortLabel ? 34 : 31,
+  };
+}
+
+function ellipseBoundaryPoint(from: Node, to: Node, dims: { rx: number; ry: number }, extra = 0) {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const scale = 1 / Math.sqrt((dx * dx) / (dims.rx * dims.rx) + (dy * dy) / (dims.ry * dims.ry));
+  return {
+    x: from.x + (dx / dist) * (scale + extra),
+    y: from.y + (dy / dist) * (scale + extra),
+  };
 }
 
 function buildForceLayout(
@@ -451,8 +477,17 @@ export function RamexGraphViewer({
 }) {
   const allEdges = useMemo(() => edges ?? [], [edges]);
   const structuralGraph = isStructuralGraph(graphType);
+  const totalNodeCount = useMemo(() => {
+    const ids = new Set<string>();
+    allEdges.forEach((edge) => {
+      ids.add(edge.From);
+      ids.add(edge.To);
+    });
+    return ids.size;
+  }, [allEdges]);
+  const canUsePaperStyle = structuralGraph || totalNodeCount <= 30;
   const [limit, setLimit] = useState(100);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>("hierarchical");
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>("paperStyle");
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
@@ -462,9 +497,10 @@ export function RamexGraphViewer({
 
   const visibleEdges = useMemo(() => {
     const sorted = [...allEdges].sort((a, b) => b.Weight - a.Weight || a.From.localeCompare(b.From) || a.To.localeCompare(b.To));
-    if (structuralGraph && layoutMode === "hierarchical") return sorted;
+    if (structuralGraph && layoutMode !== "force") return sorted;
+    if (layoutMode === "paperStyle" && totalNodeCount > 30) return sorted.slice(0, limit);
     return sorted.slice(0, limit);
-  }, [allEdges, limit, layoutMode, structuralGraph]);
+  }, [allEdges, limit, layoutMode, structuralGraph, totalNodeCount]);
 
   const validationStats = useMemo(() => {
     const computed = computeValidationStats(visibleEdges, root, graphType);
@@ -488,8 +524,8 @@ export function RamexGraphViewer({
 
   const nodes = useMemo(() => {
     if (!visibleEdges.length) return new Map<string, Node>();
-    return layoutMode === "hierarchical"
-      ? buildHierarchicalLayout(visibleEdges, root, CANVAS_W, CANVAS_H, graphType)
+    return layoutMode === "hierarchical" || layoutMode === "paperStyle"
+      ? buildHierarchicalLayout(visibleEdges, root, CANVAS_W, CANVAS_H, graphType, layoutMode === "paperStyle")
       : buildForceLayout(visibleEdges, root, CANVAS_W, CANVAS_H);
   }, [visibleEdges, root, layoutMode, graphType]);
 
@@ -520,23 +556,19 @@ export function RamexGraphViewer({
   const handleMouseUp = useCallback(() => setDragging(false), []);
 
   useEffect(() => {
-    if (structuralGraph) {
-      setLayoutMode("hierarchical");
+    if (structuralGraph || totalNodeCount <= 30) {
+      setLayoutMode("paperStyle");
       return;
     }
-    const nodeSet = new Set<string>();
-    allEdges.forEach((edge) => {
-      nodeSet.add(edge.From);
-      nodeSet.add(edge.To);
-    });
-    const density = allEdges.length / Math.max(1, nodeSet.size * (nodeSet.size - 1));
+    const density = allEdges.length / Math.max(1, totalNodeCount * (totalNodeCount - 1));
     setLayoutMode(density > 0.25 || allEdges.length > MAX_EDGES_FORCE ? "force" : "hierarchical");
-  }, [allEdges, structuralGraph]);
+  }, [allEdges, structuralGraph, totalNodeCount]);
 
   if (!allEdges.length) return null;
 
   const isTruncated = allEdges.length > visibleEdges.length;
   const showingAlternative = structuralGraph && layoutMode === "force";
+  const paperStyle = layoutMode === "paperStyle";
   const convergenceNodes = [...nodes.values()].filter((node) => node.isConvergence).length;
 
   return (
@@ -556,6 +588,11 @@ export function RamexGraphViewer({
           {showingAlternative ? (
             <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
               Layout alternativo apenas exploratório. A estrutura RAMEX principal é hierárquica.
+            </p>
+          ) : null}
+          {layoutMode === "paperStyle" && totalNodeCount > 30 ? (
+            <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
+              Estrutura demasiado grande para visualizacao completa em estilo artigo; apresentada versao filtrada/top-N.
             </p>
           ) : null}
           {isTruncated ? (
@@ -579,21 +616,21 @@ export function RamexGraphViewer({
           {structuralGraph ? (
             <button
               type="button"
-              onClick={() => setLayoutMode((current) => current === "hierarchical" ? "force" : "hierarchical")}
+              onClick={() => setLayoutMode((current) => current === "force" ? "paperStyle" : "force")}
               className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 hover:bg-slate-50"
             >
-              {layoutMode === "hierarchical" ? "Ver layout alternativo" : "Voltar ao layout hierárquico"}
+              {layoutMode === "force" ? "Voltar ao estilo artigo" : "Ver layout alternativo"}
             </button>
           ) : (
             <div className="flex gap-1 rounded-xl border border-slate-200 bg-slate-50 p-1">
-              {(["hierarchical", "force"] as LayoutMode[]).map((mode) => (
+              {(["paperStyle", "hierarchical", "force"] as LayoutMode[]).filter((mode) => mode !== "paperStyle" || canUsePaperStyle).map((mode) => (
                 <button
                   key={mode}
                   type="button"
                   onClick={() => setLayoutMode(mode)}
                   className={`rounded-lg px-3 py-1.5 font-semibold transition ${layoutMode === mode ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  {mode === "hierarchical" ? "Hierárquico" : "Força"}
+                  {mode === "paperStyle" ? "Estilo artigo" : mode === "hierarchical" ? "Hierárquico" : "Força"}
                 </button>
               ))}
             </div>
@@ -648,28 +685,21 @@ export function RamexGraphViewer({
                 const source = nodes.get(edge.From);
                 const target = nodes.get(edge.To);
                 if (!source || !target || source.id === target.id) return null;
-                const sourceRadius = nodeRadius(source, maxWeight);
-                const targetRadius = nodeRadius(target, maxWeight);
-                const dx = target.x - source.x;
-                const dy = target.y - source.y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const x1 = source.x + (sourceRadius * dx) / dist;
-                const y1 = source.y + (sourceRadius * dy) / dist;
-                const x2 = target.x - ((targetRadius + 8) * dx) / dist;
-                const y2 = target.y - ((targetRadius + 8) * dy) / dist;
-                const strokeW = 0.8 + 4 * Math.sqrt(edge.Weight / maxEdgeW);
+                const sourceDims = nodeDimensions(source, maxWeight, paperStyle);
+                const targetDims = nodeDimensions(target, maxWeight, paperStyle);
+                const start = ellipseBoundaryPoint(source, target, sourceDims);
+                const end = ellipseBoundaryPoint(target, source, targetDims, paperStyle ? 12 : 8);
+                const x1 = start.x;
+                const y1 = start.y;
+                const x2 = end.x;
+                const y2 = end.y;
+                const labelX = x1 + (x2 - x1) * 0.52;
+                const labelY = y1 + (y2 - y1) * 0.52 - (paperStyle ? 10 : 6);
+                const strokeW = paperStyle ? 1.8 + 4.6 * Math.sqrt(edge.Weight / maxEdgeW) : 0.8 + 4 * Math.sqrt(edge.Weight / maxEdgeW);
                 const isFromRoot = source.isRoot;
                 return (
-                  <line
+                  <g
                     key={`${edge.From}-${edge.To}-${index}`}
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke={isFromRoot ? highlightColor : "#315f72"}
-                    strokeWidth={strokeW}
-                    strokeOpacity={isFromRoot ? 0.85 : 0.55}
-                    markerEnd={isFromRoot ? "url(#arrow-root)" : "url(#arrow)"}
                     onMouseEnter={(event) => {
                       const svg = svgRef.current;
                       if (!svg) return;
@@ -682,12 +712,50 @@ export function RamexGraphViewer({
                     }}
                     onMouseLeave={() => setTooltip(null)}
                     style={{ cursor: "pointer" }}
-                  />
+                  >
+                    <line
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke={isFromRoot ? highlightColor : paperStyle ? "#334155" : "#315f72"}
+                      strokeWidth={strokeW}
+                      strokeOpacity={isFromRoot ? 0.9 : paperStyle ? 0.72 : 0.55}
+                      markerEnd={isFromRoot ? "url(#arrow-root)" : "url(#arrow)"}
+                    />
+                    {(paperStyle || totalNodeCount <= 30) ? (
+                      <g style={{ pointerEvents: "none" }}>
+                        <rect
+                          x={labelX - String(edge.Weight).length * 4.6 - 8}
+                          y={labelY - 10}
+                          width={String(edge.Weight).length * 9.2 + 16}
+                          height={20}
+                          rx={6}
+                          fill="white"
+                          fillOpacity={0.92}
+                          stroke="#cbd5e1"
+                          strokeWidth={0.8}
+                        />
+                        <text
+                          x={labelX}
+                          y={labelY + 1}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          fontSize={paperStyle ? 13 : 12}
+                          fontWeight="700"
+                          fill="#0f172a"
+                        >
+                          {edge.Weight}
+                        </text>
+                      </g>
+                    ) : null}
+                  </g>
                 );
               })}
 
               {[...nodes.values()].map((node) => {
                 const radius = nodeRadius(node, maxWeight);
+                const dims = nodeDimensions(node, maxWeight, paperStyle);
                 return (
                   <g
                     key={node.id}
@@ -704,20 +772,21 @@ export function RamexGraphViewer({
                     onMouseLeave={() => setTooltip(null)}
                     style={{ cursor: "default" }}
                   >
-                    <circle
+                    <ellipse
                       cx={node.x}
                       cy={node.y}
-                      r={radius}
+                      rx={dims.rx}
+                      ry={dims.ry}
                       fill={node.isRoot ? highlightColor : node.isConvergence ? "#efe2ff" : "#dceef5"}
                       stroke={node.isConvergence ? "#7c3aed" : "#315f72"}
-                      strokeWidth={node.isRoot || node.isConvergence ? 2.5 : 1.5}
+                      strokeWidth={paperStyle ? node.isRoot || node.isConvergence ? 3 : 2 : node.isRoot || node.isConvergence ? 2.5 : 1.5}
                     />
                     <text
                       x={node.x}
                       y={node.y}
                       textAnchor="middle"
                       dominantBaseline="central"
-                      fontSize={Math.max(8, Math.min(13, radius * 0.75))}
+                      fontSize={paperStyle ? 15 : Math.max(8, Math.min(13, radius * 0.75))}
                       fontWeight={node.isRoot ? "800" : "600"}
                       fill={node.isRoot ? "#fff" : "#0f172a"}
                       style={{ pointerEvents: "none", userSelect: "none" }}

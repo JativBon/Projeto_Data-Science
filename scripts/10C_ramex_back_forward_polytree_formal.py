@@ -204,21 +204,23 @@ def validate_polytree_formal(tree: nx.DiGraph, original_graph: nx.DiGraph) -> di
 
 def hierarchical_layout(graph: nx.DiGraph, root: str) -> dict:
     try:
-        return nx.nx_agraph.graphviz_layout(graph, prog="dot", args="-Grankdir=TB")
+        return nx.nx_agraph.graphviz_layout(graph, prog="dot", args="-Grankdir=LR")
     except Exception:
         levels = calculate_levels(graph, root) if root in graph else {}
         grouped: dict[int, list[str]] = {}
         for node in graph.nodes:
             grouped.setdefault(levels.get(node, 0), []).append(node)
-        shells = [sorted(nodes, key=str) for _, nodes in sorted(grouped.items())]
-        shell_pos = nx.shell_layout(graph, nlist=shells)
-        return {
-            node: (
-                shell_pos[node][0] * (1 + 0.12 * levels.get(node, 0)),
-                -1.9 * levels.get(node, 0) + shell_pos[node][1] * 0.2,
-            )
-            for node in graph.nodes
-        }
+        max_level = max(grouped.keys(), default=0)
+        pos: dict[str, tuple[float, float]] = {}
+        for level, nodes in sorted(grouped.items()):
+            ordered = sorted(nodes, key=str)
+            count = len(ordered)
+            for index, node in enumerate(ordered):
+                pos[node] = (
+                    (level / max(max_level, 1)) * 10,
+                    (index - (count - 1) / 2) * max(1.8, 8 / max(count, 1)),
+                )
+        return pos
 
 
 def neato_layout_optional(graph: nx.DiGraph) -> dict | None:
@@ -234,6 +236,7 @@ def canonical_export_paths(output_csv: Path, output_json: Path, output_png: Path
         "tree_json": output_json.parent / "back_forward_polytree_formal.json",
         "metrics_json": output_json.parent / "back_forward_polytree_formal_metrics.json",
         "hierarchical_png": output_png.parent / "back_forward_polytree_formal_hierarchical.png",
+        "paper_style_png": output_png.parent / "back_forward_polytree_paper_style.png",
         "neato_optional_png": output_png.parent / "back_forward_polytree_formal_neato_optional.png",
     }
 
@@ -324,8 +327,9 @@ def render_network_axes(
         for n in tree.nodes
     ]
     max_w = max([d["weight"] for _, _, d in tree.edges(data=True)], default=1)
-    node_sizes = [1700 + 420 * degrees.get(n, 0) for n in tree.nodes]
-    font_size = 9 if tree.number_of_nodes() <= 15 else 7
+    small = tree.number_of_nodes() <= 15
+    node_sizes = [(5200 if small else 1700) + (900 if small else 420) * degrees.get(n, 0) for n in tree.nodes]
+    font_size = 15 if small else 7
 
     nx.draw_networkx_nodes(tree, pos, node_color=colors, node_size=node_sizes, edgecolors="#1f2937", linewidths=1.4, ax=ax)
     nx.draw_networkx_labels(tree, pos, font_size=font_size, font_weight="bold", ax=ax)
@@ -336,7 +340,7 @@ def render_network_axes(
         if edges:
             widths = [1.0 + 5.0 * (tree[o][t]["weight"] / max_w) for o, t in edges]
             nx.draw_networkx_edges(tree, pos, edgelist=edges, width=widths, edge_color=color, 
-                                   arrows=True, arrowstyle="-|>", arrowsize=20, alpha=0.86, connectionstyle="arc3,rad=0.04", ax=ax)
+                                   arrows=True, arrowstyle="-|>", arrowsize=30 if small else 20, alpha=0.86, connectionstyle="arc3,rad=0.04", ax=ax)
 
     labels = {(o, t): str(fmt_wt(d["weight"])) for o, t, d in tree.edges(data=True)}
     nx.draw_networkx_edge_labels(
@@ -367,6 +371,8 @@ def render_network_axes(
 
 def draw_polytree_views(tree: nx.DiGraph, initial: tuple[str, str, float], output_png: Path, canonical_paths: dict[str, str]) -> str | None:
     hierarchical_png = Path(canonical_paths["hierarchical_png"])
+    paper_style_png = Path(canonical_paths["paper_style_png"])
+    output_paper_style_png = output_png.with_name(output_png.stem + "_paper_style.png")
     neato_png = Path(canonical_paths["neato_optional_png"])
 
     fig, ax = plt.subplots(figsize=(14, 9))
@@ -374,6 +380,8 @@ def draw_polytree_views(tree: nx.DiGraph, initial: tuple[str, str, float], outpu
     plt.tight_layout()
     plt.savefig(output_png, dpi=300, bbox_inches="tight")
     plt.savefig(hierarchical_png, dpi=300, bbox_inches="tight")
+    plt.savefig(paper_style_png, dpi=300, bbox_inches="tight")
+    plt.savefig(output_paper_style_png, dpi=300, bbox_inches="tight")
     plt.close()
 
     neato_pos = neato_layout_optional(tree)

@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -117,7 +118,7 @@ def hierarchical_layout(graph: nx.DiGraph, root: str) -> dict:
         try:
             return nx.nx_agraph.graphviz_layout(
                 graph, prog=prog,
-                args=f"-Grankdir=TB -Gnodesep={nodesep:.2f} -Granksep={ranksep:.2f}",
+                args=f"-Grankdir=LR -Gnodesep={nodesep:.2f} -Granksep={ranksep:.2f}",
             )
         except Exception:
             pass
@@ -137,8 +138,8 @@ def hierarchical_layout(graph: nx.DiGraph, root: str) -> dict:
         nodes_sorted = sorted(nodes, key=str)
         count = len(nodes_sorted)
         for i, node in enumerate(nodes_sorted):
-            x = (i - (count - 1) / 2) * max(1.5, 8 / max(count, 1))
-            y = -(lvl / max(max_lvl, 1)) * 10
+            x = (lvl / max(max_lvl, 1)) * 10
+            y = (i - (count - 1) / 2) * max(1.8, 8 / max(count, 1))
             pos[node] = (x, y)
     return pos
 
@@ -209,7 +210,7 @@ def draw_tree(tree: nx.DiGraph, root: str, output_png: Path) -> None:
 
     # Dimensões escaladas com o número de nós
     if n <= 15:
-        figsize, dpi, font_size, node_base, node_scale = (16, 12), 300, 12, 2400, 800
+        figsize, dpi, font_size, node_base, node_scale = (12, 7), 300, 16, 5600, 1200
     elif n <= 50:
         figsize, dpi, font_size, node_base, node_scale = (22, 16), 250, 9, 1400, 500
     elif n <= 120:
@@ -227,7 +228,7 @@ def draw_tree(tree: nx.DiGraph, root: str, output_png: Path) -> None:
                            edgecolors="#315f72", linewidths=1.6)
     nx.draw_networkx_edges(
         tree, pos, width=widths, arrows=True, arrowstyle="-|>",
-        arrowsize=max(12, 22 - n // 15),
+        arrowsize=30 if n <= 15 else max(12, 22 - n // 15),
         edge_color=edge_color_scale(tree), alpha=0.85, connectionstyle="arc3,rad=0.02",
     )
     nx.draw_networkx_labels(tree, pos, font_size=font_size, font_weight="bold",
@@ -237,7 +238,7 @@ def draw_tree(tree: nx.DiGraph, root: str, output_png: Path) -> None:
     if n <= 60:
         labels = {(u, v): str(fmt_wt(d["weight"])) for u, v, d in tree.edges(data=True)}
         nx.draw_networkx_edge_labels(
-            tree, pos, edge_labels=labels, font_size=max(font_size - 2, 5),
+            tree, pos, edge_labels=labels, font_size=max(font_size - 3, 12 if n <= 15 else 5),
             bbox={"boxstyle": "round,pad=0.18", "fc": "white", "ec": "#cbd5e1", "alpha": 0.85},
         )
 
@@ -263,6 +264,7 @@ def main() -> None:
 
         payload = export_outputs(graph, tree, args.root, args)
         draw_tree(tree, args.root, Path(args.output_png))
+        shutil.copyfile(args.output_png, Path(args.output_png).with_name(Path(args.output_png).stem + "_paper_style.png"))
 
         m = payload["metrics"]
         print(f"Ficheiro lido: {args.input_edges_csv}")

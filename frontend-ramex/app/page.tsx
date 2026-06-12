@@ -246,6 +246,7 @@ type UploadResult = {
   filename: string;
   status: string;
   analysis_type?: AnalysisType;
+  available_files?: string[];
   metrics: {
     nodes: number;
     edges: number;
@@ -1151,6 +1152,19 @@ function uploadFileUrl(result: UploadResult, filename?: string): string | undefi
   return filename ? `${API_BASE_URL}/api/file/${result.job_id}/${filename}` : undefined;
 }
 
+function paperStyleFilename(filename?: string): string | undefined {
+  return filename?.endsWith(".png") ? filename.replace(/\.png$/, "_paper_style.png") : undefined;
+}
+
+function uploadPaperStyleFileUrl(result: UploadResult, filename?: string): string | undefined {
+  const paper = paperStyleFilename(filename);
+  const available = new Set([
+    ...Object.values(result.files ?? {}).filter((value): value is string => typeof value === "string"),
+    ...(result.available_files ?? []),
+  ]);
+  return uploadFileUrl(result, paper && available.has(paper) ? paper : filename);
+}
+
 function forumFileUrl(result: UploadResult, filename?: string): string | undefined {
   return filename ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${filename}` : undefined;
 }
@@ -1226,7 +1240,7 @@ function normalizeUploadResult(raw: UploadResult): NormalizedUploadResult {
         validation: ramex2007?.validation as RamexGraphValidationMetrics | undefined,
         root: ramex2007?.root,
         method: ramex2007?.method ?? ramex2007?.algorithm,
-        treeCompleteImage: uploadFileUrl(result, result.files.ramex2007_png),
+        treeCompleteImage: uploadPaperStyleFileUrl(result, result.files.ramex2007_png),
         sankeyData: ramex2007?.edges ?? [],
         selectedEdges: ramex2007?.edges ?? [],
         dominantPaths: ramex2007?.expansion?.dominant_paths,
@@ -3758,7 +3772,7 @@ function RamexPurePanel({
           description="O RAMEX 2007 formal usa Maximum Weight Rooted Branching na fase 10A. A fase simplificada 07 é mantida apenas como baseline heurístico experimental."
           data={effectiveData?.ramex2007}
           imageFile={uploaded ? undefined : `ramex2007_dataset${datasetId}.png`}
-          imageUrl={uploaded?.files.ramex2007_png ? `${imageBase}${uploaded.files.ramex2007_png}` : undefined}
+          imageUrl={uploaded ? uploadPaperStyleFileUrl(uploaded, uploaded.files.ramex2007_png) : undefined}
         />
         </motion.div>
       ) : null}
@@ -3769,7 +3783,7 @@ function RamexPurePanel({
           description="A Forward Heuristic é adequada quando existe uma raiz ou nó inicial conhecido. Expande a árvore para a frente, escolhendo transições elegíveis de maior peso."
           data={effectiveData?.forward}
           imageFile={uploaded ? undefined : `ramex_forward_dataset${datasetId}.png`}
-          imageUrl={uploaded?.files.forward_png ? `${imageBase}${uploaded.files.forward_png}` : undefined}
+          imageUrl={uploaded ? uploadPaperStyleFileUrl(uploaded, uploaded.files.forward_png) : undefined}
         />
         </motion.div>
       ) : null}
@@ -3780,7 +3794,7 @@ function RamexPurePanel({
           description="A Back-and-Forward Heuristic é adequada quando não existe nó inicial claro. Começa pela relação mais forte e expande em ambos os sentidos, procurando uma poly-tree de maior peso."
           data={effectiveData?.backForward}
           imageFile={uploaded ? undefined : `ramex_back_forward_dataset${datasetId}.png`}
-          imageUrl={uploaded?.files.back_forward_formal_png ? `${imageBase}${uploaded.files.back_forward_formal_png}` : undefined}
+          imageUrl={uploaded ? uploadPaperStyleFileUrl(uploaded, uploaded.files.back_forward_formal_png) : undefined}
         />
         </motion.div>
       ) : null}
@@ -5832,9 +5846,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
           graph: normalizedResult?.observed.graphImage,
           ramex: result.files.ramex_png ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.ramex_png}` : undefined,
           ramex2007: normalizedResult?.ramex2007.phase2.treeCompleteImage,
-          polytree: result.files.back_forward_formal_png
-              ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.back_forward_formal_png}`
-              : undefined,
+          polytree: uploadPaperStyleFileUrl(result, result.files.back_forward_formal_png),
           forumGraph: (result.ramex_forum ?? result.forum)?.files?.graph_png
             ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${(result.ramex_forum ?? result.forum)?.files?.graph_png}`
             : undefined,
@@ -5846,9 +5858,7 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
         backendTechnicalImages: {
           graph: normalizedResult?.observed.graphImage,
           ramex2007: normalizedResult?.ramex2007.phase2.treeCompleteImage,
-          backForward: result.files.back_forward_formal_png
-            ? `${API_BASE_URL}/api/file/${result.job_id}/${result.files.back_forward_formal_png}`
-            : undefined,
+          backForward: uploadPaperStyleFileUrl(result, result.files.back_forward_formal_png),
           forumGraph: (result.ramex_forum ?? result.forum)?.files?.graph_png
             ? `${API_BASE_URL}/api/ramex-forum/jobs/${result.job_id}/file/${(result.ramex_forum ?? result.forum)?.files?.graph_png}`
             : undefined,
@@ -7174,12 +7184,8 @@ export default function Home() {
           ramex: uploadedResult.files.ramex_png
             ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.ramex_png}`
             : undefined,
-          ramex2007: uploadedResult.files.ramex2007_png
-            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.ramex2007_png}`
-            : undefined,
-          polytree: uploadedResult.files.back_forward_formal_png
-            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.back_forward_formal_png}`
-            : undefined,
+          ramex2007: uploadPaperStyleFileUrl(uploadedResult, uploadedResult.files.ramex2007_png),
+          polytree: uploadPaperStyleFileUrl(uploadedResult, uploadedResult.files.back_forward_formal_png),
           forumGraph: (uploadedResult.ramex_forum ?? uploadedResult.forum)?.files?.graph_png
             ? `${API_BASE_URL}/api/ramex-forum/jobs/${uploadedResult.job_id}/file/${(uploadedResult.ramex_forum ?? uploadedResult.forum)?.files?.graph_png}`
             : undefined,
@@ -7192,15 +7198,9 @@ export default function Home() {
           graph: uploadedResult.files.graph_png
             ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.graph_png}`
             : undefined,
-          ramex2007: uploadedResult.files.ramex2007_png
-            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.ramex2007_png}`
-            : undefined,
-          forward: uploadedResult.files.forward_png
-            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.forward_png}`
-            : undefined,
-          backForward: uploadedResult.files.back_forward_formal_png
-            ? `${API_BASE_URL}/api/file/${uploadedResult.job_id}/${uploadedResult.files.back_forward_formal_png}`
-            : undefined,
+          ramex2007: uploadPaperStyleFileUrl(uploadedResult, uploadedResult.files.ramex2007_png),
+          forward: uploadPaperStyleFileUrl(uploadedResult, uploadedResult.files.forward_png),
+          backForward: uploadPaperStyleFileUrl(uploadedResult, uploadedResult.files.back_forward_formal_png),
           forumGraph: (uploadedResult.ramex_forum ?? uploadedResult.forum)?.files?.graph_png
             ? `${API_BASE_URL}/api/ramex-forum/jobs/${uploadedResult.job_id}/file/${(uploadedResult.ramex_forum ?? uploadedResult.forum)?.files?.graph_png}`
             : undefined,

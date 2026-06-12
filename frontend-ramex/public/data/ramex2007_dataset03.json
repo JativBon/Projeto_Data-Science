@@ -1,6 +1,8 @@
 {
-  "algorithm": "RAMEX 2007 Rooted Branching",
+  "algorithm": "RAMEX 2007 formal",
+  "display_title": "RAMEX 2007 formal",
   "method": "maximum_weight_rooted_branching",
+  "artifact_type": "ramex2007_formal",
   "paper_alignment": {
     "main_phases": [
       "transformacao_da_base_de_dados_em_rede_de_transicao_de_estados",
@@ -11,7 +13,7 @@
     "complexity": "O(N^2)"
   },
   "root": "SOURCE",
-  "root_selection": "provided_root",
+  "root_selection": "SOURCE",
   "nodes_original": 6,
   "edges_original": 20,
   "nodes_selected": 6,
@@ -23,13 +25,53 @@
   "preserved_reachable_weight_percent": 36.50442477876106,
   "is_dag": true,
   "is_arborescence": true,
+  "is_valid_arborescence": true,
   "root_in_degree": 0,
   "max_non_root_in_degree": 1,
   "reachable_from_root": true,
   "original_graph_has_cycles": true,
   "original_graph_can_contain_cycles": true,
-  "expanded_paths_csv": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\frontend-ramex\\public\\data\\ramex2007_expanded_paths_dataset03.csv",
-  "tree_complete_png": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\frontend-ramex\\public\\data\\ramex2007_dataset03_tree_complete.png",
+  "expanded_paths_csv": "frontend-ramex\\public\\data\\ramex2007_expanded_paths_dataset03.csv",
+  "tree_complete_png": "frontend-ramex\\public\\data\\ramex2007_dataset03_tree_complete.png",
+  "tree_paper_style_png": "frontend-ramex\\public\\data\\ramex2007_dataset03_paper_style.png",
+  "canonical_exports": {
+    "edges_csv": "frontend-ramex\\public\\data\\ramex2007_edges.csv",
+    "nodes_csv": "frontend-ramex\\public\\data\\ramex2007_nodes.csv",
+    "tree_json": "frontend-ramex\\public\\data\\ramex2007_tree.json",
+    "metrics_json": "frontend-ramex\\public\\data\\ramex2007_metrics.json",
+    "tree_png": "frontend-ramex\\public\\data\\ramex2007_tree.png",
+    "tree_paper_style_png": "frontend-ramex\\public\\data\\ramex2007_tree_paper_style.png"
+  },
+  "validation": {
+    "nodes": 6,
+    "edges": 5,
+    "total_weight": 165.0,
+    "average_degree": 1.6666666666666667,
+    "max_in_degree": 1,
+    "max_out_degree": 3,
+    "number_of_sources": 1,
+    "number_of_sinks": 3,
+    "density": 0.16666666666666666,
+    "preserved_weight_percentage": 36.50442477876106,
+    "preserved_weight_percent": 36.50442477876106,
+    "is_valid_rooted_branching": true,
+    "is_valid_arborescence": true,
+    "is_arborescence": true,
+    "root": "SOURCE",
+    "root_exists": true,
+    "expected_edges": 5,
+    "is_dag": true,
+    "all_reachable_from_root": true,
+    "reachable_from_root": true,
+    "root_in_degree": 0,
+    "max_non_root_in_degree": 1,
+    "edge_count_ok": true,
+    "total_selected_weight": 165.0,
+    "original_total_weight": 452.0,
+    "validation_messages": [
+      "Rooted branching validado como arborescência dirigida."
+    ]
+  },
   "warnings": [],
   "nodes": [
     {
@@ -142,7 +184,7 @@
       "average_branching_factor": 1.6666666666666667,
       "max_branching_factor": 3
     },
-    "expanded_paths_csv": "C:\\Users\\joaqu\\Documents\\Projeto - Data Sciense\\frontend-ramex\\public\\data\\ramex2007_expanded_paths_dataset03.csv"
+    "expanded_paths_csv": "frontend-ramex\\public\\data\\ramex2007_expanded_paths_dataset03.csv"
   },
   "compare_simplified": [],
   "metrics": {
@@ -160,11 +202,14 @@
     "is_acyclic": true,
     "is_dag": true,
     "is_arborescence": true,
+    "is_valid_arborescence": true,
     "is_connected": true,
     "root_in_degree": 0,
     "max_indegree_except_root": 1,
     "max_non_root_in_degree": 1,
     "reachable_from_root": true,
+    "all_reachable_from_root": true,
+    "expected_edges": 5,
     "original_graph_has_cycles": true,
     "compression_ratio": 0.25,
     "removed_edges": 15,

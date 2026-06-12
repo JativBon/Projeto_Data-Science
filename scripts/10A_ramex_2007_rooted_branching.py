@@ -253,7 +253,7 @@ def expand_dominant_paths(tree: nx.DiGraph, root: str) -> tuple[list[dict[str, A
 
 def hierarchical_layout(tree: nx.DiGraph, root: str, levels: dict[str, int]) -> dict[str, tuple[float, float]]:
     try:
-        return nx.nx_agraph.graphviz_layout(tree, prog="dot", args="-Grankdir=TB")
+        return nx.nx_agraph.graphviz_layout(tree, prog="dot", args="-Grankdir=LR")
     except Exception:
         try:
             layout_graph = tree.copy()
@@ -402,6 +402,7 @@ def canonical_export_paths(output_csv: Path, output_json: Path, output_png: Path
         "tree_json": output_json.parent / "ramex2007_tree.json",
         "metrics_json": output_json.parent / "ramex2007_metrics.json",
         "tree_png": output_png.parent / "ramex2007_tree.png",
+        "tree_paper_style_png": output_png.parent / "ramex2007_tree_paper_style.png",
     }
 
 
@@ -429,10 +430,13 @@ def export_outputs(
     edge_rows_df.to_csv(output_csv, index=False, encoding="utf-8")
     edge_rows_df.to_csv(canonical_paths["edges_csv"], index=False, encoding="utf-8")
     draw_tree(tree, root, output_png)
+    paper_style_png = output_png.with_name(output_png.stem + "_paper_style.png")
+    shutil.copyfile(output_png, paper_style_png)
     complete_png = output_png.with_name(output_png.stem + "_tree_complete.png")
     if complete_png != output_png:
         shutil.copyfile(output_png, complete_png)
     shutil.copyfile(output_png, canonical_paths["tree_png"])
+    shutil.copyfile(paper_style_png, canonical_paths["tree_paper_style_png"])
 
     total_weight_original = sum(float(data["weight"]) for _, _, data in graph.edges(data=True))
     reachable_total_weight = sum(float(data["weight"]) for _, _, data in reachable_graph.edges(data=True))
@@ -508,6 +512,7 @@ def export_outputs(
         "original_graph_can_contain_cycles": True,
         "expanded_paths_csv": str(expanded_paths_csv),
         "tree_complete_png": str(complete_png),
+        "tree_paper_style_png": str(paper_style_png),
         "canonical_exports": {key: str(path) for key, path in canonical_paths.items()},
         "validation": validation,
         "warnings": warnings,

@@ -1,9 +1,48 @@
 {
-  "algorithm": "RAMEX Back-and-Forward Heuristic",
+  "algorithm": "Back-and-Forward Poly-tree Formal",
+  "display_title": "Back-and-Forward Poly-tree Formal",
+  "method": "ramex_back_forward_polytree_formal",
+  "artifact_type": "polytree_formal",
   "initial_edge": {
     "from": "Tecnologia",
     "to": "Mercearia",
     "weight": 75.0
+  },
+  "validation": {
+    "nodes": 4,
+    "edges": 3,
+    "total_weight": 130.0,
+    "average_degree": 1.5,
+    "max_in_degree": 2,
+    "max_out_degree": 2,
+    "number_of_sources": 2,
+    "number_of_sinks": 2,
+    "density": 0.25,
+    "preserved_weight_percentage": 36.93181818181818,
+    "preserved_weight_percent": 36.93181818181818,
+    "is_valid_polytree": true,
+    "is_polytree": true,
+    "is_dag": true,
+    "is_acyclic": true,
+    "undirected_is_tree": true,
+    "is_tree_undirected": true,
+    "expected_edges": 3,
+    "edge_count_ok": true,
+    "convergence_nodes": [
+      "Mercearia"
+    ],
+    "total_selected_weight": 130.0,
+    "original_total_weight": 352.0,
+    "validation_messages": [
+      "Poly-tree formal validada: DAG cujo grafo não dirigido é uma árvore."
+    ]
+  },
+  "canonical_exports": {
+    "edges_csv": "frontend-ramex\\public\\data\\back_forward_polytree_formal_edges.csv",
+    "tree_json": "frontend-ramex\\public\\data\\back_forward_polytree_formal.json",
+    "metrics_json": "frontend-ramex\\public\\data\\back_forward_polytree_formal_metrics.json",
+    "hierarchical_png": "frontend-ramex\\public\\data\\back_forward_polytree_formal_hierarchical.png",
+    "paper_style_png": "frontend-ramex\\public\\data\\back_forward_polytree_paper_style.png"
   },
   "metrics": {
     "original_nodes": 4,
@@ -15,7 +54,15 @@
     "preserved_weight_percent": 36.93181818181818,
     "is_acyclic": true,
     "is_connected": true,
-    "is_polytree": true
+    "is_polytree": true,
+    "is_tree_undirected": true,
+    "undirected_is_tree": true,
+    "expected_edges": 3,
+    "max_in_degree": 2,
+    "convergence_nodes": [
+      "Mercearia"
+    ],
+    "rejected_edges_count": 0
   },
   "nodes": [
     {
@@ -58,5 +105,6 @@
       "direction": "FORWARD"
     }
   ],
+  "rejected_edges": [],
   "warnings": []
 }
