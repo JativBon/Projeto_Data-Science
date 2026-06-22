@@ -20,7 +20,7 @@ def load_csv(file_path: str, req_cols: list[str]) -> tuple[pd.DataFrame | None, 
         return None, f"Ficheiro inexistente ou vazio: {file_path}"
 
     try:
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, encoding="utf-8")
     except Exception as exc:
         return None, f"Erro ao ler {file_path}: {exc}"
 

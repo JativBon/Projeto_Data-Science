@@ -20,7 +20,7 @@ def main() -> None:
     parser.add_argument("--root", default="SOURCE")
     args = parser.parse_args()
 
-    df = pd.read_csv(args.branching_csv)
+    df = pd.read_csv(args.branching_csv, encoding="utf-8")
     graph = nx.DiGraph()
     for row in df.itertuples(index=False):
         graph.add_edge(str(row.From), str(row.To), weight=float(row.Weight))
@@ -44,7 +44,7 @@ def main() -> None:
 
     output = Path(args.output_csv)
     output.parent.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(rows).sort_values(["path_weight", "branch_depth"], ascending=[False, False]).to_csv(output, index=False)
+    pd.DataFrame(rows).sort_values(["path_weight", "branch_depth"], ascending=[False, False]).to_csv(output, index=False, encoding="utf-8")
     print(f"Caminhos dominantes gerados: {output}")
 
 

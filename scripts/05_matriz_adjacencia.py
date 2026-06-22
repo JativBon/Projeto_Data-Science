@@ -13,7 +13,7 @@ def load_pair_frequencies(file_path: str) -> pd.DataFrame:
         raise FileNotFoundError(f"Ficheiro nao encontrado: {caminho}")
 
     try:
-        df_pairs = pd.read_csv(caminho)
+        df_pairs = pd.read_csv(caminho, encoding="utf-8")
     except OSError as exc:
         raise OSError(f"Erro ao ler o ficheiro CSV: {exc}") from exc
 

@@ -78,7 +78,7 @@ def read_csv_df(path: Path | None) -> pd.DataFrame:
     if not path or not path.is_file():
         return pd.DataFrame()
     try:
-        return pd.read_csv(path)
+        return pd.read_csv(path, encoding="utf-8")
     except Exception:
         return pd.DataFrame()
 

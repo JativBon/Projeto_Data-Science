@@ -35,7 +35,7 @@ def load_edges(path_text: str) -> tuple[pd.DataFrame, int]:
     if not path.exists() or path.stat().st_size == 0:
         raise ValueError(f"Ficheiro vazio ou inexistente: {path}")
 
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, encoding="utf-8")
     if missing := [c for c in REQUIRED_COLUMNS if c not in df.columns]:
         raise ValueError(f"Colunas obrigatórias em falta: {missing}")
 
@@ -80,7 +80,7 @@ def build_forward_tree(graph: nx.DiGraph, root: str) -> nx.DiGraph:
         if not candidates:
             break
 
-        # Ordenar por maior peso, com desempate alfabÃ©tico
+        # Ordenar por maior peso, com desempate alfabético
         candidates.sort(key=lambda e: (-e[2], e[0], e[1]))
         u, v, w = candidates[0]
         

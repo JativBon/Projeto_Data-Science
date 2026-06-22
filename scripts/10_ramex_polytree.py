@@ -81,7 +81,7 @@ def load_edges(path: str) -> tuple[pd.DataFrame, int]:
     if not p.exists() or p.stat().st_size == 0:
         raise ValueError(f"Ficheiro vazio ou inexistente: {path}")
 
-    df = pd.read_csv(p)
+    df = pd.read_csv(p, encoding="utf-8")
     if missing := [c for c in COLUNAS_OBRIGATORIAS if c not in df.columns]:
         raise ValueError(f"Colunas em falta: {missing}")
 

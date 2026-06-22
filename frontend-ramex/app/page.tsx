@@ -3152,17 +3152,26 @@ function layoutRamexEdges(edges: PureRamexEdge[], root?: string) {
   const grouped = new Map<number, string[]>();
   levels.forEach((level, node) => grouped.set(level, [...(grouped.get(level) ?? []), node]));
   const maxLevel = Math.max(1, ...Array.from(grouped.keys()));
+  const maxNodesInLevel = Math.max(1, ...[...grouped.values()].map((nodes) => nodes.length));
+  const nodeCount = levels.size;
+  const compact = nodeCount > 30;
+  const paddingX = compact ? 50 : 60;
+  const paddingY = compact ? 40 : 50;
+  const minLevelGap = compact ? Math.max(48, Math.min(75, Math.round(5000 / (maxLevel + 1)))) : 120;
+  const minRowGap = compact ? Math.max(28, Math.min(48, Math.round(7000 / maxNodesInLevel))) : 42;
+  const width = Math.max(980, paddingX * 2 + maxLevel * minLevelGap);
+  const height = Math.max(540, paddingY * 2 + maxNodesInLevel * minRowGap);
   const positions = new Map<string, { x: number; y: number }>();
   grouped.forEach((nodes, level) => {
     const ordered = nodes.sort();
     ordered.forEach((node, index) => {
       positions.set(node, {
-        x: 60 + (level / maxLevel) * 840,
-        y: 50 + ((index + 1) / (ordered.length + 1)) * 420,
+        x: paddingX + (level / maxLevel) * (width - paddingX * 2),
+        y: paddingY + (index + 0.5) * minRowGap,
       });
     });
   });
-  return positions;
+  return { positions, width, height, compact };
 }
 
 function RamexAnalyticalTree({ edges, root }: { edges: PureRamexEdge[]; root?: string }) {
@@ -3174,7 +3183,7 @@ function RamexAnalyticalTree({ edges, root }: { edges: PureRamexEdge[]; root?: s
       .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0))
       .slice(0, topN);
   }, [edges, maxDepth, topN]);
-  const positions = useMemo(() => layoutRamexEdges(visible, root), [visible, root]);
+  const layout = useMemo(() => layoutRamexEdges(visible, root), [visible, root]);
   const maxWeight = Math.max(1, ...visible.map((edge) => edge.weight ?? 0));
 
   if (!edges.length) return null;
@@ -3197,12 +3206,12 @@ function RamexAnalyticalTree({ edges, root }: { edges: PureRamexEdge[]; root?: s
           </label>
         </div>
       </div>
-      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-3">
-        <svg viewBox="0 0 980 540" className="h-[32rem] min-w-[760px] w-full" role="img" aria-label="Grafo analítico RAMEX 2007">
-          <rect width="980" height="540" rx="18" fill="#f8fafc" />
+      <div className="mt-4 max-h-[70vh] overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <svg viewBox={`0 0 ${layout.width} ${layout.height}`} className="h-[32rem] min-w-[760px] w-full" role="img" aria-label="Grafo analítico RAMEX 2007">
+          <rect width={layout.width} height={layout.height} rx="18" fill="#f8fafc" />
           {visible.map((edge, index) => {
-            const source = positions.get(String(edge.from ?? ""));
-            const target = positions.get(String(edge.to ?? ""));
+            const source = layout.positions.get(String(edge.from ?? ""));
+            const target = layout.positions.get(String(edge.to ?? ""));
             if (!source || !target) return null;
             const width = 1.5 + Math.sqrt((edge.weight ?? 0) / maxWeight) * 9;
             return (
@@ -3211,10 +3220,10 @@ function RamexAnalyticalTree({ edges, root }: { edges: PureRamexEdge[]; root?: s
               </line>
             );
           })}
-          {Array.from(positions.entries()).map(([node, pos]) => (
+          {Array.from(layout.positions.entries()).map(([node, pos]) => (
             <g key={node}>
-              <circle cx={pos.x} cy={pos.y} r={node === root ? 11 : node.toUpperCase() === "SINK" ? 9 : 7} fill={node === root ? "#c8914b" : node.toUpperCase() === "SINK" ? "#334155" : "#e8f4f8"} stroke="#18212f" />
-              <text x={pos.x} y={pos.y - 14} textAnchor="middle" fontSize="11" fontWeight="700" fill="#18212f">{node}</text>
+              <circle cx={pos.x} cy={pos.y} r={node === root ? 11 : node.toUpperCase() === "SINK" ? 9 : layout.compact ? 6 : 7} fill={node === root ? "#c8914b" : node.toUpperCase() === "SINK" ? "#334155" : "#e8f4f8"} stroke="#18212f" />
+              <text x={pos.x} y={pos.y - 14} textAnchor="middle" fontSize={layout.compact ? 9 : 11} fontWeight="700" fill="#18212f">{node}</text>
             </g>
           ))}
         </svg>
@@ -3271,7 +3280,7 @@ function RamexExpansionPlayer({ edges, root }: { edges: PureRamexEdge[]; root?: 
     return () => window.clearInterval(id);
   }, [playing, maxStep]);
   const visible = edges.filter((edge) => Number(edge.level ?? 1) <= step);
-  const positions = useMemo(() => layoutRamexEdges(edges, root), [edges, root]);
+  const layout = useMemo(() => layoutRamexEdges(edges, root), [edges, root]);
   const maxWeight = Math.max(1, ...edges.map((edge) => edge.weight ?? 0));
   if (!edges.length) return null;
   return (
@@ -3289,20 +3298,20 @@ function RamexExpansionPlayer({ edges, root }: { edges: PureRamexEdge[]; root?: 
         </div>
       </div>
       <input className="mt-4 w-full" type="range" min={1} max={maxStep} value={step} onChange={(event) => setStep(Number(event.target.value))} />
-      <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-3">
-        <svg viewBox="0 0 980 540" className="h-[30rem] min-w-[760px] w-full">
-          <rect width="980" height="540" rx="18" fill="#f8fafc" />
+      <div className="mt-4 max-h-[70vh] overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <svg viewBox={`0 0 ${layout.width} ${layout.height}`} className="h-[30rem] min-w-[760px] w-full">
+          <rect width={layout.width} height={layout.height} rx="18" fill="#f8fafc" />
           {visible.map((edge, index) => {
-            const source = positions.get(String(edge.from ?? ""));
-            const target = positions.get(String(edge.to ?? ""));
+            const source = layout.positions.get(String(edge.from ?? ""));
+            const target = layout.positions.get(String(edge.to ?? ""));
             if (!source || !target) return null;
             const width = 1.5 + Math.sqrt((edge.weight ?? 0) / maxWeight) * 10;
             return <line key={`${edge.from}-${edge.to}-${index}`} x1={source.x} y1={source.y} x2={target.x} y2={target.y} stroke="#0f766e" strokeWidth={width} strokeOpacity={0.78} />;
           })}
-          {Array.from(positions.entries()).map(([node, pos]) => (
+          {Array.from(layout.positions.entries()).map(([node, pos]) => (
             <g key={node} opacity={node === root || visible.some((edge) => edge.from === node || edge.to === node) ? 1 : 0.22}>
-              <circle cx={pos.x} cy={pos.y} r={node === root ? 11 : 7} fill={node === root ? "#c8914b" : "#e8f4f8"} stroke="#18212f" />
-              <text x={pos.x} y={pos.y - 14} textAnchor="middle" fontSize="11" fontWeight="700" fill="#18212f">{node}</text>
+              <circle cx={pos.x} cy={pos.y} r={node === root ? 11 : layout.compact ? 6 : 7} fill={node === root ? "#c8914b" : "#e8f4f8"} stroke="#18212f" />
+              <text x={pos.x} y={pos.y - 14} textAnchor="middle" fontSize={layout.compact ? 9 : 11} fontWeight="700" fill="#18212f">{node}</text>
             </g>
           ))}
         </svg>

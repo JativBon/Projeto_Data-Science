@@ -23,6 +23,7 @@ dist/
 .vscode/
 .idea/
 .vs/
+.claude/
 
 # OS generated files
 Thumbs.db

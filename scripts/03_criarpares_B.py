@@ -80,7 +80,7 @@ print(f"Clientes distintos no dataset: {df['Customer ID'].nunique()}")
 # Guarda as sequências válidas em CSV
 df_seq = sequencias.reset_index()
 df_seq.columns = ["Customer ID", "Sequence"]
-df_seq.to_csv("sequencias_dataset03.csv", index=False)
+df_seq.to_csv("sequencias_dataset03.csv", index=False, encoding="utf-8")
 
 print("\nFicheiro gerado com sucesso: sequencias_dataset03.csv")
 
@@ -107,6 +107,6 @@ print("\nExemplo de pares:")
 print(pares[:10])
 
 df_pares = pd.DataFrame(pares, columns=["From", "To"])
-df_pares.to_csv("pares_dataset03.csv", index=False)
+df_pares.to_csv("pares_dataset03.csv", index=False, encoding="utf-8")
 
 print("Ficheiro gerado: pares_dataset03.csv")

@@ -30,7 +30,7 @@ def normalize_text(value: Any) -> str | None:
 def read_simple_sequences(path: Path) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     if path.suffix.lower() == ".csv":
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, encoding="utf-8")
         if "Sequence" in df.columns:
             for index, sequence in enumerate(df["Sequence"].astype(str), start=1):
                 customer = str(df.iloc[index - 1].get("Sequence ID", f"C{index:05d}"))
@@ -46,7 +46,7 @@ def read_simple_sequences(path: Path) -> pd.DataFrame:
 
 
 def read_event_table(path: Path, customer_col: str, time_col: str, item_col: str) -> pd.DataFrame:
-    df = pd.read_csv(path) if path.suffix.lower() == ".csv" else pd.read_excel(path)
+    df = pd.read_csv(path, encoding="utf-8") if path.suffix.lower() == ".csv" else pd.read_excel(path)
     missing = [column for column in [customer_col, time_col, item_col] if column not in df.columns]
     if missing:
         raise ValueError(f"Colunas em falta: {missing}")
@@ -117,9 +117,9 @@ def main() -> None:
         events = read_simple_sequences(path)
     ordered, sequences, edges = build_outputs(events)
     Path(args.ordered_out).parent.mkdir(parents=True, exist_ok=True)
-    ordered.to_csv(args.ordered_out, index=False)
-    sequences.to_csv(args.sequences_out, index=False)
-    edges.to_csv(args.edges_out, index=False)
+    ordered.to_csv(args.ordered_out, index=False, encoding="utf-8")
+    sequences.to_csv(args.sequences_out, index=False, encoding="utf-8")
+    edges.to_csv(args.edges_out, index=False, encoding="utf-8")
     print(f"Gerados: {args.ordered_out}, {args.sequences_out}, {args.edges_out}")
 
 

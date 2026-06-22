@@ -21,8 +21,8 @@ METHOD_NAME = "ramex_back_forward_heuristic"
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="RAMEX Back-and-Forward Heuristic a partir de um CSV.")
     parser.add_argument("input_edges_csv", help="CSV de entrada (From, To, Weight).")
-    parser.add_argument("output_csv", help="CSV de saí­da.")
-    parser.add_argument("output_png", help="PNG de saí­da.")
+    parser.add_argument("output_csv", help="CSV de saída.")
+    parser.add_argument("output_png", help="PNG de saída.")
     parser.add_argument("--start-edge", default="auto", help="Aresta inicial: auto ou From->To.")
     parser.add_argument("--max-iterations", type=int, default=1000, help="Número máximo de iterações.")
     parser.add_argument("--output-json", default=None, help="JSON opcional.")
@@ -39,9 +39,9 @@ def load_edges(path_text: str) -> tuple[pd.DataFrame, int]:
     if not path.exists() or path.stat().st_size == 0:
         raise ValueError(f"Ficheiro vazio ou inexistente: {path}")
 
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, encoding="utf-8")
     if missing := [c for c in REQUIRED_COLUMNS if c not in df.columns]:
-        raise ValueError(f"Colunas obrigatÃ³rias em falta: {missing}")
+        raise ValueError(f"Colunas obrigatórias em falta: {missing}")
 
     df["From"] = df["From"].astype(str).str.strip()
     df["To"] = df["To"].astype(str).str.strip()
@@ -51,7 +51,7 @@ def load_edges(path_text: str) -> tuple[pd.DataFrame, int]:
     valid_df = df.dropna(subset=REQUIRED_COLUMNS).query("Weight > 0").copy()
 
     if valid_df.empty:
-        raise ValueError("NÃ£o existem arestas vÃ¡lidas com peso positivo.")
+        raise ValueError("Não existem arestas válidas com peso positivo.")
 
     return valid_df.sort_values(by="Weight", ascending=False).reset_index(drop=True), initial_len - len(valid_df)
 
@@ -61,7 +61,7 @@ def build_graph(df: pd.DataFrame) -> nx.DiGraph:
     for u, v, w in df[REQUIRED_COLUMNS].itertuples(index=False):
         graph.add_edge(u, v, weight=float(w))
     if not graph.edges:
-        raise ValueError("O grafo nÃ£o contÃ©m arestas.")
+        raise ValueError("O grafo não contém arestas.")
     return graph
 
 
@@ -72,7 +72,7 @@ def choose_initial_edge(graph: nx.DiGraph, start_edge: str) -> tuple[str, str, f
 
     sep = "->" if "->" in start_edge else "," if "," in start_edge else None
     if not sep:
-        raise ValueError("start-edge invÃ¡lido. Use auto, From->To ou From,To.")
+        raise ValueError("start-edge inválido. Use auto, From->To ou From,To.")
 
     u, v = [p.strip() for p in start_edge.split(sep, 1)]
     if not graph.has_edge(u, v):
@@ -300,7 +300,7 @@ def main() -> None:
             raise ValueError("A estrutura final não satisfaz a condição de poly-tree (grafo não dirigido não é árvore).")
 
         if tree.number_of_nodes() < graph.number_of_nodes():
-            warnings.append(f"IncluÃ­dos {tree.number_of_nodes()} de {graph.number_of_nodes()} nÃ³s originais.")
+            warnings.append(f"Incluídos {tree.number_of_nodes()} de {graph.number_of_nodes()} nós originais.")
 
         payload = export_outputs(graph, tree, initial_edge, warnings, args)
         draw_tree(tree, initial_edge, Path(args.output_png))

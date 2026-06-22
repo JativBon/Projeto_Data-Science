@@ -38,7 +38,7 @@ def load_adjacency_matrix(file_path: str) -> tuple[pd.DataFrame, int]:
     if not path.exists() or path.stat().st_size == 0:
         raise ValueError(f"Ficheiro vazio ou inexistente: {path}")
 
-    df = pd.read_csv(path, index_col=0)
+    df = pd.read_csv(path, index_col=0, encoding="utf-8")
     if df.empty:
         raise ValueError("A matriz está vazia.")
 

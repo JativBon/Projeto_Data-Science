@@ -58,10 +58,10 @@ def main() -> None:
     parser.add_argument("--output-png")
     args = parser.parse_args()
 
-    matrix = build_matrix(pd.read_csv(args.edges_csv))
+    matrix = build_matrix(pd.read_csv(args.edges_csv, encoding="utf-8"))
     output_csv = Path(args.output_csv)
     output_csv.parent.mkdir(parents=True, exist_ok=True)
-    matrix.to_csv(output_csv)
+    matrix.to_csv(output_csv, encoding="utf-8")
     if args.output_png:
         draw_heatmap(matrix, Path(args.output_png))
     print(f"Matriz gerada: {output_csv}")

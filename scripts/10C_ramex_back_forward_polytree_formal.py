@@ -1,7 +1,7 @@
 ﻿"""
 10C_ramex_back_forward_polytree_formal.py
 
-RAMEX Back-and-Forward â€” versÃ£o com formalizaÃ§Ã£o de Poly-tree.
+RAMEX Back-and-Forward — versão com formalização de Poly-tree.
 """
 from __future__ import annotations
 
@@ -27,18 +27,18 @@ from ramex_validation import validate_polytree
 
 REQUIRED_COLUMNS = ["From", "To", "Weight"]
 METHOD_NAME = "ramex_back_forward_polytree_formal"
-FORMAL_TITLE = "RAMEX 2015 / Back-and-Forward â€” Poly-tree Formal"
-FORMAL_LEGEND = "Poly-tree formal: DAG cujo grafo nÃ£o dirigido Ã© uma Ã¡rvore."
-INVALID_LABEL = "Estrutura Back-and-Forward invÃ¡lida â€” requer revisÃ£o."
+FORMAL_TITLE = "RAMEX 2015 / Back-and-Forward — Poly-tree Formal"
+FORMAL_LEGEND = "Poly-tree formal: DAG cujo grafo não dirigido é uma árvore."
+INVALID_LABEL = "Estrutura Back-and-Forward inválida — requer revisão."
 
 
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="RAMEX Back-and-Forward Poly-tree Formal.")
     parser.add_argument("input_edges_csv", help="CSV de entrada (From, To, Weight).")
-    parser.add_argument("output_csv", help="CSV de saÃ­da.")
-    parser.add_argument("output_png", help="PNG de saÃ­da.")
+    parser.add_argument("output_csv", help="CSV de saída.")
+    parser.add_argument("output_png", help="PNG de saída.")
     parser.add_argument("--start-edge", default="auto", help="Aresta inicial: auto ou From->To.")
-    parser.add_argument("--max-iterations", type=int, default=1000, help="NÃºmero mÃ¡ximo de iteraÃ§Ãµes.")
+    parser.add_argument("--max-iterations", type=int, default=1000, help="Número máximo de iterações.")
     parser.add_argument("--output-json", default=None, help="JSON opcional.")
     parser.add_argument("--output-dot", default=None, help="Ficheiro DOT opcional.")
     parser.add_argument("--compare", action="store_true", help="Comparar com 10C original.")
@@ -54,9 +54,9 @@ def load_edges(path_text: str) -> tuple[pd.DataFrame, int]:
     if not path.exists() or path.stat().st_size == 0:
         raise ValueError(f"Ficheiro vazio ou inexistente: {path}")
 
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, encoding="utf-8")
     if missing := [c for c in REQUIRED_COLUMNS if c not in df.columns]:
-        raise ValueError(f"Colunas obrigatÃ³rias em falta: {missing}")
+        raise ValueError(f"Colunas obrigatórias em falta: {missing}")
 
     df["From"] = df["From"].astype(str).str.strip()
     df["To"] = df["To"].astype(str).str.strip()
@@ -66,7 +66,7 @@ def load_edges(path_text: str) -> tuple[pd.DataFrame, int]:
     valid_df = df.dropna(subset=REQUIRED_COLUMNS).query("Weight > 0").copy()
     
     if valid_df.empty:
-        raise ValueError("NÃ£o existem arestas vÃ¡lidas com peso positivo.")
+        raise ValueError("Não existem arestas válidas com peso positivo.")
 
     return valid_df.sort_values(by="Weight", ascending=False).reset_index(drop=True), initial_len - len(valid_df)
 
@@ -76,7 +76,7 @@ def build_graph(edges_df: pd.DataFrame) -> nx.DiGraph:
     for u, v, w in edges_df[REQUIRED_COLUMNS].itertuples(index=False):
         graph.add_edge(u, v, weight=float(w))
     if not graph.edges:
-        raise ValueError("O grafo nÃ£o contÃ©m arestas.")
+        raise ValueError("O grafo não contém arestas.")
     return graph
 
 
@@ -87,11 +87,11 @@ def choose_initial_edge(graph: nx.DiGraph, start_edge: str) -> tuple[str, str, f
 
     sep = "->" if "->" in start_edge else "," if "," in start_edge else None
     if not sep:
-        raise ValueError("start-edge invÃ¡lido. Use auto, From->To ou From,To.")
+        raise ValueError("start-edge inválido. Use auto, From->To ou From,To.")
         
     u, v = [p.strip() for p in start_edge.split(sep, 1)]
     if not graph.has_edge(u, v):
-        raise ValueError(f"A aresta inicial indicada nÃ£o existe: {u} -> {v}")
+        raise ValueError(f"A aresta inicial indicada não existe: {u} -> {v}")
     
     return u, v, float(graph[u][v]["weight"])
 
@@ -118,10 +118,10 @@ def is_polytree_valid(tree: nx.DiGraph, u: str, v: str, weight: float) -> tuple[
     undirected = test.to_undirected()
     if not nx.is_tree(undirected):
         if not nx.is_connected(undirected):
-            return False, f"grafo nÃ£o dirigido ficaria desconexo ao adicionar {u} -> {v}"
+            return False, f"grafo não dirigido ficaria desconexo ao adicionar {u} -> {v}"
         if undirected.number_of_edges() >= undirected.number_of_nodes():
-            return False, f"grafo nÃ£o dirigido ficaria com ciclo ao adicionar {u} -> {v} ({undirected.number_of_edges()} arestas, {undirected.number_of_nodes()} nÃ³s)"
-        return False, f"grafo nÃ£o dirigido nÃ£o seria Ã¡rvore ao adicionar {u} -> {v}"
+            return False, f"grafo não dirigido ficaria com ciclo ao adicionar {u} -> {v} ({undirected.number_of_edges()} arestas, {undirected.number_of_nodes()} nós)"
+        return False, f"grafo não dirigido não seria árvore ao adicionar {u} -> {v}"
 
     return True, ""
 
@@ -158,7 +158,7 @@ def build_polytree_formal(graph: nx.DiGraph, initial_edge: tuple[str, str, float
             break
 
     if not tree.edges:
-        raise ValueError("NÃ£o foi possÃ­vel construir a poly-tree formal.")
+        raise ValueError("Não foi possível construir a poly-tree formal.")
     return tree, rejections
 
 
@@ -352,12 +352,12 @@ def render_network_axes(
             plt.Line2D([0], [0], color=color, lw=3, label=direction)
             for direction, color in edge_colors.items()
         ] + [
-            plt.Line2D([0], [0], marker="o", color="w", markerfacecolor="#f9a8d4", markeredgecolor="#1f2937", markersize=12, label="convergÃªncia in_degree > 1")
+            plt.Line2D([0], [0], marker="o", color="w", markerfacecolor="#f9a8d4", markeredgecolor="#1f2937", markersize=12, label="convergência in_degree > 1")
         ],
         loc="upper right",
         frameon=True,
     )
-    note = "VisualizaÃ§Ã£o exploratÃ³ria da poly-tree" if exploratory else FORMAL_LEGEND
+    note = "Visualização exploratória da poly-tree" if exploratory else FORMAL_LEGEND
     ax.text(
         0.01, 0.01, note,
         transform=ax.transAxes,
@@ -393,7 +393,7 @@ def draw_polytree_views(tree: nx.DiGraph, initial: tuple[str, str, float], outpu
         ax,
         tree,
         initial,
-        "VisualizaÃ§Ã£o exploratÃ³ria da poly-tree",
+        "Visualização exploratória da poly-tree",
         pos=neato_pos,
         exploratory=True,
     )
@@ -411,21 +411,21 @@ def print_comparison(graph: nx.DiGraph, tree_orig: nx.DiGraph, tree_formal: nx.D
     n1, e1, w1, p1 = get_m(tree_orig)
     n2, e2, w2, p2 = get_m(tree_formal)
 
-    print(f"\n{'='*64}\nCOMPARAÃ‡ÃƒO: 10C original vs 10C Poly-tree Formal\n{'='*64}")
-    print(f"{'MÃ©trica':<30} {'10C Original':>15} {'10C Formal':>15}\n{'-'*64}")
-    print(f"{'NÃ³s seleccionados':<30} {n1:>15} {n2:>15}")
+    print(f"\n{'='*64}\nCOMPARAÇÃO: 10C original vs 10C Poly-tree Formal\n{'='*64}")
+    print(f"{'Métrica':<30} {'10C Original':>15} {'10C Formal':>15}\n{'-'*64}")
+    print(f"{'Nós seleccionados':<30} {n1:>15} {n2:>15}")
     print(f"{'Arestas seleccionadas':<30} {e1:>15} {e2:>15}")
     print(f"{'Soma pesos seleccionados':<30} {w1:>15.2f} {w2:>15.2f}")
     print(f"{'Peso preservado (%)':<30} {p1:>14.2f}% {p2:>14.2f}%")
-    print(f"{'AcÃ­clico (DAG)':<30} {str(nx.is_directed_acyclic_graph(tree_orig)):>15} {str(nx.is_directed_acyclic_graph(tree_formal)):>15}")
-    print(f"{'Grafo nÃ£o dir. Ã© Ã¡rvore':<30} {str(nx.is_tree(tree_orig.to_undirected())):>15} {str(nx.is_tree(tree_formal.to_undirected())):>15}")
-    print(f"{'Arestas rejeitadas':<30} {'â€”':>15} {len(rejections):>15}\n{'='*64}")
+    print(f"{'Acíclico (DAG)':<30} {str(nx.is_directed_acyclic_graph(tree_orig)):>15} {str(nx.is_directed_acyclic_graph(tree_formal)):>15}")
+    print(f"{'Grafo não dir. é árvore':<30} {str(nx.is_tree(tree_orig.to_undirected())):>15} {str(nx.is_tree(tree_formal.to_undirected())):>15}")
+    print(f"{'Arestas rejeitadas':<30} {'—':>15} {len(rejections):>15}\n{'='*64}")
 
     only_orig = set(tree_orig.edges()) - set(tree_formal.edges())
     only_form = set(tree_formal.edges()) - set(tree_orig.edges())
 
     if not only_orig and not only_form:
-        print("\nAs estruturas sÃ£o idÃªnticas.")
+        print("\nAs estruturas são idênticas.")
     else:
         if only_orig:
             print(f"\nArestas apenas no 10C original ({len(only_orig)}):")
@@ -448,7 +448,7 @@ def main() -> None:
         tree, rejections = build_polytree_formal(graph, initial_edge, args.max_iterations)
 
         if tree.number_of_nodes() < graph.number_of_nodes():
-            warnings.append(f"IncluÃ­dos {tree.number_of_nodes()} de {graph.number_of_nodes()} nÃ³s originais.")
+            warnings.append(f"Incluídos {tree.number_of_nodes()} de {graph.number_of_nodes()} nós originais.")
 
         payload = export_outputs(graph, tree, initial_edge, rejections, warnings, args)
 
@@ -465,29 +465,29 @@ def main() -> None:
         m = payload["metrics"]
         print(f"\n{'='*56}\nRAMEX Back-and-Forward Poly-tree Formal\n{'='*56}")
         print(f"Ficheiro lido         : {args.input_edges_csv}")
-        if invalid_count: print(f"Aviso                 : ignoradas {invalid_count} arestas invÃ¡lidas")
-        print(f"NÃ³s originais         : {m['original_nodes']}\nArestas originais     : {m['original_edges']}")
+        if invalid_count: print(f"Aviso                 : ignoradas {invalid_count} arestas inválidas")
+        print(f"Nós originais         : {m['original_nodes']}\nArestas originais     : {m['original_edges']}")
         print(f"Arestas seleccionadas : {m['selected_edges']}\nPeso preservado       : {m['preserved_weight_percent']:.2f}%")
-        print(f"Ã‰ poly-tree formal    : {m['is_polytree']}\n")
+        print(f"É poly-tree formal    : {m['is_polytree']}\n")
         print("Ficheiros exportados:")
         for label, path in payload.get("canonical_exports", {}).items():
             print(f"- {label}: {path}")
         
-        if m["is_polytree"]: print(">>> ESTRUTURA VÃLIDA COMO POLY-TREE FORMAL <<<\n")
-        else: print(">>> AVISO: estrutura NÃƒO satisfaz poly-tree formal <<<\n")
+        if m["is_polytree"]: print(">>> ESTRUTURA VÁLIDA COMO POLY-TREE FORMAL <<<\n")
+        else: print(">>> AVISO: estrutura NÃO satisfaz poly-tree formal <<<\n")
 
         if args.compare:
             tree_orig = _build_original_back_forward(graph, initial_edge, args.max_iterations)
             print_comparison(graph, tree_orig, tree, rejections)
             
             fig, axes = plt.subplots(1, 2, figsize=(22, 9))
-            render_network_axes(axes[0], tree_orig, initial_edge, "10C â€” Original")
-            render_network_axes(axes[1], tree, initial_edge, "10C â€” Poly-tree Formal")
+            render_network_axes(axes[0], tree_orig, initial_edge, "10C — Original")
+            render_network_axes(axes[1], tree, initial_edge, "10C — Poly-tree Formal")
             comp_png = Path(args.output_png).with_name(Path(args.output_png).stem + "_comparacao.png")
             plt.tight_layout()
             plt.savefig(comp_png, dpi=300, bbox_inches="tight")
             plt.close()
-            print(f"PNG de comparaÃ§Ã£o: {comp_png}")
+            print(f"PNG de comparação: {comp_png}")
 
     except Exception as exc:
         print(f"Erro: {exc}", file=sys.stderr)

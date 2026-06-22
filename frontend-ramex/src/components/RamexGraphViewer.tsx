@@ -37,6 +37,13 @@ type Node = {
 
 type LayoutMode = "paperStyle" | "hierarchical" | "force";
 
+type LayoutResult = {
+  nodes: Map<string, Node>;
+  width: number;
+  height: number;
+  compact: boolean;
+};
+
 type GraphIndex = {
   nodeIds: Set<string>;
   weightByNode: Map<string, number>;
@@ -246,7 +253,7 @@ function buildHierarchicalLayout(
   canvasH: number,
   graphType: GraphType,
   paperStyle = false,
-): Map<string, Node> {
+): LayoutResult {
   const index = buildGraphIndex(edges);
   const visualRoot = chooseVisualRoot(edges, rootId, graphType, index);
   const levelByNode = computeLevels(visualRoot, graphType, index);
@@ -258,11 +265,42 @@ function buildHierarchicalLayout(
     byLevel.get(level)!.push(id);
   });
 
+  const maxNodesInLevel = Math.max(1, ...[...byLevel.values()].map((ids) => ids.length));
   const totalLevels = Math.max(1, ...byLevel.keys()) + 1;
-  const paddingX = paperStyle ? 115 : 80;
-  const paddingY = paperStyle ? 95 : 70;
-  const usableH = canvasH - paddingY * 2;
-  const usableW = canvasW - paddingX * 2;
+  const nodeCount = index.nodeIds.size;
+  const largeGraph = nodeCount > 30;
+  const compact = paperStyle && largeGraph;
+
+  let paddingX: number;
+  let paddingY: number;
+  let minLevelGap: number;
+  let minRowGap: number;
+
+  if (compact) {
+    paddingX = 55;
+    paddingY = 45;
+    minRowGap = Math.max(30, Math.min(52, Math.round(9000 / maxNodesInLevel)));
+    minLevelGap = Math.max(50, Math.min(85, Math.round(6000 / totalLevels)));
+  } else if (paperStyle) {
+    paddingX = 115;
+    paddingY = 95;
+    minRowGap = 72;
+    minLevelGap = 120;
+  } else {
+    paddingX = 80;
+    paddingY = 70;
+    minRowGap = 50;
+    minLevelGap = 80;
+  }
+
+  const width = paperStyle
+    ? Math.max(canvasW, paddingX * 2 + Math.max(totalLevels - 1, 1) * minLevelGap)
+    : canvasW;
+  const height = paperStyle
+    ? Math.max(canvasH, paddingY * 2 + maxNodesInLevel * minRowGap)
+    : canvasH;
+  const usableW = width - paddingX * 2;
+  const usableH = height - paddingY * 2;
   const nodes = new Map<string, Node>();
 
   byLevel.forEach((ids, level) => {
@@ -273,9 +311,15 @@ function buildHierarchicalLayout(
     );
     const rank = level / Math.max(totalLevels - 1, 1);
     orderedIds.forEach((id, idx) => {
-      const spread = orderedIds.length > 1 ? idx / (orderedIds.length - 1) : 0.5;
-      const x = paperStyle ? paddingX + rank * usableW : paddingX + ((idx + 0.5) / orderedIds.length) * usableW;
-      const y = paperStyle ? paddingY + spread * usableH : paddingY + rank * usableH;
+      let x: number;
+      let y: number;
+      if (paperStyle) {
+        x = totalLevels <= 1 ? width / 2 : paddingX + rank * (width - paddingX * 2);
+        y = paddingY + (idx + 0.5) * minRowGap;
+      } else {
+        x = paddingX + ((idx + 0.5) / orderedIds.length) * usableW;
+        y = paddingY + rank * usableH;
+      }
       nodes.set(id, {
         id,
         x,
@@ -288,13 +332,20 @@ function buildHierarchicalLayout(
     });
   });
 
-  return nodes;
+  return { nodes, width, height, compact };
 }
 
-function nodeDimensions(node: Node, maxWeight: number, paperStyle: boolean): { rx: number; ry: number } {
+function nodeDimensions(node: Node, maxWeight: number, paperStyle: boolean, compact = false): { rx: number; ry: number } {
   if (!paperStyle) {
     const radius = nodeRadius(node, maxWeight);
     return { rx: radius, ry: radius };
+  }
+  if (compact) {
+    const shortLabel = node.id.length <= 4;
+    return {
+      rx: Math.max(shortLabel ? 14 : 20, Math.min(38, node.id.length * 2.2 + 8)),
+      ry: shortLabel ? 14 : 12,
+    };
   }
   const shortLabel = node.id.length <= 3;
   return {
@@ -319,21 +370,26 @@ function buildForceLayout(
   rootId: string | undefined,
   canvasW: number,
   canvasH: number,
-): Map<string, Node> {
+): LayoutResult {
   const index = buildGraphIndex(edges);
   const ids = [...index.nodeIds];
+  const nodeCount = ids.length;
+  const width = Math.max(canvasW, 60 + nodeCount * 12);
+  const height = Math.max(canvasH, 60 + nodeCount * 10);
   const pos: Record<string, { x: number; y: number }> = {};
 
   ids.forEach((id, i) => {
     const angle = (2 * Math.PI * i) / Math.max(ids.length, 1);
-    const r = Math.min(canvasW, canvasH) * 0.35;
-    pos[id] = { x: canvasW / 2 + r * Math.cos(angle), y: canvasH / 2 + r * Math.sin(angle) };
+    const r = Math.min(width, height) * 0.35;
+    pos[id] = { x: width / 2 + r * Math.cos(angle), y: height / 2 + r * Math.sin(angle) };
   });
 
   const edgeSet = edges.map((edge) => ({ from: edge.From, to: edge.To, w: edge.Weight }));
   const maxW = Math.max(1, ...edgeSet.map((edge) => edge.w));
+  const iterations = nodeCount > 80 ? 120 : 80;
+  const repulsionBase = nodeCount > 80 ? 28000 : 18000;
 
-  for (let iter = 0; iter < 80; iter++) {
+  for (let iter = 0; iter < iterations; iter++) {
     const force: Record<string, { fx: number; fy: number }> = {};
     ids.forEach((id) => { force[id] = { fx: 0, fy: 0 }; });
 
@@ -344,7 +400,7 @@ function buildForceLayout(
         const dx = pos[b].x - pos[a].x;
         const dy = pos[b].y - pos[a].y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const repulsion = 18000 / (dist * dist);
+        const repulsion = repulsionBase / (dist * dist);
         force[a].fx -= (repulsion * dx) / dist;
         force[a].fy -= (repulsion * dy) / dist;
         force[b].fx += (repulsion * dx) / dist;
@@ -364,10 +420,10 @@ function buildForceLayout(
       force[to].fy -= (attraction * dy) / dist;
     });
 
-    const alpha = 1 - iter / 80;
+    const alpha = 1 - iter / iterations;
     ids.forEach((id) => {
-      pos[id].x = Math.max(60, Math.min(canvasW - 60, pos[id].x + force[id].fx * alpha * 0.1));
-      pos[id].y = Math.max(60, Math.min(canvasH - 60, pos[id].y + force[id].fy * alpha * 0.1));
+      pos[id].x = Math.max(60, Math.min(width - 60, pos[id].x + force[id].fx * alpha * 0.1));
+      pos[id].y = Math.max(60, Math.min(height - 60, pos[id].y + force[id].fy * alpha * 0.1));
     });
   }
 
@@ -384,7 +440,7 @@ function buildForceLayout(
     });
   });
 
-  return nodes;
+  return { nodes, width, height, compact: nodeCount > 30 };
 }
 
 function isDag(index: GraphIndex) {
@@ -494,6 +550,7 @@ export function RamexGraphViewer({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const lastFitKeyRef = useRef("");
 
   const visibleEdges = useMemo(() => {
     const sorted = [...allEdges].sort((a, b) => b.Weight - a.Weight || a.From.localeCompare(b.From) || a.To.localeCompare(b.To));
@@ -522,12 +579,19 @@ export function RamexGraphViewer({
     };
   }, [visibleEdges, root, graphType, validationMetrics]);
 
-  const nodes = useMemo(() => {
-    if (!visibleEdges.length) return new Map<string, Node>();
+  const layout = useMemo(() => {
+    if (!visibleEdges.length) {
+      return { nodes: new Map<string, Node>(), width: CANVAS_W, height: CANVAS_H, compact: false };
+    }
     return layoutMode === "hierarchical" || layoutMode === "paperStyle"
       ? buildHierarchicalLayout(visibleEdges, root, CANVAS_W, CANVAS_H, graphType, layoutMode === "paperStyle")
       : buildForceLayout(visibleEdges, root, CANVAS_W, CANVAS_H);
   }, [visibleEdges, root, layoutMode, graphType]);
+
+  const nodes = layout.nodes;
+  const canvasWidth = layout.width;
+  const canvasHeight = layout.height;
+  const compactLayout = layout.compact;
 
   const maxWeight = useMemo(
     () => Math.max(1, ...[...nodes.values()].map((node) => node.weight)),
@@ -564,6 +628,21 @@ export function RamexGraphViewer({
     setLayoutMode(density > 0.25 || allEdges.length > MAX_EDGES_FORCE ? "force" : "hierarchical");
   }, [allEdges, structuralGraph, totalNodeCount]);
 
+  useEffect(() => {
+    const fitKey = `${totalNodeCount}-${layoutMode}-${visibleEdges.length}-${canvasWidth}-${canvasHeight}`;
+    if (fitKey === lastFitKeyRef.current) return;
+    lastFitKeyRef.current = fitKey;
+
+    if (totalNodeCount <= 30) {
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      return;
+    }
+    const fitZoom = Math.min(1, CANVAS_W / canvasWidth, 580 / canvasHeight);
+    setZoom(Math.max(0.15, fitZoom));
+    setPan({ x: 0, y: 0 });
+  }, [canvasWidth, canvasHeight, totalNodeCount, layoutMode, visibleEdges.length]);
+
   if (!allEdges.length) return null;
 
   const isTruncated = allEdges.length > visibleEdges.length;
@@ -592,7 +671,7 @@ export function RamexGraphViewer({
           ) : null}
           {layoutMode === "paperStyle" && totalNodeCount > 30 ? (
             <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
-              Estrutura demasiado grande para visualizacao completa em estilo artigo; apresentada versao filtrada/top-N.
+              Estrutura grande: visualização compacta com scroll e zoom. Use zoom/arrastar para explorar todos os nós.
             </p>
           ) : null}
           {isTruncated ? (
@@ -658,11 +737,12 @@ export function RamexGraphViewer({
       </div>
 
       <div className="relative rounded-b-2xl bg-slate-50" style={{ cursor: dragging ? "grabbing" : "grab" }}>
-        <div className="overflow-hidden rounded-b-2xl">
+        <div className="max-h-[70vh] overflow-auto rounded-b-2xl">
           <svg
             ref={svgRef}
-            viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
-            className="h-[580px] w-full"
+            viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+            className="w-full"
+            style={{ minHeight: Math.min(580, canvasHeight), height: Math.min(580, canvasHeight) }}
             onWheel={handleWheel}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -685,8 +765,8 @@ export function RamexGraphViewer({
                 const source = nodes.get(edge.From);
                 const target = nodes.get(edge.To);
                 if (!source || !target || source.id === target.id) return null;
-                const sourceDims = nodeDimensions(source, maxWeight, paperStyle);
-                const targetDims = nodeDimensions(target, maxWeight, paperStyle);
+                const sourceDims = nodeDimensions(source, maxWeight, paperStyle, compactLayout);
+                const targetDims = nodeDimensions(target, maxWeight, paperStyle, compactLayout);
                 const start = ellipseBoundaryPoint(source, target, sourceDims);
                 const end = ellipseBoundaryPoint(target, source, targetDims, paperStyle ? 12 : 8);
                 const x1 = start.x;
@@ -723,7 +803,7 @@ export function RamexGraphViewer({
                       strokeOpacity={isFromRoot ? 0.9 : paperStyle ? 0.72 : 0.55}
                       markerEnd={isFromRoot ? "url(#arrow-root)" : "url(#arrow)"}
                     />
-                    {(paperStyle || totalNodeCount <= 30) ? (
+                    {(paperStyle && !compactLayout) || totalNodeCount <= 30 ? (
                       <g style={{ pointerEvents: "none" }}>
                         <rect
                           x={labelX - String(edge.Weight).length * 4.6 - 8}
@@ -755,7 +835,7 @@ export function RamexGraphViewer({
 
               {[...nodes.values()].map((node) => {
                 const radius = nodeRadius(node, maxWeight);
-                const dims = nodeDimensions(node, maxWeight, paperStyle);
+                const dims = nodeDimensions(node, maxWeight, paperStyle, compactLayout);
                 return (
                   <g
                     key={node.id}
@@ -786,7 +866,7 @@ export function RamexGraphViewer({
                       y={node.y}
                       textAnchor="middle"
                       dominantBaseline="central"
-                      fontSize={paperStyle ? 15 : Math.max(8, Math.min(13, radius * 0.75))}
+                      fontSize={paperStyle ? (compactLayout ? 10 : 15) : Math.max(8, Math.min(13, radius * 0.75))}
                       fontWeight={node.isRoot ? "800" : "600"}
                       fill={node.isRoot ? "#fff" : "#0f172a"}
                       style={{ pointerEvents: "none", userSelect: "none" }}
@@ -803,7 +883,7 @@ export function RamexGraphViewer({
         {tooltip ? (
           <div
             className="pointer-events-none absolute z-20 rounded-lg border border-slate-200 bg-white/98 px-3 py-2 text-xs font-semibold text-slate-800 shadow-xl"
-            style={{ left: Math.min(tooltip.x + 12, CANVAS_W - 220), top: Math.max(tooltip.y - 8, 4) }}
+            style={{ left: Math.min(tooltip.x + 12, Math.max(120, canvasWidth) - 220), top: Math.max(tooltip.y - 8, 4) }}
           >
             {tooltip.text}
           </div>
@@ -811,7 +891,7 @@ export function RamexGraphViewer({
       </div>
 
       <p className="px-5 py-2 text-xs text-slate-400">
-        Scroll para zoom · Arrastar para mover · Passe o cursor em nós e arestas para detalhes
+        Scroll para zoom · Arrastar para mover · {totalNodeCount > 30 ? "Use scroll na área do grafo para ver toda a estrutura · " : ""}Passe o cursor em nós e arestas para detalhes
       </p>
     </div>
   );
