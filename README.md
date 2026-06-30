@@ -314,6 +314,6 @@ Ver [VALIDATION_CHECKLIST.md](VALIDATION_CHECKLIST.md).
 
 ## Autoria
 
-- Joaquim Bonacho (2300542)
-- César Neves (2200745)
-- Ricardo Costa (2400400)
+- Joaquim Bonacho
+- César Neves
+- Ricardo Costa 
