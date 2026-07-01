@@ -9,7 +9,7 @@ Framework de análise sequencial baseada em RAMEX, com separação explícita en
 
 As versões exploratórias baseadas em heurísticas locais/gulosas desenvolvidas numa fase inicial continuam disponíveis apenas como comparação experimental. As abordagens finais distinguem RAMEX 2007 formal, RAMEX 2015 Forward/Back-and-Forward e RAMEX-Forum temporal.
 
----
+----
 
 ## Alinhamento bibliográfico das abordagens RAMEX
 
