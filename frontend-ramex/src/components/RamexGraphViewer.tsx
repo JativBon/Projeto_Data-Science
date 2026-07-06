@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent, WheelEvent as ReactWheelEvent } from "react";
 
 export type GraphType = "observed" | "filtered" | "ramex2007" | "forward" | "polytree" | "experimental";
@@ -20,6 +20,8 @@ export type GraphValidationMetrics = {
   is_valid_forward_tree?: boolean;
   is_valid_polytree?: boolean;
   is_polytree?: boolean;
+  edges_equal_nodes_minus_one?: boolean;
+  edges_equals_nodes_minus_one?: boolean;
   edges?: number;
   nodes?: number;
   expected_edges?: number;
@@ -66,6 +68,16 @@ type ValidationStats = {
 const CANVAS_W = 1100;
 const CANVAS_H = 700;
 const MAX_EDGES_FORCE = 200;
+const ARROW_MARKER = {
+  size: 20,
+  refX: 17,
+  refY: 10,
+  tipX: 19,
+  tipY: 10,
+  baseX: 1,
+  baseTopY: 1,
+  baseBottomY: 19,
+} as const;
 
 function isStructuralGraph(graphType: GraphType) {
   return graphType === "ramex2007" || graphType === "forward" || graphType === "polytree";
@@ -358,11 +370,21 @@ function ellipseBoundaryPoint(from: Node, to: Node, dims: { rx: number; ry: numb
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-  const scale = 1 / Math.sqrt((dx * dx) / (dims.rx * dims.rx) + (dy * dy) / (dims.ry * dims.ry));
+  const ux = dx / dist;
+  const uy = dy / dist;
+  const scale = 1 / Math.sqrt((ux * ux) / (dims.rx * dims.rx) + (uy * uy) / (dims.ry * dims.ry));
   return {
-    x: from.x + (dx / dist) * (scale + extra),
-    y: from.y + (dy / dist) * (scale + extra),
+    x: from.x + ux * (scale + extra),
+    y: from.y + uy * (scale + extra),
   };
+}
+
+export function arrowEndpointOffset(strokeWidth: number, marker: typeof ARROW_MARKER = ARROW_MARKER): number {
+  const safeStrokeWidth = Number.isFinite(strokeWidth) ? Math.max(0, strokeWidth) : 0;
+  const markerForwardOverhang = Math.max(0, marker.tipX - marker.refX);
+  const markerBodyClearance = marker.size * 0.45;
+  const strokeClearance = safeStrokeWidth / 2;
+  return markerForwardOverhang + markerBodyClearance + strokeClearance;
 }
 
 function buildForceLayout(
@@ -551,6 +573,9 @@ export function RamexGraphViewer({
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const lastFitKeyRef = useRef("");
+  const markerBaseId = useId().replace(/:/g, "");
+  const arrowMarkerId = `${markerBaseId}-arrow`;
+  const rootArrowMarkerId = `${markerBaseId}-arrow-root`;
 
   const visibleEdges = useMemo(() => {
     const sorted = [...allEdges].sort((a, b) => b.Weight - a.Weight || a.From.localeCompare(b.From) || a.To.localeCompare(b.To));
@@ -565,9 +590,11 @@ export function RamexGraphViewer({
     return {
       ...computed,
       isDag: validationMetrics.is_dag ?? computed.isDag,
-      edgesEqualNodesMinusOne: validationMetrics.edges !== undefined && validationMetrics.expected_edges !== undefined
+      edgesEqualNodesMinusOne: validationMetrics.edges_equal_nodes_minus_one
+        ?? validationMetrics.edges_equals_nodes_minus_one
+        ?? (validationMetrics.edges !== undefined && validationMetrics.expected_edges !== undefined
         ? validationMetrics.edges === validationMetrics.expected_edges
-        : computed.edgesEqualNodesMinusOne,
+        : computed.edgesEqualNodesMinusOne),
       isArborescence: validationMetrics.is_valid_rooted_branching
         ?? validationMetrics.is_valid_arborescence
         ?? validationMetrics.is_arborescence
@@ -578,6 +605,23 @@ export function RamexGraphViewer({
         ?? computed.isPolytree,
     };
   }, [visibleEdges, root, graphType, validationMetrics]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const impossible =
+      (validationStats.isPolytree && !validationStats.isDag)
+      || (validationStats.isArborescence && !validationStats.isDag)
+      || (validationStats.isArborescence && !validationStats.edgesEqualNodesMinusOne);
+    if (!impossible) return;
+    console.warn("[RAMEX Upload] Invariant violation in graph validation", {
+      card: title,
+      graphType,
+      nodes: totalNodeCount,
+      edges: visibleEdges.length,
+      validationMetrics,
+      validationStats,
+    });
+  }, [graphType, title, totalNodeCount, validationMetrics, validationStats, visibleEdges.length]);
 
   const layout = useMemo(() => {
     if (!visibleEdges.length) {
@@ -752,11 +796,41 @@ export function RamexGraphViewer({
             aria-label={title ?? "Grafo RAMEX"}
           >
             <defs>
-              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L8,3 z" fill="#315f72" opacity="0.7" />
+              <marker
+                id={arrowMarkerId}
+                markerWidth={ARROW_MARKER.size}
+                markerHeight={ARROW_MARKER.size}
+                refX={ARROW_MARKER.refX}
+                refY={ARROW_MARKER.refY}
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+                viewBox={`0 0 ${ARROW_MARKER.size} ${ARROW_MARKER.size}`}
+              >
+                <path
+                  d={`M${ARROW_MARKER.baseX},${ARROW_MARKER.baseTopY} L${ARROW_MARKER.tipX},${ARROW_MARKER.tipY} L${ARROW_MARKER.baseX},${ARROW_MARKER.baseBottomY} z`}
+                  fill="context-stroke"
+                  stroke="context-stroke"
+                  strokeWidth="1"
+                  opacity="1"
+                />
               </marker>
-              <marker id="arrow-root" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L8,3 z" fill={highlightColor} opacity="0.85" />
+              <marker
+                id={rootArrowMarkerId}
+                markerWidth={ARROW_MARKER.size}
+                markerHeight={ARROW_MARKER.size}
+                refX={ARROW_MARKER.refX}
+                refY={ARROW_MARKER.refY}
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+                viewBox={`0 0 ${ARROW_MARKER.size} ${ARROW_MARKER.size}`}
+              >
+                <path
+                  d={`M${ARROW_MARKER.baseX},${ARROW_MARKER.baseTopY} L${ARROW_MARKER.tipX},${ARROW_MARKER.tipY} L${ARROW_MARKER.baseX},${ARROW_MARKER.baseBottomY} z`}
+                  fill="context-stroke"
+                  stroke="context-stroke"
+                  strokeWidth="1"
+                  opacity="1"
+                />
               </marker>
             </defs>
 
@@ -767,15 +841,15 @@ export function RamexGraphViewer({
                 if (!source || !target || source.id === target.id) return null;
                 const sourceDims = nodeDimensions(source, maxWeight, paperStyle, compactLayout);
                 const targetDims = nodeDimensions(target, maxWeight, paperStyle, compactLayout);
+                const strokeW = paperStyle ? 1.8 + 4.6 * Math.sqrt(edge.Weight / maxEdgeW) : 0.8 + 4 * Math.sqrt(edge.Weight / maxEdgeW);
                 const start = ellipseBoundaryPoint(source, target, sourceDims);
-                const end = ellipseBoundaryPoint(target, source, targetDims, paperStyle ? 12 : 8);
+                const end = ellipseBoundaryPoint(target, source, targetDims, arrowEndpointOffset(strokeW));
                 const x1 = start.x;
                 const y1 = start.y;
                 const x2 = end.x;
                 const y2 = end.y;
                 const labelX = x1 + (x2 - x1) * 0.52;
                 const labelY = y1 + (y2 - y1) * 0.52 - (paperStyle ? 10 : 6);
-                const strokeW = paperStyle ? 1.8 + 4.6 * Math.sqrt(edge.Weight / maxEdgeW) : 0.8 + 4 * Math.sqrt(edge.Weight / maxEdgeW);
                 const isFromRoot = source.isRoot;
                 return (
                   <g
@@ -801,7 +875,7 @@ export function RamexGraphViewer({
                       stroke={isFromRoot ? highlightColor : paperStyle ? "#334155" : "#315f72"}
                       strokeWidth={strokeW}
                       strokeOpacity={isFromRoot ? 0.9 : paperStyle ? 0.72 : 0.55}
-                      markerEnd={isFromRoot ? "url(#arrow-root)" : "url(#arrow)"}
+                      markerEnd={`url(#${isFromRoot ? rootArrowMarkerId : arrowMarkerId})`}
                     />
                     {(paperStyle && !compactLayout) || totalNodeCount <= 30 ? (
                       <g style={{ pointerEvents: "none" }}>

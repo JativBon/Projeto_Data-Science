@@ -191,15 +191,27 @@ type RamexForumData = {
       is_dag?: boolean;
       is_tree?: boolean;
       is_polytree?: boolean;
+      is_arborescence?: boolean;
+      is_valid_arborescence?: boolean;
+      is_valid_polytree?: boolean;
+      edges_eq_nodes_minus_1?: boolean;
+      edges_equals_nodes_minus_one?: boolean;
       dominant_path?: string[];
       warnings?: string[];
     };
     structure?: {
       algorithm?: string;
       structure?: string;
+      nodes_selected?: number;
+      edges_selected?: number;
+      is_dag?: boolean;
+      is_tree?: boolean;
+      is_polytree?: boolean;
+      is_arborescence?: boolean;
       edges?: ForumEdge[];
       validation?: Record<string, boolean>;
     };
+    validation?: Record<string, boolean>;
     selected_edges?: ForumEdge[];
     dominant_path?: Array<{ Step?: number; From?: string; To?: string; Weight?: number; InfluenceWeight?: number; Direction?: string }>;
     interpretation?: string;
@@ -1781,6 +1793,58 @@ function pureRamexGraphValidation(result: PureRamexResult | undefined, graphType
     nodes,
     edges: edgeCount,
     expected_edges: expectedEdges,
+  };
+}
+
+function forumPhase2GraphType(phase2?: NonNullable<RamexForumData["temporal_phase2"]>): RamexGraphType {
+  return phase2?.metrics?.heuristic_used === "forward" ? "forward" : "polytree";
+}
+
+function validationBool(validation: Record<string, boolean> | undefined, ...keys: string[]) {
+  for (const key of keys) {
+    const value = validation?.[key];
+    if (value !== undefined) return value;
+  }
+  return undefined;
+}
+
+function forumPhase2GraphValidation(
+  phase2: NonNullable<RamexForumData["temporal_phase2"]> | undefined,
+  edges: RamexGraphEdge[],
+): RamexGraphValidationMetrics | undefined {
+  if (!phase2) return undefined;
+  const metrics = phase2.metrics ?? {};
+  const structure = phase2.structure;
+  const validation = phase2.validation ?? structure?.validation;
+  const nodes = metrics.nodes_after
+    ?? structure?.nodes_selected
+    ?? new Set(edges.flatMap((edge) => [edge.From, edge.To])).size;
+  const edgeCount = metrics.edges_after ?? structure?.edges_selected ?? edges.length;
+  const edgesEqualNodesMinusOne = metrics.edges_eq_nodes_minus_1
+    ?? metrics.edges_equals_nodes_minus_one
+    ?? validationBool(validation, "edges_eq_nodes_minus_1", "edges_equals_nodes_minus_one")
+    ?? (edgeCount === Math.max(nodes - 1, 0));
+  const isDag = metrics.is_dag ?? structure?.is_dag ?? validationBool(validation, "is_dag", "is_acyclic");
+  const isPolytree = metrics.is_valid_polytree
+    ?? metrics.is_polytree
+    ?? structure?.is_polytree
+    ?? validationBool(validation, "is_valid_polytree", "is_polytree");
+  const isArborescence = metrics.is_valid_arborescence
+    ?? metrics.is_arborescence
+    ?? structure?.is_arborescence
+    ?? validationBool(validation, "is_valid_arborescence", "is_arborescence", "is_tree");
+
+  return {
+    is_dag: isDag,
+    is_valid_arborescence: isArborescence,
+    is_arborescence: isArborescence,
+    is_valid_forward_tree: forumPhase2GraphType(phase2) === "forward" ? isArborescence ?? metrics.is_tree : undefined,
+    is_valid_polytree: forumPhase2GraphType(phase2) === "polytree" ? isPolytree : undefined,
+    is_polytree: forumPhase2GraphType(phase2) === "polytree" ? isPolytree : undefined,
+    edges_equal_nodes_minus_one: edgesEqualNodesMinusOne,
+    edges: edgeCount,
+    nodes,
+    expected_edges: Math.max(nodes - 1, 0),
   };
 }
 
@@ -5894,11 +5958,20 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
       weight: readFirstNumber(edge, ["weight", "Weight"]),
       mode: String(edge.direction ?? edge.Direction ?? ""),
     }));
-  const forumRelationRows: GraphRelationRow[] = (normalizedResult?.forum.phase2?.selected_edges ?? normalizedResult?.forum.phase1?.influence_graph?.edges ?? [])
+  const forumPhase2Edges: RamexGraphEdge[] = (normalizedResult?.forum.phase2?.selected_edges ?? normalizedResult?.forum.phase2?.structure?.edges ?? [])
+    .map((edge) => ({
+      From: edge.From ?? "",
+      To: edge.To ?? "",
+      Weight: edge.Weight ?? edge.SmoothedWeight ?? 0,
+      Level: edge.Level,
+    }));
+  const forumPhase2Validation = forumPhase2GraphValidation(normalizedResult?.forum.phase2, forumPhase2Edges);
+  const resolvedForumPhase2GraphType = forumPhase2GraphType(normalizedResult?.forum.phase2);
+  const forumRelationRows: GraphRelationRow[] = (normalizedResult?.forum.phase2?.selected_edges ?? normalizedResult?.forum.phase2?.structure?.edges ?? [])
     .map((edge) => ({
       from: edge.From ?? "",
       to: edge.To ?? "",
-      weight: edge.Weight,
+      weight: edge.Weight ?? edge.SmoothedWeight,
       relativeWeight: edge.SmoothedWeight,
       rank: edge.Rank,
     }));
@@ -6726,9 +6799,9 @@ function UploadDatasetPanel({ onAnalyzed }: { onAnalyzed?: (result: UploadResult
                 edges={normalizedResult?.forum.phase2?.metrics?.edges_after}
                 mode="forum"
                 legend="RAMEX-Forum temporal"
-                graphEdges={forumRelationRows.map((r) => ({ From: r.from, To: r.to, Weight: r.weight ?? 0 }))}
-                graphType="filtered"
-                graphValidation={normalizedResult?.filtered.validation}
+                graphEdges={forumPhase2Edges}
+                graphType={resolvedForumPhase2GraphType}
+                graphValidation={forumPhase2Validation}
               >
                 <GraphRelationsTable title="Influência selecionada" rows={forumRelationRows} mode="forum" />
               </GraphViewer>
